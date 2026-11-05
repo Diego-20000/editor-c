@@ -1,0 +1,1940 @@
+<!doctype html>
+<html lang="es" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark light">
+<title>Editor C</title>
+<meta name="description" content="Editor de C sin anuncios que corre en tu navegador: escribí, ejecutá y probá tus programas al instante.">
+<style>
+:root {
+  --bg: #0e1116; --panel: #141922; --panel2: #1a2130; --line: #263042; --text: #e6e9ef; --muted: #8b95a7;
+  --accent: #3ddc97; --accent-ink: #06281a; --danger: #ff6b6b; --warn: #ffb454; --input: #7cc4ff;
+  --kw: #ff8a80; --ty: #79c0ff; --st: #a5d6a7; --nu: #ffb86b; --co: #7d8799; --fn: #d2a8ff; --pp: #e0a5ff;
+  --sel: rgba(61, 220, 151, .22); --caret: #3ddc97;
+  --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  --ui: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --fs: 15px;
+}
+:root[data-theme="light"] {
+  --bg: #f4f6f9; --panel: #ffffff; --panel2: #eef1f6; --line: #d6dce6; --text: #1b2230; --muted: #5d6879;
+  --accent: #0f9d63; --accent-ink: #ffffff; --danger: #d93a3a; --warn: #b26b00; --input: #0b5ed7;
+  --kw: #cf222e; --ty: #0550ae; --st: #0a7a3d; --nu: #b35900; --co: #7a8494; --fn: #8250df; --pp: #8250df;
+  --sel: rgba(15, 157, 99, .18); --caret: #0f9d63;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--ui); display: flex; flex-direction: column; min-height: 100dvh; }
+h1, h2, p { margin: 0; }
+.bar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; padding: 10px max(16px, env(safe-area-inset-left)); background: var(--panel); border-bottom: 1px solid var(--line); }
+.brand { display: flex; align-items: center; gap: 10px; margin-right: auto; }
+.logo { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 9px; background: var(--accent); color: var(--accent-ink); font: 700 18px var(--mono); }
+.brand h1 { font-size: 16px; line-height: 1.1; }
+.brand p { font-size: 12px; color: var(--muted); }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.grp { display: inline-flex; gap: 4px; }
+.btn { display: inline-flex; align-items: center; gap: 6px; min-height: 38px; padding: 0 14px; border-radius: 9px; border: 1px solid var(--line); background: var(--panel2); color: var(--text); font: 600 14px var(--ui); cursor: pointer; }
+.btn:hover:not(:disabled) { border-color: var(--muted); }
+.btn:focus-visible, select:focus-visible, textarea:focus-visible, .console:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: transparent; }
+.btn.danger:not(:disabled) { color: var(--danger); }
+.btn.icon { padding: 0; min-width: 38px; justify-content: center; }
+.btn.mini { min-height: 28px; padding: 0 10px; font-size: 12px; margin-left: auto; }
+.btn.sel { appearance: none; -webkit-appearance: none; padding-right: 14px; max-width: 150px; }
+
+.split { flex: 1; display: flex; flex-direction: column; gap: 10px; padding: 10px max(10px, env(safe-area-inset-left)) max(10px, env(safe-area-inset-bottom)); min-height: 0; }
+.pane { display: flex; flex-direction: column; min-height: 0; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.pane:first-child { flex: 1.15; min-height: 260px; }
+.pane.term { flex: 1; min-height: 220px; }
+.pane-head { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-bottom: 1px solid var(--line); font-size: 12px; color: var(--muted); letter-spacing: .02em; }
+.pane-head .hint { margin-left: auto; }
+.chip { padding: 2px 9px; border-radius: 99px; background: var(--panel2); color: var(--muted); font-size: 12px; }
+.chip.run { color: var(--accent); } .chip.err { color: var(--danger); } .chip.wait { color: var(--input); }
+
+.editor { position: relative; flex: 1; display: flex; min-height: 0; font: var(--fs)/1.5 var(--mono); }
+.gut { flex: none; overflow: hidden; padding: 12px 0; min-width: 3.2em; text-align: right; color: var(--co); background: var(--panel); border-right: 1px solid var(--line); user-select: none; }
+.gut div { padding: 0 .7em 0 .5em; height: 1.5em; }
+.gut .e { color: var(--danger); background: color-mix(in srgb, var(--danger) 16%, transparent); font-weight: 700; }
+.gut .w { color: var(--warn); background: color-mix(in srgb, var(--warn) 14%, transparent); font-weight: 700; }
+.code { position: relative; flex: 1; min-width: 0; }
+.hl, #code { position: absolute; inset: 0; margin: 0; padding: 12px 14px; font: inherit; letter-spacing: 0; tab-size: 4; -moz-tab-size: 4; white-space: pre; border: 0; }
+.hl { overflow: hidden; color: var(--text); pointer-events: none; }
+#code { overflow: auto; resize: none; background: transparent; color: transparent; caret-color: var(--caret); outline: 0; -webkit-text-fill-color: transparent; }
+#code::selection { background: var(--sel); -webkit-text-fill-color: transparent; }
+.k { color: var(--kw); } .t { color: var(--ty); } .s { color: var(--st); } .n { color: var(--nu); } .c { color: var(--co); font-style: italic; } .f { color: var(--fn); } .p { color: var(--pp); }
+
+.console { flex: 1; overflow: auto; padding: 12px 14px; font: var(--fs)/1.5 var(--mono); background: var(--bg); min-height: 0; }
+.console:focus { outline-offset: -2px; }
+#out { margin: 0; font: inherit; white-space: pre-wrap; overflow-wrap: anywhere; color: var(--text); }
+#out .in { color: var(--input); }
+#out .er { color: var(--danger); }
+#out .dim { color: var(--muted); }
+.stdin { display: inline-block; vertical-align: baseline; }
+.stdin input { font: inherit; color: var(--input); background: transparent; border: 0; border-bottom: 1px dashed var(--input); padding: 0; margin: 0; width: 1ch; min-width: 1ch; max-width: 100%; outline: 0; caret-color: var(--input); }
+.eofbtn { margin-left: 10px; font: 600 11px var(--ui); color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 6px; padding: 2px 7px; cursor: pointer; }
+
+.diag { max-height: 34%; overflow: auto; border-top: 1px solid var(--line); background: var(--panel); padding: 6px 8px; font-size: 13px; }
+.diag button { display: flex; gap: 8px; width: 100%; text-align: left; background: transparent; color: var(--text); border: 0; border-radius: 8px; padding: 6px 8px; font: inherit; line-height: 1.35; cursor: pointer; }
+.diag button:hover { background: var(--panel2); }
+.diag .tag { flex: none; font: 700 11px var(--mono); padding: 2px 6px; border-radius: 5px; margin-top: 1px; }
+.diag .e .tag { background: color-mix(in srgb, var(--danger) 20%, transparent); color: var(--danger); }
+.diag .w .tag { background: color-mix(in srgb, var(--warn) 20%, transparent); color: var(--warn); }
+
+dialog { max-width: min(520px, calc(100vw - 32px)); border: 1px solid var(--line); border-radius: 14px; background: var(--panel); color: var(--text); padding: 22px; }
+dialog::backdrop { background: rgba(0, 0, 0, .55); }
+dialog h2 { font-size: 18px; margin-bottom: 8px; }
+dialog p { color: var(--muted); font-size: 14px; line-height: 1.5; margin-bottom: 10px; }
+dialog ul { margin: 0 0 12px; padding-left: 20px; font-size: 14px; line-height: 1.55; }
+dialog .fine { font-size: 12px; }
+
+.more { position: relative; display: contents; }
+.more > summary { list-style: none; cursor: pointer; display: none; }
+.more > summary::-webkit-details-marker { display: none; }
+.menu { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+@media (max-width: 899px) {
+  .more { display: block; }
+  .more > summary { display: inline-flex; }
+  .menu { position: absolute; right: 0; top: calc(100% + 8px); z-index: 10; width: min(320px, calc(100vw - 32px)); padding: 12px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 14px 34px rgba(0, 0, 0, .35); }
+  .menu .btn.sel { max-width: none; flex: 1 1 100%; }
+}
+@media (min-width: 900px) {
+  .split { flex-direction: row; height: calc(100dvh - 62px); }
+  .pane:first-child { flex: 1.25; min-height: 0; }
+  .pane.term { flex: 1; min-height: 0; }
+}
+@media (max-width: 560px) {
+  .bar { flex-wrap: nowrap; padding-top: 8px; padding-bottom: 8px; }
+  .brand p { display: none; }
+  #stop span { display: none; }
+  #stop { padding: 0; min-width: 40px; justify-content: center; }
+  .btn { padding: 0 11px; }
+  .btn span { font-size: 13px; }
+  .pane-head .hint { display: none; }
+  .pane:first-child { min-height: 300px; }
+}
+@media (max-width: 440px) { .brand h1 { display: none; } }
+@media (prefers-reduced-motion: no-preference) { .btn { transition: border-color .12s, background .12s; } }
+
+.toast { position: fixed; left: 50%; bottom: max(16px, env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 20; display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--panel2); color: var(--text); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 10px 28px rgba(0, 0, 0, .4); font-size: 14px; }
+.toast[hidden] { display: none; }
+.toast .btn.mini { margin-left: 0; }
+
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="brand"><span class="logo" aria-hidden="true">C</span><div><h1>Editor C</h1><p>Sin anuncios · corre en tu navegador</p></div></div>
+  <div class="actions">
+    <button id="run" class="btn primary" title="Ejecutar (Ctrl+Enter)"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M7 4.5v15l12-7.5z" fill="currentColor"/></svg><span>Ejecutar</span></button>
+    <button id="stop" class="btn danger" title="Detener" disabled><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="1.5" fill="currentColor"/></svg><span>Detener</span></button>
+    <details class="more" id="more"><summary class="btn" aria-label="Más opciones"><span>Más</span><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></summary>
+    <div class="menu">
+    <select id="examples" class="btn sel" aria-label="Ejemplos"><option value="">Ejemplos…</option></select>
+      <button id="open" class="btn" title="Abrir un archivo .c"><span>Abrir</span></button>
+      <button id="save" class="btn" title="Descargar como .c"><span>Guardar</span></button>
+      <span class="grp" role="group" aria-label="Tamaño de letra"><button id="fsm" class="btn icon" title="Letra más chica" aria-label="Letra más chica">A−</button><button id="fsp" class="btn icon" title="Letra más grande" aria-label="Letra más grande">A+</button></span>
+      <button id="theme" class="btn icon" title="Cambiar tema claro/oscuro" aria-label="Cambiar tema"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M21 14.5A9 9 0 0 1 9.5 3 9 9 0 1 0 21 14.5z" fill="currentColor"/></svg></button>
+      <button id="help" class="btn icon" title="Qué soporta" aria-label="Ayuda">?</button>
+    </div></details>
+  </div>
+</header>
+<main class="split">
+  <section class="pane" aria-label="Editor de código">
+    <div class="pane-head"><span>programa.c</span><span class="hint">Ctrl+Enter para ejecutar</span></div>
+    <div class="editor" id="editor">
+      <div class="gut" id="gut" aria-hidden="true"></div>
+      <div class="code">
+        <pre class="hl" id="hl" aria-hidden="true"></pre>
+        <textarea id="code" wrap="off" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" aria-label="Código en C"></textarea>
+      </div>
+    </div>
+  </section>
+  <section class="pane term" aria-label="Consola">
+    <div class="pane-head"><span>Consola</span><span id="status" class="chip">Listo</span><button id="clear" class="btn mini" title="Limpiar la consola">Limpiar</button></div>
+    <div class="console" id="console" tabindex="0"><pre id="out" aria-live="polite"></pre></div>
+    <div class="diag" id="diag" hidden></div>
+  </section>
+</main>
+<dialog id="dlg">
+  <form method="dialog">
+    <h2>Qué soporta este editor</h2>
+    <p>Interpreta el C que se usa en la materia. No es gcc: si algo se comporta distinto, avisá.</p>
+    <ul>
+      <li><b>Tipos:</b> int, float, double, char, long, unsigned.</li>
+      <li><b>Control:</b> if / else, switch, while, do-while, for, break, continue.</li>
+      <li><b>Funciones</b> con parámetros, retorno y recursión; <b>arreglos</b> de 1 y 2 dimensiones.</li>
+      <li><b>Entrada y salida:</b> printf, scanf, getchar, putchar, puts (con todos los formatos: %d %f %.2f %c %e %g %x …).</li>
+      <li><b>Biblioteca:</b> math.h (sqrt, pow, abs…), rand, ctype.h básico, #define de constantes.</li>
+      <li><b>Avisos útiles:</b> te marca %d con float, scanf sin &amp;, variables sin valor inicial, = dentro de if…</li>
+      <li><b>Todavía no:</b> punteros, textos (char[] con %s), struct, archivos.</li>
+    </ul>
+    <p class="fine">Tu código no sale de tu navegador. Se guarda solo en este dispositivo.</p>
+    <button class="btn primary" value="ok">Entendido</button>
+  </form>
+</dialog>
+<input type="file" id="file" accept=".c,.h,.txt,text/plain" hidden>
+<script>
+/* Compilador del Editor C: subconjunto de C de la materia -> JavaScript.
+   Entrada: texto C. Salida: { js, errors:[{line,msg}], warnings:[{line,msg}] } */
+(function (root) {
+  'use strict';
+
+  class CErr extends Error { constructor(msg, line) { super(msg); this.cline = line; } }
+
+  const TYPE_KW = new Set(['int', 'float', 'double', 'char', 'void', 'long', 'short', 'unsigned', 'signed', 'const', 'static', 'bool']);
+  const UNSUPPORTED_KW = { struct: 'struct', union: 'union', enum: 'enum', typedef: 'typedef', goto: 'goto' };
+  const CONSTS = {
+    EOF: [-1, 'int'], NULL: [0, 'int'], RAND_MAX: [2147483647, 'int'], INT_MAX: [2147483647, 'int'],
+    INT_MIN: [-2147483648, 'int'], M_PI: [Math.PI, 'double'], M_E: [Math.E, 'double'], true: [1, 'int'], false: [0, 'int'],
+    stdout: [0, 'int'], stdin: [0, 'int'], stderr: [0, 'int'], CHAR_BIT: [8, 'int'], UINT_MAX: [4294967295, 'uint']
+  };
+
+  /* ================= LEXER ================= */
+  function tokenize(text, line0, top, includes, defines) {
+    const out = [];
+    let i = 0, line = line0;
+    const n = text.length;
+    let atStart = true;
+    const OPS = ['<<=', '>>=', '...', '++', '--', '+=', '-=', '*=', '/=', '%=', '&=', '|=', '^=', '==', '!=', '<=', '>=', '&&', '||', '<<', '>>', '->'];
+    while (i < n) {
+      const c = text[i];
+      if (c === '\n') { line++; i++; atStart = true; continue; }
+      if (c === ' ' || c === '\t' || c === '\r' || c === '\f' || c === '\v') { i++; continue; }
+      if (c === '/' && text[i + 1] === '/') { while (i < n && text[i] !== '\n') i++; continue; }
+      if (c === '/' && text[i + 1] === '*') {
+        const e = text.indexOf('*/', i + 2);
+        if (e < 0) throw new CErr('comentario /* sin cerrar', line);
+        for (let k = i; k < e; k++) if (text[k] === '\n') line++;
+        i = e + 2; continue;
+      }
+      if (c === '#' && top && atStart) {
+        let j = i, extra = 0;
+        while (j < n && text[j] !== '\n') { if (text[j] === '\\' && text[j + 1] === '\n') { j += 2; extra++; continue; } j++; }
+        const d = text.slice(i + 1, j).replace(/\\\n/g, ' ');
+        const m = /^\s*(\w+)\s*([\s\S]*)$/.exec(d);
+        if (m) {
+          if (m[1] === 'include') includes.push(m[2].trim());
+          else if (m[1] === 'define') {
+            const m2 = /^(\w+)([\s\S]*)$/.exec(m[2]);
+            if (!m2) throw new CErr('#define mal escrito', line);
+            if (m2[2][0] === '(') throw new CErr('los #define con parámetros todavía no están soportados', line);
+            defines.set(m2[1], tokenize(m2[2], line, false, includes, defines));
+          }
+        }
+        i = j; line += extra; continue;
+      }
+      atStart = false;
+      if (/[A-Za-z_]/.test(c)) {
+        let j = i + 1; while (j < n && /[A-Za-z0-9_]/.test(text[j])) j++;
+        out.push({ t: 'id', v: text.slice(i, j), line }); i = j; continue;
+      }
+      if (/[0-9]/.test(c) || (c === '.' && /[0-9]/.test(text[i + 1] || ''))) {
+        const m = /^(?:0[xX][0-9a-fA-F]+|(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?)[fFlLuU]*/.exec(text.slice(i, i + 64));
+        let s = m[0]; i += s.length;
+        let v, kind;
+        if (/^0[xX]/.test(s)) { v = parseInt(s.replace(/[uUlL]+$/, ''), 16); kind = v > 2147483647 ? 'long' : 'int'; }
+        else {
+          const isF = /[fF]$/.test(s);
+          const body = s.replace(/[fFlLuU]+$/, '');
+          if (/[.eE]/.test(body)) { v = parseFloat(body); kind = isF ? 'float' : 'double'; if (isF) v = Math.fround(v); }
+          else {
+            if (/^0\d+$/.test(body) && /^[0-7]+$/.test(body)) v = parseInt(body, 8); else v = parseInt(body, 10);
+            kind = v > 2147483647 ? 'long' : 'int';
+          }
+        }
+        out.push({ t: 'num', v, kind, line }); continue;
+      }
+      if (c === '"') {
+        let j = i + 1, s = '';
+        while (j < n && text[j] !== '"') {
+          if (text[j] === '\n') throw new CErr('cadena sin cerrar (falta la comilla ")', line);
+          if (text[j] === '\\') { const r = esc(text, j); s += r[0]; j = r[1]; } else s += text[j++];
+        }
+        if (j >= n) throw new CErr('cadena sin cerrar (falta la comilla ")', line);
+        out.push({ t: 'str', v: s, line }); i = j + 1; continue;
+      }
+      if (c === "'") {
+        let j = i + 1, s;
+        if (text[j] === '\\') { const r = esc(text, j); s = r[0]; j = r[1]; } else { s = text[j++]; }
+        if (text[j] !== "'") throw new CErr("carácter con comillas simples mal escrito (usá 'a' con un solo carácter)", line);
+        out.push({ t: 'num', v: s.charCodeAt(0), kind: 'int', line }); i = j + 1; continue;
+      }
+      let op = null;
+      for (const o of OPS) if (text.startsWith(o, i)) { op = o; break; }
+      if (!op && '+-*/%=<>!&|^~?:;,.(){}[]'.indexOf(c) >= 0) op = c;
+      if (!op) throw new CErr("carácter no válido '" + c + "'", line);
+      out.push({ t: 'op', v: op, line }); i += op.length;
+    }
+    return out;
+  }
+  function esc(text, j) { // text[j] === '\\'
+    const c = text[j + 1];
+    const map = { n: '\n', t: '\t', r: '\r', '0': '\0', a: '\x07', b: '\b', f: '\f', v: '\v', '\\': '\\', '"': '"', "'": "'", '?': '?' };
+    if (c === 'x') { const m = /^[0-9a-fA-F]{1,2}/.exec(text.slice(j + 2)); if (m) return [String.fromCharCode(parseInt(m[0], 16)), j + 2 + m[0].length]; }
+    if (c in map) return [map[c], j + 2];
+    return [c, j + 2];
+  }
+  function expandDefines(toks, defines) {
+    if (!defines.size) return toks;
+    const out = [];
+    const go = (arr, depth, line) => {
+      for (const t of arr) {
+        if (t.t === 'id' && defines.has(t.v) && depth < 12) go(defines.get(t.v), depth + 1, t.line);
+        else out.push(depth ? Object.assign({}, t, { line: line }) : t);
+      }
+    };
+    go(toks, 0, 0);
+    return out;
+  }
+
+  /* ================= PARSER ================= */
+  class Parser {
+    constructor(toks) { this.t = toks; this.p = 0; this.lastLine = toks.length ? toks[toks.length - 1].line : 1; }
+    peek(k) { return this.t[this.p + (k || 0)] || { t: 'eof', v: '<fin del archivo>', line: this.lastLine }; }
+    next() { const t = this.peek(); this.p++; return t; }
+    prevLine() { return this.p > 0 ? this.t[this.p - 1].line : 1; }
+    isOp(v, k) { const t = this.peek(k); return t.t === 'op' && t.v === v; }
+    isId(v, k) { const t = this.peek(k); return t.t === 'id' && t.v === v; }
+    accept(v) { if (this.isOp(v)) { this.p++; return true; } return false; }
+    expect(v) {
+      if (this.isOp(v)) return this.next();
+      const t = this.peek();
+      const line = (v === ';' || v === ')' || v === ']') && t.line > this.prevLine() ? this.prevLine() : t.line;
+      const found = t.t === 'eof' ? 'el final del archivo' : "'" + t.v + "'";
+      if (v === ';') throw new CErr("falta un ';' al final de esta línea (antes de " + found + ')', line);
+      throw new CErr("se esperaba '" + v + "' pero se encontró " + found, line);
+    }
+    ident() {
+      const t = this.peek();
+      if (t.t !== 'id') throw new CErr('se esperaba un nombre pero se encontró ' + (t.t === 'eof' ? 'el final del archivo' : "'" + t.v + "'"), t.line);
+      if (TYPE_KW.has(t.v) || RESERVED.has(t.v)) throw new CErr("'" + t.v + "' es una palabra reservada, no puede usarse como nombre", t.line);
+      return this.next();
+    }
+    isTypeStart(k) { const t = this.peek(k); return t.t === 'id' && TYPE_KW.has(t.v); }
+    checkUnsupported() {
+      const t = this.peek();
+      if (t.t === 'id' && UNSUPPORTED_KW[t.v]) throw new CErr("'" + t.v + "' todavía no está soportado en este editor", t.line);
+    }
+    typeSpec() {
+      let seen = false, base = null, uns = false, longs = 0;
+      while (this.peek().t === 'id' && TYPE_KW.has(this.peek().v)) {
+        const v = this.next().v; seen = true;
+        if (v === 'unsigned') uns = true;
+        else if (v === 'long') longs++;
+        else if (v === 'signed' || v === 'short' || v === 'const' || v === 'static') { /* ignorar */ }
+        else base = v;
+      }
+      if (!seen) return null;
+      if (base === 'double') return 'double';
+      if (base === 'float') return 'float';
+      if (base === 'char') return 'char';
+      if (base === 'void') return 'void';
+      if (base === 'bool') return 'int';
+      if (longs > 0) return 'long';
+      if (uns) return 'uint';
+      return 'int';
+    }
+
+    program() {
+      const items = [];
+      while (this.peek().t !== 'eof') {
+        this.checkUnsupported();
+        const line = this.peek().line;
+        let type = this.typeSpec();
+        if (type === null) {
+          // función sin tipo (ej. main() ) = int implícito
+          if (this.peek().t === 'id' && this.isOp('(', 1)) type = 'int';
+          else {
+            const t = this.peek();
+            throw new CErr("no se entiende '" + t.v + "' fuera de una función", t.line);
+          }
+        }
+        if (this.isOp('*')) throw new CErr('los punteros todavía no están soportados en este editor', this.peek().line);
+        const nameTok = this.ident();
+        if (this.isOp('(')) items.push(this.funcRest(type, nameTok, line));
+        else { this.p--; items.push(this.declRest(type, line)); }
+      }
+      return items;
+    }
+    funcRest(ret, nameTok, line) {
+      this.expect('(');
+      const params = [];
+      if (this.isId('void') && this.isOp(')', 1)) this.next();
+      else if (!this.isOp(')')) {
+        for (;;) {
+          const pt = this.typeSpec();
+          if (!pt || pt === 'void') throw new CErr('parámetro mal escrito: se esperaba un tipo (int, float, ...)', this.peek().line);
+          if (this.isOp('*')) throw new CErr('los punteros todavía no están soportados en este editor', this.peek().line);
+          const pn = this.ident();
+          if (this.isOp('[')) throw new CErr('los arreglos como parámetro todavía no están soportados en este editor', this.peek().line);
+          params.push({ name: pn.v, type: pt, line: pn.line });
+          if (!this.accept(',')) break;
+        }
+      }
+      this.expect(')');
+      if (this.accept(';')) return { k: 'proto', name: nameTok.v, ret, params, line };
+      const body = this.block();
+      return { k: 'func', name: nameTok.v, ret, params, body, line };
+    }
+    declRest(type, line) {
+      if (type === 'void') throw new CErr('una variable no puede ser de tipo void', line);
+      const vars = [];
+      for (;;) {
+        if (this.isOp('*')) throw new CErr('los punteros todavía no están soportados en este editor', this.peek().line);
+        const nt = this.ident();
+        const dims = [];
+        while (this.accept('[')) {
+          if (this.isOp(']')) dims.push(null); else dims.push(this.assign());
+          this.expect(']');
+        }
+        let init = null;
+        if (this.accept('=')) init = this.isOp('{') ? this.initList() : this.assign();
+        vars.push({ name: nt.v, dims, init, line: nt.line });
+        if (!this.accept(',')) break;
+      }
+      this.expect(';');
+      return { k: 'decl', type, vars, line };
+    }
+    initList() {
+      const line = this.expect('{').line;
+      const items = [];
+      while (!this.isOp('}')) {
+        items.push(this.isOp('{') ? this.initList() : this.assign());
+        if (!this.accept(',')) break;
+      }
+      this.expect('}');
+      return { k: 'list', items, line };
+    }
+
+    block() {
+      const line = this.expect('{').line;
+      const body = [];
+      while (!this.isOp('}')) {
+        if (this.peek().t === 'eof') throw new CErr("falta cerrar la llave '{' abierta en la línea " + line, this.prevLine());
+        body.push(this.stmt());
+      }
+      this.expect('}');
+      return { k: 'block', body, line };
+    }
+    stmt() {
+      const t = this.peek();
+      const line = t.line;
+      this.checkUnsupported();
+      if (this.isOp('{')) return this.block();
+      if (this.isOp(';')) { this.next(); return { k: 'empty', line }; }
+      if (this.isTypeStart()) { const type = this.typeSpec(); return this.declRest(type, line); }
+      if (t.t === 'id') {
+        switch (t.v) {
+          case 'if': {
+            this.next(); this.expect('('); const c = this.expr(); this.expect(')');
+            const a = this.stmt(); let b = null;
+            if (this.isId('else')) { this.next(); b = this.stmt(); }
+            return { k: 'if', c, a, b, line };
+          }
+          case 'while': {
+            this.next(); this.expect('('); const c = this.expr(); this.expect(')');
+            return { k: 'while', c, body: this.stmt(), line };
+          }
+          case 'do': {
+            this.next(); const body = this.stmt();
+            if (!this.isId('while')) throw new CErr("falta 'while' después del cuerpo del do", this.peek().line);
+            this.next(); this.expect('('); const c = this.expr(); this.expect(')'); this.expect(';');
+            return { k: 'do', c, body, line };
+          }
+          case 'for': {
+            this.next(); this.expect('(');
+            let init = null;
+            if (this.isOp(';')) this.next();
+            else if (this.isTypeStart()) { const type = this.typeSpec(); init = this.declRest(type, line); }
+            else { init = { k: 'expr', e: this.expr(), line }; this.expect(';'); }
+            let c = null; if (!this.isOp(';')) c = this.expr(); this.expect(';');
+            let step = null; if (!this.isOp(')')) step = this.expr(); this.expect(')');
+            return { k: 'for', init, c, step, body: this.stmt(), line };
+          }
+          case 'return': {
+            this.next(); let e = null;
+            if (!this.isOp(';')) e = this.expr();
+            this.expect(';');
+            return { k: 'return', e, line };
+          }
+          case 'break': this.next(); this.expect(';'); return { k: 'break', line };
+          case 'continue': this.next(); this.expect(';'); return { k: 'continue', line };
+          case 'switch': {
+            this.next(); this.expect('('); const e = this.expr(); this.expect(')');
+            this.expect('{');
+            const items = [];
+            while (!this.isOp('}')) {
+              if (this.peek().t === 'eof') throw new CErr('falta cerrar la llave del switch', this.prevLine());
+              if (this.isId('case')) { const l = this.next().line; const ce = this.ternary(); this.expect(':'); items.push({ k: 'case', e: ce, line: l }); }
+              else if (this.isId('default')) { const l = this.next().line; this.expect(':'); items.push({ k: 'default', line: l }); }
+              else items.push(this.stmt());
+            }
+            this.expect('}');
+            return { k: 'switch', e, items, line };
+          }
+          case 'else': throw new CErr("'else' sin su 'if' (revisá las llaves y los ';')", line);
+          case 'case': case 'default': throw new CErr("'" + t.v + "' fuera de un switch", line);
+        }
+      }
+      const e = this.expr();
+      this.expect(';');
+      return { k: 'expr', e, line };
+    }
+
+    expr() {
+      let e = this.assign();
+      while (this.isOp(',')) { const line = this.next().line; e = { k: 'comma', l: e, r: this.assign(), line }; }
+      return e;
+    }
+    assign() {
+      const l = this.ternary();
+      const t = this.peek();
+      if (t.t === 'op' && ['=', '+=', '-=', '*=', '/=', '%=', '&=', '|=', '^=', '<<=', '>>='].indexOf(t.v) >= 0) {
+        this.next();
+        const r = this.assign();
+        return { k: 'assign', op: t.v, l, r, line: t.line };
+      }
+      return l;
+    }
+    ternary() {
+      const c = this.binary(0);
+      if (this.isOp('?')) {
+        const line = this.next().line;
+        const a = this.expr(); this.expect(':'); const b = this.ternary();
+        return { k: 'cond', c, a, b, line };
+      }
+      return c;
+    }
+    binary(minPrec) {
+      let l = this.unary();
+      for (;;) {
+        const t = this.peek();
+        if (t.t !== 'op') break;
+        const prec = PREC[t.v];
+        if (prec === undefined || prec < minPrec) break;
+        this.next();
+        const r = this.binary(prec + 1);
+        l = { k: 'bin', op: t.v, l, r, line: t.line };
+      }
+      return l;
+    }
+    unary() {
+      const t = this.peek();
+      if (t.t === 'op') {
+        if (t.v === '++' || t.v === '--') { this.next(); return { k: 'incdec', op: t.v, prefix: true, e: this.unary(), line: t.line }; }
+        if (t.v === '-' || t.v === '+' || t.v === '!' || t.v === '~') { this.next(); return { k: 'un', op: t.v, e: this.unary(), line: t.line }; }
+        if (t.v === '&') { this.next(); return { k: 'addr', e: this.unary(), line: t.line }; }
+        if (t.v === '*') throw new CErr('los punteros todavía no están soportados en este editor', t.line);
+        if (t.v === '(' && this.isTypeStart(1)) {
+          this.next(); const type = this.typeSpec();
+          if (this.isOp('*')) throw new CErr('los punteros todavía no están soportados en este editor', this.peek().line);
+          this.expect(')');
+          return { k: 'cast', type, e: this.unary(), line: t.line };
+        }
+      }
+      if (t.t === 'id' && t.v === 'sizeof') {
+        this.next();
+        if (this.isOp('(') && this.isTypeStart(1)) { this.next(); const type = this.typeSpec(); this.expect(')'); return { k: 'sizeof', type, line: t.line }; }
+        return { k: 'sizeof', e: this.unary(), line: t.line };
+      }
+      return this.postfix();
+    }
+    postfix() {
+      let e = this.primary();
+      for (;;) {
+        const t = this.peek();
+        if (t.t !== 'op') break;
+        if (t.v === '[') { this.next(); const i = this.expr(); this.expect(']'); e = { k: 'idx', base: e, i, line: t.line }; }
+        else if (t.v === '(') {
+          if (e.k !== 'id') throw new CErr('solo se pueden llamar funciones por su nombre', t.line);
+          this.next(); const args = [];
+          if (!this.isOp(')')) { for (;;) { args.push(this.assign()); if (!this.accept(',')) break; } }
+          this.expect(')');
+          e = { k: 'call', name: e.name, args, line: t.line };
+        } else if (t.v === '++' || t.v === '--') { this.next(); e = { k: 'incdec', op: t.v, prefix: false, e, line: t.line }; }
+        else if (t.v === '.' || t.v === '->') throw new CErr('struct / punteros todavía no están soportados en este editor', t.line);
+        else break;
+      }
+      return e;
+    }
+    primary() {
+      const t = this.next();
+      if (t.t === 'num') return { k: 'num', v: t.v, kind: t.kind, line: t.line };
+      if (t.t === 'str') {
+        let s = t.v;
+        while (this.peek().t === 'str') s += this.next().v;
+        return { k: 'str', v: s, line: t.line };
+      }
+      if (t.t === 'id') {
+        if (TYPE_KW.has(t.v)) throw new CErr("no se esperaba el tipo '" + t.v + "' acá (¿falta un ';' antes?)", t.line);
+        if (RESERVED.has(t.v)) throw new CErr("no se esperaba '" + t.v + "' acá", t.line);
+        return { k: 'id', name: t.v, line: t.line };
+      }
+      if (t.t === 'op' && t.v === '(') { const e = this.expr(); this.expect(')'); return e; }
+      const found = t.t === 'eof' ? 'el final del archivo' : "'" + t.v + "'";
+      const line = t.t === 'eof' ? this.prevLine() : t.line;
+      throw new CErr('falta una expresión antes de ' + found, line);
+    }
+  }
+  const RESERVED = new Set(['if', 'else', 'while', 'do', 'for', 'return', 'break', 'continue', 'switch', 'case', 'default', 'sizeof', 'struct', 'union', 'enum', 'typedef', 'goto']);
+  const PREC = { '||': 1, '&&': 2, '|': 3, '^': 4, '&': 5, '==': 6, '!=': 6, '<': 7, '>': 7, '<=': 7, '>=': 7, '<<': 8, '>>': 8, '+': 9, '-': 9, '*': 10, '/': 10, '%': 10 };
+
+  /* ================= GENERADOR ================= */
+  const INTLIKE = new Set(['int', 'uint', 'long', 'char']);
+  const FLOATLIKE = new Set(['float', 'double']);
+  function arith(a, b) {
+    if (a === 'double' || b === 'double') return 'double';
+    if (a === 'float' || b === 'float') return 'float';
+    if (a === 'long' || b === 'long') return 'long';
+    if (a === 'uint' || b === 'uint') return 'uint';
+    return 'int';
+  }
+  const TNAME = { int: 'int', uint: 'unsigned', long: 'long', char: 'char', float: 'float', double: 'double' };
+
+  class Gen {
+    constructor(items, opts) {
+      this.items = items;
+      this.opts = opts || {};
+      this.errors = []; this.warnings = [];
+      this.funcs = new Map();
+      this.scopes = [new Map()];
+      this.cur = null;
+      this.seenW = new Set();
+    }
+    err(msg, line) { this.errors.push({ line, msg }); }
+    warn(msg, line) { const k = line + '|' + msg; if (this.seenW.has(k)) return; this.seenW.add(k); this.warnings.push({ line, msg }); }
+    push() { this.scopes.push(new Map()); }
+    pop() { this.scopes.pop(); }
+    declare(name, info, line) {
+      const sc = this.scopes[this.scopes.length - 1];
+      if (sc.has(name)) { this.err("'" + name + "' ya fue declarada antes en este bloque", line); }
+      sc.set(name, info);
+    }
+    lookup(name) {
+      for (let i = this.scopes.length - 1; i >= 0; i--) if (this.scopes[i].has(name)) return this.scopes[i].get(name);
+      return null;
+    }
+
+    run() {
+      // 1) firmas de funciones
+      for (const it of this.items) {
+        if (it.k === 'func' || it.k === 'proto') {
+          const prev = this.funcs.get(it.name);
+          if (prev && prev.node && it.k === 'func') { this.err("la función '" + it.name + "' está definida dos veces", it.line); continue; }
+          if (!prev || it.k === 'func') this.funcs.set(it.name, { name: it.name, ret: it.ret, params: it.params, node: it.k === 'func' ? it : (prev && prev.node), async: false, calls: new Set(), reads: false });
+        }
+      }
+      for (const f of this.funcs.values()) if (!f.node) this.err("la función '" + f.name + "' se declara pero nunca se define", 1);
+      if (!this.funcs.has('main')) this.err("no hay función main(): el programa empieza en 'main() { ... }'", 1);
+      // 2) async: funciones que llegan a scanf/getchar
+      for (const f of this.funcs.values()) if (f.node) this.scan(f.node.body, f);
+      let ch = true;
+      while (ch) { ch = false; for (const f of this.funcs.values()) if (!f.async) for (const c of f.calls) { const g = this.funcs.get(c); if (g && g.async) { f.async = true; ch = true; break; } } }
+      if (this.opts.yieldLoops) for (const f of this.funcs.values()) f.async = true;
+      // 3) código
+      const out = ['const $={printf:$rt.printf,puts:$rt.puts,putchar:$rt.putchar,scanf:$rt.scanf,getchar:$rt.getchar,idiv:$rt.idiv,imod:$rt.imod,ix:$rt.ix,d2i:$rt.d2i,mk:$rt.mk,pad:$rt.pad,rand:$rt.rand,srand:$rt.srand,time:$rt.time,exit:$rt.exit,round:$rt.round,fmod:$rt.fmod,lop:$rt.lop,yield:$rt.yield};', 'let $t;let $y=0;'];
+      for (const it of this.items) if (it.k === 'decl') out.push(this.declCode(it, true));
+      for (const it of this.items) if (it.k === 'func') out.push(this.funcCode(it));
+      out.push('return f_main;');
+      return out.join('\n');
+    }
+    // recorre el AST buscando llamadas
+    scan(node, f) {
+      if (!node || typeof node !== 'object') return;
+      if (Array.isArray(node)) { for (const n of node) this.scan(n, f); return; }
+      if (node.k === 'call') {
+        if (node.name === 'scanf' || node.name === 'getchar' || node.name === 'getch' || node.name === 'getche') f.async = true;
+        f.calls.add(node.name);
+      }
+      for (const key in node) if (key !== 'line' && typeof node[key] === 'object') this.scan(node[key], f);
+    }
+
+    funcCode(f) {
+      const info = this.funcs.get(f.name);
+      this.cur = info;
+      this.push();
+      const ps = [];
+      for (const p of f.params) { this.declare(p.name, { type: p.type, js: 'v_' + p.name, assigned: true, scalar: true }, p.line); ps.push('v_' + p.name); }
+      const body = this.stmtList(f.body.body);
+      this.pop();
+      this.cur = null;
+      const tail = f.name === 'main' ? '\nreturn 0;' : '';
+      return (info.async ? 'async ' : '') + 'function f_' + f.name + '(' + ps.join(',') + '){let $t;\n' + body + tail + '\n}';
+    }
+    stmtList(arr) { return arr.map((s) => this.stmt(s)).join('\n'); }
+    stmt(s) {
+      switch (s.k) {
+        case 'block': { this.push(); const b = this.stmtList(s.body); this.pop(); return '{\n' + b + '\n}'; }
+        case 'empty': return ';';
+        case 'decl': return this.declCode(s, false);
+        case 'expr': return this.expr(s.e, true).c + ';';
+        case 'if': {
+          this.checkCondAssign(s.c);
+          const c = this.cond(s.c);
+          this.push(); const a = this.stmt(s.a); this.pop();
+          let r = 'if (' + c + ') ' + this.wrap(a);
+          if (s.b) { this.push(); r += ' else ' + this.wrap(this.stmt(s.b)); this.pop(); }
+          return r;
+        }
+        case 'while': {
+          this.checkCondAssign(s.c);
+          const c = this.cond(s.c);
+          this.push(); const b = this.stmt(s.body); this.pop();
+          this.checkEmptyBody(s, 'while');
+          return 'while (' + c + ') ' + this.loopWrap(b);
+        }
+        case 'do': { this.push(); const b = this.stmt(s.body); this.pop(); this.checkCondAssign(s.c); return 'do ' + this.loopWrap(b) + ' while (' + this.cond(s.c) + ');'; }
+        case 'for': {
+          this.push();
+          let init = '';
+          if (s.init) init = s.init.k === 'decl' ? this.declCode(s.init, false, true) : this.expr(s.init.e, true).c;
+          if (s.c) this.checkCondAssign(s.c);
+          const c = s.c ? this.cond(s.c) : '';
+          const st = s.step ? this.expr(s.step, true).c : '';
+          const b = this.stmt(s.body);
+          this.pop();
+          this.checkEmptyBody(s, 'for');
+          return 'for (' + init + ';' + c + ';' + st + ') ' + this.loopWrap(b);
+        }
+        case 'return': {
+          const rt = this.cur.ret;
+          if (!s.e) { if (rt !== 'void') this.warn("'return' sin valor en una función que devuelve " + TNAME[rt], s.line); return 'return' + (this.cur.name === 'main' ? ' 0' : '') + ';'; }
+          if (rt === 'void') { this.err('una función void no puede devolver un valor', s.line); this.expr(s.e); return 'return;'; }
+          const r = this.expr(s.e);
+          return 'return ' + this.conv(r, rt) + ';';
+        }
+        case 'break': return 'break;';
+        case 'continue': return 'continue;';
+        case 'switch': {
+          const e = this.expr(s.e);
+          if (!INTLIKE.has(e.t)) this.err('el switch necesita un valor entero', s.line);
+          this.push();
+          let out = 'switch (' + this.val(e) + ') {\n';
+          for (const it of s.items) {
+            if (it.k === 'case') { const ce = this.expr(it.e); out += 'case ' + this.val(ce) + ':\n'; }
+            else if (it.k === 'default') out += 'default:\n';
+            else out += this.stmt(it) + '\n';
+          }
+          this.pop();
+          return out + '}';
+        }
+      }
+      throw new Error('stmt ' + s.k);
+    }
+    wrap(c) { return c.startsWith('{') ? c : '{\n' + c + '\n}'; }
+    loopWrap(c) {
+      const w = this.wrap(c);
+      if (!this.opts.yieldLoops) return w;
+      return '{if(++$y>100000){$y=0;await $.yield();}' + w.slice(1);
+    }
+    checkCondAssign(c) {
+      if (c.k === 'assign' && c.op === '=') this.warn("hay una asignación '=' dentro de la condición: ¿querías comparar con '=='?", c.line);
+    }
+    checkEmptyBody(s, kind) {
+      if (s.body.k === 'empty') this.warn("el " + kind + " termina en ';' y su cuerpo queda vacío: ¿sobra ese ';'?", s.line);
+    }
+
+    zero(t) { return '0'; }
+
+    declCode(d, global, inFor) {
+      const parts = [];
+      for (const v of d.vars) {
+        const js = 'v_' + v.name;
+        if (v.dims.length) {
+          const dimsCode = [];
+          let ok = true;
+          if (v.init && v.init.k === 'list' && v.dims[0] === null) {
+            dimsCode.push(String(v.init.items.length));
+          }
+          for (let i = 0; i < v.dims.length; i++) {
+            if (v.dims[i] === null) { if (!(i === 0 && dimsCode.length)) { this.err('al arreglo le falta el tamaño', v.line); ok = false; } continue; }
+            const r = this.expr(v.dims[i]);
+            if (!INTLIKE.has(r.t)) { this.err('el tamaño de un arreglo debe ser un entero', v.line); ok = false; }
+            dimsCode.push(this.val(r));
+          }
+          this.declare(v.name, { type: d.type, js, array: true, ndims: v.dims.length, assigned: true }, v.line);
+          if (!ok) { parts.push('let ' + js + '=[];'); continue; }
+          let init;
+          if (v.init) {
+            if (v.init.k !== 'list') { this.err('un arreglo se inicializa con llaves { ... }', v.line); init = '$.mk([1],0)'; }
+            else init = '$.pad(' + this.listCode(v.init, d.type, v.dims.length) + ',[' + dimsCode.join(',') + '])';
+          } else init = '$.mk([' + dimsCode.join(',') + '],0)';
+          parts.push('let ' + js + '=' + init + ';');
+          continue;
+        }
+        let init = '0';
+        let assigned = global;
+        if (v.init) {
+          if (v.init.k === 'list') { this.err("'" + v.name + "' no es un arreglo, no se inicializa con llaves", v.line); }
+          else { const r = this.expr(v.init); init = this.conv(r, d.type); assigned = true; }
+        }
+        this.declare(v.name, { type: d.type, js, assigned, scalar: true, global }, v.line);
+        parts.push((inFor ? '' : 'let ') + js + '=' + init + (inFor ? '' : ';'));
+      }
+      if (inFor) return 'let ' + parts.join(',');
+      return parts.join('\n');
+    }
+    listCode(l, type, depth) {
+      return '[' + l.items.map((it) => {
+        if (it.k === 'list') return this.listCode(it, type, depth - 1);
+        const r = this.expr(it); return this.conv(r, type);
+      }).join(',') + ']';
+    }
+
+    /* ----- conversiones ----- */
+    val(r) { return r.b ? '(' + r.c + '?1:0)' : r.c; }
+    cond(node) {
+      const r = this.expr(node);
+      if (r.t === 'void') { this.err('esa función no devuelve ningún valor', node.line); return 'false'; }
+      return r.b ? r.c : '(' + r.c + '!==0)';
+    }
+    conv(r, to) {
+      if (r.t === 'void') { this.err('esa función no devuelve ningún valor', 0); return '0'; }
+      if (r.t === 'str') { this.err('no se puede usar un texto entre comillas como número', 0); return '0'; }
+      const v = this.val(r);
+      const f = r.t;
+      if (f === to) return v;
+      switch (to) {
+        case 'double': return v;
+        case 'float': return 'Math.fround(' + v + ')';
+        case 'int': return FLOATLIKE.has(f) ? '$.d2i(' + v + ')' : (f === 'char' ? v : '(' + v + '|0)');
+        case 'uint': return FLOATLIKE.has(f) ? '($.d2i(' + v + ')>>>0)' : '(' + v + '>>>0)';
+        case 'long': return FLOATLIKE.has(f) ? 'Math.trunc(' + v + ')' : v;
+        case 'char': return FLOATLIKE.has(f) ? '($.d2i(' + v + ')<<24>>24)' : '(' + v + '<<24>>24)';
+      }
+      return v;
+    }
+    wrapInt(t, c) {
+      switch (t) {
+        case 'int': return '((' + c + ')|0)';
+        case 'uint': return '((' + c + ')>>>0)';
+        case 'float': return 'Math.fround(' + c + ')';
+        case 'long': return '((' + c + ')+0)';
+        default: return '(' + c + ')';
+      }
+    }
+
+    /* ----- expresiones ----- */
+    expr(n, asStmt) {
+      switch (n.k) {
+        case 'num': return { c: n.v < 0 ? '(' + n.v + ')' : String(n.v), t: n.kind };
+        case 'str': return { c: JSON.stringify(n.v), t: 'str' };
+        case 'id': return this.idRead(n);
+        case 'comma': { const a = this.expr(n.l, true); const b = this.expr(n.r, asStmt); return { c: '(' + a.c + ',' + b.c + ')', t: b.t, b: b.b }; }
+        case 'un': return this.unaryOp(n);
+        case 'bin': return this.binOp(n.op, n.l, n.r, n.line);
+        case 'assign': return this.assignOp(n);
+        case 'cond': {
+          const c = this.cond(n.c);
+          const a = this.expr(n.a), b = this.expr(n.b);
+          if (a.t === 'str' || b.t === 'str' || a.t === 'void' || b.t === 'void') { this.err('los dos lados del ?: deben ser números', n.line); return { c: '0', t: 'int' }; }
+          const t = arith(a.t, b.t);
+          return { c: '(' + c + '?' + this.conv(a, t) + ':' + this.conv(b, t) + ')', t };
+        }
+        case 'cast': {
+          const r = this.expr(n.e);
+          if (n.type === 'void') return { c: '(' + r.c + ',0)', t: 'int' };
+          return { c: this.conv(r, n.type), t: n.type };
+        }
+        case 'sizeof': {
+          const sz = { int: 4, uint: 4, long: 8, char: 1, float: 4, double: 8, void: 1 };
+          if (n.type) return { c: String(sz[n.type]), t: 'int' };
+          if (n.e.k === 'id') { const info = this.lookup(n.e.name); if (info && info.scalar) return { c: String(sz[info.type]), t: 'int' }; }
+          this.err('sizeof solo se soporta con un tipo (sizeof(int)) o una variable simple', n.line);
+          return { c: '0', t: 'int' };
+        }
+        case 'incdec': return this.incdec(n, asStmt);
+        case 'idx': { const lv = this.lvalue(n, false); return { c: lv.c, t: lv.t }; }
+        case 'addr': this.err("el operador '&' solo se usa dentro de scanf", n.line); return { c: '0', t: 'int' };
+        case 'call': return this.call(n);
+        case 'list': this.err('las llaves { } solo se usan para inicializar arreglos', n.line); return { c: '0', t: 'int' };
+      }
+      throw new Error('expr ' + n.k);
+    }
+    idRead(n) {
+      if (CONSTS[n.name] && !this.lookup(n.name)) { const c = CONSTS[n.name]; return { c: String(c[0]), t: c[1] }; }
+      const info = this.lookup(n.name);
+      if (!info) {
+        if (this.funcs.has(n.name)) { this.err("'" + n.name + "' es una función: faltan los paréntesis para llamarla", n.line); return { c: '0', t: 'int' }; }
+        this.err("'" + n.name + "' no está declarada (¿falta declararla o está mal escrita?)", n.line);
+        return { c: '0', t: 'int' };
+      }
+      if (info.array) { this.err("'" + n.name + "' es un arreglo: usá " + n.name + '[i] para acceder a una posición', n.line); return { c: '0', t: 'int' }; }
+      if (!info.assigned && !info.warned) { info.warned = true; this.warn("'" + n.name + "' se usa antes de darle un valor (en C su valor inicial es basura): asignale un valor inicial, por ejemplo " + n.name + ' = 0;', n.line); }
+      return { c: info.js, t: info.type };
+    }
+    lvalue(n, forWrite) {
+      if (n.k === 'id') {
+        const info = this.lookup(n.name);
+        if (!info) { this.err("'" + n.name + "' no está declarada (¿falta declararla o está mal escrita?)", n.line); return { c: 'v_' + n.name, t: 'int', bad: true }; }
+        if (info.array) { this.err("'" + n.name + "' es un arreglo: usá " + n.name + '[i] para acceder a una posición', n.line); return { c: info.js, t: info.type, bad: true }; }
+        return { c: info.js, t: info.type, info };
+      }
+      if (n.k === 'idx') {
+        const idxs = []; let b = n;
+        while (b.k === 'idx') { idxs.unshift(b.i); b = b.base; }
+        if (b.k !== 'id') { this.err('solo se pueden indexar arreglos por su nombre', n.line); return { c: '0', t: 'int', bad: true }; }
+        const info = this.lookup(b.name);
+        if (!info) { this.err("'" + b.name + "' no está declarada", b.line); return { c: '0', t: 'int', bad: true }; }
+        if (!info.array) { this.err("'" + b.name + "' no es un arreglo", b.line); return { c: '0', t: 'int', bad: true }; }
+        if (idxs.length !== info.ndims) { this.err("'" + b.name + "' tiene " + info.ndims + ' dimensión(es) y se usó con ' + idxs.length, b.line); return { c: '0', t: 'int', bad: true }; }
+        let code = info.js;
+        let lenBase = info.js;
+        idxs.forEach((ix, k) => {
+          const r = this.expr(ix);
+          if (!INTLIKE.has(r.t)) this.err('el índice de un arreglo debe ser un entero', ix.line || n.line);
+          code += '[$.ix(' + this.val(r) + ',' + lenBase + '.length,' + n.line + ')]';
+          lenBase += '[0]';
+        });
+        return { c: code, t: info.type, info, arrayElem: true };
+      }
+      this.err('a la izquierda del = tiene que haber una variable', n.line);
+      return { c: '$t', t: 'int', bad: true };
+    }
+    markAssigned(lv) { if (lv.info) lv.info.assigned = true; }
+
+    unaryOp(n) {
+      const r = this.expr(n.e);
+      if (r.t === 'str' || r.t === 'void') { this.err('operación inválida sobre ' + (r.t === 'str' ? 'un texto' : 'void'), n.line); return { c: '0', t: 'int' }; }
+      if (n.op === '!') return { c: r.b ? '!(' + r.c + ')' : '((' + r.c + ')===0)', t: 'int', b: true };
+      if (n.op === '+') return { c: this.val(r), t: r.t === 'char' ? 'int' : r.t };
+      const t = r.t === 'char' || r.b ? 'int' : r.t;
+      if (n.op === '-') {
+        const v = this.val(r);
+        return { c: this.wrapInt(t, '-' + (/^[\d.]+$/.test(v) ? v : '(' + v + ')')), t };
+      }
+      if (n.op === '~') { if (!INTLIKE.has(t)) this.err("'~' necesita un entero", n.line); if (t === 'long') return { c: '(-(' + this.val(r) + ')-1)', t }; return { c: this.wrapInt(t, '~' + '(' + this.val(r) + ')'), t }; }
+      throw new Error('un');
+    }
+    binOp(op, ln, rn, line) {
+      if (op === '&&' || op === '||') {
+        const a = this.cond(ln), b = this.cond(rn);
+        return { c: '(' + a + (op === '&&' ? '&&' : '||') + b + ')', t: 'int', b: true };
+      }
+      const a = this.expr(ln), b = this.expr(rn);
+      if (a.t === 'str' || b.t === 'str' || a.t === 'void' || b.t === 'void') {
+        this.err(a.t === 'void' || b.t === 'void' ? 'esa función no devuelve ningún valor' : 'no se puede operar con un texto entre comillas', line);
+        return { c: '0', t: 'int' };
+      }
+      let av = this.val(a), bv = this.val(b);
+      const ctype = arith(a.t, b.t);
+      if (ctype === 'float') {
+        if (a.t !== 'float') av = 'Math.fround(' + av + ')';
+        if (b.t !== 'float') bv = 'Math.fround(' + bv + ')';
+      }
+      if (op === '<' || op === '>' || op === '<=' || op === '>=' || op === '==' || op === '!=') {
+        if (op === '==' || op === '!=') {
+          const frac = (x) => x.k === 'num' && (x.kind === 'double' || x.kind === 'float') && !Number.isInteger(x.v);
+          if (frac(ln) || frac(rn)) this.warn("comparar un decimal con '" + op + "' puede fallar por redondeo (por ejemplo 0.1 no se guarda exacto): conviene comparar con '<' o '>'", line);
+        }
+        const ct = arith(a.t, b.t);
+        const ua = ct === 'uint' ? '(' + av + '>>>0)' : av, ub = ct === 'uint' ? '(' + bv + '>>>0)' : bv;
+        return { c: '(' + ua + ' ' + (op === '==' ? '===' : op === '!=' ? '!==' : op) + ' ' + ub + ')', t: 'int', b: true };
+      }
+      const t = arith(a.t, b.t === undefined ? 'int' : b.t);
+      switch (op) {
+        case '+': case '-': return { c: this.wrapInt(t, av + ' ' + op + ' ' + bv), t };
+        case '*':
+          if (t === 'int') return { c: 'Math.imul(' + av + ',' + bv + ')', t };
+          if (t === 'uint') return { c: '(Math.imul(' + av + ',' + bv + ')>>>0)', t };
+          return { c: this.wrapInt(t, av + ' * ' + bv), t };
+        case '/':
+          if (FLOATLIKE.has(t)) return { c: this.wrapInt(t, av + ' / ' + bv), t };
+          if (t === 'uint') return { c: this.wrapInt(t, '$.idiv(' + av + '>>>0,' + bv + '>>>0,' + line + ')'), t };
+          return { c: this.wrapInt(t, '$.idiv(' + av + ',' + bv + ',' + line + ')'), t };
+        case '%':
+          if (FLOATLIKE.has(t)) { this.err("'%' solo funciona con enteros (para decimales usá fmod)", line); return { c: '0', t: 'int' }; }
+          if (t === 'uint') return { c: this.wrapInt(t, '$.imod(' + av + '>>>0,' + bv + '>>>0,' + line + ')'), t };
+          return { c: this.wrapInt(t, '$.imod(' + av + ',' + bv + ',' + line + ')'), t };
+        case '&': case '|': case '^': case '<<': case '>>':
+          if (FLOATLIKE.has(t)) { this.err("'" + op + "' solo funciona con enteros", line); return { c: '0', t: 'int' }; }
+          if (t === 'long') return { c: '$.lop(' + JSON.stringify(op) + ',' + av + ',' + bv + ')', t };
+          return { c: this.wrapInt(t, av + ' ' + op + ' ' + bv), t };
+      }
+      throw new Error('bin ' + op);
+    }
+    assignOp(n) {
+      const lv = this.lvalue(n.l, true);
+      let valueCode;
+      if (n.op === '=') {
+        const r = this.expr(n.r);
+        if (r.t === 'str') { this.err('los textos (char arrays) todavía no están soportados: solo se usan dentro de printf', n.line); return { c: '0', t: 'int' }; }
+        if (r.t === 'void') { this.err('esa función no devuelve ningún valor', n.line); return { c: '0', t: 'int' }; }
+        valueCode = this.conv(r, lv.t);
+      } else {
+        if (lv.info && !lv.arrayElem) { /* lectura previa */ if (!lv.info.assigned && !lv.info.warned) { lv.info.warned = true; this.warn("'" + n.l.name + "' se usa antes de darle un valor (en C su valor inicial es basura): asignale un valor inicial, por ejemplo " + n.l.name + ' = 0;', n.line); } }
+        const r = this.binOp(n.op.slice(0, -1), n.l, n.r, n.line);
+        valueCode = this.conv(r, lv.t);
+      }
+      if (!lv.bad) this.markAssigned(lv);
+      return { c: '(' + lv.c + '=' + valueCode + ')', t: lv.t };
+    }
+    incdec(n, asStmt) {
+      const lv = this.lvalue(n.e, true);
+      if (lv.bad) return { c: '0', t: 'int' };
+      if (lv.info && !lv.arrayElem && !lv.info.assigned && !lv.info.warned) { lv.info.warned = true; this.warn("'" + n.e.name + "' se usa antes de darle un valor (en C su valor inicial es basura): asignale un valor inicial, por ejemplo " + n.e.name + ' = 0;', n.line); }
+      this.markAssigned(lv);
+      const sign = n.op === '++' ? '+' : '-';
+      const t = lv.t;
+      const calc = (src) => this.conv({ c: this.wrapInt(arith(t, 'int'), src + ' ' + sign + ' 1'), t: arith(t, 'int') }, t);
+      if (n.prefix || asStmt) return { c: '(' + lv.c + '=' + calc(lv.c) + ')', t };
+      return { c: '($t=' + lv.c + ',' + lv.c + '=' + calc('$t') + ',$t)', t };
+    }
+
+    /* ----- llamadas ----- */
+    call(n) {
+      const name = n.name;
+      const args = n.args;
+      const MATH1 = { sqrt: 'Math.sqrt', fabs: 'Math.abs', floor: 'Math.floor', ceil: 'Math.ceil', round: '$.round', trunc: 'Math.trunc', sin: 'Math.sin', cos: 'Math.cos', tan: 'Math.tan', asin: 'Math.asin', acos: 'Math.acos', atan: 'Math.atan', exp: 'Math.exp', log: 'Math.log', log10: 'Math.log10', log2: 'Math.log2', cbrt: 'Math.cbrt' };
+      if (name === 'printf') return this.printfCall(n);
+      if (name === 'scanf') return this.scanfCall(n);
+      if (MATH1[name] !== undefined || ['pow', 'fmod', 'atan2', 'fmax', 'fmin', 'hypot'].indexOf(name) >= 0) {
+        const want = ['pow', 'fmod', 'atan2', 'fmax', 'fmin', 'hypot'].indexOf(name) >= 0 ? 2 : 1;
+        if (args.length !== want) { this.err("'" + name + "' recibe " + want + ' argumento(s)', n.line); return { c: '0', t: 'double' }; }
+        const a = args.map((x) => { const r = this.expr(x); return this.val(r); });
+        const m = { pow: 'Math.pow', fmod: '$.fmod', atan2: 'Math.atan2', fmax: 'Math.max', fmin: 'Math.min', hypot: 'Math.hypot' };
+        const fn = MATH1[name] !== undefined ? MATH1[name] : m[name];
+        return { c: fn + '(' + a.join(',') + ')', t: 'double' };
+      }
+      if (name === 'abs' || name === 'labs') {
+        if (args.length !== 1) { this.err("'abs' recibe 1 argumento", n.line); return { c: '0', t: 'int' }; }
+        const r = this.expr(args[0]); return { c: '(Math.abs(' + this.conv(r, 'int') + ')|0)', t: 'int' };
+      }
+      if (name === 'rand') return { c: '$.rand()', t: 'int' };
+      if (name === 'srand') { const r = args[0] ? this.expr(args[0]) : { c: '0', t: 'int' }; return { c: '$.srand(' + this.val(r) + ')', t: 'void' }; }
+      if (name === 'time') { if (args[0]) this.expr(args[0]); return { c: '$.time()', t: 'long' }; }
+      if (name === 'exit') { const r = args[0] ? this.expr(args[0]) : { c: '0', t: 'int' }; return { c: '$.exit(' + this.val(r) + ')', t: 'void' }; }
+      if (name === 'getchar' || name === 'getch' || name === 'getche') { return { c: '(await $.getchar())', t: 'int' }; }
+      if (name === 'putchar') { const r = this.expr(args[0]); return { c: '$.putchar(' + this.conv(r, 'int') + ')', t: 'int' }; }
+      if (name === 'puts') {
+        if (!args[0] || args[0].k !== 'str') { this.err('puts solo se soporta con un texto entre comillas', n.line); return { c: '0', t: 'int' }; }
+        return { c: '$.puts(' + JSON.stringify(args[0].v) + ')', t: 'int' };
+      }
+      if (name === 'system' || name === 'fflush' || name === 'setbuf' || name === 'setvbuf') { args.forEach((a) => { if (a.k !== 'str') this.expr(a); }); return { c: '0', t: 'int' }; }
+      const CT = { isdigit: 'c>=48&&c<=57', isalpha: '(c>=65&&c<=90)||(c>=97&&c<=122)', isupper: 'c>=65&&c<=90', islower: 'c>=97&&c<=122', isspace: 'c===32||(c>=9&&c<=13)', isalnum: '(c>=48&&c<=57)||(c>=65&&c<=90)||(c>=97&&c<=122)' };
+      if (CT[name]) { const r = this.expr(args[0]); return { c: '((c=>' + CT[name] + ')(' + this.conv(r, 'int') + ')?1:0)', t: 'int' }; }
+      if (name === 'toupper') { const r = this.expr(args[0]); return { c: '((c=>c>=97&&c<=122?c-32:c)(' + this.conv(r, 'int') + '))', t: 'int' }; }
+      if (name === 'tolower') { const r = this.expr(args[0]); return { c: '((c=>c>=65&&c<=90?c+32:c)(' + this.conv(r, 'int') + '))', t: 'int' }; }
+
+      const f = this.funcs.get(name);
+      if (!f) { this.err("la función '" + name + "' no está declarada", n.line); args.forEach((a) => { if (a.k !== 'str') this.expr(a); }); return { c: '0', t: 'int' }; }
+      if (args.length !== f.params.length) {
+        this.err("la función '" + name + "' recibe " + f.params.length + ' argumento(s) y se la llamó con ' + args.length, n.line);
+        return { c: '0', t: f.ret === 'void' ? 'void' : f.ret };
+      }
+      const a = args.map((x, i) => this.conv(this.expr(x), f.params[i].type));
+      const call = 'f_' + name + '(' + a.join(',') + ')';
+      return { c: f.async ? '(await ' + call + ')' : call, t: f.ret };
+    }
+
+    parseFmt(fmt) {
+      const specs = [];
+      const re = /%([-+ #0]*)(\*|\d+)?(?:\.(\*|\d*))?(hh|h|ll|l|L|z|j|t)?([diouxXfFeEgGcsp%])/g;
+      let m;
+      while ((m = re.exec(fmt))) if (m[5] !== '%') specs.push({ w: m[2], p: m[3], len: m[4] || '', conv: m[5] });
+      return specs;
+    }
+    describe(node, k) { return node.k === 'id' ? "'" + node.name + "'" : 'el argumento ' + (k + 1); }
+
+    printfCall(n) {
+      const args = n.args;
+      if (args.length && args[0].k === 'cond' && args[0].a.k === 'str' && args[0].b.k === 'str') {
+        const c = this.cond(args[0].c);
+        const vals = args.slice(1).map((a) => { const r = this.expr(a); return r.t === 'str' ? JSON.stringify(a.v) : this.val(r); });
+        return { c: '$.printf(' + c + '?' + JSON.stringify(args[0].a.v) + ':' + JSON.stringify(args[0].b.v) + ',[' + vals.join(',') + '])', t: 'int' };
+      }
+      if (!args.length || args[0].k !== 'str') { this.err('printf necesita un texto entre comillas como primer argumento', n.line); return { c: '0', t: 'int' }; }
+      const fmt = args[0].v;
+      const specs = this.parseFmt(fmt);
+      const vals = [];
+      let si = 0;
+      const rest = args.slice(1);
+      let needed = specs.reduce((s, sp) => s + 1 + (sp.w === '*' ? 1 : 0) + (sp.p === '*' ? 1 : 0), 0);
+      if (rest.length < needed) this.warn('printf pide ' + needed + ' valor(es) por los % del texto, pero recibe ' + rest.length, n.line);
+      else if (rest.length > needed) this.warn('printf recibe más valores (' + rest.length + ') de los que usan los % del texto (' + needed + ')', n.line);
+      const slots = [];
+      for (const sp of specs) { if (sp.w === '*') slots.push({ conv: 'w' }); if (sp.p === '*') slots.push({ conv: 'w' }); slots.push(sp); }
+      rest.forEach((a, k) => {
+        const r = this.expr(a);
+        if (r.t === 'void') { this.err('esa función no devuelve ningún valor', n.line); vals.push('0'); return; }
+        const target = slots[k] || null;
+        if (target && target.conv !== 'w') {
+          const c = target.conv, t = r.t, d = this.describe(a, k);
+          const isInt = INTLIKE.has(t), isFl = FLOATLIKE.has(t);
+          if ('diuxXoc'.indexOf(c) >= 0 && isFl) this.warn("printf: '%" + target.len + c + "' espera un entero, pero " + d + ' es ' + t + ": usá '%f' (o '%.2f' para 2 decimales)", n.line);
+          else if ('fFeEgG'.indexOf(c) >= 0 && (isInt || t === 'str')) this.warn("printf: '%" + c + "' espera un número decimal, pero " + d + ' es ' + (t === 'str' ? 'un texto' : t === 'char' ? 'char' : 'entero (' + t + ')') + ": usá '%d'", n.line);
+          else if (c === 's' && t !== 'str') this.warn("printf: '%s' es para textos y " + d + ' es ' + t + ': los textos (char arrays) todavía no están soportados', n.line);
+          else if (c === 'c' && isFl) this.warn("printf: '%c' espera un carácter, pero " + d + ' es ' + t, n.line);
+          else if ((c === 'd' || c === 'i') && t === 'long' && target.len !== 'l' && target.len !== 'll') this.warn("printf: para un long usá '%ld'", n.line);
+          else if (c === 'd' && t === 'str') this.warn("printf: '%d' espera un entero pero recibe un texto", n.line);
+          else if (c === 'c' && t === 'str') this.warn("printf: '%c' espera un carácter (entre comillas simples 'a'), no un texto", n.line);
+        }
+        vals.push(r.t === 'str' ? JSON.stringify(a.v) : this.val(r));
+      });
+      return { c: '$.printf(' + JSON.stringify(fmt) + ',[' + vals.join(',') + '])', t: 'int' };
+    }
+    scanfCall(n) {
+      const args = n.args;
+      if (!args.length || args[0].k !== 'str') { this.err('scanf necesita un texto entre comillas como primer argumento', n.line); return { c: '0', t: 'int' }; }
+      const fmt = args[0].v;
+      const specs = this.parseFmt(fmt).filter((s) => !/\*/.test(s.w || ''));
+      const refs = [], types = [];
+      const rest = args.slice(1);
+      if (rest.length !== specs.length) this.warn('scanf lee ' + specs.length + ' valor(es) por los % del texto, pero recibe ' + rest.length + ' variable(s)', n.line);
+      rest.forEach((a, k) => {
+        if (a.k !== 'addr') {
+          if (a.k === 'id' && this.lookup(a.name) && this.lookup(a.name).scalar) this.err("a scanf le falta el '&' delante de '" + a.name + "' (scanf necesita &" + a.name + ')', n.line);
+          else this.err("scanf necesita '&' delante de cada variable", n.line);
+          return;
+        }
+        const lv = this.lvalue(a.e, true);
+        if (lv.bad) return;
+        this.markAssigned(lv);
+        const sp = specs[k];
+        if (sp) {
+          const t = lv.t, nm = a.e.k === 'id' ? "'" + a.e.name + "'" : 'la variable';
+          const c = sp.conv;
+          if ((c === 'd' || c === 'i' || c === 'u') && sp.len === '' && !(t === 'int' || t === 'uint')) {
+            if (FLOATLIKE.has(t)) this.warn("scanf: '%" + c + "' lee un entero pero " + nm + ' es ' + t + ": usá '%" + (t === 'float' ? 'f' : 'lf') + "'", n.line);
+            else this.warn("scanf: '%" + c + "' no corresponde al tipo " + t + ' de ' + nm, n.line);
+          } else if ((c === 'd' || c === 'i') && (sp.len === 'l' || sp.len === 'll') && t !== 'long') this.warn("scanf: '%" + sp.len + c + "' es para long y " + nm + ' es ' + t, n.line);
+          else if ('feEgG'.indexOf(c) >= 0) {
+            if (sp.len === '' && t === 'double') this.warn("scanf: '%" + c + "' lee un float pero " + nm + " es double: usá '%lf'", n.line);
+            else if (sp.len === 'l' && t === 'float') this.warn("scanf: '%l" + c + "' es para double pero " + nm + " es float: usá '%f'", n.line);
+            else if (INTLIKE.has(t)) this.warn("scanf: '%" + c + "' lee un decimal pero " + nm + ' es ' + t + ": usá '%d'", n.line);
+          } else if (c === 'c' && !(t === 'char' || t === 'int')) this.warn("scanf: '%c' no corresponde al tipo " + t + ' de ' + nm, n.line);
+          else if (c === 's') this.err('los textos (%s / char arrays) todavía no están soportados en este editor', n.line);
+        }
+        refs.push('[()=>' + lv.c + ',(v)=>{' + lv.c + '=v}]');
+        types.push(JSON.stringify(lv.t));
+      });
+      return { c: '(await $.scanf(' + JSON.stringify(fmt) + ',[' + refs.join(',') + '],[' + types.join(',') + '],' + n.line + '))', t: 'int' };
+    }
+  }
+
+  function compile(src, opts) {
+    const includes = [], defines = new Map();
+    let toks;
+    try {
+      toks = tokenize(src, 1, true, includes, defines);
+      toks = expandDefines(toks, defines);
+      const items = new Parser(toks).program();
+      const g = new Gen(items, opts);
+      const js = g.run();
+      g.errors.sort((a, b) => a.line - b.line);
+      g.warnings.sort((a, b) => a.line - b.line);
+      if (g.errors.length) return { js: null, errors: g.errors, warnings: g.warnings };
+      return { js, errors: [], warnings: g.warnings };
+    } catch (e) {
+      if (e instanceof CErr) return { js: null, errors: [{ line: e.cline, msg: e.message }], warnings: [] };
+      throw e;
+    }
+  }
+
+  const api = { compile };
+  if (typeof module !== 'undefined' && module.exports) module.exports = api;
+  else root.CCompiler = api;
+})(typeof self !== 'undefined' ? self : this);
+
+</script>
+<script>
+/* Runtime del Editor C: printf/scanf con la misma salida que gcc/glibc.
+   Se usa en el worker del navegador y en node (tests). */
+(function (root) {
+  'use strict';
+
+  class CRuntimeError extends Error {
+    constructor(msg, line) { super(msg); this.cline = line; }
+  }
+  class ExitSignal { constructor(code) { this.code = code; } }
+
+  /* ---------- formato de números como glibc ---------- */
+
+  function signBit(x) { return x < 0 || Object.is(x, -0); }
+
+  // |x| con p decimales, redondeo exacto "half-even" (igual que glibc)
+  function fixedExact(x, p) {
+    x = Math.abs(x);
+    const dv = new DataView(new ArrayBuffer(8));
+    dv.setFloat64(0, x);
+    const hi = dv.getUint32(0), lo = dv.getUint32(4);
+    const exp = (hi >>> 20) & 0x7ff;
+    let mant = (BigInt(hi & 0xfffff) << 32n) | BigInt(lo);
+    let e;
+    if (exp === 0) e = -1074; else { mant |= 1n << 52n; e = exp - 1075; }
+    const num = mant * (10n ** BigInt(p));
+    let q;
+    if (e >= 0) q = num << BigInt(e);
+    else {
+      const sh = BigInt(-e);
+      q = num >> sh;
+      const rem = num - (q << sh);
+      const half = 1n << (sh - 1n);
+      if (rem > half || (rem === half && (q & 1n) === 1n)) q += 1n;
+    }
+    let s = q.toString();
+    if (p > 0) {
+      s = s.padStart(p + 1, '0');
+      s = s.slice(0, -p) + '.' + s.slice(-p);
+    }
+    return s;
+  }
+
+  // dígitos decimales exactos de |x| en notación científica con p decimales (half-even, como glibc)
+  function expDigits(x, p) {
+    x = Math.abs(x);
+    if (x === 0) return { d: '0'.repeat(p + 1), e: 0 };
+    const dv = new DataView(new ArrayBuffer(8));
+    dv.setFloat64(0, x);
+    const hi = dv.getUint32(0), lo = dv.getUint32(4);
+    const ex = (hi >>> 20) & 0x7ff;
+    let mant = (BigInt(hi & 0xfffff) << 32n) | BigInt(lo);
+    let e2;
+    if (ex === 0) e2 = -1074; else { mant |= 1n << 52n; e2 = ex - 1075; }
+    let e10 = Math.floor(Math.log10(x));
+    for (let tries = 0; tries < 4; tries++) {
+      const k = e10 - p; // N = x / 10^k
+      let num = mant, den = 1n;
+      if (e2 >= 0) num <<= BigInt(e2); else den <<= BigInt(-e2);
+      if (k > 0) den *= 10n ** BigInt(k); else if (k < 0) num *= 10n ** BigInt(-k);
+      let q = num / den;
+      const rem = num - q * den;
+      if (rem * 2n > den || (rem * 2n === den && (q & 1n) === 1n)) q += 1n;
+      const lowB = 10n ** BigInt(p), highB = lowB * 10n;
+      if (q >= highB) { e10++; continue; }
+      if (q < lowB) { e10--; continue; }
+      return { d: q.toString(), e: e10 };
+    }
+    return { d: '0'.repeat(p + 1), e: 0 };
+  }
+
+  function expStr(e10, upper) {
+    const s = (e10 < 0 ? '-' : '+') + String(Math.abs(e10)).padStart(2, '0');
+    return (upper ? 'E' : 'e') + s;
+  }
+  function expForm(x, p, upper) {
+    const r = expDigits(x, p);
+    return r.d[0] + (p > 0 ? '.' + r.d.slice(1) : '') + expStr(r.e, upper);
+  }
+
+  function gForm(x, p, alt, upper) {
+    if (p === 0) p = 1;
+    if (x === 0) return alt ? '0.' + '0'.repeat(p - 1) : '0';
+    const X = expDigits(x, p - 1).e;
+    let s;
+    if (X >= -4 && X < p) {
+      s = fixedExact(x, p - 1 - X);
+      if (!alt && s.indexOf('.') >= 0) s = s.replace(/0+$/, '').replace(/\.$/, '');
+    } else {
+      s = expForm(x, p - 1, upper);
+      if (!alt) s = s.replace(/\.?0+([eE])/, '$1');
+    }
+    return s;
+  }
+
+  const SPEC = /%([-+ #0]*)(\*|\d+)?(?:\.(\*|\d*))?(hh|h|ll|l|L|z|j|t)?([diouxXfFeEgGcsp%])/g;
+
+  function cformat(fmt, args) {
+    let ai = 0;
+    return fmt.replace(SPEC, function (m, flags, width, prec, len, conv) {
+      if (conv === '%') return '%';
+      let w = width === undefined ? 0 : (width === '*' ? (args[ai++] | 0) : parseInt(width, 10));
+      let left = flags.indexOf('-') >= 0, zero = flags.indexOf('0') >= 0, plus = flags.indexOf('+') >= 0,
+        space = flags.indexOf(' ') >= 0, alt = flags.indexOf('#') >= 0;
+      if (w < 0) { left = true; w = -w; }
+      let p = prec === undefined ? -1 : (prec === '*' ? (args[ai++] | 0) : (prec === '' ? 0 : parseInt(prec, 10)));
+      const arg = args[ai++];
+      let body = '', sign = '', numeric = true, isSpecial = false;
+      const upper = conv === 'F' || conv === 'E' || conv === 'G' || conv === 'X';
+      if (conv === 'd' || conv === 'i') {
+        let v = typeof arg === 'number' ? Math.trunc(arg) : 0;
+        if (!isFinite(v)) v = 0;
+        if (len !== 'l' && len !== 'll' && len !== 'z' && len !== 'j') v = v | 0;
+        sign = v < 0 ? '-' : (plus ? '+' : (space ? ' ' : ''));
+        body = Math.abs(v).toString();
+        if (p >= 0) { zero = false; body = body.padStart(p, '0'); if (p === 0 && v === 0) body = ''; }
+      } else if (conv === 'u' || conv === 'x' || conv === 'X' || conv === 'o') {
+        let v = typeof arg === 'number' ? Math.trunc(arg) : 0;
+        if (!isFinite(v)) v = 0;
+        if (len === 'l' || len === 'll' || len === 'z' || len === 'j') {
+          v = BigInt.asUintN(64, BigInt(v));
+        } else v = v >>> 0;
+        const base = conv === 'u' ? 10 : (conv === 'o' ? 8 : 16);
+        body = v.toString(base);
+        if (upper) body = body.toUpperCase();
+        if (alt && v != 0) { if (conv === 'x') body = '0x' + body; else if (conv === 'X') body = '0X' + body; else if (conv === 'o') body = '0' + body; }
+        if (p >= 0) { zero = false; body = body.padStart(p, '0'); }
+      } else if ('fFeEgG'.indexOf(conv) >= 0) {
+        const v = typeof arg === 'number' ? arg : 0;
+        const neg = Number.isNaN(v) ? true : signBit(v);
+        sign = neg ? '-' : (plus ? '+' : (space ? ' ' : ''));
+        if (Number.isNaN(v)) { body = upper ? 'NAN' : 'nan'; isSpecial = true; }
+        else if (!isFinite(v)) { body = upper ? 'INF' : 'inf'; isSpecial = true; }
+        else {
+          const pp = p < 0 ? 6 : p;
+          if (conv === 'f' || conv === 'F') { body = fixedExact(v, pp); if (alt && pp === 0) body += '.'; }
+          else if (conv === 'e' || conv === 'E') body = expForm(v, pp, upper);
+          else body = gForm(v, pp, alt, upper);
+        }
+        if (isSpecial) zero = false;
+      } else if (conv === 'c') {
+        numeric = false; zero = false;
+        body = String.fromCharCode(typeof arg === 'number' ? (arg & 255) : 63);
+      } else if (conv === 's') {
+        numeric = false; zero = false;
+        body = typeof arg === 'string' ? arg : String(arg === undefined ? '(null)' : arg);
+        if (p >= 0) body = body.slice(0, p);
+      } else if (conv === 'p') {
+        numeric = false; body = '0x' + ((typeof arg === 'number' ? arg : 0) >>> 0).toString(16);
+      }
+      let out = sign + body;
+      if (out.length < w) {
+        if (left) out = out + ' '.repeat(w - out.length);
+        else if (zero && numeric) {
+          let pre = sign;
+          let rest = body;
+          if ((conv === 'x' || conv === 'X') && alt && /^0[xX]/.test(rest)) { pre += rest.slice(0, 2); rest = rest.slice(2); }
+          out = pre + '0'.repeat(w - out.length) + rest;
+        } else out = ' '.repeat(w - out.length) + out;
+      }
+      return out;
+    });
+  }
+
+  /* ---------- entrada estándar ---------- */
+
+  function createRuntime(io) {
+    // io.write(s)  io.readLine() -> Promise<string|null>   (null = fin de entrada)
+    let buf = '', pos = 0, eof = false;
+
+    async function fill() {
+      if (eof) return false;
+      const line = await io.readLine();
+      if (line === null || line === undefined) { eof = true; return false; }
+      buf = buf.slice(pos) + line + '\n';
+      pos = 0;
+      return true;
+    }
+    async function peek() {
+      while (pos >= buf.length) { if (!(await fill())) return -1; }
+      return buf.charCodeAt(pos);
+    }
+    const isWs = (c) => c === 32 || (c >= 9 && c <= 13);
+
+    async function skipWs() {
+      for (;;) { const c = await peek(); if (c < 0 || !isWs(c)) return c; pos++; }
+    }
+
+    function conv(t, v) {
+      switch (t) {
+        case 'int': return v | 0;
+        case 'uint': return v >>> 0;
+        case 'char': return (v << 24) >> 24;
+        case 'float': return Math.fround(v);
+        case 'long': return Math.trunc(v);
+        default: return v;
+      }
+    }
+
+    // refs: [[get,set],...]  types: ['int','float',...]
+    async function scanf(fmt, refs, types, line) {
+      let count = 0, ri = 0, i = 0;
+      const n = fmt.length;
+      let first = true;
+      while (i < n) {
+        const ch = fmt[i];
+        if (ch === '%') {
+          i++;
+          if (fmt[i] === '%') {
+            const c = await skipWs();
+            if (c !== 37) return count === 0 && c < 0 ? -1 : count;
+            pos++; i++; continue;
+          }
+          let suppress = false;
+          if (fmt[i] === '*') { suppress = true; i++; }
+          let w = '';
+          while (/\d/.test(fmt[i] || '')) w += fmt[i++];
+          const maxw = w ? parseInt(w, 10) : Infinity;
+          let len = '';
+          while ('hlLzjt'.indexOf(fmt[i]) >= 0 && fmt[i] !== undefined) len += fmt[i++];
+          const sp = fmt[i++];
+          if (sp === 'c') {
+            const c = await peek();
+            if (c < 0) return count === 0 ? -1 : count;
+            pos++;
+            if (!suppress) { const r = refs[ri], t = types[ri]; ri++; r[1](conv(t, c)); count++; }
+            first = false; continue;
+          }
+          if (sp === 'd' || sp === 'i' || sp === 'u' || sp === 'x') {
+            const c0 = await skipWs();
+            if (c0 < 0) return count === 0 ? -1 : count;
+            const rest = buf.slice(pos);
+            const re = sp === 'x' ? /^[+-]?(0[xX])?[0-9a-fA-F]+/ : (sp === 'i' ? /^[+-]?(0[xX][0-9a-fA-F]+|[0-9]+)/ : /^[+-]?[0-9]+/);
+            const m = re.exec(rest.slice(0, isFinite(maxw) ? maxw : undefined));
+            if (!m) return count;
+            pos += m[0].length;
+            let v = sp === 'x' ? parseInt(m[0], 16) : (sp === 'i' ? Number(m[0].replace(/^([+-]?)0(\d)/, '$1$2')) : parseInt(m[0], 10));
+            if (!suppress) { const r = refs[ri], t = types[ri]; ri++; r[1](conv(t, v)); count++; }
+            first = false; continue;
+          }
+          if ('feEgG'.indexOf(sp) >= 0) {
+            const c0 = await skipWs();
+            if (c0 < 0) return count === 0 ? -1 : count;
+            const rest = buf.slice(pos);
+            const m = /^[+-]?(\d+\.?\d*([eE][+-]?\d+)?|\.\d+([eE][+-]?\d+)?|inf(inity)?|nan)/i.exec(rest.slice(0, isFinite(maxw) ? maxw : undefined));
+            if (!m) return count;
+            pos += m[0].length;
+            const v = /inf/i.test(m[0]) ? (m[0][0] === '-' ? -Infinity : Infinity) : (/nan/i.test(m[0]) ? NaN : parseFloat(m[0]));
+            if (!suppress) { const r = refs[ri], t = types[ri]; ri++; r[1](conv(t, v)); count++; }
+            first = false; continue;
+          }
+          return count; // especificador no soportado
+        } else if (isWs(fmt.charCodeAt(i))) {
+          while (i < n && isWs(fmt.charCodeAt(i))) i++;
+          await skipWs();
+        } else {
+          const c = await peek();
+          if (c < 0) return count === 0 ? -1 : count;
+          if (c !== fmt.charCodeAt(i)) return count;
+          pos++; i++;
+        }
+      }
+      return count;
+    }
+
+    async function getchar() {
+      const c = await peek();
+      if (c < 0) return -1;
+      pos++;
+      return c;
+    }
+
+    let seed = 1;
+    function rand() { seed = (Math.imul(seed, 1103515245) + 12345) & 0x7fffffff; return seed; }
+
+    return {
+      printf(fmt, args) { const s = cformat(fmt, args); io.write(s); return s.length; },
+      puts(s) { io.write(s + '\n'); return 1; },
+      putchar(c) { io.write(String.fromCharCode(c & 255)); return c; },
+      scanf, getchar,
+      idiv(a, b, line) { if (b === 0) throw new CRuntimeError('división entera por cero (en C el programa se cierra con "Floating point exception")', line); return Math.trunc(a / b); },
+      imod(a, b, line) { if (b === 0) throw new CRuntimeError('resto (%) con divisor cero (en C el programa se cierra con "Floating point exception")', line); return a % b; },
+      ix(i, len, line) {
+        if (i < 0 || i >= len) throw new CRuntimeError('índice ' + i + ' fuera del arreglo (tiene ' + len + ' posiciones: 0 a ' + (len - 1) + ')', line);
+        return i;
+      },
+      d2i(v) { return (v > -2147483649 && v < 2147483648) ? (v | 0) : -2147483648; },
+      mk(dims, fill) {
+        const build = (k) => { const a = new Array(dims[k]); for (let i = 0; i < dims[k]; i++) a[i] = k === dims.length - 1 ? fill : build(k + 1); return a; };
+        for (const d of dims) if (!(d > 0)) throw new CRuntimeError('tamaño de arreglo inválido (' + d + ')');
+        return build(0);
+      },
+      pad(list, dims) {
+        const d = dims[0];
+        const out = list.slice(0, d);
+        if (dims.length > 1) { for (let i = 0; i < out.length; i++) out[i] = this.pad(out[i], dims.slice(1)); while (out.length < d) out.push(this.mk(dims.slice(1), 0)); }
+        else while (out.length < d) out.push(0);
+        return out;
+      },
+      lop(op, a, b) {
+        if (!isFinite(a)) a = 0; if (!isFinite(b)) b = 0;
+        const x = BigInt.asIntN(64, BigInt(Math.trunc(a))), y = BigInt.asIntN(64, BigInt(Math.trunc(b)));
+        let v;
+        switch (op) { case '&': v = x & y; break; case '|': v = x | y; break; case '^': v = x ^ y; break; case '<<': v = x << (y & 63n); break; default: v = x >> (y & 63n); }
+        return Number(BigInt.asIntN(64, v));
+      },
+      round(x) { return x < 0 ? -Math.round(-x) : Math.round(x); },
+      fmod(a, b) { return a % b; },
+      yield: async function () { await new Promise((res) => setTimeout(res, 0)); if (io.cancelled && io.cancelled()) throw new ExitSignal(-999); },
+      rand, srand(s) { seed = s | 0; return 0; },
+      time() { return Math.floor(Date.now() / 1000); },
+      exit(c) { throw new ExitSignal(c | 0); },
+      CRuntimeError, ExitSignal
+    };
+  }
+
+  // Crea la función del programa. Si la página tiene una política que prohíbe eval (unsafe-eval),
+  // se inyecta como <script> en línea, que esas políticas sí permiten.
+  let progN = 0;
+  function makeProgram(js) {
+    try { return new Function('$rt', js); }
+    catch (e) {
+      if (typeof document === 'undefined') throw e;
+      const key = '__cprog' + (++progN);
+      const s = document.createElement('script');
+      s.textContent = 'window.' + key + '=function($rt){' + js + '\n};';
+      (document.head || document.documentElement).appendChild(s);
+      s.remove();
+      const f = window[key];
+      try { delete window[key]; } catch (e2) { window[key] = undefined; }
+      if (typeof f !== 'function') throw e;
+      return f;
+    }
+  }
+
+  async function runProgram(js, io) {
+    const rt = createRuntime(io);
+    let main;
+    try {
+      main = makeProgram(js)(rt);
+      const rc = await main();
+      return { code: rc | 0 };
+    } catch (e) {
+      if (e instanceof ExitSignal) return e.code === -999 ? { stopped: true, code: 0 } : { code: e.code };
+      if (e instanceof CRuntimeError) return { error: e.message, line: e.cline, code: 136 };
+      if (e instanceof RangeError && /call stack/i.test(e.message)) return { error: 'desbordamiento de la pila (recursión infinita o muy profunda)', code: 139 };
+      return { error: 'error interno: ' + (e && e.message), code: 1 };
+    }
+  }
+
+  const api = { cformat, createRuntime, runProgram, fixedExact, CRuntimeError, ExitSignal };
+  if (typeof module !== 'undefined' && module.exports) module.exports = api;
+  else root.CRT = api;
+})(typeof self !== 'undefined' ? self : this);
+
+</script>
+<script>
+const RT_SRC = "/* Runtime del Editor C: printf/scanf con la misma salida que gcc/glibc.\n   Se usa en el worker del navegador y en node (tests). */\n(function (root) {\n  'use strict';\n\n  class CRuntimeError extends Error {\n    constructor(msg, line) { super(msg); this.cline = line; }\n  }\n  class ExitSignal { constructor(code) { this.code = code; } }\n\n  /* ---------- formato de números como glibc ---------- */\n\n  function signBit(x) { return x \u003c 0 || Object.is(x, -0); }\n\n  // |x| con p decimales, redondeo exacto \"half-even\" (igual que glibc)\n  function fixedExact(x, p) {\n    x = Math.abs(x);\n    const dv = new DataView(new ArrayBuffer(8));\n    dv.setFloat64(0, x);\n    const hi = dv.getUint32(0), lo = dv.getUint32(4);\n    const exp = (hi >>> 20) & 0x7ff;\n    let mant = (BigInt(hi & 0xfffff) \u003c\u003c 32n) | BigInt(lo);\n    let e;\n    if (exp === 0) e = -1074; else { mant |= 1n \u003c\u003c 52n; e = exp - 1075; }\n    const num = mant * (10n ** BigInt(p));\n    let q;\n    if (e >= 0) q = num \u003c\u003c BigInt(e);\n    else {\n      const sh = BigInt(-e);\n      q = num >> sh;\n      const rem = num - (q \u003c\u003c sh);\n      const half = 1n \u003c\u003c (sh - 1n);\n      if (rem > half || (rem === half && (q & 1n) === 1n)) q += 1n;\n    }\n    let s = q.toString();\n    if (p > 0) {\n      s = s.padStart(p + 1, '0');\n      s = s.slice(0, -p) + '.' + s.slice(-p);\n    }\n    return s;\n  }\n\n  // dígitos decimales exactos de |x| en notación científica con p decimales (half-even, como glibc)\n  function expDigits(x, p) {\n    x = Math.abs(x);\n    if (x === 0) return { d: '0'.repeat(p + 1), e: 0 };\n    const dv = new DataView(new ArrayBuffer(8));\n    dv.setFloat64(0, x);\n    const hi = dv.getUint32(0), lo = dv.getUint32(4);\n    const ex = (hi >>> 20) & 0x7ff;\n    let mant = (BigInt(hi & 0xfffff) \u003c\u003c 32n) | BigInt(lo);\n    let e2;\n    if (ex === 0) e2 = -1074; else { mant |= 1n \u003c\u003c 52n; e2 = ex - 1075; }\n    let e10 = Math.floor(Math.log10(x));\n    for (let tries = 0; tries \u003c 4; tries++) {\n      const k = e10 - p; // N = x / 10^k\n      let num = mant, den = 1n;\n      if (e2 >= 0) num \u003c\u003c= BigInt(e2); else den \u003c\u003c= BigInt(-e2);\n      if (k > 0) den *= 10n ** BigInt(k); else if (k \u003c 0) num *= 10n ** BigInt(-k);\n      let q = num / den;\n      const rem = num - q * den;\n      if (rem * 2n > den || (rem * 2n === den && (q & 1n) === 1n)) q += 1n;\n      const lowB = 10n ** BigInt(p), highB = lowB * 10n;\n      if (q >= highB) { e10++; continue; }\n      if (q \u003c lowB) { e10--; continue; }\n      return { d: q.toString(), e: e10 };\n    }\n    return { d: '0'.repeat(p + 1), e: 0 };\n  }\n\n  function expStr(e10, upper) {\n    const s = (e10 \u003c 0 ? '-' : '+') + String(Math.abs(e10)).padStart(2, '0');\n    return (upper ? 'E' : 'e') + s;\n  }\n  function expForm(x, p, upper) {\n    const r = expDigits(x, p);\n    return r.d[0] + (p > 0 ? '.' + r.d.slice(1) : '') + expStr(r.e, upper);\n  }\n\n  function gForm(x, p, alt, upper) {\n    if (p === 0) p = 1;\n    if (x === 0) return alt ? '0.' + '0'.repeat(p - 1) : '0';\n    const X = expDigits(x, p - 1).e;\n    let s;\n    if (X >= -4 && X \u003c p) {\n      s = fixedExact(x, p - 1 - X);\n      if (!alt && s.indexOf('.') >= 0) s = s.replace(/0+$/, '').replace(/\\.$/, '');\n    } else {\n      s = expForm(x, p - 1, upper);\n      if (!alt) s = s.replace(/\\.?0+([eE])/, '$1');\n    }\n    return s;\n  }\n\n  const SPEC = /%([-+ #0]*)(\\*|\\d+)?(?:\\.(\\*|\\d*))?(hh|h|ll|l|L|z|j|t)?([diouxXfFeEgGcsp%])/g;\n\n  function cformat(fmt, args) {\n    let ai = 0;\n    return fmt.replace(SPEC, function (m, flags, width, prec, len, conv) {\n      if (conv === '%') return '%';\n      let w = width === undefined ? 0 : (width === '*' ? (args[ai++] | 0) : parseInt(width, 10));\n      let left = flags.indexOf('-') >= 0, zero = flags.indexOf('0') >= 0, plus = flags.indexOf('+') >= 0,\n        space = flags.indexOf(' ') >= 0, alt = flags.indexOf('#') >= 0;\n      if (w \u003c 0) { left = true; w = -w; }\n      let p = prec === undefined ? -1 : (prec === '*' ? (args[ai++] | 0) : (prec === '' ? 0 : parseInt(prec, 10)));\n      const arg = args[ai++];\n      let body = '', sign = '', numeric = true, isSpecial = false;\n      const upper = conv === 'F' || conv === 'E' || conv === 'G' || conv === 'X';\n      if (conv === 'd' || conv === 'i') {\n        let v = typeof arg === 'number' ? Math.trunc(arg) : 0;\n        if (!isFinite(v)) v = 0;\n        if (len !== 'l' && len !== 'll' && len !== 'z' && len !== 'j') v = v | 0;\n        sign = v \u003c 0 ? '-' : (plus ? '+' : (space ? ' ' : ''));\n        body = Math.abs(v).toString();\n        if (p >= 0) { zero = false; body = body.padStart(p, '0'); if (p === 0 && v === 0) body = ''; }\n      } else if (conv === 'u' || conv === 'x' || conv === 'X' || conv === 'o') {\n        let v = typeof arg === 'number' ? Math.trunc(arg) : 0;\n        if (!isFinite(v)) v = 0;\n        if (len === 'l' || len === 'll' || len === 'z' || len === 'j') {\n          v = BigInt.asUintN(64, BigInt(v));\n        } else v = v >>> 0;\n        const base = conv === 'u' ? 10 : (conv === 'o' ? 8 : 16);\n        body = v.toString(base);\n        if (upper) body = body.toUpperCase();\n        if (alt && v != 0) { if (conv === 'x') body = '0x' + body; else if (conv === 'X') body = '0X' + body; else if (conv === 'o') body = '0' + body; }\n        if (p >= 0) { zero = false; body = body.padStart(p, '0'); }\n      } else if ('fFeEgG'.indexOf(conv) >= 0) {\n        const v = typeof arg === 'number' ? arg : 0;\n        const neg = Number.isNaN(v) ? true : signBit(v);\n        sign = neg ? '-' : (plus ? '+' : (space ? ' ' : ''));\n        if (Number.isNaN(v)) { body = upper ? 'NAN' : 'nan'; isSpecial = true; }\n        else if (!isFinite(v)) { body = upper ? 'INF' : 'inf'; isSpecial = true; }\n        else {\n          const pp = p \u003c 0 ? 6 : p;\n          if (conv === 'f' || conv === 'F') { body = fixedExact(v, pp); if (alt && pp === 0) body += '.'; }\n          else if (conv === 'e' || conv === 'E') body = expForm(v, pp, upper);\n          else body = gForm(v, pp, alt, upper);\n        }\n        if (isSpecial) zero = false;\n      } else if (conv === 'c') {\n        numeric = false; zero = false;\n        body = String.fromCharCode(typeof arg === 'number' ? (arg & 255) : 63);\n      } else if (conv === 's') {\n        numeric = false; zero = false;\n        body = typeof arg === 'string' ? arg : String(arg === undefined ? '(null)' : arg);\n        if (p >= 0) body = body.slice(0, p);\n      } else if (conv === 'p') {\n        numeric = false; body = '0x' + ((typeof arg === 'number' ? arg : 0) >>> 0).toString(16);\n      }\n      let out = sign + body;\n      if (out.length \u003c w) {\n        if (left) out = out + ' '.repeat(w - out.length);\n        else if (zero && numeric) {\n          let pre = sign;\n          let rest = body;\n          if ((conv === 'x' || conv === 'X') && alt && /^0[xX]/.test(rest)) { pre += rest.slice(0, 2); rest = rest.slice(2); }\n          out = pre + '0'.repeat(w - out.length) + rest;\n        } else out = ' '.repeat(w - out.length) + out;\n      }\n      return out;\n    });\n  }\n\n  /* ---------- entrada estándar ---------- */\n\n  function createRuntime(io) {\n    // io.write(s)  io.readLine() -> Promise\u003cstring|null>   (null = fin de entrada)\n    let buf = '', pos = 0, eof = false;\n\n    async function fill() {\n      if (eof) return false;\n      const line = await io.readLine();\n      if (line === null || line === undefined) { eof = true; return false; }\n      buf = buf.slice(pos) + line + '\\n';\n      pos = 0;\n      return true;\n    }\n    async function peek() {\n      while (pos >= buf.length) { if (!(await fill())) return -1; }\n      return buf.charCodeAt(pos);\n    }\n    const isWs = (c) => c === 32 || (c >= 9 && c \u003c= 13);\n\n    async function skipWs() {\n      for (;;) { const c = await peek(); if (c \u003c 0 || !isWs(c)) return c; pos++; }\n    }\n\n    function conv(t, v) {\n      switch (t) {\n        case 'int': return v | 0;\n        case 'uint': return v >>> 0;\n        case 'char': return (v \u003c\u003c 24) >> 24;\n        case 'float': return Math.fround(v);\n        case 'long': return Math.trunc(v);\n        default: return v;\n      }\n    }\n\n    // refs: [[get,set],...]  types: ['int','float',...]\n    async function scanf(fmt, refs, types, line) {\n      let count = 0, ri = 0, i = 0;\n      const n = fmt.length;\n      let first = true;\n      while (i \u003c n) {\n        const ch = fmt[i];\n        if (ch === '%') {\n          i++;\n          if (fmt[i] === '%') {\n            const c = await skipWs();\n            if (c !== 37) return count === 0 && c \u003c 0 ? -1 : count;\n            pos++; i++; continue;\n          }\n          let suppress = false;\n          if (fmt[i] === '*') { suppress = true; i++; }\n          let w = '';\n          while (/\\d/.test(fmt[i] || '')) w += fmt[i++];\n          const maxw = w ? parseInt(w, 10) : Infinity;\n          let len = '';\n          while ('hlLzjt'.indexOf(fmt[i]) >= 0 && fmt[i] !== undefined) len += fmt[i++];\n          const sp = fmt[i++];\n          if (sp === 'c') {\n            const c = await peek();\n            if (c \u003c 0) return count === 0 ? -1 : count;\n            pos++;\n            if (!suppress) { const r = refs[ri], t = types[ri]; ri++; r[1](conv(t, c)); count++; }\n            first = false; continue;\n          }\n          if (sp === 'd' || sp === 'i' || sp === 'u' || sp === 'x') {\n            const c0 = await skipWs();\n            if (c0 \u003c 0) return count === 0 ? -1 : count;\n            const rest = buf.slice(pos);\n            const re = sp === 'x' ? /^[+-]?(0[xX])?[0-9a-fA-F]+/ : (sp === 'i' ? /^[+-]?(0[xX][0-9a-fA-F]+|[0-9]+)/ : /^[+-]?[0-9]+/);\n            const m = re.exec(rest.slice(0, isFinite(maxw) ? maxw : undefined));\n            if (!m) return count;\n            pos += m[0].length;\n            let v = sp === 'x' ? parseInt(m[0], 16) : (sp === 'i' ? Number(m[0].replace(/^([+-]?)0(\\d)/, '$1$2')) : parseInt(m[0], 10));\n            if (!suppress) { const r = refs[ri], t = types[ri]; ri++; r[1](conv(t, v)); count++; }\n            first = false; continue;\n          }\n          if ('feEgG'.indexOf(sp) >= 0) {\n            const c0 = await skipWs();\n            if (c0 \u003c 0) return count === 0 ? -1 : count;\n            const rest = buf.slice(pos);\n            const m = /^[+-]?(\\d+\\.?\\d*([eE][+-]?\\d+)?|\\.\\d+([eE][+-]?\\d+)?|inf(inity)?|nan)/i.exec(rest.slice(0, isFinite(maxw) ? maxw : undefined));\n            if (!m) return count;\n            pos += m[0].length;\n            const v = /inf/i.test(m[0]) ? (m[0][0] === '-' ? -Infinity : Infinity) : (/nan/i.test(m[0]) ? NaN : parseFloat(m[0]));\n            if (!suppress) { const r = refs[ri], t = types[ri]; ri++; r[1](conv(t, v)); count++; }\n            first = false; continue;\n          }\n          return count; // especificador no soportado\n        } else if (isWs(fmt.charCodeAt(i))) {\n          while (i \u003c n && isWs(fmt.charCodeAt(i))) i++;\n          await skipWs();\n        } else {\n          const c = await peek();\n          if (c \u003c 0) return count === 0 ? -1 : count;\n          if (c !== fmt.charCodeAt(i)) return count;\n          pos++; i++;\n        }\n      }\n      return count;\n    }\n\n    async function getchar() {\n      const c = await peek();\n      if (c \u003c 0) return -1;\n      pos++;\n      return c;\n    }\n\n    let seed = 1;\n    function rand() { seed = (Math.imul(seed, 1103515245) + 12345) & 0x7fffffff; return seed; }\n\n    return {\n      printf(fmt, args) { const s = cformat(fmt, args); io.write(s); return s.length; },\n      puts(s) { io.write(s + '\\n'); return 1; },\n      putchar(c) { io.write(String.fromCharCode(c & 255)); return c; },\n      scanf, getchar,\n      idiv(a, b, line) { if (b === 0) throw new CRuntimeError('división entera por cero (en C el programa se cierra con \"Floating point exception\")', line); return Math.trunc(a / b); },\n      imod(a, b, line) { if (b === 0) throw new CRuntimeError('resto (%) con divisor cero (en C el programa se cierra con \"Floating point exception\")', line); return a % b; },\n      ix(i, len, line) {\n        if (i \u003c 0 || i >= len) throw new CRuntimeError('índice ' + i + ' fuera del arreglo (tiene ' + len + ' posiciones: 0 a ' + (len - 1) + ')', line);\n        return i;\n      },\n      d2i(v) { return (v > -2147483649 && v \u003c 2147483648) ? (v | 0) : -2147483648; },\n      mk(dims, fill) {\n        const build = (k) => { const a = new Array(dims[k]); for (let i = 0; i \u003c dims[k]; i++) a[i] = k === dims.length - 1 ? fill : build(k + 1); return a; };\n        for (const d of dims) if (!(d > 0)) throw new CRuntimeError('tamaño de arreglo inválido (' + d + ')');\n        return build(0);\n      },\n      pad(list, dims) {\n        const d = dims[0];\n        const out = list.slice(0, d);\n        if (dims.length > 1) { for (let i = 0; i \u003c out.length; i++) out[i] = this.pad(out[i], dims.slice(1)); while (out.length \u003c d) out.push(this.mk(dims.slice(1), 0)); }\n        else while (out.length \u003c d) out.push(0);\n        return out;\n      },\n      lop(op, a, b) {\n        if (!isFinite(a)) a = 0; if (!isFinite(b)) b = 0;\n        const x = BigInt.asIntN(64, BigInt(Math.trunc(a))), y = BigInt.asIntN(64, BigInt(Math.trunc(b)));\n        let v;\n        switch (op) { case '&': v = x & y; break; case '|': v = x | y; break; case '^': v = x ^ y; break; case '\u003c\u003c': v = x \u003c\u003c (y & 63n); break; default: v = x >> (y & 63n); }\n        return Number(BigInt.asIntN(64, v));\n      },\n      round(x) { return x \u003c 0 ? -Math.round(-x) : Math.round(x); },\n      fmod(a, b) { return a % b; },\n      yield: async function () { await new Promise((res) => setTimeout(res, 0)); if (io.cancelled && io.cancelled()) throw new ExitSignal(-999); },\n      rand, srand(s) { seed = s | 0; return 0; },\n      time() { return Math.floor(Date.now() / 1000); },\n      exit(c) { throw new ExitSignal(c | 0); },\n      CRuntimeError, ExitSignal\n    };\n  }\n\n  // Crea la función del programa. Si la página tiene una política que prohíbe eval (unsafe-eval),\n  // se inyecta como \u003cscript> en línea, que esas políticas sí permiten.\n  let progN = 0;\n  function makeProgram(js) {\n    try { return new Function('$rt', js); }\n    catch (e) {\n      if (typeof document === 'undefined') throw e;\n      const key = '__cprog' + (++progN);\n      const s = document.createElement('script');\n      s.textContent = 'window.' + key + '=function($rt){' + js + '\\n};';\n      (document.head || document.documentElement).appendChild(s);\n      s.remove();\n      const f = window[key];\n      try { delete window[key]; } catch (e2) { window[key] = undefined; }\n      if (typeof f !== 'function') throw e;\n      return f;\n    }\n  }\n\n  async function runProgram(js, io) {\n    const rt = createRuntime(io);\n    let main;\n    try {\n      main = makeProgram(js)(rt);\n      const rc = await main();\n      return { code: rc | 0 };\n    } catch (e) {\n      if (e instanceof ExitSignal) return e.code === -999 ? { stopped: true, code: 0 } : { code: e.code };\n      if (e instanceof CRuntimeError) return { error: e.message, line: e.cline, code: 136 };\n      if (e instanceof RangeError && /call stack/i.test(e.message)) return { error: 'desbordamiento de la pila (recursión infinita o muy profunda)', code: 139 };\n      return { error: 'error interno: ' + (e && e.message), code: 1 };\n    }\n  }\n\n  const api = { cformat, createRuntime, runProgram, fixedExact, CRuntimeError, ExitSignal };\n  if (typeof module !== 'undefined' && module.exports) module.exports = api;\n  else root.CRT = api;\n})(typeof self !== 'undefined' ? self : this);\n";
+</script>
+<script>
+(function () {
+  'use strict';
+  const $ = (id) => document.getElementById(id);
+  const ta = $('code'), hl = $('hl'), gut = $('gut'), out = $('out'), cons = $('console'), diag = $('diag'),
+    statusEl = $('status'), runBtn = $('run'), stopBtn = $('stop'), exSel = $('examples');
+  const store = {
+    get(k, d) { try { const v = localStorage.getItem('editorc.' + k); return v === null ? d : v; } catch (e) { return d; } },
+    set(k, v) { try { localStorage.setItem('editorc.' + k, v); } catch (e) { /* sin almacenamiento */ } }
+  };
+
+  /* ---------- ejemplos ---------- */
+  const EXAMPLES = [
+    ['Hola mundo', `#include <stdio.h>
+
+int main() {
+    printf("Hola, mundo!\\n");
+    return 0;
+}
+`],
+    ['Suma de dos números', `#include <stdio.h>
+
+int main() {
+    int A, B, SUMA;
+
+    printf("Primer número: ");
+    scanf("%d", &A);
+    printf("Segundo número: ");
+    scanf("%d", &B);
+
+    SUMA = A + B;
+    printf("%d + %d = %d\\n", A, B, SUMA);
+    return 0;
+}
+`],
+    ['Promedio de 3 notas (decimales)', `#include <stdio.h>
+
+int main() {
+    float N1, N2, N3, PROM;
+
+    printf("Notas (separadas por Enter): ");
+    scanf("%f", &N1);
+    scanf("%f", &N2);
+    scanf("%f", &N3);
+
+    PROM = (N1 + N2 + N3) / 3;
+    printf("El promedio es: %.2f\\n", PROM);
+    return 0;
+}
+`],
+    ['Mayor de tres (if / else)', `#include <stdio.h>
+
+int main() {
+    int A, B, C, MAYOR;
+
+    printf("Tres números: ");
+    scanf("%d %d %d", &A, &B, &C);
+
+    MAYOR = A;
+    if (B > MAYOR) { MAYOR = B; }
+    if (C > MAYOR) { MAYOR = C; }
+
+    printf("El mayor es %d\\n", MAYOR);
+    return 0;
+}
+`],
+    ['Tabla de multiplicar (for)', `#include <stdio.h>
+
+int main() {
+    int N, i;
+
+    printf("Tabla del: ");
+    scanf("%d", &N);
+
+    for (i = 1; i <= 10; i++) {
+        printf("%d x %d = %d\\n", N, i, N * i);
+    }
+    return 0;
+}
+`],
+    ['Suma hasta ingresar 0 (while)', `#include <stdio.h>
+
+main() {
+    int V, SUMA, CANT;
+
+    SUMA = 0; CANT = 0;
+    printf("Valor (0 termina): ");
+    scanf("%d", &V);
+    while (V != 0) {
+        SUMA = SUMA + V;
+        CANT++;
+        printf("Valor (0 termina): ");
+        scanf("%d", &V);
+    }
+    printf("Se ingresaron %d valores, suma %d\\n", CANT, SUMA);
+}
+`],
+    ['Factorial (función)', `#include <stdio.h>
+
+int factorial(int n) {
+    if (n <= 1) { return 1; }
+    return n * factorial(n - 1);
+}
+
+int main() {
+    int N;
+    printf("N: ");
+    scanf("%d", &N);
+    printf("%d! = %d\\n", N, factorial(N));
+    return 0;
+}
+`]
+  ];
+  EXAMPLES.forEach((e, i) => { const o = document.createElement('option'); o.value = String(i); o.textContent = e[0]; exSel.appendChild(o); });
+
+  /* ---------- resaltado ---------- */
+  const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const HL_RE = /(\/\*[\s\S]*?\*\/|\/\*[\s\S]*$|\/\/[^\n]*)|("(?:\\.|[^"\\\n])*"?)|('(?:\\.|[^'\\\n])*'?)|(^[ \t]*#[^\n]*)|(\b(?:int|float|double|char|void|long|short|unsigned|signed|const|static|bool)\b)|(\b(?:if|else|while|do|for|return|break|continue|switch|case|default|sizeof)\b)|(\b\d+\.?\d*(?:[eE][+-]?\d+)?[fFlLuU]*\b|\.\d+\b)|(\b[A-Za-z_]\w*(?=\s*\())/gm;
+  const CLS = [null, 'c', 's', 's', 'p', 't', 'k', 'n', 'f'];
+  function highlight(src) {
+    let res = '', last = 0, m;
+    HL_RE.lastIndex = 0;
+    while ((m = HL_RE.exec(src))) {
+      if (m[0] === '') { HL_RE.lastIndex++; continue; }
+      res += esc(src.slice(last, m.index));
+      let g = 1; while (g < 9 && m[g] === undefined) g++;
+      res += '<span class="' + CLS[g] + '">' + esc(m[0]) + '</span>';
+      last = m.index + m[0].length;
+    }
+    return res + esc(src.slice(last));
+  }
+
+  /* ---------- editor ---------- */
+  let marks = new Map(); let lastLines = 0;
+  function renderGutter(force) {
+    const n = ta.value.split('\n').length;
+    if (!force && n === lastLines && !gut.dataset.dirty) return;
+    lastLines = n; delete gut.dataset.dirty;
+    let h = '';
+    for (let i = 1; i <= n; i++) { const m = marks.get(i); h += '<div' + (m ? ' class="' + m + '"' : '') + '>' + i + '</div>'; }
+    gut.innerHTML = h;
+    gut.scrollTop = ta.scrollTop;
+  }
+  function refresh() {
+    hl.innerHTML = highlight(ta.value) + '\n';
+    renderGutter(false);
+    syncScroll();
+  }
+  function syncScroll() { hl.scrollTop = ta.scrollTop; hl.scrollLeft = ta.scrollLeft; gut.scrollTop = ta.scrollTop; }
+  ta.addEventListener('scroll', syncScroll);
+  ta.addEventListener('input', () => { clearMarks(); refresh(); store.set('code', ta.value); });
+
+  function insert(text) {
+    ta.focus();
+    let ok = false;
+    try { ok = document.execCommand('insertText', false, text); } catch (e) { ok = false; }
+    if (!ok) {
+      const s = ta.selectionStart, e = ta.selectionEnd;
+      ta.setRangeText(text, s, e, 'end');
+      ta.dispatchEvent(new Event('input'));
+    }
+  }
+  function lineStart(v, pos) { return v.lastIndexOf('\n', pos - 1) + 1; }
+  ta.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') { e.preventDefault(); save(); return; }
+    const v = ta.value, s = ta.selectionStart, en = ta.selectionEnd;
+    if (e.key === 'Tab') {
+      e.preventDefault();
+      if (s === en && !e.shiftKey) { insert('    '); return; }
+      // sangrar / quitar sangría en las líneas elegidas
+      const a = lineStart(v, s);
+      const b = en > s && v[en - 1] === '\n' ? en - 1 : en;
+      const block = v.slice(a, b).split('\n');
+      const nb = block.map((l) => e.shiftKey ? l.replace(/^( {1,4}|\t)/, '') : '    ' + l).join('\n');
+      ta.setSelectionRange(a, b);
+      insert(nb);
+      ta.setSelectionRange(a, a + nb.length);
+      return;
+    }
+    if (e.key === 'Enter' && !e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey) {
+      e.preventDefault();
+      const ls = lineStart(v, s);
+      const cur = v.slice(ls, s);
+      const ind = /^[ \t]*/.exec(cur)[0];
+      const before = v[s - 1], after = v[en];
+      if (before === '{' && after === '}') { insert('\n' + ind + '    \n' + ind); const p = s + 1 + ind.length + 4; ta.setSelectionRange(p, p); return; }
+      insert('\n' + ind + (before === '{' ? '    ' : ''));
+      return;
+    }
+    if (e.key === '}' && !e.ctrlKey && !e.metaKey) {
+      const ls = lineStart(v, s);
+      if (s === en && /^ +$/.test(v.slice(ls, s)) && s - ls >= 4) { e.preventDefault(); ta.setSelectionRange(s - 4, s); insert('}'); }
+    }
+  });
+
+  /* ---------- marcas y diagnósticos ---------- */
+  function clearMarks() { if (marks.size) { marks = new Map(); gut.dataset.dirty = '1'; renderGutter(true); } diag.hidden = true; diag.innerHTML = ''; }
+  function goLine(n) {
+    const lines = ta.value.split('\n');
+    let pos = 0; for (let i = 0; i < n - 1 && i < lines.length; i++) pos += lines[i].length + 1;
+    ta.focus(); ta.setSelectionRange(pos, pos + (lines[n - 1] || '').length);
+    const lh = parseFloat(getComputedStyle(ta).lineHeight) || 22;
+    ta.scrollTop = Math.max(0, (n - 3) * lh);
+    syncScroll();
+  }
+  function showDiag(res, rtErr) {
+    const items = [];
+    res.errors.forEach((e) => items.push({ k: 'e', line: e.line, msg: e.msg }));
+    if (rtErr) items.push({ k: 'e', line: rtErr.line, msg: rtErr.msg });
+    res.warnings.forEach((w) => items.push({ k: 'w', line: w.line, msg: w.msg }));
+    marks = new Map();
+    items.forEach((it) => { if (it.line) { if (marks.get(it.line) !== 'e') marks.set(it.line, it.k); } });
+    gut.dataset.dirty = '1'; renderGutter(true);
+    diag.innerHTML = '';
+    items.forEach((it) => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = it.k;
+      const tag = document.createElement('span'); tag.className = 'tag'; tag.textContent = (it.k === 'e' ? 'Error' : 'Aviso') + (it.line ? ' · línea ' + it.line : '');
+      const t = document.createElement('span'); t.textContent = it.msg;
+      b.appendChild(tag); b.appendChild(t);
+      if (it.line) b.addEventListener('click', () => goLine(it.line));
+      const wrap = document.createElement('div'); wrap.className = it.k; wrap.appendChild(b); diag.appendChild(wrap);
+    });
+    diag.hidden = !items.length;
+  }
+
+  /* ---------- consola ---------- */
+  let total = 0; const CAP = 400000;
+  function appendText(text, cls) {
+    if (!text) return;
+    total += text.length;
+    const last = out.lastChild;
+    if (!cls) {
+      if (last && last.nodeType === 3) { last.appendData(text); }
+      else out.appendChild(document.createTextNode(text));
+    } else {
+      const sp = document.createElement('span'); sp.className = cls; sp.textContent = text; out.appendChild(sp);
+    }
+    cons.scrollTop = cons.scrollHeight;
+  }
+  function endsWithNewline() { return !out.textContent || out.textContent.endsWith('\n'); }
+  function setStatus(txt, cls) { statusEl.textContent = txt; statusEl.className = 'chip' + (cls ? ' ' + cls : ''); }
+  function clearConsole() { out.textContent = ''; total = 0; }
+  $('clear').addEventListener('click', () => { removeInput(); clearConsole(); if ((worker || main) && waiting) showInput(); });
+
+  let worker = null, waiting = false;
+  function removeInput() { const w = out.querySelector('.stdin'); if (w) w.remove(); const b = out.querySelector('.eofbtn'); if (b) b.remove(); }
+  function showInput() {
+    removeInput(); waiting = true;
+    const wrap = document.createElement('span'); wrap.className = 'stdin';
+    const inp = document.createElement('input');
+    inp.type = 'text'; inp.autocomplete = 'off'; inp.spellcheck = false; inp.setAttribute('autocapitalize', 'off'); inp.setAttribute('autocorrect', 'off');
+    inp.setAttribute('aria-label', 'Entrada del programa (Enter para enviar)'); inp.enterKeyHint = 'send'; inp.inputMode = 'text';
+    wrap.appendChild(inp); out.appendChild(wrap);
+    const eof = document.createElement('button'); eof.type = 'button'; eof.className = 'eofbtn'; eof.textContent = 'Fin de entrada (Ctrl+D)';
+    eof.addEventListener('click', () => sendEOF()); out.appendChild(eof);
+    const fit = () => { inp.style.width = Math.max(1, inp.value.length + 1) + 'ch'; };
+    inp.addEventListener('input', fit);
+    inp.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); const s = inp.value; removeInput(); waiting = false; appendText(s + '\n', 'in'); setStatus('Ejecutando…', 'run'); send({ type: 'line', s }); }
+      else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'd') { e.preventDefault(); sendEOF(); }
+    });
+    fit(); setStatus('Esperando datos…', 'wait');
+    cons.scrollTop = cons.scrollHeight;
+    inp.focus({ preventScroll: true });
+  }
+  function sendEOF() { removeInput(); waiting = false; appendText('^D\n', 'dim'); setStatus('Ejecutando…', 'run'); send({ type: 'eof' }); }
+  cons.addEventListener('click', (e) => { const i = out.querySelector('.stdin input'); if (i && !window.getSelection().toString()) i.focus({ preventScroll: true }); });
+
+  const BOOT = `
+let pend = '', resolver = null;
+function flush() { if (pend) { self.postMessage({ type: 'out', s: pend }); pend = ''; } }
+self.onmessage = async (ev) => {
+  const m = ev.data;
+  if (m.type === 'run') {
+    const io = {
+      write(s) { pend += s; if (pend.length > 2048) flush(); },
+      readLine() { flush(); self.postMessage({ type: 'need' }); return new Promise((r) => { resolver = r; }); }
+    };
+    const res = await CRT.runProgram(m.js, io);
+    flush(); self.postMessage({ type: 'done', res });
+  } else if (m.type === 'line') { if (resolver) { const r = resolver; resolver = null; r(m.s); } }
+  else if (m.type === 'eof') { if (resolver) { const r = resolver; resolver = null; r(null); } }
+};
+self.postMessage({ type: 'ready' });`;
+  let blobUrl = null;
+  function makeWorker() {
+    if (!blobUrl) blobUrl = URL.createObjectURL(new Blob([RT_SRC + '\n' + BOOT], { type: 'text/javascript' }));
+    return new Worker(blobUrl);
+  }
+  let workerBroken = false;   // si el navegador no deja usar Workers, se ejecuta en la página
+  let main = null;            // ejecución en la página: { cancel, send }
+  function resetRun() { if (worker) { worker.terminate(); worker = null; } if (main) { main.cancel(); main = null; } waiting = false; runBtn.disabled = false; stopBtn.disabled = true; }
+  function stopWorker() { resetRun(); }
+  function stop() {
+    if (!worker && !main) return;
+    const wasMain = !!main;
+    if (wasMain) { main.cancel(); return; }   // el aviso de "Detenido" lo pone el final de la ejecución
+    resetRun(); removeInput();
+    if (!endsWithNewline()) appendText('\n');
+    appendText('— Detenido —\n', 'dim'); setStatus('Detenido');
+  }
+  stopBtn.addEventListener('click', stop);
+  function send(msg) { if (main) { if (msg.type === 'line') main.send(msg.s); else main.send(null); } else if (worker) worker.postMessage(msg); }
+
+  let lastRes = null;
+  function finish(r) {
+    resetRun(); removeInput();
+    if (!endsWithNewline()) appendText('\n');
+    if (r.stopped) { appendText('— Detenido —\n', 'dim'); setStatus('Detenido'); return; }
+    if (r.error) {
+      appendText('Error' + (r.line ? ' en la línea ' + r.line : '') + ': ' + r.error + '\n', 'er');
+      showDiag(lastRes, { line: r.line, msg: r.error });
+      setStatus('Error al ejecutar', 'err');
+    } else { appendText('— Programa terminado (código ' + r.code + ') —\n', 'dim'); setStatus('Terminó'); }
+  }
+
+  // Ejecución dentro de la página (cuando el navegador no permite Workers): los lazos ceden el control cada tanto
+  function runInPage(src) {
+    let res;
+    try { res = CCompiler.compile(src, { yieldLoops: true }); } catch (e) { res = { js: null }; }
+    if (!res.js || typeof CRT === 'undefined') { appendText('No se pudo iniciar la ejecución en este navegador.\n', 'er'); setStatus('Error', 'err'); return; }
+    let cancelled = false, resolver = null;
+    const me = {
+      cancel() { cancelled = true; if (resolver) { const r = resolver; resolver = null; r(null); } },
+      send(line) { if (resolver) { const r = resolver; resolver = null; r(line); } }
+    };
+    main = me;
+    runBtn.disabled = true; stopBtn.disabled = false; setStatus('Ejecutando…', 'run');
+    let pend = '', size = 0;
+    const flush = () => { if (pend) { const t = pend; pend = ''; appendText(t); } };
+    const io = {
+      cancelled: () => { flush(); return cancelled; },
+      write(s) {
+        if (cancelled) return;
+        pend += s; size += s.length;
+        if (size > CAP) { cancelled = true; flush(); appendText('\n— Salida cortada: demasiado texto (¿bucle infinito?) —\n', 'er'); }
+      },
+      readLine() { flush(); showInput(); return new Promise((r) => { resolver = r; }); }
+    };
+    CRT.runProgram(res.js, io).then((r) => { flush(); if (main === me) finish(r); });
+  }
+
+  function run() {
+    resetRun();
+    removeInput(); clearConsole(); clearMarks();
+    const src = ta.value;
+    let res;
+    try { res = CCompiler.compile(src); }
+    catch (e) { res = { js: null, errors: [{ line: 0, msg: 'error interno del editor: ' + e.message }], warnings: [] }; }
+    lastRes = res;
+    showDiag(res);
+    if (res.errors.length) {
+      appendText('No se pudo ejecutar: ' + (res.errors.length === 1 ? 'hay 1 error' : 'hay ' + res.errors.length + ' errores') + '. Corregilos y volvé a ejecutar.\n', 'er');
+      setStatus('Con errores', 'err');
+      return;
+    }
+    if (workerBroken) { runInPage(src); return; }
+    let w;
+    try { w = makeWorker(); } catch (e) { workerBroken = true; runInPage(src); return; }
+    worker = w;
+    runBtn.disabled = true; stopBtn.disabled = false; setStatus('Ejecutando…', 'run');
+    let ready = false;
+    const giveUp = () => { if (ready || w !== worker) return; workerBroken = true; w.terminate(); worker = null; runInPage(src); };
+    const timer = setTimeout(giveUp, 2500);
+    w.onmessage = (ev) => {
+      if (w !== worker) return;
+      const m = ev.data;
+      if (m.type === 'ready') { ready = true; clearTimeout(timer); w.postMessage({ type: 'run', js: res.js }); }
+      else if (m.type === 'out') {
+        appendText(m.s);
+        if (total > CAP) { resetRun(); removeInput(); appendText('\n— Salida cortada: demasiado texto (¿bucle infinito?) —\n', 'er'); setStatus('Detenido', 'err'); }
+      } else if (m.type === 'need') showInput();
+      else if (m.type === 'done') finish(m.res);
+    };
+    w.onerror = (e) => {
+      if (w !== worker) return;
+      if (!ready) { clearTimeout(timer); giveUp(); return; }
+      resetRun(); removeInput(); appendText('\nError interno: ' + (e.message || 'desconocido') + '\n', 'er'); setStatus('Error', 'err');
+    };
+  }
+  runBtn.addEventListener('click', run);
+  document.addEventListener('keydown', (e) => { if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); run(); } });
+
+  /* ---------- archivos, ejemplos, tema, letra ---------- */
+  function setCode(src) { ta.value = src; ta.scrollTop = 0; ta.scrollLeft = 0; clearMarks(); refresh(); store.set('code', src); }
+  function save() {
+    const blob = new Blob([ta.value], { type: 'text/plain' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'programa.c';
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  }
+  $('save').addEventListener('click', save);
+  $('open').addEventListener('click', () => $('file').click());
+  $('file').addEventListener('change', (e) => {
+    const f = e.target.files[0]; if (!f) return;
+    const r = new FileReader(); r.onload = () => setCode(String(r.result).replace(/\r\n?/g, '\n')); r.readAsText(f); e.target.value = '';
+  });
+  const isExample = (v) => EXAMPLES.some((x) => x[1] === v) || !v.trim();
+  exSel.addEventListener('change', () => {
+    const i = exSel.value; exSel.value = '';
+    if (i === '') return;
+    const prev = ta.value;
+    setCode(EXAMPLES[+i][1]);
+    if (!isExample(prev)) toast('Ejemplo cargado', 'Deshacer', () => setCode(prev));
+  });
+  let toastTimer = null;
+  function toast(msg, label, fn) {
+    let t = $('toast');
+    if (!t) { t = document.createElement('div'); t.id = 'toast'; t.className = 'toast'; document.body.appendChild(t); }
+    t.textContent = msg + ' ';
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'btn mini'; b.textContent = label;
+    b.addEventListener('click', () => { fn(); t.hidden = true; });
+    t.appendChild(b); t.hidden = false;
+    clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.hidden = true; }, 9000);
+  }
+  $('help').addEventListener('click', () => $('dlg').showModal());
+  function setTheme(t) { document.documentElement.dataset.theme = t; store.set('theme', t); }
+  $('theme').addEventListener('click', () => setTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'));
+  const sysDark = !window.matchMedia || window.matchMedia('(prefers-color-scheme: dark)').matches;
+  setTheme(store.get('theme', sysDark ? 'dark' : 'light'));
+  let fs = parseInt(store.get('fs', '15'), 10) || 15;
+  function setFs(n) { fs = Math.max(11, Math.min(26, n)); document.documentElement.style.setProperty('--fs', fs + 'px'); store.set('fs', String(fs)); refresh(); }
+  $('fsp').addEventListener('click', () => setFs(fs + 1));
+  $('fsm').addEventListener('click', () => setFs(fs - 1));
+  setFs(fs);
+
+  const more = $('more');
+  if (window.matchMedia) {
+    const mq = window.matchMedia('(min-width: 900px)');
+    const sync = () => { more.open = mq.matches; };
+    sync(); (mq.addEventListener ? mq.addEventListener('change', sync) : mq.addListener(sync));
+    document.addEventListener('click', (e) => { if (!mq.matches && more.open && !more.contains(e.target)) more.open = false; });
+  } else more.open = true;
+
+  ta.value = store.get('code', '') || EXAMPLES[2][1];
+  refresh();
+  window.__editorc = { run, setCode, compile: (s) => CCompiler.compile(s) };
+})();
+
+</script>
+</body>
+</html>

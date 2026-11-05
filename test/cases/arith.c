@@ -1,0 +1,43 @@
+#include <stdio.h>
+int main() {
+  int a = 2147483647, b = 5, c;
+  unsigned u = 4000000000u;
+  float f = 0.1f, g;
+  double d = 0.1;
+  char ch = 'A';
+  c = a + 1; printf("%d\n", c);
+  c = a * 2; printf("%d\n", c);
+  c = -a - 2; printf("%d\n", c);
+  c = (int)3.99; printf("%d\n", c);
+  c = (int)-3.99; printf("%d\n", c);
+  printf("%d\n", (int)(2.5f * 4));
+  g = f * 3; printf("%.10f\n", g);
+  g = d * 3; printf("%.10f\n", g);
+  printf("%.10f\n", f + d);
+  printf("%d %d\n", f == 0.1, d == 0.1);
+  printf("%d\n", 7 / 2 * 2.0 > 6);
+  printf("%f\n", 7 / 2 * 2.0);
+  printf("%f\n", 7 / 2.0);
+  printf("%d\n", 1 + 2 * 3 - 4 / 2 % 3);
+  printf("%d %d %d\n", 5 & 3, 5 | 3, 5 ^ 3);
+  printf("%d %d %d\n", 1 << 4, 256 >> 2, ~5);
+  printf("%u\n", u + 500000000u);
+  ch = ch + 1; printf("%c %d\n", ch, ch);
+  ch = 127; ch++; printf("%d\n", ch);
+  c = 10; c += 5; c -= 3; c *= 2; c /= 5; c %= 3; printf("%d\n", c);
+  c = 5; printf("%d\n", c++); printf("%d\n", c); printf("%d\n", ++c); printf("%d\n", c--);
+  f = 10; f /= 4; printf("%f\n", f);
+  c = 7; f = c / 2; printf("%f\n", f);
+  c = 7; f = c / 2.0; printf("%f\n", f);
+  printf("%d\n", !0 + !5 + !!7);
+  printf("%d\n", (3 > 2) + (2 > 3) + (2 >= 2));
+  printf("%d\n", 3 > 2 && 2 > 1 || 0);
+  printf("%d\n", 5 ? 10 : 20);
+  printf("%f\n", 5 > 3 ? 1 : 2.5);
+  c = 3; c = c > 2 ? c * 2 : c; printf("%d\n", c);
+  printf("%d %d\n", sizeof(int), sizeof(double));
+  c = 1000000; printf("%d\n", c * c);
+  c = 46341; printf("%d\n", c * c);
+  printf("%.0f\n", 1e15 + 0.5);
+  return 0;
+}

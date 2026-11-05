@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="es" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark light">
+<title>Editor C</title>
+<meta name="description" content="Editor de C sin anuncios que corre en tu navegador: escribí, ejecutá y probá tus programas al instante.">
+<style>
+/*@@CSS@@*/
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="brand"><span class="logo" aria-hidden="true">C</span><div><h1>Editor C</h1><p>Sin anuncios · corre en tu navegador</p></div></div>
+  <div class="actions">
+    <button id="run" class="btn primary" title="Ejecutar (Ctrl+Enter)"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M7 4.5v15l12-7.5z" fill="currentColor"/></svg><span>Ejecutar</span></button>
+    <button id="stop" class="btn danger" title="Detener" disabled><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="1.5" fill="currentColor"/></svg><span>Detener</span></button>
+    <details class="more" id="more"><summary class="btn" aria-label="Más opciones"><span>Más</span><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></summary>
+    <div class="menu">
+    <select id="examples" class="btn sel" aria-label="Ejemplos"><option value="">Ejemplos…</option></select>
+      <button id="open" class="btn" title="Abrir un archivo .c"><span>Abrir</span></button>
+      <button id="save" class="btn" title="Descargar como .c"><span>Guardar</span></button>
+      <span class="grp" role="group" aria-label="Tamaño de letra"><button id="fsm" class="btn icon" title="Letra más chica" aria-label="Letra más chica">A−</button><button id="fsp" class="btn icon" title="Letra más grande" aria-label="Letra más grande">A+</button></span>
+      <button id="theme" class="btn icon" title="Cambiar tema claro/oscuro" aria-label="Cambiar tema"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M21 14.5A9 9 0 0 1 9.5 3 9 9 0 1 0 21 14.5z" fill="currentColor"/></svg></button>
+      <button id="help" class="btn icon" title="Qué soporta" aria-label="Ayuda">?</button>
+    </div></details>
+  </div>
+</header>
+<main class="split">
+  <section class="pane" aria-label="Editor de código">
+    <div class="pane-head"><span>programa.c</span><span class="hint">Ctrl+Enter para ejecutar</span></div>
+    <div class="editor" id="editor">
+      <div class="gut" id="gut" aria-hidden="true"></div>
+      <div class="code">
+        <pre class="hl" id="hl" aria-hidden="true"></pre>
+        <textarea id="code" wrap="off" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" aria-label="Código en C"></textarea>
+      </div>
+    </div>
+  </section>
+  <section class="pane term" aria-label="Consola">
+    <div class="pane-head"><span>Consola</span><span id="status" class="chip">Listo</span><button id="clear" class="btn mini" title="Limpiar la consola">Limpiar</button></div>
+    <div class="console" id="console" tabindex="0"><pre id="out" aria-live="polite"></pre></div>
+    <div class="diag" id="diag" hidden></div>
+  </section>
+</main>
+<dialog id="dlg">
+  <form method="dialog">
+    <h2>Qué soporta este editor</h2>
+    <p>Interpreta el C que se usa en la materia. No es gcc: si algo se comporta distinto, avisá.</p>
+    <ul>
+      <li><b>Tipos:</b> int, float, double, char, long, unsigned.</li>
+      <li><b>Control:</b> if / else, switch, while, do-while, for, break, continue.</li>
+      <li><b>Funciones</b> con parámetros, retorno y recursión; <b>arreglos</b> de 1 y 2 dimensiones.</li>
+      <li><b>Entrada y salida:</b> printf, scanf, getchar, putchar, puts (con todos los formatos: %d %f %.2f %c %e %g %x …).</li>
+      <li><b>Biblioteca:</b> math.h (sqrt, pow, abs…), rand, ctype.h básico, #define de constantes.</li>
+      <li><b>Avisos útiles:</b> te marca %d con float, scanf sin &amp;, variables sin valor inicial, = dentro de if…</li>
+      <li><b>Todavía no:</b> punteros, textos (char[] con %s), struct, archivos.</li>
+    </ul>
+    <p class="fine">Tu código no sale de tu navegador. Se guarda solo en este dispositivo.</p>
+    <button class="btn primary" value="ok">Entendido</button>
+  </form>
+</dialog>
+<input type="file" id="file" accept=".c,.h,.txt,text/plain" hidden>
+<script>
+/*@@COMPILER@@*/
+</script>
+<script>
+/*@@RUNTIME@@*/
+</script>
+<script>
+const RT_SRC = /*@@RTJSON@@*/;
+</script>
+<script>
+/*@@APP@@*/
+</script>
+</body>
+</html>
