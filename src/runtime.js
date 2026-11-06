@@ -349,7 +349,7 @@
       if (e instanceof ExitSignal) return e.code === -999 ? { stopped: true, code: 0 } : { code: e.code };
       if (e instanceof CRuntimeError) return { error: e.message, line: e.cline, code: 136 };
       if (e instanceof RangeError && /call stack/i.test(e.message)) return { error: 'desbordamiento de la pila (recursión infinita o muy profunda)', code: 139 };
-      return { error: 'error interno: ' + (e && e.message), code: 1 };
+      return { error: 'Error inesperado del editor (no es culpa de tu programa): ' + (e && e.message) + '. Avisale al profe.', code: 1 };
     }
   }
 

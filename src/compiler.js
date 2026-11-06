@@ -183,7 +183,7 @@
       if (!seen) return null;
       if (base === 'double') return 'double';
       if (base === 'float') return 'float';
-      if (base === 'char') return 'char';
+      if (base === 'char') return uns ? 'uchar' : 'char';
       if (base === 'void') return 'void';
       if (base === 'bool') return 'int';
       if (shorts) return uns ? 'ushort' : 'short';
@@ -223,9 +223,10 @@
           const pt = this.typeSpec();
           if (!pt || pt === 'void') throw new CErr('parámetro mal escrito: se esperaba un tipo (int, float, ...)', this.peek().line);
           if (this.isOp('*')) throw new CErr('los punteros todavía no están soportados en este editor', this.peek().line);
-          const pn = (this.isOp(',') || this.isOp(')')) ? { v: null, line: this.peek().line } : this.ident();
-          if (this.isOp('[')) throw new CErr('los arreglos como parámetro todavía no están soportados en este editor', this.peek().line);
-          params.push({ name: pn.v, type: pt, line: pn.line });
+          const pn = (this.isOp(',') || this.isOp(')') || this.isOp('[')) ? { v: null, line: this.peek().line } : this.ident();
+          let pdims = 0;
+          while (this.accept('[')) { if (!this.isOp(']')) this.assign(); this.expect(']'); pdims++; }
+          params.push({ name: pn.v, type: pt, line: pn.line, array: pdims > 0, dims: pdims });
           if (!this.accept(',')) break;
         }
       }
@@ -440,18 +441,18 @@
   const PREC = { '||': 1, '&&': 2, '|': 3, '^': 4, '&': 5, '==': 6, '!=': 6, '<': 7, '>': 7, '<=': 7, '>=': 7, '<<': 8, '>>': 8, '+': 9, '-': 9, '*': 10, '/': 10, '%': 10 };
 
   /* ================= GENERADOR ================= */
-  const INTLIKE = new Set(['int', 'uint', 'long', 'char', 'short', 'ushort']);
+  const INTLIKE = new Set(['int', 'uint', 'long', 'char', 'uchar', 'short', 'ushort']);
   const FLOATLIKE = new Set(['float', 'double']);
   function arith(a, b) {
-    if (a === 'short' || a === 'ushort') a = 'int';
-    if (b === 'short' || b === 'ushort') b = 'int';
+    if (a === 'short' || a === 'ushort' || a === 'uchar') a = 'int';
+    if (b === 'short' || b === 'ushort' || b === 'uchar') b = 'int';
     if (a === 'double' || b === 'double') return 'double';
     if (a === 'float' || b === 'float') return 'float';
     if (a === 'long' || b === 'long') return 'long';
     if (a === 'uint' || b === 'uint') return 'uint';
     return 'int';
   }
-  const TNAME = { int: 'int', uint: 'unsigned', long: 'long', char: 'char', short: 'short', ushort: 'unsigned short', float: 'float', double: 'double' };
+  const TNAME = { int: 'int', uint: 'unsigned', long: 'long', char: 'char', uchar: 'unsigned char', short: 'short', ushort: 'unsigned short', float: 'float', double: 'double' };
 
   class Gen {
     constructor(items, opts) {
@@ -463,15 +464,32 @@
       this.cur = null;
       this.seenW = new Set();
       this.hoisted = []; this.sid = 0;
+      this.curLine = 1; this.loopDepth = 0; this.switchDepth = 0; this.undeclared = new Set(); this.inSC = 0;
+      this.incl = new Set((this.opts.includes || []).map((h) => h.replace(/^[<"]|[>"]$/g, '')));
     }
-    err(msg, line) { this.errors.push({ line, msg }); }
-    warn(msg, line) { const k = line + '|' + msg; if (this.seenW.has(k)) return; this.seenW.add(k); this.warnings.push({ line, msg }); }
+    err(msg, line) { this.errors.push({ line: line || this.curLine, msg }); }
+    warn(msg, line) { line = line || this.curLine; const k = line + '|' + msg; if (this.seenW.has(k)) return; this.seenW.add(k); this.warnings.push({ line, msg }); }
     push() { this.scopes.push(new Map()); }
     pop() { this.scopes.pop(); }
     declare(name, info, line) {
       const sc = this.scopes[this.scopes.length - 1];
       if (sc.has(name)) { this.err("'" + name + "' ya fue declarada antes en este bloque", line); }
       sc.set(name, info);
+    }
+    undeclErr(name, line) {
+      if (this.undeclared.has(name)) return; this.undeclared.add(name);
+      const sug = this.suggest(name);
+      this.err("'" + name + "' no está declarada" + (sug ? ". ¿Quisiste decir '" + sug + "'? (C distingue mayúsculas y minúsculas)" : ' (¿falta declararla o está mal escrita?)'), line);
+    }
+    suggest(name) {
+      const cand = new Set();
+      for (const sc of this.scopes) for (const k of sc.keys()) cand.add(k);
+      for (const k of this.funcs.keys()) cand.add(k);
+      for (const k of ['printf', 'scanf', 'sqrt', 'pow', 'fabs', 'floor', 'ceil', 'abs', 'rand', 'srand', 'getchar', 'putchar', 'puts', 'toupper', 'tolower']) cand.add(k);
+      const lev = (a, b) => { const d = []; for (let i = 0; i <= a.length; i++) { d[i] = [i]; } for (let j = 1; j <= b.length; j++) d[0][j] = j; for (let i = 1; i <= a.length; i++) for (let j = 1; j <= b.length; j++) d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)); return d[a.length][b.length]; };
+      let best = null, bd = 99;
+      for (const c of cand) { if (c === name) continue; const dist = c.toLowerCase() === name.toLowerCase() ? 0 : lev(name.toLowerCase(), c.toLowerCase()); const lim = name.length <= 3 ? 1 : 2; if (dist <= lim && dist < bd) { bd = dist; best = c; } }
+      return best;
     }
     lookup(name) {
       for (let i = this.scopes.length - 1; i >= 0; i--) if (this.scopes[i].has(name)) return this.scopes[i].get(name);
@@ -522,7 +540,7 @@
       this.cur = info;
       this.push();
       const ps = [];
-      for (const p of f.params) { this.declare(p.name, { type: p.type, js: 'v_' + p.name, assigned: true, scalar: true }, p.line); ps.push('v_' + p.name); }
+      for (const p of f.params) { this.declare(p.name, p.array ? { type: p.type, js: 'v_' + p.name, assigned: true, array: true, ndims: p.dims, param: true } : { type: p.type, js: 'v_' + p.name, assigned: true, scalar: true }, p.line); ps.push('v_' + p.name); }
       const body = this.stmtList(f.body.body);
       this.pop();
       this.cur = null;
@@ -531,6 +549,7 @@
     }
     stmtList(arr) { return arr.map((s) => this.stmt(s)).join('\n'); }
     stmt(s) {
+      if (s.line) this.curLine = s.line;
       switch (s.k) {
         case 'block': { this.push(); const b = this.stmtList(s.body); this.pop(); return '{\n' + b + '\n}'; }
         case 'empty': return ';';
@@ -547,11 +566,11 @@
         case 'while': {
           this.checkCondAssign(s.c);
           const c = this.cond(s.c);
-          this.push(); const b = this.stmt(s.body); this.pop();
+          this.push(); const b = this.bodyStmt(s.body); this.pop();
           this.checkEmptyBody(s, 'while');
           return 'while (' + c + ') ' + this.loopWrap(b);
         }
-        case 'do': { this.push(); const b = this.stmt(s.body); this.pop(); this.checkCondAssign(s.c); return 'do ' + this.loopWrap(b) + ' while (' + this.cond(s.c) + ');'; }
+        case 'do': { this.push(); const b = this.bodyStmt(s.body); this.pop(); this.checkCondAssign(s.c); return 'do ' + this.loopWrap(b) + ' while (' + this.cond(s.c) + ');'; }
         case 'for': {
           this.push();
           let init = '';
@@ -559,7 +578,7 @@
           if (s.c) this.checkCondAssign(s.c);
           const c = s.c ? this.cond(s.c) : '';
           const st = s.step ? this.expr(s.step, true).c : '';
-          const b = this.stmt(s.body);
+          const b = this.bodyStmt(s.body);
           this.pop();
           this.checkEmptyBody(s, 'for');
           return 'for (' + init + ';' + c + ';' + st + ') ' + this.loopWrap(b);
@@ -572,23 +591,44 @@
           this.checkIntDiv(r, rt, s.line);
           return 'return ' + this.conv(r, rt) + ';';
         }
-        case 'break': return 'break;';
-        case 'continue': return 'continue;';
+        case 'break': if (!this.loopDepth && !this.switchDepth) this.err("'break' solo se puede usar dentro de un for, while, do-while o switch", s.line); return 'break;';
+        case 'continue': if (!this.loopDepth) this.err("'continue' solo se puede usar dentro de un for, while o do-while", s.line); return 'continue;';
         case 'switch': {
           const e = this.expr(s.e);
           if (!INTLIKE.has(e.t)) this.err('el switch necesita un valor entero', s.line);
-          this.push();
+          this.push(); this.switchDepth++;
           let out = 'switch (' + this.val(e) + ') {\n';
+          const seen = new Set(); let hasDefault = false; let lastStmt = null;
+          const termina = (st) => !!st && (st.k === 'break' || st.k === 'return' || st.k === 'continue' || (st.k === 'expr' && st.e.k === 'call' && st.e.name === 'exit') || (st.k === 'block' && termina(st.body[st.body.length - 1])) || (st.k === 'if' && st.b && termina(st.a) && termina(st.b)));
+          const cierraGrupo = () => { if (lastStmt && !termina(lastStmt)) this.warn("este grupo del switch sigue con el siguiente porque le falta un 'break;' (en C no se corta solo)", lastStmt.line); lastStmt = null; };
           for (const it of s.items) {
-            if (it.k === 'case') { const ce = this.expr(it.e); out += 'case ' + this.val(ce) + ':\n'; }
-            else if (it.k === 'default') out += 'default:\n';
-            else out += this.stmt(it) + '\n';
+            if (it.k === 'case') {
+              cierraGrupo();
+              if (!this.isConstExpr(it.e)) { this.err("después de 'case' tiene que ir un número o un carácter fijo (por ejemplo case 3: o case 'a':), no una variable ni una cuenta", it.line); continue; }
+              const ce = this.expr(it.e);
+              if (!INTLIKE.has(ce.t)) { this.err("'case' necesita un valor entero: un decimal o un texto no sirve", it.line); continue; }
+              let key = null; try { key = Function('return ' + this.val(ce))(); } catch (x) { key = null; }
+              if (key !== null) { if (seen.has(key)) this.err("el valor 'case " + key + "' está repetido en este switch", it.line); seen.add(key); }
+              out += 'case ' + this.val(ce) + ':\n';
+            } else if (it.k === 'default') {
+              cierraGrupo();
+              if (hasDefault) this.err("ya hay un 'default' en este switch (solo puede haber uno)", it.line);
+              hasDefault = true; out += 'default:\n';
+            } else { out += this.stmt(it) + '\n'; lastStmt = it; }
           }
-          this.pop();
+          this.switchDepth--; this.pop();
           return out + '}';
         }
       }
       throw new Error('stmt ' + s.k);
+    }
+    bodyStmt(b) { this.loopDepth++; const r = this.stmt(b); this.loopDepth--; return r; }
+    isConstExpr(n) {
+      if (n.k === 'num') return true;
+      if (n.k === 'un') return this.isConstExpr(n.e);
+      if (n.k === 'bin') return this.isConstExpr(n.l) && this.isConstExpr(n.r);
+      if (n.k === 'cast') return this.isConstExpr(n.e);
+      return false;
     }
     wrap(c) { return c.startsWith('{') ? c : '{\n' + c + '\n}'; }
     loopWrap(c) {
@@ -623,6 +663,7 @@
             if (v.dims[i] === null) { if (!(i === 0 && dimsCode.length)) { this.err('al arreglo le falta el tamaño', v.line); ok = false; } continue; }
             const r = this.expr(v.dims[i]);
             if (!INTLIKE.has(r.t)) { this.err('el tamaño de un arreglo debe ser un entero', v.line); ok = false; }
+            else if (this.isConstExpr(v.dims[i])) { let nv = null; try { nv = Function('return ' + this.val(r))(); } catch (x) { nv = null; } if (nv !== null && nv <= 0) { this.err('el tamaño del arreglo tiene que ser mayor que 0 (usaste ' + nv + ')', v.line); ok = false; } }
             dimsCode.push(this.val(r));
           }
           this.declare(v.name, { type: d.type, js, array: true, ndims: v.dims.length, assigned: true, isConst: !!d.const }, v.line);
@@ -671,10 +712,11 @@
       switch (to) {
         case 'double': return v;
         case 'float': return 'Math.fround(' + v + ')';
-        case 'int': return FLOATLIKE.has(f) ? '$.d2i(' + v + ')' : (f === 'char' || f === 'short' || f === 'ushort' ? v : '(' + v + '|0)');
+        case 'int': return FLOATLIKE.has(f) ? '$.d2i(' + v + ')' : (f === 'char' || f === 'uchar' || f === 'short' || f === 'ushort' ? v : '(' + v + '|0)');
         case 'uint': return FLOATLIKE.has(f) ? '($.d2i(' + v + ')>>>0)' : '(' + v + '>>>0)';
         case 'long': return FLOATLIKE.has(f) ? 'Math.trunc(' + v + ')' : v;
         case 'char': return FLOATLIKE.has(f) ? '($.d2i(' + v + ')<<24>>24)' : '(' + v + '<<24>>24)';
+        case 'uchar': return FLOATLIKE.has(f) ? '($.d2i(' + v + ')&255)' : '(' + v + '&255)';
         case 'short': return FLOATLIKE.has(f) ? '($.d2i(' + v + ')<<16>>16)' : '(' + v + '<<16>>16)';
         case 'ushort': return FLOATLIKE.has(f) ? '($.d2i(' + v + ')&65535)' : '(' + v + '&65535)';
       }
@@ -692,6 +734,7 @@
 
     /* ----- expresiones ----- */
     expr(n, asStmt) {
+      if (n.line) this.curLine = n.line;
       switch (n.k) {
         case 'num': return { c: n.v < 0 ? '(' + n.v + ')' : String(n.v), t: n.kind };
         case 'str': return { c: JSON.stringify(n.v), t: 'str' };
@@ -713,9 +756,10 @@
           return { c: this.conv(r, n.type), t: n.type };
         }
         case 'sizeof': {
-          const sz = { int: 4, uint: 4, long: 8, char: 1, short: 2, ushort: 2, float: 4, double: 8, void: 1 };
+          const sz = { int: 4, uint: 4, long: 8, char: 1, uchar: 1, short: 2, ushort: 2, float: 4, double: 8, void: 1 };
           if (n.type) return { c: String(sz[n.type]), t: 'int' };
-          if (n.e.k === 'id') { const info = this.lookup(n.e.name); if (info && info.scalar) return { c: String(sz[info.type]), t: 'int' }; }
+          if (n.e.k === 'id') { const info = this.lookup(n.e.name); if (info && info.scalar) return { c: String(sz[info.type]), t: 'int' }; if (info && info.array) { if (info.param) return { c: '8', t: 'int' }; let mul = info.js + '.length'; if (info.ndims === 2) mul += '*' + info.js + '[0].length'; return { c: '(' + mul + '*' + sz[info.type] + ')', t: 'uint' }; } }
+          if (n.e.k === 'idx') { let b = n.e, k = 0; while (b.k === 'idx') { k++; b = b.base; } const info = b.k === 'id' ? this.lookup(b.name) : null; if (info && info.array && k <= info.ndims) { if (k === info.ndims) return { c: String(sz[info.type]), t: 'uint' }; return { c: '(' + info.js + '[0].length*' + sz[info.type] + ')', t: 'uint' }; } }
           this.err('sizeof solo se soporta con un tipo (sizeof(int)) o una variable simple', n.line);
           return { c: '0', t: 'int' };
         }
@@ -732,17 +776,17 @@
       const info = this.lookup(n.name);
       if (!info) {
         if (this.funcs.has(n.name)) { this.err("'" + n.name + "' es una función: faltan los paréntesis para llamarla", n.line); return { c: '0', t: 'int' }; }
-        this.err("'" + n.name + "' no está declarada (¿falta declararla o está mal escrita?)", n.line);
+        this.undeclErr(n.name, n.line);
         return { c: '0', t: 'int' };
       }
       if (info.array) { this.err("'" + n.name + "' es un arreglo: usá " + n.name + '[i] para acceder a una posición', n.line); return { c: '0', t: 'int' }; }
-      if (!info.assigned && !info.warned) { info.warned = true; this.warn("'" + n.name + "' se usa antes de darle un valor (en C su valor inicial es basura): asignale un valor inicial, por ejemplo " + n.name + ' = 0;', n.line); }
+      if (!info.assigned && !info.warned && !this.inSC) { info.warned = true; this.warn("'" + n.name + "' se usa antes de darle un valor (en C su valor inicial es basura): asignale un valor inicial, por ejemplo " + n.name + ' = 0;', n.line); }
       return { c: info.js, t: info.type };
     }
     lvalue(n, forWrite) {
       if (n.k === 'id') {
         const info = this.lookup(n.name);
-        if (!info) { this.err("'" + n.name + "' no está declarada (¿falta declararla o está mal escrita?)", n.line); return { c: 'v_' + n.name, t: 'int', bad: true }; }
+        if (!info) { this.undeclErr(n.name, n.line); return { c: 'v_' + n.name, t: 'int', bad: true }; }
         if (info.array) { this.err("'" + n.name + "' es un arreglo: usá " + n.name + '[i] para acceder a una posición', n.line); return { c: info.js, t: info.type, bad: true }; }
         return { c: info.js, t: info.type, info };
       }
@@ -777,8 +821,8 @@
       const r = this.expr(n.e);
       if (r.t === 'str' || r.t === 'void') { this.err('operación inválida sobre ' + (r.t === 'str' ? 'un texto' : 'void'), n.line); return { c: '0', t: 'int' }; }
       if (n.op === '!') return { c: r.b ? '!(' + r.c + ')' : '((' + r.c + ')===0)', t: 'int', b: true };
-      if (n.op === '+') return { c: this.val(r), t: (r.t === 'char' || r.t === 'short' || r.t === 'ushort') ? 'int' : r.t };
-      const t = r.t === 'char' || r.t === 'short' || r.t === 'ushort' || r.b ? 'int' : r.t;
+      if (n.op === '+') return { c: this.val(r), t: (r.t === 'char' || r.t === 'uchar' || r.t === 'short' || r.t === 'ushort') ? 'int' : r.t };
+      const t = r.t === 'char' || r.t === 'uchar' || r.t === 'short' || r.t === 'ushort' || r.b ? 'int' : r.t;
       if (n.op === '-') {
         const v = this.val(r);
         return { c: this.wrapInt(t, '-' + (/^[\d.]+$/.test(v) ? v : '(' + v + ')')), t };
@@ -788,7 +832,7 @@
     }
     binOp(op, ln, rn, line) {
       if (op === '&&' || op === '||') {
-        const a = this.cond(ln), b = this.cond(rn);
+        const a = this.cond(ln); this.inSC++; const b = this.cond(rn); this.inSC--;
         return { c: '(' + a + (op === '&&' ? '&&' : '||') + b + ')', t: 'int', b: true };
       }
       const a = this.expr(ln), b = this.expr(rn);
@@ -902,12 +946,21 @@
       if (name === 'tolower') { const r = this.expr(args[0]); return { c: '((c=>c>=65&&c<=90?c+32:c)(' + this.conv(r, 'int') + '))', t: 'int' }; }
 
       const f = this.funcs.get(name);
-      if (!f) { this.err("la función '" + name + "' no está declarada", n.line); args.forEach((a) => { if (a.k !== 'str') this.expr(a); }); return { c: '0', t: 'int' }; }
+      if (!f) { const sg = this.suggest(name); this.err("la función '" + name + "' no está declarada" + (sg ? ". ¿Quisiste decir '" + sg + "'? (en C todo va en minúscula y se escribe igual)" : ''), n.line); args.forEach((a) => { if (a.k !== 'str') this.expr(a); }); return { c: '0', t: 'int' }; }
       if (args.length !== f.params.length) {
         this.err("la función '" + name + "' recibe " + f.params.length + ' argumento(s) y se la llamó con ' + args.length, n.line);
         return { c: '0', t: f.ret === 'void' ? 'void' : f.ret };
       }
-      const a = args.map((x, i) => this.conv(this.expr(x), f.params[i].type));
+      const a = args.map((x, i) => {
+        const p = f.params[i];
+        if (p.array) {
+          const inf = x.k === 'id' ? this.lookup(x.name) : null;
+          if (!inf || !inf.array) { this.err("el argumento " + (i + 1) + " de '" + name + "' tiene que ser un arreglo (la función lo pide con [ ])", n.line); return '[]'; }
+          if (inf.ndims !== p.dims) this.err("el arreglo '" + x.name + "' tiene " + inf.ndims + ' dimensión(es) pero la función ' + name + ' espera ' + p.dims, n.line);
+          return inf.js;
+        }
+        return this.conv(this.expr(x), p.type);
+      });
       const call = 'f_' + name + '(' + a.join(',') + ')';
       return { c: f.async ? '(await ' + call + ')' : call, t: f.ret };
     }
@@ -965,7 +1018,8 @@
       const specs = this.parseFmt(fmt).filter((s) => !/\*/.test(s.w || ''));
       const refs = [], types = [];
       const rest = args.slice(1);
-      if (rest.length !== specs.length) this.warn('scanf lee ' + specs.length + ' valor(es) por los % del texto, pero recibe ' + rest.length + ' variable(s)', n.line);
+      if (rest.length < specs.length) this.err('scanf pide leer ' + specs.length + ' valor(es) (hay ' + specs.length + " '%') pero solo tiene " + rest.length + " variable(s): falta una variable con '&' (por ejemplo scanf(\"%d %d\", &a, &b);)", n.line);
+      else if (rest.length !== specs.length) this.warn('scanf lee ' + specs.length + ' valor(es) por los % del texto, pero recibe ' + rest.length + ' variable(s)', n.line);
       rest.forEach((a, k) => {
         if (a.k !== 'addr') {
           if (a.k === 'id' && this.lookup(a.name) && this.lookup(a.name).scalar) this.err("a scanf le falta el '&' delante de '" + a.name + "' (scanf necesita &" + a.name + ')', n.line);
