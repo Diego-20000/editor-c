@@ -113,6 +113,8 @@
       let op = null;
       for (const o of OPS) if (text.startsWith(o, i)) { op = o; break; }
       if (!op && '+-*/%=<>!&|^~?:;,.(){}[]'.indexOf(c) >= 0) op = c;
+      if (c === '\\') throw new CErr("carácter no válido '\\': si querías escribir un texto, ponelo entre comillas, por ejemplo printf(\"Hola\\n\");", line);
+      if (c === '“' || c === '”' || c === '‘' || c === '’') throw new CErr("las comillas tipográficas " + c + " no sirven en C: usá las comillas rectas " + (c === '“' || c === '”' ? '"' : "'"), line);
       if (!op) throw new CErr("carácter no válido '" + c + "'", line);
       out.push({ t: 'op', v: op, line }); i += op.length;
     }
@@ -153,6 +155,8 @@
       const t = this.peek();
       const line = (v === ';' || v === ')' || v === ']') && t.line > this.prevLine() ? this.prevLine() : t.line;
       const found = t.t === 'eof' ? 'el final del archivo' : "'" + t.v + "'";
+      if (t.t === 'id' && (t.v === 'and' || t.v === 'or' || t.v === 'not')) throw new CErr("en C la \"y\" lógica es '&&', la \"o\" es '||' y el \"no\" es '!' (no se escribe '" + t.v + "')", t.line);
+      if (v === ';' && t.t === 'id' && (t.v === 'then' || t.v === 'endif' || t.v === 'end')) throw new CErr("'" + t.v + "' no existe en C: el cuerpo del if va entre llaves { }", t.line);
       if (v === ';') throw new CErr("falta un ';' al final de esta línea (antes de " + found + ')', line);
       throw new CErr("se esperaba '" + v + "' pero se encontró " + found, line);
     }
@@ -200,7 +204,7 @@
         let type = this.typeSpec();
         if (type === null) {
           // función sin tipo (ej. main() ) = int implícito
-          if (this.peek().t === 'id' && this.isOp('(', 1)) type = 'int';
+          if (this.peek().t === 'id' && this.isOp('(', 1)) { const a2 = this.peek(2); if (a2.t === 'str' || a2.t === 'num') throw new CErr('esta instrucción está fuera de una función: va adentro de main() { ... }', this.peek().line); type = 'int'; }
           else {
             const t = this.peek();
             throw new CErr("no se entiende '" + t.v + "' fuera de una función", t.line);
@@ -209,6 +213,7 @@
         const cn = this.sawConst;
         if (this.isOp('*')) throw new CErr('los punteros todavía no están soportados en este editor', this.peek().line);
         const nameTok = this.ident();
+        if (this.isOp('{')) throw new CErr("a '" + nameTok.v + "' le faltan los paréntesis: " + nameTok.v + '() { ... }', nameTok.line);
         if (this.isOp('(')) items.push(this.funcRest(type, nameTok, line));
         else { this.p--; const d = this.declRest(type, line); d.const = cn; items.push(d); }
       }
@@ -284,12 +289,21 @@
       if (this.isOp('{')) return this.block();
       if (this.isOp(';')) { this.next(); return { k: 'empty', line }; }
       if (this.isTypeStart()) { const type = this.typeSpec(); const st = this.sawStatic, cn = this.sawConst; const d = this.declRest(type, line); d.static = st; d.const = cn; return d; }
+      if (t.t === 'id' && (t.v === 'elseif' || t.v === 'elif') && this.isOp('(', 1)) throw new CErr("'" + t.v + "' no existe en C: se escribe 'else if (condición)'", line);
+      if (t.t === 'id' && !RESERVED.has(t.v) && !TYPE_KW.has(t.v) && this.peek(1).t === 'id' && !RESERVED.has(this.peek(1).v) && !TYPE_KW.has(this.peek(1).v)) {
+        const tipos = ['int', 'float', 'double', 'char', 'void', 'long', 'short', 'unsigned'];
+        const lev = (a, b) => { const d = []; for (let i = 0; i <= a.length; i++) d[i] = [i]; for (let j = 1; j <= b.length; j++) d[0][j] = j; for (let i = 1; i <= a.length; i++) for (let j = 1; j <= b.length; j++) d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)); return d[a.length][b.length]; };
+        let best = null, bd = 99; for (const ty of tipos) { const dd = lev(t.v.toLowerCase(), ty); if (dd < bd) { bd = dd; best = ty; } }
+        if (t.v === 'string') throw new CErr("en C no existe 'string': para un carácter usá char (los textos completos todavía no están soportados en este editor)", line);
+        if (bd <= 2) throw new CErr("'" + t.v + "' no es un tipo de C: ¿quisiste escribir '" + best + "'? (C distingue mayúsculas y minúsculas)", line);
+        throw new CErr("no se entiende '" + t.v + ' ' + this.peek(1).v + "': ¿falta un operador, un ';' o es un tipo mal escrito?", line);
+      }
       if (t.t === 'id') {
         switch (t.v) {
           case 'if': {
             this.next(); this.expect('('); const c = this.expr(); this.expect(')');
             const a = this.stmt(); let b = null;
-            if (this.isId('else')) { this.next(); b = this.stmt(); }
+            if (this.isId('else')) { this.next(); if (this.isOp('(')) throw new CErr("después de 'else' no va una condición: si querías otra condición escribí 'else if (…)'", this.peek().line); b = this.stmt(); }
             return { k: 'if', c, a, b, line };
           }
           case 'while': {
@@ -385,7 +399,7 @@
         if (t.v === '++' || t.v === '--') { this.next(); return { k: 'incdec', op: t.v, prefix: true, e: this.unary(), line: t.line }; }
         if (t.v === '-' || t.v === '+' || t.v === '!' || t.v === '~') { this.next(); return { k: 'un', op: t.v, e: this.unary(), line: t.line }; }
         if (t.v === '&') { this.next(); return { k: 'addr', e: this.unary(), line: t.line }; }
-        if (t.v === '*') throw new CErr('los punteros todavía no están soportados en este editor', t.line);
+        if (t.v === '*') { const pv = this.t[this.p - 1]; if (pv && pv.t === 'op' && pv.v === '*') throw new CErr("en C no existe '**' (potencia): usá pow(base, exponente) de <math.h>", t.line); throw new CErr('los punteros todavía no están soportados en este editor', t.line); }
         if (t.v === '(' && this.isTypeStart(1)) {
           this.next(); const type = this.typeSpec();
           if (this.isOp('*')) throw new CErr('los punteros todavía no están soportados en este editor', this.peek().line);
@@ -434,6 +448,10 @@
       if (t.t === 'op' && t.v === '(') { const e = this.expr(); this.expect(')'); return e; }
       const found = t.t === 'eof' ? 'el final del archivo' : "'" + t.v + "'";
       const line = t.t === 'eof' ? this.prevLine() : t.line;
+      const ant = this.t[this.p - 2];
+      if (t.t === 'op' && t.v === '>' && ant && ant.t === 'op' && ant.v === '<') throw new CErr("en C \"distinto\" se escribe '!=' (no '<>')", line);
+      if (t.t === 'op' && t.v === '>' && ant && ant.t === 'op' && ant.v === '=') throw new CErr("\"mayor o igual\" se escribe '>=' (no '=>')", line);
+      if (t.t === 'op' && t.v === '=' && ant && ant.t === 'op' && ant.v === '<') throw new CErr("\"menor o igual\" se escribe '<=' (no '=<')", line);
       throw new CErr('falta una expresión antes de ' + found, line);
     }
   }
