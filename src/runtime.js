@@ -94,38 +94,44 @@
 
   const SPEC = /%([-+ #0]*)(\*|\d+)?(?:\.(\*|\d*))?(hh|h|ll|l|L|z|j|t)?([diouxXfFeEgGcsp%])/g;
 
+  function toBig(a) {
+    if (typeof a === 'bigint') return a;
+    if (typeof a === 'number' && isFinite(a)) return BigInt(Math.trunc(a));
+    return 0n;
+  }
   function cformat(fmt, args) {
     let ai = 0;
     return fmt.replace(SPEC, function (m, flags, width, prec, len, conv) {
       if (conv === '%') return '%';
-      let w = width === undefined ? 0 : (width === '*' ? (args[ai++] | 0) : parseInt(width, 10));
+      let w = width === undefined ? 0 : (width === '*' ? (Number(args[ai++]) | 0) : parseInt(width, 10));
       let left = flags.indexOf('-') >= 0, zero = flags.indexOf('0') >= 0, plus = flags.indexOf('+') >= 0,
         space = flags.indexOf(' ') >= 0, alt = flags.indexOf('#') >= 0;
       if (w < 0) { left = true; w = -w; }
-      let p = prec === undefined ? -1 : (prec === '*' ? (args[ai++] | 0) : (prec === '' ? 0 : parseInt(prec, 10)));
+      let p = prec === undefined ? -1 : (prec === '*' ? (Number(args[ai++]) | 0) : (prec === '' ? 0 : parseInt(prec, 10)));
       const arg = args[ai++];
       let body = '', sign = '', numeric = true, isSpecial = false;
       const upper = conv === 'F' || conv === 'E' || conv === 'G' || conv === 'X';
       if (conv === 'd' || conv === 'i') {
-        let v = typeof arg === 'number' ? Math.trunc(arg) : 0;
-        if (!isFinite(v)) v = 0;
-        if (len !== 'l' && len !== 'll' && len !== 'z' && len !== 'j') v = v | 0;
-        sign = v < 0 ? '-' : (plus ? '+' : (space ? ' ' : ''));
-        body = Math.abs(v).toString();
-        if (p >= 0) { zero = false; body = body.padStart(p, '0'); if (p === 0 && v === 0) body = ''; }
+        let bv = toBig(arg);
+        const bits = len === 'hh' ? 8 : len === 'h' ? 16 : (len === 'l' || len === 'll' || len === 'z' || len === 'j' || len === 't') ? 64 : 32;
+        if (bits === 64 && typeof arg === 'number') bv = BigInt.asUintN(32, bv);
+        bv = BigInt.asIntN(bits, bv);
+        const neg = bv < 0n;
+        sign = neg ? '-' : (plus ? '+' : (space ? ' ' : ''));
+        body = (neg ? -bv : bv).toString();
+        if (p >= 0) { zero = false; body = body.padStart(p, '0'); if (p === 0 && bv === 0n) body = ''; }
       } else if (conv === 'u' || conv === 'x' || conv === 'X' || conv === 'o') {
-        let v = typeof arg === 'number' ? Math.trunc(arg) : 0;
-        if (!isFinite(v)) v = 0;
-        if (len === 'l' || len === 'll' || len === 'z' || len === 'j') {
-          v = BigInt.asUintN(64, BigInt(v));
-        } else v = v >>> 0;
+        let bv = toBig(arg);
+        const bits = len === 'hh' ? 8 : len === 'h' ? 16 : (len === 'l' || len === 'll' || len === 'z' || len === 'j' || len === 't') ? 64 : 32;
+        if (bits === 64 && typeof arg === 'number') bv = BigInt.asUintN(32, bv);
+        bv = BigInt.asUintN(bits, bv);
         const base = conv === 'u' ? 10 : (conv === 'o' ? 8 : 16);
-        body = v.toString(base);
+        body = bv.toString(base);
         if (upper) body = body.toUpperCase();
-        if (alt && v != 0) { if (conv === 'x') body = '0x' + body; else if (conv === 'X') body = '0X' + body; else if (conv === 'o') body = '0' + body; }
-        if (p >= 0) { zero = false; body = body.padStart(p, '0'); }
+        if (p >= 0) { zero = false; body = body.padStart(p, '0'); if (p === 0 && bv === 0n && !(alt && conv === 'o')) body = ''; }
+        if (alt && bv !== 0n) { if (conv === 'x') body = '0x' + body; else if (conv === 'X') body = '0X' + body; else if (conv === 'o' && body[0] !== '0') body = '0' + body; }
       } else if ('fFeEgG'.indexOf(conv) >= 0) {
-        const v = typeof arg === 'number' ? arg : 0;
+        const v = typeof arg === 'number' ? arg : (typeof arg === 'bigint' ? Number(arg) : 0);
         const neg = Number.isNaN(v) ? true : signBit(v);
         sign = neg ? '-' : (plus ? '+' : (space ? ' ' : ''));
         if (Number.isNaN(v)) { body = upper ? 'NAN' : 'nan'; isSpecial = true; }
@@ -139,7 +145,7 @@
         if (isSpecial) zero = false;
       } else if (conv === 'c') {
         numeric = false; zero = false;
-        body = String.fromCharCode(typeof arg === 'number' ? (arg & 255) : 63);
+        body = String.fromCharCode(typeof arg === 'number' ? (arg & 255) : (typeof arg === 'bigint' ? Number(BigInt.asUintN(8, arg)) : 63));
       } else if (conv === 's') {
         numeric = false; zero = false;
         body = typeof arg === 'string' ? arg : String(arg === undefined ? '(null)' : arg);
@@ -186,14 +192,30 @@
     }
 
     function conv(t, v) {
+      if (typeof v === 'bigint') {
+        switch (t) {
+          case 'int': return Number(BigInt.asIntN(32, v));
+          case 'uint': return Number(BigInt.asUintN(32, v));
+          case 'char': return Number(BigInt.asIntN(8, v));
+          case 'uchar': return Number(BigInt.asUintN(8, v));
+          case 'short': return Number(BigInt.asIntN(16, v));
+          case 'ushort': return Number(BigInt.asUintN(16, v));
+          case 'long': return BigInt.asIntN(64, v);
+          case 'ulong': return BigInt.asUintN(64, v);
+          case 'float': return Math.fround(Number(v));
+          default: return Number(v);
+        }
+      }
       switch (t) {
         case 'int': return v | 0;
         case 'uint': return v >>> 0;
         case 'char': return (v << 24) >> 24;
+        case 'uchar': return v & 255;
         case 'short': return (v << 16) >> 16;
         case 'ushort': return v & 65535;
         case 'float': return Math.fround(v);
-        case 'long': return Math.trunc(v);
+        case 'long': return BigInt(isFinite(v) ? Math.trunc(v) : 0);
+        case 'ulong': return BigInt.asUintN(64, BigInt(isFinite(v) ? Math.trunc(v) : 0));
         default: return v;
       }
     }
@@ -235,11 +257,14 @@
             const m = re.exec(rest.slice(0, isFinite(maxw) ? maxw : undefined));
             if (!m) return count;
             pos += m[0].length;
-            let v;
-            if (sp === 'x' || sp === 'X') v = parseInt(m[0], 16);
-            else if (sp === 'o') v = parseInt(m[0], 8);
-            else if (sp === 'i') v = /^[+-]?0[xX]/.test(m[0]) ? parseInt(m[0], 16) : (/^[+-]?0[0-7]/.test(m[0]) ? parseInt(m[0], 8) : parseInt(m[0], 10));
-            else v = parseInt(m[0], 10);
+            let txt = m[0], neg = false;
+            if (txt[0] === '+' || txt[0] === '-') { neg = txt[0] === '-'; txt = txt.slice(1); }
+            let radix = 10;
+            if (sp === 'x' || sp === 'X') { radix = 16; txt = txt.replace(/^0[xX]/, ''); }
+            else if (sp === 'o') radix = 8;
+            else if (sp === 'i') { if (/^0[xX]/.test(txt)) { radix = 16; txt = txt.slice(2); } else if (/^0[0-7]/.test(txt)) radix = 8; }
+            let v = BigInt((radix === 16 ? '0x' : (radix === 8 ? '0o' : '')) + txt);
+            if (neg) v = -v;
             if (!suppress) { const r = refs[ri], t = types[ri]; ri++; r[1](conv(t, v)); count++; }
             first = false; continue;
           }
@@ -298,11 +323,13 @@
       idiv(a, b, line) { if (b === 0) throw new CRuntimeError('división entera por cero (en C el programa se cierra con "Floating point exception")', line); return Math.trunc(a / b); },
       imod(a, b, line) { if (b === 0) throw new CRuntimeError('resto (%) con divisor cero (en C el programa se cierra con "Floating point exception")', line); return a % b; },
       ix(i, len, line) {
+        if (typeof i === 'bigint') i = Number(i);
         if (i < 0 || i >= len) throw new CRuntimeError('índice ' + i + ' fuera del arreglo (tiene ' + len + ' posiciones: 0 a ' + (len - 1) + ')', line);
         return i;
       },
       d2i(v) { return (v > -2147483649 && v < 2147483648) ? (v | 0) : -2147483648; },
       mk(dims, fill) {
+        dims = dims.map(Number);
         const build = (k) => { const a = new Array(dims[k]); for (let i = 0; i < dims[k]; i++) a[i] = k === dims.length - 1 ? fill : build(k + 1); return a; };
         for (const d of dims) if (!(d > 0)) throw new CRuntimeError('tamaño de arreglo inválido (' + d + ')');
         return build(0);
@@ -314,8 +341,8 @@
         else while (out.length < d) out.push(0);
         return out;
       },
-      init(list, dims) {
-        const arr = this.mk(dims, 0);
+      init(list, dims, fill) {
+        const arr = this.mk(dims, fill === undefined ? 0 : fill);
         const fillFrom = (a, ds, lst, st) => {
           for (let k = 0; k < ds[0]; k++) {
             if (st.i >= lst.length) break;
@@ -337,7 +364,12 @@
       fmod(a, b) { return a % b; },
       yield: async function () { await new Promise((res) => setTimeout(res, 0)); if (io.cancelled && io.cancelled()) throw new ExitSignal(-999); },
       rand, srand(s) { nextRand = makeRand(s); return 0; },
-      time() { return Math.floor(Date.now() / 1000); },
+      time() { return BigInt(Math.floor(Date.now() / 1000)); },
+      clock() { return BigInt(Math.round((typeof performance !== 'undefined' ? performance.now() : Date.now()) * 1000)); },
+      ldiv(a, b, line) { if (b === 0n) throw new CRuntimeError('división entera por cero (en C el programa se cierra con "Floating point exception")', line); return a / b; },
+      lmod(a, b, line) { if (b === 0n) throw new CRuntimeError('resto (%) con divisor cero (en C el programa se cierra con "Floating point exception")', line); return a % b; },
+      f2l(v) { return (isFinite(v) && v >= -9223372036854775808 && v < 9223372036854775808) ? BigInt(Math.trunc(v)) : -(2n ** 63n); },
+      f2ul(v) { return (isFinite(v) && v >= 0 && v < 18446744073709551616) ? BigInt(Math.trunc(v)) : BigInt.asUintN(64, this.f2l(v)); },
       exit(c) { throw new ExitSignal(c | 0); },
       CRuntimeError, ExitSignal
     };
