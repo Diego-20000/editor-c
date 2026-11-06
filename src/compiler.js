@@ -274,8 +274,8 @@
         if (this.peek().t === 'eof') throw new CErr("falta cerrar la llave '{' abierta en la línea " + line, this.prevLine());
         body.push(this.stmt());
       }
-      this.expect('}');
-      return { k: 'block', body, line };
+      const close = this.expect('}');
+      return { k: 'block', body, line, end: close.line };
     }
     stmt() {
       const t = this.peek();
@@ -496,13 +496,32 @@
       return null;
     }
 
+    checkIncludes() {
+      const ok = ['stdio.h', 'math.h', 'stdlib.h', 'string.h', 'ctype.h', 'time.h', 'limits.h', 'stdbool.h', 'conio.h'];
+      for (const h of (this.opts.includes || [])) {
+        const nm = h.replace(/^[<"]|[>"]$/g, '');
+        if (nm === 'conio.h') this.warn("<conio.h> solo existe en Windows (Code::Blocks): en Programiz y OnlineGDB no compila. Para esperar una tecla usá getchar() o scanf", 1);
+        else if (ok.indexOf(nm) < 0) {
+          const sg = nm === 'studio.h' || nm === 'stdoi.h' || nm === 'stido.h' || nm === 'stdio' ? 'stdio.h' : (nm === 'maths.h' || nm === 'math' ? 'math.h' : null);
+          this.warn('no se conoce la biblioteca <' + nm + '>' + (sg ? ': ¿quisiste escribir <' + sg + '>?' : ''), 1);
+        }
+      }
+    }
     run() {
+      this.checkIncludes();
       // 1) firmas de funciones
       for (const it of this.items) {
         if (it.k === 'func' || it.k === 'proto') {
           const prev = this.funcs.get(it.name);
           if (prev && prev.node && it.k === 'func') { this.err("la función '" + it.name + "' está definida dos veces", it.line); continue; }
-          if (!prev || it.k === 'func') this.funcs.set(it.name, { name: it.name, ret: it.ret, params: it.params, node: it.k === 'func' ? it : (prev && prev.node), line: it.line, async: false, calls: new Set(), reads: false });
+          if (prev) {
+            const dif = [];
+            if (prev.ret !== it.ret) dif.push('devuelve ' + TNAME[prev.ret] + ' en una y ' + TNAME[it.ret] + ' en la otra');
+            if (prev.params.length !== it.params.length) dif.push('una tiene ' + prev.params.length + ' parámetro(s) y la otra ' + it.params.length);
+            else if (prev.params.some((p, i) => p.type !== it.params[i].type || !!p.array !== !!it.params[i].array)) dif.push('los tipos de los parámetros no coinciden');
+            if (dif.length) this.err("el prototipo y la definición de '" + it.name + "' no coinciden: " + dif.join('; '), it.line);
+          }
+          if (!prev || it.k === 'func') this.funcs.set(it.name, { name: it.name, ret: it.ret, params: it.params, node: it.k === 'func' ? it : (prev && prev.node), hasProto: it.k === 'proto' || !!(prev && prev.hasProto), line: it.line, async: false, calls: new Set(), reads: false });
         }
       }
       if (!this.funcs.has('main')) this.err("no hay función main(): el programa empieza en 'main() { ... }'", 1);
@@ -543,6 +562,7 @@
       for (const p of f.params) { this.declare(p.name, p.array ? { type: p.type, js: 'v_' + p.name, assigned: true, array: true, ndims: p.dims, param: true } : { type: p.type, js: 'v_' + p.name, assigned: true, scalar: true }, p.line); ps.push('v_' + p.name); }
       const body = this.stmtList(f.body.body);
       this.pop();
+      if (info.ret !== 'void' && f.name !== 'main' && !this.alwaysReturns(f.body)) this.warn("la función '" + f.name + "' puede terminar sin ejecutar 'return' en algún caso: en C devuelve un valor basura. Agregá un return al final", f.body.end || f.line);
       this.cur = null;
       const tail = f.name === 'main' ? '\nreturn 0;' : '';
       return (info.async ? 'async ' : '') + 'function f_' + f.name + '(' + ps.join(',') + '){let $t;\n' + body + tail + '\n}';
@@ -554,11 +574,20 @@
         case 'block': { this.push(); const b = this.stmtList(s.body); this.pop(); return '{\n' + b + '\n}'; }
         case 'empty': return ';';
         case 'decl': return this.declCode(s, false);
-        case 'expr': return this.expr(s.e, true).c + ';';
+        case 'expr': {
+          const ek = s.e.k;
+          if (ek === 'bin' || ek === 'un' || ek === 'id' || ek === 'num' || ek === 'cond' || ek === 'idx') {
+            if (ek === 'bin' && s.e.op === '==') this.warn("esta sentencia compara pero no guarda el resultado: no hace nada. ¿Querías asignar con '='?", s.line);
+            else this.warn('esta sentencia no hace nada: el resultado de la cuenta no se guarda en ninguna variable', s.line);
+          }
+          return this.expr(s.e, true).c + ';';
+        }
         case 'if': {
           this.checkCondAssign(s.c);
           const c = this.cond(s.c);
           this.push(); const a = this.stmt(s.a); this.pop();
+          if (s.a.k === 'empty') this.warn("el if termina en ';' y su cuerpo queda vacío: lo que sigue se ejecuta siempre. ¿Sobra ese ';'?", s.line);
+          if (s.b && s.b.k === 'empty') this.warn("el else termina en ';' y su cuerpo queda vacío", s.line);
           let r = 'if (' + c + ') ' + this.wrap(a);
           if (s.b) { this.push(); r += ' else ' + this.wrap(this.stmt(s.b)); this.pop(); }
           return r;
@@ -567,10 +596,10 @@
           this.checkCondAssign(s.c);
           const c = this.cond(s.c);
           this.push(); const b = this.bodyStmt(s.body); this.pop();
-          this.checkEmptyBody(s, 'while');
+          this.checkEmptyBody(s, 'while'); this.checkLoop(s, 'while');
           return 'while (' + c + ') ' + this.loopWrap(b);
         }
-        case 'do': { this.push(); const b = this.bodyStmt(s.body); this.pop(); this.checkCondAssign(s.c); return 'do ' + this.loopWrap(b) + ' while (' + this.cond(s.c) + ');'; }
+        case 'do': { this.push(); const b = this.bodyStmt(s.body); this.pop(); this.checkCondAssign(s.c); this.checkLoop(s, 'do-while'); return 'do ' + this.loopWrap(b) + ' while (' + this.cond(s.c) + ');'; }
         case 'for': {
           this.push();
           let init = '';
@@ -580,7 +609,7 @@
           const st = s.step ? this.expr(s.step, true).c : '';
           const b = this.bodyStmt(s.body);
           this.pop();
-          this.checkEmptyBody(s, 'for');
+          this.checkEmptyBody(s, 'for'); this.checkLoop(s, 'for');
           return 'for (' + init + ';' + c + ';' + st + ') ' + this.loopWrap(b);
         }
         case 'return': {
@@ -621,6 +650,52 @@
         }
       }
       throw new Error('stmt ' + s.k);
+    }
+    alwaysReturns(st) {
+      if (!st) return false;
+      switch (st.k) {
+        case 'return': return true;
+        case 'block': return st.body.some((x) => this.alwaysReturns(x));
+        case 'if': return !!st.b && this.alwaysReturns(st.a) && this.alwaysReturns(st.b);
+        case 'while': return st.c.k === 'num' && st.c.v !== 0 && !this.hasBreak(st.body);
+        case 'do': return this.alwaysReturns(st.body);
+        case 'for': return !st.c && !this.hasBreak(st.body);
+        case 'switch': return st.items.some((x) => x.k === 'default') && st.items.some((x) => this.alwaysReturns(x)) && !st.items.some((x) => this.hasBreak(x));
+        default: return false;
+      }
+    }
+    hasBreak(n) {
+      if (!n || typeof n !== 'object') return false;
+      if (Array.isArray(n)) return n.some((x) => this.hasBreak(x));
+      if (n.k === 'break') return true;
+      for (const k in n) if (k !== 'line' && typeof n[k] === 'object' && this.hasBreak(n[k])) return true;
+      return false;
+    }
+    walk(n, fn) {
+      if (!n || typeof n !== 'object') return;
+      if (Array.isArray(n)) { n.forEach((x) => this.walk(x, fn)); return; }
+      if (n.k) fn(n);
+      for (const k in n) if (k !== 'line' && typeof n[k] === 'object') this.walk(n[k], fn);
+    }
+    rootId(n) { while (n && n.k === 'idx') n = n.base; return n && n.k === 'id' ? n.name : null; }
+    checkLoop(s, kind) {
+      const body = s.body, cond = s.c;
+      let salida = false; const mod = new Set(); const calls = [];
+      const scan = (n) => this.walk(n, (x) => {
+        if (x.k === 'break' || x.k === 'return') salida = true;
+        if (x.k === 'call') { if (['exit', 'scanf', 'getchar', 'getch', 'getche', 'fgets', 'gets'].indexOf(x.name) >= 0) salida = true; else if (this.funcs.has(x.name)) { salida = true; } }
+        if (x.k === 'assign') { const r = this.rootId(x.l); if (r) mod.add(r); }
+        if (x.k === 'incdec') { const r = this.rootId(x.e); if (r) mod.add(r); }
+        if (x.k === 'addr') { const r = this.rootId(x.e); if (r) mod.add(r); }
+      });
+      scan(body); if (s.step) scan(s.step);
+      if (salida) return;
+      const siempre = !cond || (cond.k === 'num' && cond.v !== 0);
+      if (siempre) { this.warn(kind + ' sin condición de corte y sin \'break\' ni \'return\' adentro: el bucle no termina nunca', s.line); return; }
+      const ids = []; let conCall = false;
+      this.walk(cond, (x) => { if (x.k === 'id') ids.push(x.name); if (x.k === 'call') conCall = true; });
+      if (conCall || !ids.length) return;
+      if (ids.every((nm) => !mod.has(nm))) this.warn('en este ' + kind + ' ninguna variable de la condición (' + Array.from(new Set(ids)).join(', ') + ') cambia dentro del bucle: es probable que nunca termine', s.line);
     }
     bodyStmt(b) { this.loopDepth++; const r = this.stmt(b); this.loopDepth--; return r; }
     isConstExpr(n) {
@@ -835,6 +910,11 @@
         const a = this.cond(ln); this.inSC++; const b = this.cond(rn); this.inSC--;
         return { c: '(' + a + (op === '&&' ? '&&' : '||') + b + ')', t: 'int', b: true };
       }
+      const REL = ['<', '>', '<=', '>=', '==', '!='];
+      const esRel = (x) => x && x.k === 'bin' && REL.indexOf(x.op) >= 0;
+      if ((op === '&' || op === '|') && (esRel(ln) || esRel(rn))) this.warn("usaste '" + op + "' (operación de bits); para " + (op === '&' ? '"y"' : '"o"') + " lógico se escribe '" + op + op + "'", line);
+      if (REL.indexOf(op) >= 0 && esRel(ln) && op !== '==' && op !== '!=') this.warn("a < b < c no comprueba un rango: C evalúa primero la comparación de la izquierda (da 0 o 1). Escribilo con &&, por ejemplo: 0 < a && a < 3", line);
+      if (op === '^') this.warn("en C, '^' no es potencia (es XOR de bits): 2 ^ 3 da 1. Para potencias usá pow(2, 3) de <math.h>", line);
       const a = this.expr(ln), b = this.expr(rn);
       if (a.t === 'str' || b.t === 'str' || a.t === 'void' || b.t === 'void') {
         this.err(a.t === 'void' || b.t === 'void' ? 'esa función no devuelve ningún valor' : 'no se puede operar con un texto entre comillas', line);
@@ -848,8 +928,9 @@
       }
       if (op === '<' || op === '>' || op === '<=' || op === '>=' || op === '==' || op === '!=') {
         if (op === '==' || op === '!=') {
-          const frac = (x) => x.k === 'num' && (x.kind === 'double' || x.kind === 'float') && !Number.isInteger(x.v);
-          if (frac(ln) || frac(rn)) this.warn("comparar un decimal con '" + op + "' puede fallar por redondeo (por ejemplo 0.1 no se guarda exacto): conviene comparar con '<' o '>'", line);
+          const entero = (x) => x.k === 'num' && Number.isInteger(x.v);
+          const hayFloat = (FLOATLIKE.has(a.t) && !entero(rn)) || (FLOATLIKE.has(b.t) && !entero(ln));
+          if (hayFloat) this.warn("comparar un decimal con '" + op + "' puede fallar por redondeo (por ejemplo 0.1 no se guarda exacto): conviene comparar con '<' o '>'", line);
         }
         const ct = arith(a.t, b.t);
         const ua = ct === 'uint' ? '(' + av + '>>>0)' : av, ub = ct === 'uint' ? '(' + bv + '>>>0)' : bv;
@@ -896,6 +977,7 @@
       return { c: '(' + lv.c + '=' + valueCode + ')', t: lv.t };
     }
     incdec(n, asStmt) {
+      if (n.e.k !== 'id' && n.e.k !== 'idx') { this.err("'" + n.op + "' solo se puede aplicar a una variable", n.line); return { c: '0', t: 'int' }; }
       const lv = this.lvalue(n.e, true);
       if (lv.bad) return { c: '0', t: 'int' };
       this.checkConst(lv, this.rootName(n.e), n.line);
@@ -909,8 +991,16 @@
     }
 
     /* ----- llamadas ----- */
+    needInclude(name, line) {
+      const H = { 'stdio.h': ['printf', 'scanf', 'getchar', 'putchar', 'puts'], 'math.h': ['sqrt', 'pow', 'fabs', 'floor', 'ceil', 'round', 'trunc', 'sin', 'cos', 'tan', 'asin', 'acos', 'atan', 'atan2', 'exp', 'log', 'log10', 'log2', 'cbrt', 'fmod', 'fmax', 'fmin', 'hypot'], 'stdlib.h': ['rand', 'srand', 'abs', 'labs', 'exit', 'system'], 'ctype.h': ['isdigit', 'isalpha', 'isalnum', 'isspace', 'isupper', 'islower', 'toupper', 'tolower'], 'time.h': ['time'] };
+      for (const h in H) if (H[h].indexOf(name) >= 0 && !this.incl.has(h)) {
+        const k = 'inc|' + h; if (this.undeclared.has(k)) return; this.undeclared.add(k);
+        this.warn('usás ' + name + ' pero falta #include <' + h + '> al principio del programa', line);
+      }
+    }
     call(n) {
       const name = n.name;
+      this.needInclude(name, n.line);
       const args = n.args;
       const MATH1 = { sqrt: 'Math.sqrt', fabs: 'Math.abs', floor: 'Math.floor', ceil: 'Math.ceil', round: '$.round', trunc: 'Math.trunc', sin: 'Math.sin', cos: 'Math.cos', tan: 'Math.tan', asin: 'Math.asin', acos: 'Math.acos', atan: 'Math.atan', exp: 'Math.exp', log: 'Math.log', log10: 'Math.log10', log2: 'Math.log2', cbrt: 'Math.cbrt' };
       if (name === 'printf') return this.printfCall(n);
@@ -947,6 +1037,7 @@
 
       const f = this.funcs.get(name);
       if (!f) { const sg = this.suggest(name); this.err("la función '" + name + "' no está declarada" + (sg ? ". ¿Quisiste decir '" + sg + "'? (en C todo va en minúscula y se escribe igual)" : ''), n.line); args.forEach((a) => { if (a.k !== 'str') this.expr(a); }); return { c: '0', t: 'int' }; }
+      if (f.node && !f.hasProto && f.node.line > n.line) this.warn("'" + name + "' se usa antes de estar definida: falta el prototipo arriba de main (por ejemplo: " + TNAME[f.ret] + ' ' + name + '(' + (f.params.map((p) => TNAME[p.type]).join(', ') || 'void') + ');)', n.line);
       if (args.length !== f.params.length) {
         this.err("la función '" + name + "' recibe " + f.params.length + ' argumento(s) y se la llamó con ' + args.length, n.line);
         return { c: '0', t: f.ret === 'void' ? 'void' : f.ret };
@@ -1059,11 +1150,11 @@
       toks = tokenize(src, 1, true, includes, defines);
       toks = expandDefines(toks, defines);
       const items = new Parser(toks).program();
-      const g = new Gen(items, opts);
+      const g = new Gen(items, Object.assign({}, opts, { includes }));
       const js = g.run();
       g.errors.sort((a, b) => a.line - b.line);
       g.warnings.sort((a, b) => a.line - b.line);
-      if (g.errors.length) return { js: null, errors: g.errors, warnings: g.warnings };
+      if (g.errors.length) { const el = new Set(g.errors.map((e) => e.line)); g.warnings = g.warnings.filter((w) => !el.has(w.line)); return { js: null, errors: g.errors, warnings: g.warnings }; }
       return { js, errors: [], warnings: g.warnings };
     } catch (e) {
       if (e instanceof CErr) return { js: null, errors: [{ line: e.cline, msg: e.message }], warnings: [] };
