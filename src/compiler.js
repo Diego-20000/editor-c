@@ -169,14 +169,15 @@
     }
     typeSpec() {
       let seen = false, base = null, uns = false, longs = 0, shorts = false;
-      this.sawStatic = false;
+      this.sawStatic = false; this.sawConst = false;
       while (this.peek().t === 'id' && TYPE_KW.has(this.peek().v)) {
         const v = this.next().v; seen = true;
         if (v === 'unsigned') uns = true;
         else if (v === 'long') longs++;
         else if (v === 'short') shorts = true;
         else if (v === 'static') this.sawStatic = true;
-        else if (v === 'signed' || v === 'const') { /* ignorar */ }
+        else if (v === 'const') this.sawConst = true;
+        else if (v === 'signed') { /* ignorar */ }
         else base = v;
       }
       if (!seen) return null;
@@ -205,10 +206,11 @@
             throw new CErr("no se entiende '" + t.v + "' fuera de una función", t.line);
           }
         }
+        const cn = this.sawConst;
         if (this.isOp('*')) throw new CErr('los punteros todavía no están soportados en este editor', this.peek().line);
         const nameTok = this.ident();
         if (this.isOp('(')) items.push(this.funcRest(type, nameTok, line));
-        else { this.p--; items.push(this.declRest(type, line)); }
+        else { this.p--; const d = this.declRest(type, line); d.const = cn; items.push(d); }
       }
       return items;
     }
@@ -280,7 +282,7 @@
       this.checkUnsupported();
       if (this.isOp('{')) return this.block();
       if (this.isOp(';')) { this.next(); return { k: 'empty', line }; }
-      if (this.isTypeStart()) { const type = this.typeSpec(); const st = this.sawStatic; const d = this.declRest(type, line); d.static = st; return d; }
+      if (this.isTypeStart()) { const type = this.typeSpec(); const st = this.sawStatic, cn = this.sawConst; const d = this.declRest(type, line); d.static = st; d.const = cn; return d; }
       if (t.t === 'id') {
         switch (t.v) {
           case 'if': {
@@ -623,7 +625,7 @@
             if (!INTLIKE.has(r.t)) { this.err('el tamaño de un arreglo debe ser un entero', v.line); ok = false; }
             dimsCode.push(this.val(r));
           }
-          this.declare(v.name, { type: d.type, js, array: true, ndims: v.dims.length, assigned: true }, v.line);
+          this.declare(v.name, { type: d.type, js, array: true, ndims: v.dims.length, assigned: true, isConst: !!d.const }, v.line);
           if (!ok) { parts.push('let ' + js + '=[];'); continue; }
           let init;
           if (v.init) {
@@ -639,7 +641,7 @@
           if (v.init.k === 'list') { this.err("'" + v.name + "' no es un arreglo, no se inicializa con llaves", v.line); }
           else { const r = this.expr(v.init); this.checkIntDiv(r, d.type, v.line); init = this.conv(r, d.type); assigned = true; }
         }
-        this.declare(v.name, { type: d.type, js, assigned, scalar: true, global }, v.line);
+        this.declare(v.name, { type: d.type, js, assigned, scalar: true, global, isConst: !!d.const }, v.line);
         parts.push((inFor ? '' : 'let ') + js + '=' + init + (inFor ? '' : ';'));
       }
       if (inFor) return 'let ' + parts.join(',');
@@ -766,6 +768,10 @@
       return { c: '$t', t: 'int', bad: true };
     }
     markAssigned(lv) { if (lv.info) lv.info.assigned = true; }
+    rootName(n) { while (n && n.k === 'idx') n = n.base; return n && n.name; }
+    checkConst(lv, name, line) {
+      if (lv.info && lv.info.isConst) this.err("'" + name + "' es const (constante): no se le puede asignar otro valor", line);
+    }
 
     unaryOp(n) {
       const r = this.expr(n.e);
@@ -829,6 +835,7 @@
     }
     assignOp(n) {
       const lv = this.lvalue(n.l, true);
+      this.checkConst(lv, this.rootName(n.l), n.line);
       let valueCode;
       if (n.op === '=') {
         const r = this.expr(n.r);
@@ -847,6 +854,7 @@
     incdec(n, asStmt) {
       const lv = this.lvalue(n.e, true);
       if (lv.bad) return { c: '0', t: 'int' };
+      this.checkConst(lv, this.rootName(n.e), n.line);
       if (lv.info && !lv.arrayElem && !lv.info.assigned && !lv.info.warned) { lv.info.warned = true; this.warn("'" + n.e.name + "' se usa antes de darle un valor (en C su valor inicial es basura): asignale un valor inicial, por ejemplo " + n.e.name + ' = 0;', n.line); }
       this.markAssigned(lv);
       const sign = n.op === '++' ? '+' : '-';
@@ -966,6 +974,7 @@
         }
         const lv = this.lvalue(a.e, true);
         if (lv.bad) return;
+        this.checkConst(lv, this.rootName(a.e), n.line);
         this.markAssigned(lv);
         const sp = specs[k];
         if (sp) {
