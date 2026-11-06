@@ -85,6 +85,7 @@
     if (X >= -4 && X < p) {
       s = fixedExact(x, p - 1 - X);
       if (!alt && s.indexOf('.') >= 0) s = s.replace(/0+$/, '').replace(/\.$/, '');
+      else if (alt && s.indexOf('.') < 0) s += '.';
     } else {
       s = expForm(x, p - 1, upper);
       if (!alt) s = s.replace(/\.?0+([eE])/, '$1');
@@ -99,7 +100,11 @@
     if (typeof a === 'number' && isFinite(a)) return BigInt(Math.trunc(a));
     return 0n;
   }
+  const ENC = typeof TextEncoder !== 'undefined' ? new TextEncoder() : null;
+  const DEC = typeof TextDecoder !== 'undefined' ? new TextDecoder() : null;
+  function ulen(s) { if (!ENC) return s.length; for (let i = 0; i < s.length; i++) if (s.charCodeAt(i) > 127) return ENC.encode(s).length; return s.length; }
   function cformat(fmt, args) {
+    if (fmt.indexOf('\0') >= 0) fmt = fmt.slice(0, fmt.indexOf('\0'));
     let ai = 0;
     return fmt.replace(SPEC, function (m, flags, width, prec, len, conv) {
       if (conv === '%') return '%';
@@ -150,19 +155,20 @@
       } else if (conv === 's') {
         numeric = false; zero = false;
         body = typeof arg === 'string' ? arg : String(arg === undefined ? '(null)' : arg);
-        if (p >= 0) body = body.slice(0, p);
+        if (p >= 0) { if (ENC && ulen(body) !== body.length) body = DEC.decode(ENC.encode(body).slice(0, p)); else body = body.slice(0, p); }
       } else if (conv === 'p') {
         numeric = false; body = '0x' + ((typeof arg === 'number' ? arg : 0) >>> 0).toString(16);
       }
       let out = sign + body;
-      if (out.length < w) {
-        if (left) out = out + ' '.repeat(w - out.length);
+      const olen = ulen(out);
+      if (olen < w) {
+        if (left) out = out + ' '.repeat(w - olen);
         else if (zero && numeric) {
           let pre = sign;
           let rest = body;
           if ((conv === 'x' || conv === 'X') && alt && /^0[xX]/.test(rest)) { pre += rest.slice(0, 2); rest = rest.slice(2); }
-          out = pre + '0'.repeat(w - out.length) + rest;
-        } else out = ' '.repeat(w - out.length) + out;
+          out = pre + '0'.repeat(w - olen) + rest;
+        } else out = ' '.repeat(w - olen) + out;
       }
       return out;
     });
@@ -266,6 +272,8 @@
             else if (sp === 'i') { if (/^0[xX]/.test(txt)) { radix = 16; txt = txt.slice(2); } else if (/^0[0-7]/.test(txt)) radix = 8; }
             let v = BigInt((radix === 16 ? '0x' : (radix === 8 ? '0o' : '')) + txt);
             if (neg) v = -v;
+            if (sp === 'd' || sp === 'i') { if (v > 9223372036854775807n) v = 9223372036854775807n; else if (v < -9223372036854775808n) v = -9223372036854775808n; }
+            else { const mag = neg ? -v : v; if (mag > 18446744073709551615n) v = 18446744073709551615n; else if (neg) v = BigInt.asUintN(64, v); }
             if (!suppress) { const r = refs[ri], t = types[ri]; ri++; r[1](conv(t, v)); count++; }
             first = false; continue;
           }
@@ -317,7 +325,7 @@
     function rand() { return nextRand(); }
 
     return {
-      printf(fmt, args, line) { let s; try { s = cformat(fmt, args); } catch (e) { if (e instanceof CRuntimeError && e.cline == null) e.cline = line; throw e; } io.write(s); return s.length; },
+      printf(fmt, args, line) { let s; try { s = cformat(fmt, args); } catch (e) { if (e instanceof CRuntimeError && e.cline == null) e.cline = line; throw e; } io.write(s); return ulen(s); },
       puts(s) { io.write(s + '\n'); return 1; },
       putchar(c) { io.write(String.fromCharCode(c & 255)); return c; },
       scanf, getchar,
@@ -356,6 +364,7 @@
         fillFrom(arr, dims, list, { i: 0 });
         return arr;
       },
+      rint(x) { if (!isFinite(x)) return x; const f = Math.floor(x), d = x - f; if (d < 0.5) return f; if (d > 0.5) return f + 1; return (f % 2 === 0) ? f : f + 1; },
       lop(op, a, b) {
         if (!isFinite(a)) a = 0; if (!isFinite(b)) b = 0;
         const x = BigInt.asIntN(64, BigInt(Math.trunc(a))), y = BigInt.asIntN(64, BigInt(Math.trunc(b)));
@@ -403,9 +412,9 @@
     try {
       main = makeProgram(js)(rt);
       const rc = await main();
-      return { code: rc | 0 };
+      return { code: (rc | 0) & 255 };
     } catch (e) {
-      if (e instanceof ExitSignal) return e.code === -999 ? { stopped: true, code: 0 } : { code: e.code };
+      if (e instanceof ExitSignal) return e.code === -999 ? { stopped: true, code: 0 } : { code: e.code & 255 };
       if (e instanceof CRuntimeError) return { error: e.message, line: e.cline, code: 136 };
       if (e instanceof RangeError && /Invalid (string|array) length|allocation/i.test(e.message)) return { error: 'el programa pidió más memoria de la que el editor puede darle', code: 139 };
       if (e instanceof RangeError && /call stack/i.test(e.message)) return { error: 'desbordamiento de la pila (recursión infinita o muy profunda)', code: 139 };
