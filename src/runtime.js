@@ -190,6 +190,8 @@
         case 'int': return v | 0;
         case 'uint': return v >>> 0;
         case 'char': return (v << 24) >> 24;
+        case 'short': return (v << 16) >> 16;
+        case 'ushort': return v & 65535;
         case 'float': return Math.fround(v);
         case 'long': return Math.trunc(v);
         default: return v;
@@ -225,15 +227,19 @@
             if (!suppress) { const r = refs[ri], t = types[ri]; ri++; r[1](conv(t, c)); count++; }
             first = false; continue;
           }
-          if (sp === 'd' || sp === 'i' || sp === 'u' || sp === 'x') {
+          if (sp === 'd' || sp === 'i' || sp === 'u' || sp === 'x' || sp === 'X' || sp === 'o') {
             const c0 = await skipWs();
             if (c0 < 0) return count === 0 ? -1 : count;
             const rest = buf.slice(pos);
-            const re = sp === 'x' ? /^[+-]?(0[xX])?[0-9a-fA-F]+/ : (sp === 'i' ? /^[+-]?(0[xX][0-9a-fA-F]+|[0-9]+)/ : /^[+-]?[0-9]+/);
+            const re = (sp === 'x' || sp === 'X') ? /^[+-]?(0[xX])?[0-9a-fA-F]+/ : (sp === 'o' ? /^[+-]?[0-7]+/ : (sp === 'i' ? /^[+-]?(0[xX][0-9a-fA-F]+|0[0-7]*|[1-9][0-9]*)/ : /^[+-]?[0-9]+/));
             const m = re.exec(rest.slice(0, isFinite(maxw) ? maxw : undefined));
             if (!m) return count;
             pos += m[0].length;
-            let v = sp === 'x' ? parseInt(m[0], 16) : (sp === 'i' ? Number(m[0].replace(/^([+-]?)0(\d)/, '$1$2')) : parseInt(m[0], 10));
+            let v;
+            if (sp === 'x' || sp === 'X') v = parseInt(m[0], 16);
+            else if (sp === 'o') v = parseInt(m[0], 8);
+            else if (sp === 'i') v = /^[+-]?0[xX]/.test(m[0]) ? parseInt(m[0], 16) : (/^[+-]?0[0-7]/.test(m[0]) ? parseInt(m[0], 8) : parseInt(m[0], 10));
+            else v = parseInt(m[0], 10);
             if (!suppress) { const r = refs[ri], t = types[ri]; ri++; r[1](conv(t, v)); count++; }
             first = false; continue;
           }
