@@ -89,6 +89,7 @@
     } else {
       s = expForm(x, p - 1, upper);
       if (!alt) s = s.replace(/\.?0+([eE])/, '$1');
+      else if (s.indexOf('.') < 0) s = s.replace(/([eE])/, '.$1');
     }
     return s;
   }
