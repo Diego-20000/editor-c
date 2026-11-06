@@ -21,7 +21,7 @@
 
   /* ---------- toast ---------- */
   let toastTimer = null;
-  function toast(msg, label, fn) {
+  function toast(msg, label, fn, sticky) {
     let t = $('toast');
     if (!t) { t = document.createElement('div'); t.id = 'toast'; t.className = 'toast'; t.setAttribute('role', 'status'); document.body.appendChild(t); }
     t.textContent = msg + ' ';
@@ -30,8 +30,13 @@
       b.addEventListener('click', () => { fn(); t.hidden = true; });
       t.appendChild(b);
     }
+    if (sticky) {
+      const c = document.createElement('button'); c.type = 'button'; c.className = 'btn mini'; c.textContent = 'Después';
+      c.addEventListener('click', () => { t.hidden = true; });
+      t.appendChild(c);
+    }
     t.hidden = false;
-    clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.hidden = true; }, label ? 9000 : 4500);
+    clearTimeout(toastTimer); if (!sticky) toastTimer = setTimeout(() => { t.hidden = true; }, label ? 9000 : 4500);
   }
 
   /* ---------- datos del alumno y cabecera ---------- */
@@ -250,6 +255,7 @@
     syncScroll();
   }
   function goLine(n) {
+    if (typeof setTab === 'function' && tabMode()) setTab('ed', true);
     const lines = ta.value.split('\n');
     let pos = 0; for (let i = 0; i < n - 1 && i < lines.length; i++) pos += lines[i].length + 1;
     if (!coarse) ta.focus({ preventScroll: true });
@@ -358,12 +364,28 @@
     const open = $('diagHead').getAttribute('aria-expanded') !== 'true';
     $('diagHead').setAttribute('aria-expanded', String(open)); diagList.hidden = !open;
   });
-  function showDiag(res, rtErr) {
+  /* avisos silenciados por código estable (si el motor lo informa); se guardan en este dispositivo */
+  let muted = store.json('muted', []); if (!Array.isArray(muted)) muted = muted && typeof muted === 'object' ? Object.keys(muted) : [];
+  muted = muted.filter((c) => typeof c === 'string').slice(0, 200);
+  function saveMuted() { store.set('muted', JSON.stringify(muted)); updateMutedRow(); }
+  function updateMutedRow() {
+    $('mutedRow').hidden = !muted.length;
+    $('mutedTxt').textContent = 'Avisos silenciados: ' + muted.join(', ');
+  }
+  $('mutedReset').addEventListener('click', () => { muted = []; saveMuted(); if (lastRes) renderDiag(lastRes, lastRt, true); toast('Los avisos vuelven a mostrarse.'); });
+  let lastRt = null;
+  function showDiag(res, rtErr) { lastRt = rtErr || null; renderDiag(res, rtErr, false); }
+  function renderDiag(res, rtErr, noScroll) {
     const lines = ta.value.split('\n');
     const items = [];
-    res.errors.forEach((e) => items.push({ k: 'e', line: e.line, msg: e.msg }));
+    let hidden = 0;
+    (res.errors || []).forEach((e) => items.push({ k: 'e', line: e.line, msg: e.msg, code: typeof e.code === 'string' ? e.code : '' }));
     if (rtErr) items.push({ k: 'e', line: rtErr.line, msg: rtErr.msg, rt: true });
-    res.warnings.forEach((w) => items.push({ k: 'w', line: w.line, msg: w.msg }));
+    (res.warnings || []).forEach((w) => {
+      const code = typeof w.code === 'string' ? w.code : '';
+      if (code && muted.indexOf(code) >= 0) { hidden++; return; }
+      items.push({ k: 'w', line: w.line, msg: w.msg, code });
+    });
     problems = items; problemLines = lines.length;
     marks = new Map();
     items.forEach((it) => { if (it.line && marks.get(it.line) !== 'e') marks.set(it.line, it.k); });
@@ -377,41 +399,64 @@
       const body = document.createElement('span'); body.className = 'body';
       const t = document.createElement('span'); t.textContent = it.msg; body.appendChild(t);
       if (it.line && lines[it.line - 1] !== undefined && lines[it.line - 1].trim()) { const c = document.createElement('code'); c.textContent = lines[it.line - 1].trim(); body.appendChild(c); }
+      if (it.code) { const c = document.createElement('span'); c.className = 'cd'; c.textContent = it.code; body.appendChild(c); }
       b.appendChild(tag); b.appendChild(body);
       if (it.line) { b.title = 'Ir a la línea ' + it.line; b.addEventListener('click', () => goLine(it.line)); }
-      wrap.appendChild(b); diagList.appendChild(wrap);
+      wrap.appendChild(b);
+      if (it.k === 'w' && it.code) {
+        const m = document.createElement('button'); m.type = 'button'; m.className = 'btn mini mute'; m.textContent = 'Silenciar';
+        m.title = 'No mostrar más avisos de tipo ' + it.code + ' (se guarda en este dispositivo)'; m.setAttribute('aria-label', 'Silenciar los avisos de tipo ' + it.code);
+        m.addEventListener('click', () => { if (muted.indexOf(it.code) < 0) muted.push(it.code); saveMuted(); renderDiag(res, rtErr, true); toast('Aviso silenciado: ' + it.code + '.', 'Deshacer', () => { muted = muted.filter((x) => x !== it.code); saveMuted(); renderDiag(res, rtErr, true); }); });
+        wrap.appendChild(m);
+      }
+      diagList.appendChild(wrap);
     });
+    if (hidden && items.length) {
+      const f = document.createElement('div'); f.className = 'dfoot';
+      f.appendChild(document.createTextNode(hidden + (hidden === 1 ? ' aviso silenciado.' : ' avisos silenciados.') + ' '));
+      const r = document.createElement('button'); r.type = 'button'; r.className = 'btn mini'; r.textContent = 'Mostrar de nuevo';
+      r.addEventListener('click', () => { muted = []; saveMuted(); renderDiag(res, rtErr, true); });
+      f.appendChild(r); diagList.appendChild(f);
+    }
     const ne = items.filter((i) => i.k === 'e').length, nw = items.length - ne;
     $('diagTitle').textContent = 'Problemas' + (items.length ? ' · ' + (ne ? ne + (ne === 1 ? ' error' : ' errores') : '') + (ne && nw ? ', ' : '') + (nw ? nw + (nw === 1 ? ' aviso' : ' avisos') : '') : '');
     diag.hidden = !items.length;
     diagList.hidden = $('diagHead').getAttribute('aria-expanded') !== 'true';
     const first = items.find((i) => i.k === 'e' && i.line) || items.find((i) => i.line);
-    if (first) scrollToPos(lineOffset(first.line), false);
+    if (first && !noScroll) scrollToPos(lineOffset(first.line), false);
   }
   function lineOffset(n) { const l = ta.value.split('\n'); let p = 0; for (let i = 0; i < n - 1 && i < l.length; i++) p += l[i].length + 1; return p; }
 
   /* ---------- consola ---------- */
   let total = 0; const CAP = 400000;
+  // La salida se junta y se vuelca a la página cada ~40 ms: un programa que escribe a toda velocidad no frena la interfaz
+  let outBuf = '', outTimer = null;
+  function flushOut() {
+    clearTimeout(outTimer); outTimer = null;
+    if (!outBuf) return;
+    const t = outBuf; outBuf = '';
+    const last = out.lastChild;
+    if (last && last.nodeType === 3) last.appendData(t); else out.appendChild(document.createTextNode(t));
+    cons.scrollTop = cons.scrollHeight;
+    if (tabMode() && tab === 'ed') $('tabDot').hidden = false;
+  }
   function appendText(text, cls) {
     if (!text) return;
     total += text.length;
-    const last = out.lastChild;
-    if (!cls) {
-      if (last && last.nodeType === 3) { last.appendData(text); }
-      else out.appendChild(document.createTextNode(text));
-    } else {
-      const sp = document.createElement('span'); sp.className = cls; sp.textContent = text; out.appendChild(sp);
-    }
+    if (!cls) { outBuf += text; if (!outTimer) outTimer = setTimeout(flushOut, 40); return; }
+    flushOut();
+    const sp = document.createElement('span'); sp.className = cls; sp.textContent = text; out.appendChild(sp);
     cons.scrollTop = cons.scrollHeight;
   }
   function consoleText() {
+    flushOut();
     let s = '';
     out.childNodes.forEach((n) => { if (n.nodeType === 3 || !(n.classList.contains('stdin') || n.classList.contains('eofbtn'))) s += n.textContent; });
     return s;
   }
   function endsWithNewline() { const s = consoleText(); return !s || s.endsWith('\n'); }
   function setStatus(txt, cls) { statusEl.textContent = txt; statusEl.className = 'chip' + (cls ? ' ' + cls : ''); }
-  function clearConsole() { out.textContent = ''; total = 0; }
+  function clearConsole() { clearTimeout(outTimer); outTimer = null; outBuf = ''; out.textContent = ''; total = 0; }
   $('clear').addEventListener('click', () => { removeInput(); clearConsole(); if ((worker || main) && waiting) showInput(); });
   function copyText(s) {
     const fallback = () => {
@@ -451,7 +496,7 @@
   let worker = null, waiting = false;
   function removeInput() { const w = out.querySelector('.stdin'); if (w) w.remove(); const b = out.querySelector('.eofbtn'); if (b) b.remove(); }
   function showInput() {
-    removeInput(); waiting = true;
+    flushOut(); removeInput(); waiting = true;
     const wrap = document.createElement('span'); wrap.className = 'stdin';
     const inp = document.createElement('input');
     inp.type = 'text'; inp.autocomplete = 'off'; inp.spellcheck = false; inp.setAttribute('autocapitalize', 'off'); inp.setAttribute('autocorrect', 'off');
@@ -466,47 +511,92 @@
       else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'd') { e.preventDefault(); sendEOF(); }
     });
     fit(); setStatus('Esperando datos…', 'wait');
-    cons.scrollTop = cons.scrollHeight;
     inp.focus({ preventScroll: true });
+    ensureInputVisible();
   }
   function sendEOF() { removeInput(); waiting = false; appendText('^D\n', 'dim'); setStatus('Ejecutando…', 'run'); send({ type: 'eof' }); }
   cons.addEventListener('click', () => { const i = out.querySelector('.stdin input'); if (i && !window.getSelection().toString()) i.focus({ preventScroll: true }); });
 
   /* ---------- ejecución ---------- */
+  // El Worker recibe el código fuente, lo compila y lo ejecuta: la página solo recibe diagnósticos y salida.
+  // Así un código patológico (compilación eterna, bucle infinito, arreglo gigante) nunca congela la página
+  // y Detener siempre funciona (termina el Worker).
   const BOOT = `
-let pend = '', resolver = null;
+const CAP = ${CAP};
+let pend = '', sent = 0, resolver = null, capped = false;
 function flush() { if (pend) { self.postMessage({ type: 'out', s: pend }); pend = ''; } }
 self.onmessage = async (ev) => {
   const m = ev.data;
   if (m.type === 'run') {
+    let res;
+    try { res = CCompiler.compile(m.src); }
+    catch (e) { res = { js: null, errors: [{ line: 0, msg: 'error interno del editor: ' + (e && e.message) }], warnings: [] }; }
+    const diag = JSON.parse(JSON.stringify({ errors: res.errors || [], warnings: res.warnings || [] }));
+    self.postMessage({ type: 'compiled', res: diag });
+    if (!res.js || diag.errors.length) return;
     const io = {
-      write(s) { pend += s; if (pend.length > 2048) flush(); },
+      write(s) {
+        if (capped) return;
+        const room = CAP - sent;
+        if (s.length > room) { pend += s.slice(0, Math.max(0, room)); sent = CAP; capped = true; flush(); self.postMessage({ type: 'cap' }); throw new CRT.ExitSignal(-999); }
+        sent += s.length; pend += s; if (pend.length > 2048) flush();
+      },
       readLine() { flush(); self.postMessage({ type: 'need' }); return new Promise((r) => { resolver = r; }); }
     };
-    const res = await CRT.runProgram(m.js, io);
-    flush(); self.postMessage({ type: 'done', res });
+    const r = await CRT.runProgram(res.js, io);
+    if (capped) return;
+    flush(); self.postMessage({ type: 'done', res: r });
   } else if (m.type === 'line') { if (resolver) { const r = resolver; resolver = null; r(m.s); } }
   else if (m.type === 'eof') { if (resolver) { const r = resolver; resolver = null; r(null); } }
 };
 self.postMessage({ type: 'ready' });`;
   let blobUrl = null;
   function makeWorker() {
-    if (!blobUrl) blobUrl = URL.createObjectURL(new Blob([RT_SRC + '\n' + BOOT], { type: 'text/javascript' }));
+    if (typeof CC_SRC === 'undefined' || typeof RT_SRC === 'undefined') throw new Error('sin texto del motor');
+    if (!blobUrl) blobUrl = URL.createObjectURL(new Blob([CC_SRC + '\n' + RT_SRC + '\n' + BOOT], { type: 'text/javascript' }));
     return new Worker(blobUrl);
   }
-  let workerBroken = false;   // si el navegador no deja usar Workers, se ejecuta en la página
+  let workerBroken = false;   // si el navegador no deja usar Workers, se compila y ejecuta en la página
   let main = null;            // ejecución en la página: { cancel, send }
-  function resetRun() { if (worker) { worker.terminate(); worker = null; } if (main) { main.cancel(); main = null; } waiting = false; runBtn.disabled = false; stopBtn.disabled = true; }
+  const cfg = { slowMs: 5000 };
+
+  /* aviso (no bloqueante) si lleva mucho sin pedir datos ni escribir: puede ser un bucle infinito */
+  let lastAct = 0, slowTimer = null, slowShown = false, phase = '';
+  const slowEl = $('slow');
+  function hideSlow() { slowShown = false; slowEl.hidden = true; }
+  function act() { lastAct = Date.now(); if (slowShown) hideSlow(); }
+  function slowCheck() {
+    if ((!worker && !main) || waiting || slowShown) return;
+    if (Date.now() - lastAct < cfg.slowMs) return;
+    slowShown = true;
+    $('slowTxt').textContent = phase === 'compiling'
+      ? 'Sigue compilando. Si tarda demasiado, apretá Detener.'
+      : 'El programa sigue ejecutándose. Si no lo esperabas, puede haber un bucle infinito: apretá Detener.';
+    slowEl.hidden = false;
+  }
+  $('slowStop').addEventListener('click', () => stop());
+  function resetRun() {
+    if (worker) { worker.terminate(); worker = null; }
+    if (main) { main.cancel(); main = null; }
+    waiting = false; runBtn.disabled = false; stopBtn.disabled = true;
+    clearInterval(slowTimer); slowTimer = null; hideSlow(); phase = '';
+  }
+  function beginRun(ph) {
+    runBtn.disabled = true; stopBtn.disabled = false; phase = ph; act();
+    setStatus(ph === 'compiling' ? 'Compilando…' : 'Ejecutando…', 'run');
+    clearInterval(slowTimer); slowTimer = setInterval(slowCheck, 400);
+  }
   function stopRun(silent) { resetRun(); if (silent) removeInput(); }
   function stop() {
     if (!worker && !main) return;
     if (main) { main.cancel(); return; }   // el aviso de "Detenido" lo pone el final de la ejecución
+    const compiling = phase === 'compiling';
     resetRun(); removeInput();
     if (!endsWithNewline()) appendText('\n');
-    appendText('— Detenido por el usuario —\n', 'dim'); setStatus('Detenido');
+    appendText(compiling ? '— Compilación detenida por el usuario —\n' : '— Detenido por el usuario —\n', 'dim'); setStatus('Detenido');
   }
   stopBtn.addEventListener('click', stop);
-  function send(msg) { if (main) { if (msg.type === 'line') main.send(msg.s); else main.send(null); } else if (worker) worker.postMessage(msg); }
+  function send(msg) { act(); if (main) { if (msg.type === 'line') main.send(msg.s); else main.send(null); } else if (worker) worker.postMessage(msg); }
 
   let lastRes = null;
   function finish(r) {
@@ -523,21 +613,39 @@ self.postMessage({ type: 'ready' });`;
       setStatus('Terminó (código ' + c + ')', c === 0 ? '' : 'err');
     }
   }
+  function capped() {
+    resetRun(); removeInput();
+    if (!endsWithNewline()) appendText('\n');
+    appendText('— Salida cortada: demasiado texto (¿bucle infinito?) —\n', 'er'); setStatus('Detenido', 'err');
+  }
+  // devuelve true si había errores (y ya los mostró)
+  function reportCompile(res) {
+    lastRes = res; showDiag(res);
+    if (res.errors.length) {
+      const n = res.errors.length;
+      appendText('No se pudo ejecutar: ' + (n === 1 ? 'hay 1 error' : 'hay ' + n + ' errores') + ' (mirá "Problemas" y las líneas marcadas en rojo). Corregí y volvé a ejecutar.\n', 'er');
+      setStatus(n === 1 ? '1 error' : n + ' errores', 'err');
+      return true;
+    }
+    return false;
+  }
 
-  // Ejecución dentro de la página (cuando el navegador no permite Workers): los lazos ceden el control cada tanto
+  // Ejecución dentro de la página (solo si el navegador no deja crear el Worker): compila acá y los lazos ceden el control cada tanto
   function runInPage(src) {
     let res;
-    try { res = CCompiler.compile(src, { yieldLoops: true }); } catch (e) { res = { js: null }; }
-    if (!res.js || typeof CRT === 'undefined') { appendText('No se pudo iniciar la ejecución en este navegador.\n', 'er'); setStatus('Error', 'err'); return; }
+    try { res = CCompiler.compile(src, { yieldLoops: true }); }
+    catch (e) { res = { js: null, errors: [{ line: 0, msg: 'error interno del editor: ' + e.message }], warnings: [] }; }
+    if (reportCompile(res)) { resetRun(); return; }
+    if (!res.js || typeof CRT === 'undefined') { appendText('No se pudo iniciar la ejecución en este navegador.\n', 'er'); setStatus('Error', 'err'); resetRun(); return; }
     let cancelled = false, resolver = null;
     const me = {
       cancel() { cancelled = true; if (resolver) { const r = resolver; resolver = null; r(null); } },
       send(line) { if (resolver) { const r = resolver; resolver = null; r(line); } }
     };
     main = me;
-    runBtn.disabled = true; stopBtn.disabled = false; setStatus('Ejecutando…', 'run');
+    beginRun('running');
     let pend = '', size = 0;
-    const flush = () => { if (pend) { const t = pend; pend = ''; appendText(t); } };
+    const flush = () => { if (pend) { const t = pend; pend = ''; act(); appendText(t); } };
     const io = {
       cancelled: () => { flush(); return cancelled; },
       write(s) {
@@ -555,35 +663,29 @@ self.postMessage({ type: 'ready' });`;
     removeInput(); clearConsole(); clearProblems();
     flushSave();
     const src = ta.value;
-    let res;
-    try { res = CCompiler.compile(src); }
-    catch (e) { res = { js: null, errors: [{ line: 0, msg: 'error interno del editor: ' + e.message }], warnings: [] }; }
-    lastRes = res;
-    showDiag(res);
-    if (res.errors.length) {
-      const n = res.errors.length;
-      appendText('No se pudo ejecutar: ' + (n === 1 ? 'hay 1 error' : 'hay ' + n + ' errores') + ' (mirá "Problemas" y las líneas marcadas en rojo). Corregí y volvé a ejecutar.\n', 'er');
-      setStatus(n === 1 ? '1 error' : n + ' errores', 'err');
-      return;
-    }
+    if (tabMode()) setTab('co');
     preparePreset();
-    if (workerBroken) { runInPage(src); return; }
+    if (workerBroken) { beginRun('compiling'); runInPage(src); return; }
     let w;
-    try { w = makeWorker(); } catch (e) { workerBroken = true; runInPage(src); return; }
+    try { w = makeWorker(); } catch (e) { workerBroken = true; beginRun('compiling'); runInPage(src); return; }
     worker = w;
-    runBtn.disabled = true; stopBtn.disabled = false; setStatus('Ejecutando…', 'run');
+    beginRun('compiling');
     let ready = false;
     const giveUp = () => { if (ready || w !== worker) return; workerBroken = true; w.terminate(); worker = null; runInPage(src); };
     const timer = setTimeout(giveUp, 2500);
     w.onmessage = (ev) => {
       if (w !== worker) return;
       const m = ev.data;
-      if (m.type === 'ready') { ready = true; clearTimeout(timer); w.postMessage({ type: 'run', js: res.js }); }
-      else if (m.type === 'out') {
-        appendText(m.s);
-        if (total > CAP) { resetRun(); removeInput(); appendText('\n— Salida cortada: demasiado texto (¿bucle infinito?) —\n', 'er'); setStatus('Detenido', 'err'); }
-      } else if (m.type === 'need') {
-        const l = nextPreset();
+      if (m.type === 'ready') { ready = true; clearTimeout(timer); w.postMessage({ type: 'run', src }); }
+      else if (m.type === 'compiled') {
+        if (reportCompile(m.res)) { resetRun(); return; }
+        phase = 'running'; act(); setStatus('Ejecutando…', 'run');
+      } else if (m.type === 'out') {
+        act(); appendText(m.s);
+        if (total > CAP) capped();
+      } else if (m.type === 'cap') capped();
+      else if (m.type === 'need') {
+        act(); const l = nextPreset();
         if (l !== null) w.postMessage({ type: 'line', s: l }); else showInput();
       } else if (m.type === 'done') finish(m.res);
     };
@@ -628,7 +730,8 @@ self.postMessage({ type: 'ready' });`;
     if (row.length || !rows.length) rows.push(row);
     return rows;
   }
-  function makePng() {
+  function makePng(opts) {
+    opts = opts || {};
     const COL = { k: '#cf222e', t: '#0550ae', s: '#0a7a3d', n: '#b35900', c: '#6b7587', f: '#8250df', p: '#8250df', in: '#0b5ed7', er: '#c62828', dim: '#566174', ok: '#0b7a4b' };
     const TXT = '#1b2230', MONO = '"Liberation Mono", Menlo, Consolas, ui-monospace, monospace', UI = 'system-ui, "Segoe UI", Roboto, Arial, sans-serif';
     const fs = 14, lh = 20, padX = 22, cv = document.createElement('canvas'), ctx = cv.getContext('2d');
@@ -655,7 +758,7 @@ self.postMessage({ type: 'ready' });`;
     });
     const outRows = rowsOf(outSegs, cols + 4);
     while (outRows.length > 1 && !outRows[outRows.length - 1].length) outRows.pop();
-    const inRows = inTxt.value.trim() ? rowsOf([['in', inTxt.value.replace(/\n+$/, '')]], cols + 4) : [];
+    const inRows = opts.input !== false && inTxt.value.trim() ? rowsOf([['in', inTxt.value.replace(/\n+$/, '')]], cols + 4) : [];
     const secH = 30, headH = 64, gap = 14;
     const H = headH + gap + secH + codeRows.length * lh + 16 + (inRows.length ? gap + secH + inRows.length * lh + 16 : 0) + gap + secH + Math.max(1, outRows.length) * lh + 16 + 14;
     let S = 2; while (W * S * H * S > 14e6 && S > 1) S -= 0.5;
@@ -697,17 +800,40 @@ self.postMessage({ type: 'ready' });`;
     drawRows(outRows.length && (outRows.length > 1 || outRows[0].length) ? outRows : [[['dim', '(sin salida: ejecutá el programa antes de sacar la captura)']]], padX, '#fbfcfe', false);
     return cv;
   }
-  $('shot').addEventListener('click', () => {
+  // Vista previa antes de descargar: se puede incluir u omitir la entrada
+  const dShot = $('dShot');
+  let shotBlob = null, shotUrl = '', shotSeq = 0;
+  function shotRender() {
+    const seq = ++shotSeq;
     let cv;
-    try { cv = makePng(); } catch (e) { toast('No se pudo armar la imagen: ' + e.message); return; }
+    try { cv = makePng({ input: $('shotIn').checked }); } catch (e) { toast('No se pudo armar la imagen: ' + e.message); dShot.close(); return; }
     cv.toBlob((blob) => {
-      if (!blob) { toast('No se pudo generar la imagen.'); return; }
-      const name = slug() + '.png';
-      const file = (typeof File === 'function') ? new File([blob], name, { type: 'image/png' }) : null;
-      if (coarse && file && navigator.canShare && navigator.canShare({ files: [file] })) {
-        navigator.share({ files: [file], title: name }).catch((err) => { if (err && err.name !== 'AbortError') { download(blob, name); toast('Imagen descargada.'); } });
-      } else { download(blob, name); toast('Imagen descargada: ' + name); }
+      if (seq !== shotSeq) return;
+      if (!blob) { toast('No se pudo generar la imagen.'); dShot.close(); return; }
+      shotBlob = blob;
+      if (shotUrl) URL.revokeObjectURL(shotUrl);
+      shotUrl = URL.createObjectURL(blob); $('shotImg').src = shotUrl;
+      $('shotImg').dataset.w = cv.width; $('shotImg').dataset.h = cv.height;
     }, 'image/png');
+  }
+  $('shot').addEventListener('click', () => {
+    const hasIn = !!inTxt.value.trim();
+    $('shotInRow').hidden = !hasIn; $('shotIn').checked = hasIn;
+    const canShare = !!(coarse && typeof File === 'function' && navigator.canShare && navigator.canShare({ files: [new File([new Blob(['x'])], 'a.png', { type: 'image/png' })] }));
+    $('shotShare').hidden = !canShare;
+    shotBlob = null; $('shotImg').removeAttribute('src');
+    dShot.showModal(); shotRender();
+  });
+  $('shotIn').addEventListener('change', shotRender);
+  dShot.addEventListener('close', () => { shotSeq++; shotBlob = null; if (shotUrl) { URL.revokeObjectURL(shotUrl); shotUrl = ''; } $('shotImg').removeAttribute('src'); });
+  $('shotDl').addEventListener('click', () => {
+    if (!shotBlob) { toast('La imagen todavía se está preparando.'); return; }
+    const name = slug() + '.png'; download(shotBlob, name); toast('Imagen descargada: ' + name); dShot.close();
+  });
+  $('shotShare').addEventListener('click', () => {
+    if (!shotBlob) return;
+    const name = slug() + '.png', file = new File([shotBlob], name, { type: 'image/png' });
+    navigator.share({ files: [file], title: name }).then(() => dShot.close(), (err) => { if (err && err.name !== 'AbortError') { download(shotBlob, name); toast('Imagen descargada.'); dShot.close(); } });
   });
 
   /* ---------- ejemplos ---------- */
@@ -826,6 +952,199 @@ self.postMessage({ type: 'ready' });`;
     }
   });
 
+  /* ---------- exportar e importar todos los programas (.json) ---------- */
+  const EXP_APP = 'editor-c', MAX_PROGS = 1000, MAX_CODE = 1000000, MAX_FILE = 25e6;
+  $('pexp').addEventListener('click', () => {
+    flushSave();
+    const d = new Date(), stamp = d.getFullYear() + pad2(d.getMonth() + 1) + pad2(d.getDate());
+    const data = { app: EXP_APP, version: 1, exported: d.toISOString(), programs: progs.map((p) => ({ name: p.name, code: p.code, input: p.input || '', t: p.t })) };
+    download(new Blob([JSON.stringify(data, null, 1)], { type: 'application/json' }), 'editor-c-programas-' + stamp + '.json');
+    toast('Se exportaron ' + progs.length + (progs.length === 1 ? ' programa.' : ' programas.'));
+  });
+  $('pimp').addEventListener('click', () => $('fileJson').click());
+  function parseImport(txt) {
+    let d; try { d = JSON.parse(txt); } catch (e) { return { error: 'El archivo no es un JSON válido.' }; }
+    if (!d || typeof d !== 'object' || d.app !== EXP_APP) return { error: 'Este archivo no es una exportación de Editor C.' };
+    if (d.version !== 1) return { error: 'Es de una versión de exportación que este editor no conoce.' };
+    if (!Array.isArray(d.programs)) return { error: 'El archivo no trae la lista de programas.' };
+    if (d.programs.length > MAX_PROGS) return { error: 'El archivo trae demasiados programas (más de ' + MAX_PROGS + ').' };
+    const list = []; let invalid = 0;
+    d.programs.forEach((p) => {
+      if (!p || typeof p !== 'object' || typeof p.code !== 'string' || p.code.length > MAX_CODE || typeof p.name !== 'string') { invalid++; return; }
+      const name = p.name.replace(/[\u0000-\u001f\u007f]/g, ' ').trim().slice(0, 60);
+      if (!name) { invalid++; return; }
+      list.push({ name, code: p.code.replace(/\r\n?/g, '\n'), input: typeof p.input === 'string' && p.input.length <= MAX_CODE ? p.input : '', t: typeof p.t === 'number' && isFinite(p.t) ? p.t : Date.now() });
+    });
+    if (!list.length) return { error: invalid ? 'Ningún programa del archivo es válido.' : 'El archivo no trae programas.' };
+    return { list, invalid };
+  }
+  // simula (o aplica) la importación sin pisar nada: repetidos se omiten, mismo nombre con otro contenido se agrega con otro nombre
+  function planImport(list, commit) {
+    const sim = progs.map((p) => ({ name: p.name, code: p.code }));
+    const res = { add: 0, dup: 0, renamed: 0 };
+    const nm = (base) => { const names = new Set(sim.map((x) => x.name)); if (!names.has(base)) return base; for (let i = 2; ; i++) if (!names.has(base + ' ' + i)) return base + ' ' + i; };
+    list.forEach((p) => {
+      if (sim.some((x) => x.name === p.name && x.code === p.code)) { res.dup++; return; }
+      let name = p.name;
+      if (sim.some((x) => x.name === name)) { name = nm(p.name + ' (importado)'); res.renamed++; } else res.add++;
+      sim.push({ name, code: p.code });
+      if (commit) progs.push({ id: uid(), name, code: p.code, input: p.input, t: p.t });
+    });
+    return res;
+  }
+  let impPending = null;
+  $('fileJson').addEventListener('change', (e) => {
+    const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+    if (f.size > MAX_FILE) { toast('El archivo es demasiado grande para ser una exportación de Editor C.'); return; }
+    const r = new FileReader();
+    r.onerror = () => toast('No se pudo leer el archivo.');
+    r.onload = () => {
+      const pr = parseImport(String(r.result));
+      if (pr.error) { toast('No se importó nada. ' + pr.error); return; }
+      const plan = planImport(pr.list, false);
+      impPending = pr.list;
+      $('impTxt').textContent = 'El archivo "' + f.name.slice(0, 60) + '" trae ' + pr.list.length + (pr.list.length === 1 ? ' programa.' : ' programas.');
+      const ul2 = $('impList'); ul2.innerHTML = '';
+      const li = (t) => { const x = document.createElement('li'); x.textContent = t; ul2.appendChild(x); };
+      if (plan.add) li(plan.add + (plan.add === 1 ? ' programa nuevo se agrega.' : ' programas nuevos se agregan.'));
+      if (plan.renamed) li(plan.renamed + (plan.renamed === 1 ? ' tiene el mismo nombre que uno tuyo pero otro contenido: se agrega con otro nombre ("… (importado)").' : ' tienen el mismo nombre que otros tuyos pero distinto contenido: se agregan con otro nombre ("… (importado)").'));
+      if (plan.dup) li(plan.dup + (plan.dup === 1 ? ' ya lo tenés igual: se omite.' : ' ya los tenés iguales: se omiten.'));
+      if (pr.invalid) li(pr.invalid + (pr.invalid === 1 ? ' entrada inválida se ignora.' : ' entradas inválidas se ignoran.'));
+      $('impOk').hidden = !(plan.add + plan.renamed);
+      if ($('impOk').hidden) $('impTxt').textContent += ' No hay nada para agregar.';
+      $('dImp').showModal();
+    };
+    r.readAsText(f);
+  });
+  $('impOk').addEventListener('click', () => {
+    if (!impPending) return;
+    flushSave();
+    const plan = planImport(impPending, true); impPending = null;
+    persist(); if (dProgs.open) renderProgs();
+    $('dImp').close();
+    const n = plan.add + plan.renamed;
+    toast('Se importaron ' + n + (n === 1 ? ' programa.' : ' programas.') + (plan.dup ? ' (' + plan.dup + ' repetidos omitidos)' : ''));
+  });
+
+  /* ---------- diseño: pestañas (celular), divisor arrastrable y teclado virtual ---------- */
+  const mq = (q) => (window.matchMedia ? window.matchMedia(q) : { matches: false, addEventListener() {}, addListener() {} });
+  const tabMQ = mq('(max-width: 699px), (max-height: 480px)'), rowMQ = mq('(min-width: 900px)');
+  const onMQ = (m, f) => (m.addEventListener ? m.addEventListener('change', f) : m.addListener(f));
+  function tabMode() { return tabMQ.matches; }
+  let tab = 'ed', edHadFocus = false;
+  // se recuerda si el foco estaba en el editor aunque el toque en la pestaña lo haya movido al botón
+  ta.addEventListener('focus', () => { edHadFocus = true; });
+  ta.addEventListener('blur', (e) => { if (!(e.relatedTarget && e.relatedTarget.closest && e.relatedTarget.closest('#tabs'))) edHadFocus = false; });
+  function setTab(t, quiet) {
+    const prev = tab;
+    tab = t;
+    $('paneEd').classList.toggle('on', t === 'ed'); $('paneCo').classList.toggle('on', t === 'co');
+    [['tabEd', 'ed'], ['tabCo', 'co']].forEach(([id, k]) => { $(id).setAttribute('aria-selected', String(t === k)); $(id).tabIndex = t === k ? 0 : -1; });
+    if (t === 'co') $('tabDot').hidden = true;
+    if (quiet || !tabMode() || prev === t) return;
+    if (t === 'co') { const i = out.querySelector('.stdin input'); if (i) { i.focus({ preventScroll: true }); ensureInputVisible(); } }
+    else if (edHadFocus) ta.focus({ preventScroll: true });
+  }
+  $('tabEd').addEventListener('click', () => setTab('ed'));
+  $('tabCo').addEventListener('click', () => setTab('co'));
+  $('tabs').addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Home' || e.key === 'End') {
+      e.preventDefault(); const t = e.key === 'ArrowLeft' || e.key === 'Home' ? 'ed' : 'co'; setTab(t); $(t === 'ed' ? 'tabEd' : 'tabCo').focus();
+    }
+  });
+  onMQ(tabMQ, () => setTab(tab, true));
+
+  const split = $('split'), divider = $('divider'), DEF_SPLIT = 55;
+  let pct = DEF_SPLIT, dragging = false;
+  const splitKey = () => (rowMQ.matches ? 'split.row' : 'split.col');
+  const clampPct = (p) => Math.max(20, Math.min(80, Math.round(p * 10) / 10));
+  function applySplit() {
+    const row = rowMQ.matches, r = Math.round(pct);
+    split.style.setProperty('--split', String(pct));
+    divider.setAttribute('aria-valuenow', String(r));
+    divider.setAttribute('aria-valuetext', 'Editor ' + r + ' %, consola ' + (100 - r) + ' %');
+    divider.setAttribute('aria-orientation', row ? 'vertical' : 'horizontal');
+  }
+  function setPct(p, save) { pct = clampPct(p); applySplit(); if (save) store.set(splitKey(), String(pct)); }
+  function loadSplit() { const v = parseFloat(store.get(splitKey(), '')); pct = isFinite(v) ? clampPct(v) : DEF_SPLIT; applySplit(); }
+  onMQ(rowMQ, loadSplit);
+  divider.addEventListener('pointerdown', (e) => {
+    if (e.button) return;
+    e.preventDefault(); dragging = true; split.classList.add('dragging');
+    try { divider.setPointerCapture(e.pointerId); } catch (x) { /* sin captura */ }
+    divider.dataset.pointer = '1'; divider.focus({ preventScroll: true });
+  });
+  divider.addEventListener('pointermove', (e) => {
+    if (!dragging) return;
+    const row = rowMQ.matches, r = split.getBoundingClientRect(), cs = getComputedStyle(split);
+    const a = parseFloat(row ? cs.paddingLeft : cs.paddingTop) || 0, b = parseFloat(row ? cs.paddingRight : cs.paddingBottom) || 0;
+    const size = (row ? r.width : r.height) - a - b - 10;
+    if (size <= 0) return;
+    setPct(((row ? e.clientX - r.left : e.clientY - r.top) - a - 5) / size * 100, false);
+  });
+  const endDrag = () => { if (!dragging) return; dragging = false; split.classList.remove('dragging'); store.set(splitKey(), String(pct)); };
+  divider.addEventListener('pointerup', endDrag); divider.addEventListener('pointercancel', endDrag); divider.addEventListener('lostpointercapture', endDrag);
+  divider.addEventListener('keydown', (e) => {
+    delete divider.dataset.pointer;
+    const step = e.shiftKey ? 10 : 2; let n = null;
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') n = pct - step;
+    else if (e.key === 'ArrowRight' || e.key === 'ArrowDown') n = pct + step;
+    else if (e.key === 'Home') n = 20; else if (e.key === 'End') n = 80;
+    else if (e.key === 'Enter') n = DEF_SPLIT;
+    if (n === null) return;
+    e.preventDefault(); setPct(n, true);
+  });
+  divider.addEventListener('dblclick', () => setPct(DEF_SPLIT, true));
+
+  // Teclado virtual: el alto de la app sigue al área realmente visible (visualViewport) y la línea de entrada se mantiene a la vista
+  const vv = window.visualViewport;
+  let baseH = 0, baseW = 0;
+  function ensureInputVisible() {
+    const i = out.querySelector('.stdin input');
+    if (!i) return;
+    cons.scrollTop = cons.scrollHeight;
+    try { i.scrollIntoView({ block: 'nearest', inline: 'nearest' }); } catch (e) { /* sin scrollIntoView */ }
+  }
+  function onViewport() {
+    const h = vv ? vv.height : window.innerHeight, w = vv ? vv.width : window.innerWidth, top = vv ? vv.offsetTop : 0;
+    if (vv && vv.scale > 1.01) return;                   // con zoom de pellizco no se toca el diseño
+    if (Math.abs(w - baseW) > 40) baseH = 0;             // giro de pantalla: se vuelve a medir
+    baseW = w; baseH = Math.max(baseH, h);
+    const root = document.documentElement;
+    root.style.setProperty('--app-h', Math.round(h) + 'px'); root.style.setProperty('--app-top', Math.round(top) + 'px');
+    root.classList.add('vv');
+    root.classList.toggle('kb', h < baseH - 120);
+    if (top) window.scrollTo(0, 0);
+    requestAnimationFrame(ensureInputVisible);
+  }
+  if (vv) { vv.addEventListener('resize', onViewport); vv.addEventListener('scroll', onViewport); }
+  else window.addEventListener('resize', onViewport);
+  window.addEventListener('orientationchange', () => { baseH = 0; setTimeout(onViewport, 250); });
+  onViewport();
+  loadSplit(); setTab('ed', true); updateMutedRow();
+
+  /* ---------- sin conexión (solo http/https; con file:// y en el archivo único no se registra nada) ---------- */
+  (function () {
+    if (!('serviceWorker' in navigator) || !/^https?:$/.test(location.protocol) || !document.querySelector('link[rel="manifest"]')) return;
+    const hadController = !!navigator.serviceWorker.controller;
+    let reloading = false;
+    const offer = (sw) => toast('Hay una versión nueva del editor.', 'Recargar', () => { flushSave(); sw.postMessage({ type: 'SKIP_WAITING' }); }, true);
+    navigator.serviceWorker.addEventListener('controllerchange', () => { if (!hadController || reloading) return; reloading = true; flushSave(); location.reload(); });
+    navigator.serviceWorker.register('sw.js').then((reg) => {
+      if (reg.waiting && navigator.serviceWorker.controller) offer(reg.waiting);
+      reg.addEventListener('updatefound', () => {
+        const nw = reg.installing; if (!nw) return;
+        nw.addEventListener('statechange', () => {
+          if (nw.state === 'installed' && navigator.serviceWorker.controller) offer(nw);
+          else if (nw.state === 'activated' && !hadController && !store.get('offlineSeen', '')) { store.set('offlineSeen', '1'); toast('Listo: el editor ya funciona sin conexión.'); }
+        });
+      });
+      const check = () => { try { reg.update().catch(() => {}); } catch (e) { /* sin red */ } };
+      document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') check(); });
+      setInterval(check, 3600000);
+    }).catch(() => { /* sin service worker: todo sigue funcionando en línea */ });
+  })();
+
   /* ---------- arranque ---------- */
   (function init() {
     const id = store.get('cur', '');
@@ -838,5 +1157,5 @@ self.postMessage({ type: 'ready' });`;
     showProgram(p);
     if (!store.get('seen', '')) { store.set('seen', '1'); }
   })();
-  window.__editorc = { run, setCode: (s) => { ta.value = s; refresh(); scheduleSave(); }, compile: (s) => CCompiler.compile(s) };
+  window.__editorc = { run, cfg, setCode: (s) => { ta.value = s; refresh(); scheduleSave(); }, compile: (s) => CCompiler.compile(s), showDiag: (r) => { lastRes = r; showDiag(r); } };
 })();
