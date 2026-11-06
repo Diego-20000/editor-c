@@ -1,0 +1,9 @@
+// espera: limpio
+#include <stdio.h>
+int main(){
+  int n;
+  scanf("%d", &n);
+  while (getchar() != '\n');
+  printf("%d\n", n);
+  return 0;
+}

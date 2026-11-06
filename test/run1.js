@@ -13,5 +13,5 @@ let out = '';
 runProgram(r.js, { write: (s) => { out += s; }, readLine: async () => (lines.length ? lines.shift() : null) }).then((res) => {
   process.stdout.write(out);
   if (res.error) process.stderr.write('RUNTIME ERR l' + res.line + ': ' + res.error + '\n');
-  process.exit(res.error ? 3 : 0);
+  process.exit(res.error ? 3 : ((res.code | 0) & 255));
 });

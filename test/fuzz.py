@@ -1,4 +1,5 @@
-import random, sys, subprocess
+import random, sys
+# uso: fuzz.py SEMILLA [N_EXPRESIONES] [SALIDA.c]
 random.seed(int(sys.argv[1]) if len(sys.argv)>1 else 1)
 VARS = {'a':'int','b':'int','c':'int','u':'uint','x':'float','y':'float','z':'double','ch':'char','L':'long'}
 def rank(t):
@@ -59,4 +60,4 @@ for i in range(N):
     elif t=='uint': lines.append(' printf("%d: %%u\\n", %s);'%(i,e))
     else: lines.append(' printf("%d: %%d\\n", %s);'%(i,e))
 lines.append(' return 0;\n}')
-open('/tmp/fuzz.c','w').write('\n'.join(lines))
+open(sys.argv[3] if len(sys.argv)>3 else '/tmp/fuzz.c','w').write('\n'.join(lines))

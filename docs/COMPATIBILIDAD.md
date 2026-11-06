@@ -1,0 +1,28 @@
+# Qué significa «igual que gcc»
+
+**Contrato.** Para los programas del subconjunto documentado, que usan solo comportamiento definido por C y se ejecutan en el objetivo de referencia, Editor C produce la misma salida estándar y el mismo código de salida. Lo que no está soportado se informa como error; nunca se simula en silencio.
+
+## Objetivo de referencia
+- Linux x86-64, gcc 13 (`-std=gnu99`), glibc.
+- Modelo LP64: `char` 8 bits con signo, `short` 16, `int` 32, `long` y `long long` 64 (BigInt), versiones `unsigned` de cada uno, `float` binary32, `double` binary64, `bool` de `<stdbool.h>`.
+- `printf`/`scanf`, `rand`/`srand` y `ctype.h` imitan a glibc (valores de retorno incluidos).
+
+## Subconjunto soportado
+Ver la sección «Qué soporta» del README. Todavía no: punteros, `char[]`/`%s`/`string.h`, `struct`, `union`, `enum`, `typedef`, archivos, `malloc`.
+
+## Comportamiento indefinido
+Estos casos no tienen resultado garantizado en C, así que el editor no promete coincidir con gcc:
+- desbordamiento de `int` con signo (el editor lo hace dar la vuelta, como gcc sin optimizar);
+- conversión de un decimal fuera de rango a entero (gcc da distinto según optimice o no);
+- leer una variable local sin inicializar (el editor la inicia en 0 y avisa);
+- orden de evaluación de los argumentos de una llamada (gcc evalúa de derecha a izquierda; el editor, de izquierda a derecha);
+- índices fuera de un arreglo (el editor se detiene con un error y el número de línea).
+
+## Límites propios del editor
+- Arreglos de hasta 20 millones de elementos; ancho y precisión de formato hasta 100000.
+- La recursión se corta antes que en gcc (el límite depende del navegador).
+- `%e`/`%g` con 15 o más cifras cerca de potencias de 10 y funciones de `math.h` pueden diferir en 1 ulp de glibc.
+
+## Cómo se comprueba
+- `bash test/run_all.sh`: compara contra gcc la salida y el código de salida de cada programa de `test/cases`.
+- `bash test/fuzz_run.sh [N] [EXPRESIONES]`: genera programas aleatorios y los compara contra gcc. Puede marcar casos de comportamiento indefinido (ver arriba).

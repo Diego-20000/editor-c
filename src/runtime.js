@@ -85,47 +85,60 @@
     if (X >= -4 && X < p) {
       s = fixedExact(x, p - 1 - X);
       if (!alt && s.indexOf('.') >= 0) s = s.replace(/0+$/, '').replace(/\.$/, '');
+      else if (alt && s.indexOf('.') < 0) s += '.';
     } else {
       s = expForm(x, p - 1, upper);
       if (!alt) s = s.replace(/\.?0+([eE])/, '$1');
+      else if (s.indexOf('.') < 0) s = s.replace(/([eE])/, '.$1');
     }
     return s;
   }
 
   const SPEC = /%([-+ #0]*)(\*|\d+)?(?:\.(\*|\d*))?(hh|h|ll|l|L|z|j|t)?([diouxXfFeEgGcsp%])/g;
 
+  function toBig(a) {
+    if (typeof a === 'bigint') return a;
+    if (typeof a === 'number' && isFinite(a)) return BigInt(Math.trunc(a));
+    return 0n;
+  }
+  const ENC = typeof TextEncoder !== 'undefined' ? new TextEncoder() : null;
+  const DEC = typeof TextDecoder !== 'undefined' ? new TextDecoder() : null;
+  function ulen(s) { if (!ENC) return s.length; for (let i = 0; i < s.length; i++) if (s.charCodeAt(i) > 127) return ENC.encode(s).length; return s.length; }
   function cformat(fmt, args) {
+    if (fmt.indexOf('\0') >= 0) fmt = fmt.slice(0, fmt.indexOf('\0'));
     let ai = 0;
     return fmt.replace(SPEC, function (m, flags, width, prec, len, conv) {
       if (conv === '%') return '%';
-      let w = width === undefined ? 0 : (width === '*' ? (args[ai++] | 0) : parseInt(width, 10));
+      if ((width !== undefined && width !== '*' && parseInt(width, 10) > 100000) || (prec !== undefined && prec !== '*' && prec !== '' && parseInt(prec, 10) > 100000)) throw new CRuntimeError('el ancho o la precisión del formato es demasiado grande para este editor (máximo 100000)');
+      let w = width === undefined ? 0 : (width === '*' ? (Number(args[ai++]) | 0) : parseInt(width, 10));
       let left = flags.indexOf('-') >= 0, zero = flags.indexOf('0') >= 0, plus = flags.indexOf('+') >= 0,
         space = flags.indexOf(' ') >= 0, alt = flags.indexOf('#') >= 0;
       if (w < 0) { left = true; w = -w; }
-      let p = prec === undefined ? -1 : (prec === '*' ? (args[ai++] | 0) : (prec === '' ? 0 : parseInt(prec, 10)));
+      let p = prec === undefined ? -1 : (prec === '*' ? (Number(args[ai++]) | 0) : (prec === '' ? 0 : parseInt(prec, 10)));
       const arg = args[ai++];
       let body = '', sign = '', numeric = true, isSpecial = false;
       const upper = conv === 'F' || conv === 'E' || conv === 'G' || conv === 'X';
       if (conv === 'd' || conv === 'i') {
-        let v = typeof arg === 'number' ? Math.trunc(arg) : 0;
-        if (!isFinite(v)) v = 0;
-        if (len !== 'l' && len !== 'll' && len !== 'z' && len !== 'j') v = v | 0;
-        sign = v < 0 ? '-' : (plus ? '+' : (space ? ' ' : ''));
-        body = Math.abs(v).toString();
-        if (p >= 0) { zero = false; body = body.padStart(p, '0'); if (p === 0 && v === 0) body = ''; }
+        let bv = toBig(arg);
+        const bits = len === 'hh' ? 8 : len === 'h' ? 16 : (len === 'l' || len === 'll' || len === 'z' || len === 'j' || len === 't') ? 64 : 32;
+        if (bits === 64 && typeof arg === 'number') bv = BigInt.asUintN(32, bv);
+        bv = BigInt.asIntN(bits, bv);
+        const neg = bv < 0n;
+        sign = neg ? '-' : (plus ? '+' : (space ? ' ' : ''));
+        body = (neg ? -bv : bv).toString();
+        if (p >= 0) { zero = false; body = body.padStart(p, '0'); if (p === 0 && bv === 0n) body = ''; }
       } else if (conv === 'u' || conv === 'x' || conv === 'X' || conv === 'o') {
-        let v = typeof arg === 'number' ? Math.trunc(arg) : 0;
-        if (!isFinite(v)) v = 0;
-        if (len === 'l' || len === 'll' || len === 'z' || len === 'j') {
-          v = BigInt.asUintN(64, BigInt(v));
-        } else v = v >>> 0;
+        let bv = toBig(arg);
+        const bits = len === 'hh' ? 8 : len === 'h' ? 16 : (len === 'l' || len === 'll' || len === 'z' || len === 'j' || len === 't') ? 64 : 32;
+        if (bits === 64 && typeof arg === 'number') bv = BigInt.asUintN(32, bv);
+        bv = BigInt.asUintN(bits, bv);
         const base = conv === 'u' ? 10 : (conv === 'o' ? 8 : 16);
-        body = v.toString(base);
+        body = bv.toString(base);
         if (upper) body = body.toUpperCase();
-        if (alt && v != 0) { if (conv === 'x') body = '0x' + body; else if (conv === 'X') body = '0X' + body; else if (conv === 'o') body = '0' + body; }
-        if (p >= 0) { zero = false; body = body.padStart(p, '0'); }
+        if (p >= 0) { zero = false; body = body.padStart(p, '0'); if (p === 0 && bv === 0n && !(alt && conv === 'o')) body = ''; }
+        if (alt && bv !== 0n) { if (conv === 'x') body = '0x' + body; else if (conv === 'X') body = '0X' + body; else if (conv === 'o' && body[0] !== '0') body = '0' + body; }
       } else if ('fFeEgG'.indexOf(conv) >= 0) {
-        const v = typeof arg === 'number' ? arg : 0;
+        const v = typeof arg === 'number' ? arg : (typeof arg === 'bigint' ? Number(arg) : 0);
         const neg = Number.isNaN(v) ? true : signBit(v);
         sign = neg ? '-' : (plus ? '+' : (space ? ' ' : ''));
         if (Number.isNaN(v)) { body = upper ? 'NAN' : 'nan'; isSpecial = true; }
@@ -139,23 +152,24 @@
         if (isSpecial) zero = false;
       } else if (conv === 'c') {
         numeric = false; zero = false;
-        body = String.fromCharCode(typeof arg === 'number' ? (arg & 255) : 63);
+        body = String.fromCharCode(typeof arg === 'number' ? (arg & 255) : (typeof arg === 'bigint' ? Number(BigInt.asUintN(8, arg)) : 63));
       } else if (conv === 's') {
         numeric = false; zero = false;
         body = typeof arg === 'string' ? arg : String(arg === undefined ? '(null)' : arg);
-        if (p >= 0) body = body.slice(0, p);
+        if (p >= 0) { if (ENC && ulen(body) !== body.length) body = DEC.decode(ENC.encode(body).slice(0, p)); else body = body.slice(0, p); }
       } else if (conv === 'p') {
         numeric = false; body = '0x' + ((typeof arg === 'number' ? arg : 0) >>> 0).toString(16);
       }
       let out = sign + body;
-      if (out.length < w) {
-        if (left) out = out + ' '.repeat(w - out.length);
+      const olen = ulen(out);
+      if (olen < w) {
+        if (left) out = out + ' '.repeat(w - olen);
         else if (zero && numeric) {
           let pre = sign;
           let rest = body;
           if ((conv === 'x' || conv === 'X') && alt && /^0[xX]/.test(rest)) { pre += rest.slice(0, 2); rest = rest.slice(2); }
-          out = pre + '0'.repeat(w - out.length) + rest;
-        } else out = ' '.repeat(w - out.length) + out;
+          out = pre + '0'.repeat(w - olen) + rest;
+        } else out = ' '.repeat(w - olen) + out;
       }
       return out;
     });
@@ -186,12 +200,30 @@
     }
 
     function conv(t, v) {
+      if (typeof v === 'bigint') {
+        switch (t) {
+          case 'int': return Number(BigInt.asIntN(32, v));
+          case 'uint': return Number(BigInt.asUintN(32, v));
+          case 'char': return Number(BigInt.asIntN(8, v));
+          case 'uchar': return Number(BigInt.asUintN(8, v));
+          case 'short': return Number(BigInt.asIntN(16, v));
+          case 'ushort': return Number(BigInt.asUintN(16, v));
+          case 'long': return BigInt.asIntN(64, v);
+          case 'ulong': return BigInt.asUintN(64, v);
+          case 'float': return Math.fround(Number(v));
+          default: return Number(v);
+        }
+      }
       switch (t) {
         case 'int': return v | 0;
         case 'uint': return v >>> 0;
         case 'char': return (v << 24) >> 24;
+        case 'uchar': return v & 255;
+        case 'short': return (v << 16) >> 16;
+        case 'ushort': return v & 65535;
         case 'float': return Math.fround(v);
-        case 'long': return Math.trunc(v);
+        case 'long': return BigInt(isFinite(v) ? Math.trunc(v) : 0);
+        case 'ulong': return BigInt.asUintN(64, BigInt(isFinite(v) ? Math.trunc(v) : 0));
         default: return v;
       }
     }
@@ -225,15 +257,24 @@
             if (!suppress) { const r = refs[ri], t = types[ri]; ri++; r[1](conv(t, c)); count++; }
             first = false; continue;
           }
-          if (sp === 'd' || sp === 'i' || sp === 'u' || sp === 'x') {
+          if (sp === 'd' || sp === 'i' || sp === 'u' || sp === 'x' || sp === 'X' || sp === 'o') {
             const c0 = await skipWs();
             if (c0 < 0) return count === 0 ? -1 : count;
             const rest = buf.slice(pos);
-            const re = sp === 'x' ? /^[+-]?(0[xX])?[0-9a-fA-F]+/ : (sp === 'i' ? /^[+-]?(0[xX][0-9a-fA-F]+|[0-9]+)/ : /^[+-]?[0-9]+/);
+            const re = (sp === 'x' || sp === 'X') ? /^[+-]?(0[xX])?[0-9a-fA-F]+/ : (sp === 'o' ? /^[+-]?[0-7]+/ : (sp === 'i' ? /^[+-]?(0[xX][0-9a-fA-F]+|0[0-7]*|[1-9][0-9]*)/ : /^[+-]?[0-9]+/));
             const m = re.exec(rest.slice(0, isFinite(maxw) ? maxw : undefined));
             if (!m) return count;
             pos += m[0].length;
-            let v = sp === 'x' ? parseInt(m[0], 16) : (sp === 'i' ? Number(m[0].replace(/^([+-]?)0(\d)/, '$1$2')) : parseInt(m[0], 10));
+            let txt = m[0], neg = false;
+            if (txt[0] === '+' || txt[0] === '-') { neg = txt[0] === '-'; txt = txt.slice(1); }
+            let radix = 10;
+            if (sp === 'x' || sp === 'X') { radix = 16; txt = txt.replace(/^0[xX]/, ''); }
+            else if (sp === 'o') radix = 8;
+            else if (sp === 'i') { if (/^0[xX]/.test(txt)) { radix = 16; txt = txt.slice(2); } else if (/^0[0-7]/.test(txt)) radix = 8; }
+            let v = BigInt((radix === 16 ? '0x' : (radix === 8 ? '0o' : '')) + txt);
+            if (neg) v = -v;
+            if (sp === 'd' || sp === 'i') { if (v > 9223372036854775807n) v = 9223372036854775807n; else if (v < -9223372036854775808n) v = -9223372036854775808n; }
+            else { const mag = neg ? -v : v; if (mag > 18446744073709551615n) v = 18446744073709551615n; else if (neg) v = BigInt.asUintN(64, v); }
             if (!suppress) { const r = refs[ri], t = types[ri]; ri++; r[1](conv(t, v)); count++; }
             first = false; continue;
           }
@@ -270,23 +311,39 @@
     }
 
     let seed = 1;
-    function rand() { seed = (Math.imul(seed, 1103515245) + 12345) & 0x7fffffff; return seed; }
+    // rand()/srand() como glibc (TYPE_3, r[i-3] + r[i-31]): misma secuencia que gcc en Linux
+    function makeRand(sd) {
+      sd = sd >>> 0; if (sd === 0) sd = 1;
+      const rs = new Int32Array(31); rs[0] = sd | 0;
+      for (let i = 1; i < 31; i++) { const hi = Math.trunc(rs[i - 1] / 127773), lo = rs[i - 1] % 127773; let w = 16807 * lo - 2836 * hi; if (w < 0) w += 2147483647; rs[i] = w; }
+      const buf = []; for (let i = 0; i < 31; i++) buf.push(rs[i] >>> 0);
+      let f = 3, rI = 0;
+      const next = () => { buf[f] = (buf[f] + buf[rI]) >>> 0; const res = buf[f] >>> 1; f = (f + 1) % 31; rI = (rI + 1) % 31; return res; };
+      for (let i = 0; i < 310; i++) next();
+      return next;
+    }
+    let nextRand = makeRand(1);
+    function rand() { return nextRand(); }
 
     return {
-      printf(fmt, args) { const s = cformat(fmt, args); io.write(s); return s.length; },
+      printf(fmt, args, line) { let s; try { s = cformat(fmt, args); } catch (e) { if (e instanceof CRuntimeError && e.cline == null) e.cline = line; throw e; } io.write(s); return ulen(s); },
       puts(s) { io.write(s + '\n'); return 1; },
       putchar(c) { io.write(String.fromCharCode(c & 255)); return c; },
       scanf, getchar,
       idiv(a, b, line) { if (b === 0) throw new CRuntimeError('división entera por cero (en C el programa se cierra con "Floating point exception")', line); return Math.trunc(a / b); },
       imod(a, b, line) { if (b === 0) throw new CRuntimeError('resto (%) con divisor cero (en C el programa se cierra con "Floating point exception")', line); return a % b; },
       ix(i, len, line) {
+        if (typeof i === 'bigint') i = Number(i);
         if (i < 0 || i >= len) throw new CRuntimeError('índice ' + i + ' fuera del arreglo (tiene ' + len + ' posiciones: 0 a ' + (len - 1) + ')', line);
         return i;
       },
       d2i(v) { return (v > -2147483649 && v < 2147483648) ? (v | 0) : -2147483648; },
-      mk(dims, fill) {
+      mk(dims, fill, line) {
+        dims = dims.map(Number);
         const build = (k) => { const a = new Array(dims[k]); for (let i = 0; i < dims[k]; i++) a[i] = k === dims.length - 1 ? fill : build(k + 1); return a; };
-        for (const d of dims) if (!(d > 0)) throw new CRuntimeError('tamaño de arreglo inválido (' + d + ')');
+        for (const d of dims) if (!(d > 0)) throw new CRuntimeError('tamaño de arreglo inválido (' + d + ')', line);
+        const total = dims.reduce((a, b) => a * b, 1);
+        if (total > 20000000) throw new CRuntimeError('el arreglo es demasiado grande para este editor (' + total + ' elementos; el máximo es 20 millones). En un programa real esto suele cerrarse por falta de memoria de pila', line);
         return build(0);
       },
       pad(list, dims) {
@@ -296,6 +353,19 @@
         else while (out.length < d) out.push(0);
         return out;
       },
+      init(list, dims, fill, line) {
+        const arr = this.mk(dims, fill === undefined ? 0 : fill, line);
+        const fillFrom = (a, ds, lst, st) => {
+          for (let k = 0; k < ds[0]; k++) {
+            if (st.i >= lst.length) break;
+            if (ds.length === 1) { let v = lst[st.i++]; while (Array.isArray(v)) v = v[0]; a[k] = v === undefined ? 0 : v; }
+            else { const it = lst[st.i]; if (Array.isArray(it)) { st.i++; fillFrom(a[k], ds.slice(1), it, { i: 0 }); } else fillFrom(a[k], ds.slice(1), lst, st); }
+          }
+        };
+        fillFrom(arr, dims, list, { i: 0 });
+        return arr;
+      },
+      rint(x) { if (!isFinite(x)) return x; const f = Math.floor(x), d = x - f; if (d < 0.5) return f; if (d > 0.5) return f + 1; return (f % 2 === 0) ? f : f + 1; },
       lop(op, a, b) {
         if (!isFinite(a)) a = 0; if (!isFinite(b)) b = 0;
         const x = BigInt.asIntN(64, BigInt(Math.trunc(a))), y = BigInt.asIntN(64, BigInt(Math.trunc(b)));
@@ -306,8 +376,13 @@
       round(x) { return x < 0 ? -Math.round(-x) : Math.round(x); },
       fmod(a, b) { return a % b; },
       yield: async function () { await new Promise((res) => setTimeout(res, 0)); if (io.cancelled && io.cancelled()) throw new ExitSignal(-999); },
-      rand, srand(s) { seed = s | 0; return 0; },
-      time() { return Math.floor(Date.now() / 1000); },
+      rand, srand(s) { nextRand = makeRand(s); return 0; },
+      time() { return BigInt(Math.floor(Date.now() / 1000)); },
+      clock() { return BigInt(Math.round((typeof performance !== 'undefined' ? performance.now() : Date.now()) * 1000)); },
+      ldiv(a, b, line) { if (b === 0n) throw new CRuntimeError('división entera por cero (en C el programa se cierra con "Floating point exception")', line); return a / b; },
+      lmod(a, b, line) { if (b === 0n) throw new CRuntimeError('resto (%) con divisor cero (en C el programa se cierra con "Floating point exception")', line); return a % b; },
+      f2l(v) { return (isFinite(v) && v >= -9223372036854775808 && v < 9223372036854775808) ? BigInt(Math.trunc(v)) : -(2n ** 63n); },
+      f2ul(v) { return (isFinite(v) && v >= 0 && v < 18446744073709551616) ? BigInt(Math.trunc(v)) : BigInt.asUintN(64, this.f2l(v)); },
       exit(c) { throw new ExitSignal(c | 0); },
       CRuntimeError, ExitSignal
     };
@@ -338,12 +413,13 @@
     try {
       main = makeProgram(js)(rt);
       const rc = await main();
-      return { code: rc | 0 };
+      return { code: (rc | 0) & 255 };
     } catch (e) {
-      if (e instanceof ExitSignal) return e.code === -999 ? { stopped: true, code: 0 } : { code: e.code };
+      if (e instanceof ExitSignal) return e.code === -999 ? { stopped: true, code: 0 } : { code: e.code & 255 };
       if (e instanceof CRuntimeError) return { error: e.message, line: e.cline, code: 136 };
+      if (e instanceof RangeError && /Invalid (string|array) length|allocation/i.test(e.message)) return { error: 'el programa pidió más memoria de la que el editor puede darle', code: 139 };
       if (e instanceof RangeError && /call stack/i.test(e.message)) return { error: 'desbordamiento de la pila (recursión infinita o muy profunda)', code: 139 };
-      return { error: 'error interno: ' + (e && e.message), code: 1 };
+      return { error: 'Error inesperado del editor (no es culpa de tu programa): ' + (e && e.message) + '. Avisale al profe.', code: 1 };
     }
   }
 

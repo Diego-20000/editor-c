@@ -1,0 +1,18 @@
+// uso: node test/diag.js   -> verifica los diagnósticos esperados de test/diag/*.c
+// cada archivo empieza con "// espera: CODIGO" (por ejemplo E-scanf-sin-amp, W-sin-inicializar) o "// espera: limpio"
+const fs = require('fs'), path = require('path');
+const { compile } = require('../src/compiler.js');
+const dir = path.join(__dirname, 'diag');
+let fallas = 0, n = 0;
+for (const f of fs.readdirSync(dir).filter((x) => x.endsWith('.c')).sort()) {
+  const src = fs.readFileSync(path.join(dir, f), 'utf8');
+  const esp = (/^\/\/ espera: (\S+)/.exec(src) || [])[1];
+  let r; const t0 = Date.now();
+  try { r = compile(src); } catch (e) { console.log('FALLA ' + f + ': excepción ' + e.message); fallas++; n++; continue; }
+  const codes = r.errors.concat(r.warnings).map((d) => d.code);
+  const ok = esp === 'limpio' ? codes.length === 0 : codes.indexOf(esp) >= 0;
+  n++;
+  if (!ok || Date.now() - t0 > 5000) { fallas++; console.log('FALLA ' + f + ': se esperaba ' + esp + ' y salió [' + codes.join(', ') + ']'); }
+}
+console.log((n - fallas) + '/' + n + ' diagnósticos como se esperaba');
+process.exit(fallas ? 1 : 0);
