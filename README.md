@@ -21,7 +21,9 @@ Editor de C **sin anuncios** que corre en tu navegador. Escribís, ejecutás y p
 
 ## Qué soporta
 
-Tipos `int`, `float`, `double`, `char`, `long`, `unsigned`; `if`/`else`, `switch`, `while`, `do-while`, `for`; funciones con recursión; arreglos de 1 y 2 dimensiones; `printf`/`scanf` con sus formatos; `math.h`, `rand` y `ctype.h` básicos; `#define` de constantes.
+Tipos `int`, `float`, `double`, `char`, `short`, `long` y `long long` (64 bits exactos), `unsigned` en todos, `bool`, `const`, `static`; `if`/`else`, `switch`, `while`, `do-while`, `for`; funciones con prototipos y recursión; arreglos de 1 y 2 dimensiones (también como parámetro); `printf`/`scanf` con todos sus formatos; `math.h`, `ctype.h`, `rand` (misma secuencia que gcc en Linux), `time`; `#define` (con y sin parámetros), `#if`/`#ifdef`/`#else`/`#endif`.
+
+Avisos y errores en español con el número de línea, entre ellos: variable sin valor, `=` dentro de un `if`, `scanf` sin `&` o con menos variables, división entera guardada en `float`, `#include` faltante, función sin `return`, `switch` sin `break`, bucles que no terminan, `const` modificado y nombres mal escritos (con sugerencia).
 
 **Todavía no:** punteros, textos (`char[]` con `%s`), `struct` y archivos.
 
@@ -34,6 +36,7 @@ No es gcc. Es un intérprete del subconjunto de C que se usa al empezar a progra
 ```
 node build.js            # genera el sitio a partir de src/ (sin dependencias)
 node tools/ui-smoke.js   # prueba de la interfaz con Chromium headless (necesita playwright)
+bash test/run_all.sh     # compara la salida de test/cases contra gcc (necesita gcc)
 ```
 
 `build.js` produce, y se suben al repositorio:
