@@ -276,7 +276,19 @@
     }
 
     let seed = 1;
-    function rand() { seed = (Math.imul(seed, 1103515245) + 12345) & 0x7fffffff; return seed; }
+    // rand()/srand() como glibc (TYPE_3, r[i-3] + r[i-31]): misma secuencia que gcc en Linux
+    function makeRand(sd) {
+      sd = sd >>> 0; if (sd === 0) sd = 1;
+      const rs = new Int32Array(31); rs[0] = sd | 0;
+      for (let i = 1; i < 31; i++) { const hi = Math.trunc(rs[i - 1] / 127773), lo = rs[i - 1] % 127773; let w = 16807 * lo - 2836 * hi; if (w < 0) w += 2147483647; rs[i] = w; }
+      const buf = []; for (let i = 0; i < 31; i++) buf.push(rs[i] >>> 0);
+      let f = 3, rI = 0;
+      const next = () => { buf[f] = (buf[f] + buf[rI]) >>> 0; const res = buf[f] >>> 1; f = (f + 1) % 31; rI = (rI + 1) % 31; return res; };
+      for (let i = 0; i < 310; i++) next();
+      return next;
+    }
+    let nextRand = makeRand(1);
+    function rand() { return nextRand(); }
 
     return {
       printf(fmt, args) { const s = cformat(fmt, args); io.write(s); return s.length; },
@@ -302,6 +314,18 @@
         else while (out.length < d) out.push(0);
         return out;
       },
+      init(list, dims) {
+        const arr = this.mk(dims, 0);
+        const fillFrom = (a, ds, lst, st) => {
+          for (let k = 0; k < ds[0]; k++) {
+            if (st.i >= lst.length) break;
+            if (ds.length === 1) { let v = lst[st.i++]; while (Array.isArray(v)) v = v[0]; a[k] = v === undefined ? 0 : v; }
+            else { const it = lst[st.i]; if (Array.isArray(it)) { st.i++; fillFrom(a[k], ds.slice(1), it, { i: 0 }); } else fillFrom(a[k], ds.slice(1), lst, st); }
+          }
+        };
+        fillFrom(arr, dims, list, { i: 0 });
+        return arr;
+      },
       lop(op, a, b) {
         if (!isFinite(a)) a = 0; if (!isFinite(b)) b = 0;
         const x = BigInt.asIntN(64, BigInt(Math.trunc(a))), y = BigInt.asIntN(64, BigInt(Math.trunc(b)));
@@ -312,7 +336,7 @@
       round(x) { return x < 0 ? -Math.round(-x) : Math.round(x); },
       fmod(a, b) { return a % b; },
       yield: async function () { await new Promise((res) => setTimeout(res, 0)); if (io.cancelled && io.cancelled()) throw new ExitSignal(-999); },
-      rand, srand(s) { seed = s | 0; return 0; },
+      rand, srand(s) { nextRand = makeRand(s); return 0; },
       time() { return Math.floor(Date.now() / 1000); },
       exit(c) { throw new ExitSignal(c | 0); },
       CRuntimeError, ExitSignal

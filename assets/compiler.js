@@ -10,7 +10,12 @@
   const CONSTS = {
     EOF: [-1, 'int'], NULL: [0, 'int'], RAND_MAX: [2147483647, 'int'], INT_MAX: [2147483647, 'int'],
     INT_MIN: [-2147483648, 'int'], M_PI: [Math.PI, 'double'], M_E: [Math.E, 'double'], true: [1, 'int'], false: [0, 'int'],
-    stdout: [0, 'int'], stdin: [0, 'int'], stderr: [0, 'int'], CHAR_BIT: [8, 'int'], UINT_MAX: [4294967295, 'uint']
+    stdout: [0, 'int'], stdin: [0, 'int'], stderr: [0, 'int'], CHAR_BIT: [8, 'int'], UINT_MAX: [4294967295, 'uint'],
+    SHRT_MAX: [32767, 'int'], SHRT_MIN: [-32768, 'int'], USHRT_MAX: [65535, 'int'], CHAR_MAX: [127, 'int'], CHAR_MIN: [-128, 'int'], UCHAR_MAX: [255, 'int'],
+    EXIT_SUCCESS: [0, 'int'], EXIT_FAILURE: [1, 'int'], INFINITY: [Infinity, 'float'], NAN: [NaN, 'float'], HUGE_VAL: [Infinity, 'double'],
+    DBL_MAX: [1.7976931348623157e308, 'double'], DBL_MIN: [2.2250738585072014e-308, 'double'], DBL_EPSILON: [2.220446049250313e-16, 'double'],
+    FLT_MAX: [3.4028234663852886e38, 'float'], FLT_MIN: [1.1754943508222875e-38, 'float'], FLT_EPSILON: [1.1920928955078125e-7, 'float'],
+    M_SQRT2: [Math.SQRT2, 'double'], M_LN2: [Math.LN2, 'double'], M_LN10: [Math.LN10, 'double'], M_PI_2: [Math.PI / 2, 'double'], M_PI_4: [Math.PI / 4, 'double']
   };
 
   /* ================= LEXER ================= */
@@ -23,7 +28,7 @@
     const active = () => cs.every((x) => x.on);
     const ppVal = (txt, ln) => {
       let e = txt.replace(/defined\s*\(\s*(\w+)\s*\)|defined\s+(\w+)/g, (_, a, b) => (defines.has(a || b) ? '1' : '0'));
-      e = e.replace(/[A-Za-z_]\w*/g, (id) => { const b = defines.get(id); return b && b.length === 1 && b[0].t === 'num' ? String(b[0].v) : '0'; });
+      e = e.replace(/[A-Za-z_]\w*/g, (id) => { const b = defines.get(id); return Array.isArray(b) && b.length === 1 && b[0].t === 'num' ? String(b[0].v) : '0'; });
       e = e.replace(/(\d)[uUlL]+/g, '$1');
       if (!/^[\d\s+\-*\/%()<>=!&|^~?:]*$/.test(e)) throw new CErr('la condición del #if no se entiende', ln);
       try { return !!Number(Function('return (' + (e.trim() || '0') + ')')()); } catch (x) { throw new CErr('la condición del #if no se entiende', ln); }
@@ -67,8 +72,12 @@
           else if (dir === 'define') {
             const m2 = /^(\w+)([\s\S]*)$/.exec(m[2]);
             if (!m2) throw new CErr('#define mal escrito', line);
-            if (m2[2][0] === '(') throw new CErr('los #define con parámetros todavía no están soportados', line);
-            defines.set(m2[1], tokenize(m2[2], line, false, includes, defines));
+            if (m2[2][0] === '(') {
+              const mp = /^\(([^)]*)\)\s*([\s\S]*)$/.exec(m2[2]);
+              if (!mp) throw new CErr('#define mal escrito: falta cerrar el paréntesis de los parámetros', line);
+              const params = mp[1].split(',').map((x) => x.trim()).filter((x) => x.length);
+              defines.set(m2[1], { params, body: tokenize(mp[2], line, false, includes, defines) });
+            } else defines.set(m2[1], tokenize(m2[2], line, false, includes, defines));
           }
         }
         i = j; line += extra; continue;
@@ -132,9 +141,28 @@
     if (!defines.size) return toks;
     const out = [];
     const go = (arr, depth, line) => {
-      for (const t of arr) {
-        if (t.t === 'id' && defines.has(t.v) && depth < 12) go(defines.get(t.v), depth + 1, t.line);
-        else out.push(depth ? Object.assign({}, t, { line: line }) : t);
+      for (let i = 0; i < arr.length; i++) {
+        const t = arr[i];
+        const d = t.t === 'id' && depth < 12 ? defines.get(t.v) : undefined;
+        if (d && Array.isArray(d)) { go(d, depth + 1, t.line); continue; }
+        if (d && arr[i + 1] && arr[i + 1].t === 'op' && arr[i + 1].v === '(') {
+          const args = []; let cur = [], lvl = 0, j = i + 2;
+          for (; j < arr.length; j++) {
+            const x = arr[j];
+            if (x.t === 'op' && x.v === '(') lvl++;
+            if (x.t === 'op' && x.v === ')') { if (lvl === 0) break; lvl--; }
+            if (x.t === 'op' && x.v === ',' && lvl === 0) { args.push(cur); cur = []; continue; }
+            cur.push(x);
+          }
+          if (j >= arr.length) throw new CErr("a la macro '" + t.v + "' le falta cerrar el paréntesis", t.line);
+          if (cur.length || args.length) args.push(cur);
+          if (args.length !== d.params.length) throw new CErr("la macro '" + t.v + "' recibe " + d.params.length + ' argumento(s) y se la usó con ' + args.length, t.line);
+          const eargs = args.map((a) => expandDefines(a, defines));
+          const sub = [];
+          for (const b of d.body) { const k = b.t === 'id' ? d.params.indexOf(b.v) : -1; if (k >= 0) for (const x of eargs[k]) sub.push(Object.assign({}, x, { line: t.line })); else sub.push(Object.assign({}, b, { line: t.line })); }
+          go(sub, depth + 1, t.line); i = j; continue;
+        }
+        out.push(depth ? Object.assign({}, t, { line: line }) : t);
       }
     };
     go(toks, 0, 0);
@@ -482,7 +510,7 @@
       this.cur = null;
       this.seenW = new Set();
       this.hoisted = []; this.sid = 0;
-      this.curLine = 1; this.loopDepth = 0; this.switchDepth = 0; this.undeclared = new Set(); this.inSC = 0;
+      this.ntemp = 0; this.fnHoist = []; this.curLine = 1; this.loopDepth = 0; this.switchDepth = 0; this.undeclared = new Set(); this.inSC = 0;
       this.incl = new Set((this.opts.includes || []).map((h) => h.replace(/^[<"]|[>"]$/g, '')));
     }
     err(msg, line) { this.errors.push({ line: line || this.curLine, msg }); }
@@ -552,7 +580,7 @@
       while (ch) { ch = false; for (const f of this.funcs.values()) if (!f.async) for (const c of f.calls) { const g = this.funcs.get(c); if (g && g.async) { f.async = true; ch = true; break; } } }
       if (this.opts.yieldLoops) for (const f of this.funcs.values()) f.async = true;
       // 3) código
-      const out = ['const $={printf:$rt.printf,puts:$rt.puts,putchar:$rt.putchar,scanf:$rt.scanf,getchar:$rt.getchar,idiv:$rt.idiv,imod:$rt.imod,ix:$rt.ix,d2i:$rt.d2i,mk:$rt.mk,pad:$rt.pad,rand:$rt.rand,srand:$rt.srand,time:$rt.time,exit:$rt.exit,round:$rt.round,fmod:$rt.fmod,lop:$rt.lop,yield:$rt.yield};', 'let $t;let $y=0;'];
+      const out = ['const $={printf:$rt.printf,puts:$rt.puts,putchar:$rt.putchar,scanf:$rt.scanf,getchar:$rt.getchar,idiv:$rt.idiv,imod:$rt.imod,ix:$rt.ix,d2i:$rt.d2i,mk:$rt.mk,pad:$rt.pad,init:$rt.init,rand:$rt.rand,srand:$rt.srand,time:$rt.time,exit:$rt.exit,round:$rt.round,fmod:$rt.fmod,lop:$rt.lop,yield:$rt.yield};', 'let $t;let $y=0;'];
       for (const it of this.items) if (it.k === 'decl') out.push(this.declCode(it, true));
       const fcs = [];
       for (const it of this.items) if (it.k === 'func') fcs.push(this.funcCode(it));
@@ -574,7 +602,7 @@
 
     funcCode(f) {
       const info = this.funcs.get(f.name);
-      this.cur = info;
+      this.cur = info; this.ntemp = 0; this.fnHoist = [];
       this.push();
       const ps = [];
       for (const p of f.params) { this.declare(p.name, p.array ? { type: p.type, js: 'v_' + p.name, assigned: true, array: true, ndims: p.dims, param: true } : { type: p.type, js: 'v_' + p.name, assigned: true, scalar: true }, p.line); ps.push('v_' + p.name); }
@@ -583,7 +611,8 @@
       if (info.ret !== 'void' && f.name !== 'main' && !this.alwaysReturns(f.body)) this.warn("la función '" + f.name + "' puede terminar sin ejecutar 'return' en algún caso: en C devuelve un valor basura. Agregá un return al final", f.body.end || f.line);
       this.cur = null;
       const tail = f.name === 'main' ? '\nreturn 0;' : '';
-      return (info.async ? 'async ' : '') + 'function f_' + f.name + '(' + ps.join(',') + '){let $t;\n' + body + tail + '\n}';
+      let temps = ''; for (let i = 1; i <= this.ntemp; i++) temps += 'let $a' + i + ',$i' + i + ';';
+      return (info.async ? 'async ' : '') + 'function f_' + f.name + '(' + ps.join(',') + '){let $t;' + temps + this.fnHoist.join('') + '\n' + body + tail + '\n}';
     }
     stmtList(arr) { return arr.map((s) => this.stmt(s)).join('\n'); }
     stmt(s) {
@@ -764,7 +793,7 @@
           let init;
           if (v.init) {
             if (v.init.k !== 'list') { this.err('un arreglo se inicializa con llaves { ... }', v.line); init = '$.mk([1],0)'; }
-            else init = '$.pad(' + this.listCode(v.init, d.type, v.dims.length) + ',[' + dimsCode.join(',') + '])';
+            else init = '$.init(' + this.listCode(v.init, d.type, v.dims.length) + ',[' + dimsCode.join(',') + '])';
           } else init = '$.mk([' + dimsCode.join(',') + '],0)';
           parts.push('let ' + js + '=' + init + ';');
           continue;
@@ -774,6 +803,12 @@
         if (v.init) {
           if (v.init.k === 'list') { this.err("'" + v.name + "' no es un arreglo, no se inicializa con llaves", v.line); }
           else { const r = this.expr(v.init); this.checkIntDiv(r, d.type, v.line); init = this.conv(r, d.type); assigned = true; }
+        }
+        if (!global && !hoist && !inFor && !v.init && this.cur) {
+          const hj = 'v_' + v.name + '$h' + (++this.sid);
+          this.fnHoist.push('let ' + hj + '=0;');
+          this.declare(v.name, { type: d.type, js: hj, assigned, scalar: true, global, isConst: !!d.const }, v.line);
+          continue;
         }
         this.declare(v.name, { type: d.type, js, assigned, scalar: true, global, isConst: !!d.const }, v.line);
         parts.push((inFor ? '' : 'let ') + js + '=' + init + (inFor ? '' : ';'));
@@ -829,6 +864,7 @@
     expr(n, asStmt) {
       if (n.line) this.curLine = n.line;
       switch (n.k) {
+        case 'raw': return { c: n.c, t: n.t };
         case 'num': return { c: n.v < 0 ? '(' + n.v + ')' : String(n.v), t: n.kind };
         case 'str': return { c: JSON.stringify(n.v), t: 'str' };
         case 'id': return this.idRead(n);
@@ -839,6 +875,7 @@
         case 'cond': {
           const c = this.cond(n.c);
           const a = this.expr(n.a), b = this.expr(n.b);
+          if (a.t === 'str' && b.t === 'str') { const sc = (x, nd) => (x.dyn ? x.c : JSON.stringify(nd.v)); return { c: '(' + c + '?' + sc(a, n.a) + ':' + sc(b, n.b) + ')', t: 'str', dyn: true }; }
           if (a.t === 'str' || b.t === 'str' || a.t === 'void' || b.t === 'void') { this.err('los dos lados del ?: deben ser números', n.line); return { c: '0', t: 'int' }; }
           const t = arith(a.t, b.t);
           return { c: '(' + c + '?' + this.conv(a, t) + ':' + this.conv(b, t) + ')', t };
@@ -876,7 +913,8 @@
       if (!info.assigned && !info.warned && !this.inSC) { info.warned = true; this.warn("'" + n.name + "' se usa antes de darle un valor (en C su valor inicial es basura): asignale un valor inicial, por ejemplo " + n.name + ' = 0;', n.line); }
       return { c: info.js, t: info.type };
     }
-    lvalue(n, forWrite) {
+    hasSideEffect(n) { let r = false; this.walk(n, (x) => { if (x.k === 'call' || x.k === 'assign' || x.k === 'incdec') r = true; }); return r; }
+    lvalue(n, forWrite, useTemps) {
       if (n.k === 'id') {
         const info = this.lookup(n.name);
         if (!info) { this.undeclErr(n.name, n.line); return { c: 'v_' + n.name, t: 'int', bad: true }; }
@@ -893,6 +931,16 @@
         if (idxs.length !== info.ndims) { this.err("'" + b.name + "' tiene " + info.ndims + ' dimensión(es) y se usó con ' + idxs.length, b.line); return { c: '0', t: 'int', bad: true }; }
         let code = info.js;
         let lenBase = info.js;
+        if (useTemps && idxs.some((ix) => this.hasSideEffect(ix))) {
+          const id = ++this.ntemp; let cont = info.js, lb = info.js;
+          idxs.forEach((ix, k) => {
+            const r = this.expr(ix);
+            if (!INTLIKE.has(r.t)) this.err('el índice de un arreglo debe ser un entero', ix.line || n.line);
+            if (k < idxs.length - 1) { cont += '[$.ix(' + this.val(r) + ',' + lb + '.length,' + n.line + ')]'; lb += '[0]'; }
+            else code = '$i' + id + '=$.ix(' + this.val(r) + ',$a' + id + '.length,' + n.line + ')';
+          });
+          return { c: '$a' + id + '[$i' + id + ']', pre: '$a' + id + '=' + cont + ',' + code, t: info.type, info, arrayElem: true };
+        }
         idxs.forEach((ix, k) => {
           const r = this.expr(ix);
           if (!INTLIKE.has(r.t)) this.err('el índice de un arreglo debe ser un entero', ix.line || n.line);
@@ -972,12 +1020,13 @@
         case '&': case '|': case '^': case '<<': case '>>':
           if (FLOATLIKE.has(t)) { this.err("'" + op + "' solo funciona con enteros", line); return { c: '0', t: 'int' }; }
           if (t === 'long') return { c: '$.lop(' + JSON.stringify(op) + ',' + av + ',' + bv + ')', t };
+          if (t === 'uint' && op === '>>') return { c: '((' + av + '>>>0) >>> ' + bv + ')', t };
           return { c: this.wrapInt(t, av + ' ' + op + ' ' + bv), t };
       }
       throw new Error('bin ' + op);
     }
     assignOp(n) {
-      const lv = this.lvalue(n.l, true);
+      const lv = this.lvalue(n.l, true, true);
       this.checkConst(lv, this.rootName(n.l), n.line);
       let valueCode;
       if (n.op === '=') {
@@ -987,16 +1036,17 @@
         this.checkIntDiv(r, lv.t, n.line);
         valueCode = this.conv(r, lv.t);
       } else {
-        if (lv.info && !lv.arrayElem) { /* lectura previa */ if (!lv.info.assigned && !lv.info.warned) { lv.info.warned = true; this.warn("'" + n.l.name + "' se usa antes de darle un valor (en C su valor inicial es basura): asignale un valor inicial, por ejemplo " + n.l.name + ' = 0;', n.line); } }
-        const r = this.binOp(n.op.slice(0, -1), n.l, n.r, n.line);
+        if (lv.info && !lv.arrayElem) { if (!lv.info.assigned && !lv.info.warned) { lv.info.warned = true; this.warn("'" + n.l.name + "' se usa antes de darle un valor (en C su valor inicial es basura): asignale un valor inicial, por ejemplo " + n.l.name + ' = 0;', n.line); } }
+        const ln = lv.pre ? { k: 'raw', c: lv.c, t: lv.t, line: n.line } : n.l;
+        const r = this.binOp(n.op.slice(0, -1), ln, n.r, n.line);
         valueCode = this.conv(r, lv.t);
       }
       if (!lv.bad) this.markAssigned(lv);
-      return { c: '(' + lv.c + '=' + valueCode + ')', t: lv.t };
+      return { c: '(' + (lv.pre ? lv.pre + ',' : '') + lv.c + '=' + valueCode + ')', t: lv.t };
     }
     incdec(n, asStmt) {
       if (n.e.k !== 'id' && n.e.k !== 'idx') { this.err("'" + n.op + "' solo se puede aplicar a una variable", n.line); return { c: '0', t: 'int' }; }
-      const lv = this.lvalue(n.e, true);
+      const lv = this.lvalue(n.e, true, true);
       if (lv.bad) return { c: '0', t: 'int' };
       this.checkConst(lv, this.rootName(n.e), n.line);
       if (lv.info && !lv.arrayElem && !lv.info.assigned && !lv.info.warned) { lv.info.warned = true; this.warn("'" + n.e.name + "' se usa antes de darle un valor (en C su valor inicial es basura): asignale un valor inicial, por ejemplo " + n.e.name + ' = 0;', n.line); }
@@ -1004,13 +1054,14 @@
       const sign = n.op === '++' ? '+' : '-';
       const t = lv.t;
       const calc = (src) => this.conv({ c: this.wrapInt(arith(t, 'int'), src + ' ' + sign + ' 1'), t: arith(t, 'int') }, t);
-      if (n.prefix || asStmt) return { c: '(' + lv.c + '=' + calc(lv.c) + ')', t };
-      return { c: '($t=' + lv.c + ',' + lv.c + '=' + calc('$t') + ',$t)', t };
+      const pre = lv.pre ? lv.pre + ',' : '';
+      if (n.prefix || asStmt) return { c: '(' + pre + lv.c + '=' + calc(lv.c) + ')', t };
+      return { c: '(' + pre + '$t=' + lv.c + ',' + lv.c + '=' + calc('$t') + ',$t)', t };
     }
 
     /* ----- llamadas ----- */
     needInclude(name, line) {
-      const H = { 'stdio.h': ['printf', 'scanf', 'getchar', 'putchar', 'puts'], 'math.h': ['sqrt', 'pow', 'fabs', 'floor', 'ceil', 'round', 'trunc', 'sin', 'cos', 'tan', 'asin', 'acos', 'atan', 'atan2', 'exp', 'log', 'log10', 'log2', 'cbrt', 'fmod', 'fmax', 'fmin', 'hypot'], 'stdlib.h': ['rand', 'srand', 'abs', 'labs', 'exit', 'system'], 'ctype.h': ['isdigit', 'isalpha', 'isalnum', 'isspace', 'isupper', 'islower', 'toupper', 'tolower'], 'time.h': ['time'] };
+      const H = { 'stdio.h': ['printf', 'scanf', 'getchar', 'putchar', 'puts'], 'math.h': ['sqrt', 'pow', 'fabs', 'floor', 'ceil', 'round', 'trunc', 'sin', 'cos', 'tan', 'asin', 'acos', 'atan', 'atan2', 'exp', 'log', 'log10', 'log2', 'cbrt', 'sinh', 'cosh', 'tanh', 'asinh', 'acosh', 'atanh', 'exp2', 'expm1', 'log1p', 'isnan', 'isinf', 'fmod', 'fmax', 'fmin', 'hypot'], 'stdlib.h': ['rand', 'srand', 'abs', 'labs', 'exit', 'system'], 'ctype.h': ['isdigit', 'isalpha', 'isalnum', 'isspace', 'isupper', 'islower', 'ispunct', 'isprint', 'isgraph', 'iscntrl', 'isxdigit', 'isblank', 'toupper', 'tolower'], 'time.h': ['time'] };
       for (const h in H) if (H[h].indexOf(name) >= 0 && !this.incl.has(h)) {
         const k = 'inc|' + h; if (this.undeclared.has(k)) return; this.undeclared.add(k);
         this.warn('usás ' + name + ' pero falta #include <' + h + '> al principio del programa', line);
@@ -1020,7 +1071,7 @@
       const name = n.name;
       this.needInclude(name, n.line);
       const args = n.args;
-      const MATH1 = { sqrt: 'Math.sqrt', fabs: 'Math.abs', floor: 'Math.floor', ceil: 'Math.ceil', round: '$.round', trunc: 'Math.trunc', sin: 'Math.sin', cos: 'Math.cos', tan: 'Math.tan', asin: 'Math.asin', acos: 'Math.acos', atan: 'Math.atan', exp: 'Math.exp', log: 'Math.log', log10: 'Math.log10', log2: 'Math.log2', cbrt: 'Math.cbrt' };
+      const MATH1 = { sqrt: 'Math.sqrt', fabs: 'Math.abs', floor: 'Math.floor', ceil: 'Math.ceil', round: '$.round', trunc: 'Math.trunc', sin: 'Math.sin', cos: 'Math.cos', tan: 'Math.tan', asin: 'Math.asin', acos: 'Math.acos', atan: 'Math.atan', exp: 'Math.exp', log: 'Math.log', log10: 'Math.log10', log2: 'Math.log2', cbrt: 'Math.cbrt', sinh: 'Math.sinh', cosh: 'Math.cosh', tanh: 'Math.tanh', asinh: 'Math.asinh', acosh: 'Math.acosh', atanh: 'Math.atanh', exp2: '((x)=>Math.pow(2,x))', expm1: 'Math.expm1', log1p: 'Math.log1p' };
       if (name === 'printf') return this.printfCall(n);
       if (name === 'scanf') return this.scanfCall(n);
       if (MATH1[name] !== undefined || ['pow', 'fmod', 'atan2', 'fmax', 'fmin', 'hypot'].indexOf(name) >= 0) {
@@ -1037,6 +1088,7 @@
         if (name === 'labs') return { c: 'Math.abs(' + this.conv(r, 'long') + ')', t: 'long' };
         return { c: '(Math.abs(' + this.conv(r, 'int') + ')|0)', t: 'int' };
       }
+      if (name === 'isnan' || name === 'isinf') { const r = this.expr(args[0]); const v = this.val(r); return { c: '(' + (name === 'isnan' ? 'Number.isNaN(' + v + ')' : '(Math.abs(' + v + ')===Infinity)') + '?1:0)', t: 'int' }; }
       if (name === 'rand') return { c: '$.rand()', t: 'int' };
       if (name === 'srand') { const r = args[0] ? this.expr(args[0]) : { c: '0', t: 'int' }; return { c: '$.srand(' + this.val(r) + ')', t: 'void' }; }
       if (name === 'time') { if (args[0]) this.expr(args[0]); return { c: '$.time()', t: 'long' }; }
@@ -1044,12 +1096,13 @@
       if (name === 'getchar' || name === 'getch' || name === 'getche') { return { c: '(await $.getchar())', t: 'int' }; }
       if (name === 'putchar') { const r = this.expr(args[0]); return { c: '$.putchar(' + this.conv(r, 'int') + ')', t: 'int' }; }
       if (name === 'puts') {
-        if (!args[0] || args[0].k !== 'str') { this.err('puts solo se soporta con un texto entre comillas', n.line); return { c: '0', t: 'int' }; }
-        return { c: '$.puts(' + JSON.stringify(args[0].v) + ')', t: 'int' };
+        const pr = args[0] ? this.expr(args[0]) : null;
+        if (!pr || pr.t !== 'str') { this.err('puts solo se soporta con un texto entre comillas', n.line); return { c: '0', t: 'int' }; }
+        return { c: '$.puts(' + (pr.dyn ? pr.c : JSON.stringify(args[0].v)) + ')', t: 'int' };
       }
       if (name === 'system' || name === 'fflush' || name === 'setbuf' || name === 'setvbuf') { args.forEach((a) => { if (a.k !== 'str') this.expr(a); }); return { c: '0', t: 'int' }; }
-      const CT = { isdigit: 'c>=48&&c<=57', isalpha: '(c>=65&&c<=90)||(c>=97&&c<=122)', isupper: 'c>=65&&c<=90', islower: 'c>=97&&c<=122', isspace: 'c===32||(c>=9&&c<=13)', isalnum: '(c>=48&&c<=57)||(c>=65&&c<=90)||(c>=97&&c<=122)' };
-      if (CT[name]) { const r = this.expr(args[0]); return { c: '((c=>' + CT[name] + ')(' + this.conv(r, 'int') + ')?1:0)', t: 'int' }; }
+      const CT = { isdigit: ['c>=48&&c<=57', 2048], isalpha: ['(c>=65&&c<=90)||(c>=97&&c<=122)', 1024], isupper: ['c>=65&&c<=90', 256], islower: ['c>=97&&c<=122', 512], isspace: ['c===32||(c>=9&&c<=13)', 8192], isalnum: ['(c>=48&&c<=57)||(c>=65&&c<=90)||(c>=97&&c<=122)', 8], ispunct: ['(c>=33&&c<=47)||(c>=58&&c<=64)||(c>=91&&c<=96)||(c>=123&&c<=126)', 4], isprint: ['c>=32&&c<=126', 16384], isgraph: ['c>=33&&c<=126', 32768], iscntrl: ['(c>=0&&c<=31)||c===127', 2], isxdigit: ['(c>=48&&c<=57)||(c>=65&&c<=70)||(c>=97&&c<=102)', 4096], isblank: ['c===32||c===9', 1] };
+      if (CT[name]) { const r = this.expr(args[0]); return { c: '((c=>' + CT[name][0] + ')(' + this.conv(r, 'int') + ')?' + CT[name][1] + ':0)', t: 'int' }; }
       if (name === 'toupper') { const r = this.expr(args[0]); return { c: '((c=>c>=97&&c<=122?c-32:c)(' + this.conv(r, 'int') + '))', t: 'int' }; }
       if (name === 'tolower') { const r = this.expr(args[0]); return { c: '((c=>c>=65&&c<=90?c+32:c)(' + this.conv(r, 'int') + '))', t: 'int' }; }
 
@@ -1116,7 +1169,7 @@
           else if (c === 'd' && t === 'str') this.warn("printf: '%d' espera un entero pero recibe un texto", n.line);
           else if (c === 'c' && t === 'str') this.warn("printf: '%c' espera un carácter (entre comillas simples 'a'), no un texto", n.line);
         }
-        vals.push(r.t === 'str' ? JSON.stringify(a.v) : this.val(r));
+        vals.push(r.t === 'str' ? (r.dyn ? r.c : JSON.stringify(a.v)) : this.val(r));
       });
       return { c: '$.printf(' + JSON.stringify(fmt) + ',[' + vals.join(',') + '])', t: 'int' };
     }
