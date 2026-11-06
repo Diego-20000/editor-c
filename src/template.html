@@ -7,6 +7,7 @@
 <title>Editor C</title>
 <meta name="description" content="Editor de C sin anuncios que corre en tu navegador: escribí, ejecutá y probá tus programas al instante.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%233ddc97'/%3E%3Ctext x='16' y='23' font-family='monospace' font-size='20' font-weight='700' text-anchor='middle' fill='%2306281a'%3EC%3C/text%3E%3C/svg%3E">
+<!--@@HEAD@@-->
 <!--@@CSS@@-->
 </head>
 <body>
@@ -25,8 +26,12 @@
     </div></details>
   </div>
 </header>
-<main class="split">
-  <section class="pane" aria-label="Editor de código">
+<div class="tabs" id="tabs" role="tablist" aria-label="Vista">
+  <button type="button" id="tabEd" class="tab" role="tab" aria-selected="true" aria-controls="paneEd">Editor</button>
+  <button type="button" id="tabCo" class="tab" role="tab" aria-selected="false" aria-controls="paneCo" tabindex="-1">Consola<i id="tabDot" class="dot" hidden></i></button>
+</div>
+<main class="split" id="split">
+  <section class="pane ed on" id="paneEd" aria-label="Editor de código">
     <div class="pane-head">
       <button id="pname" class="pname" title="Cambiar de programa o ponerle nombre" aria-label="Programa actual: Programa 1. Abrir lista de programas"><span id="pnameTxt">Programa 1</span><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
       <span class="hint" id="pos" aria-hidden="true">Lín 1, Col 1</span>
@@ -49,7 +54,8 @@
       </div>
     </div>
   </section>
-  <section class="pane term" aria-label="Consola">
+  <div class="divider" id="divider" role="separator" tabindex="0" aria-orientation="vertical" aria-label="Tamaño del editor y de la consola" title="Arrastrá o usá las flechas (Inicio y Fin: extremos, Enter: restablecer)" aria-valuemin="20" aria-valuemax="80" aria-valuenow="55"></div>
+  <section class="pane term" id="paneCo" aria-label="Consola">
     <div class="pane-head"><span>Consola</span><span id="status" class="chip" role="status">Listo</span>
       <span class="tools">
         <button id="inBtn" class="btn mini" aria-expanded="false" aria-controls="inbox" title="Datos de entrada para precargar lo que lee scanf">Entrada<i id="inDot" class="dot" hidden></i></button>
@@ -61,6 +67,7 @@
       <textarea id="inTxt" rows="3" spellcheck="false" autocomplete="off" autocapitalize="off" placeholder="5&#10;8"></textarea>
     </div>
     <div class="console" id="console" tabindex="0" role="log" aria-label="Salida del programa"><pre id="out" aria-live="polite"></pre></div>
+    <div class="slow" id="slow" role="status" hidden><span id="slowTxt"></span><button type="button" id="slowStop" class="btn mini danger">Detener</button></div>
     <div class="diag" id="diag" role="region" aria-label="Problemas" hidden>
       <button type="button" id="diagHead" class="dhead" aria-expanded="true"><span id="diagTitle">Problemas</span><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
       <div id="diagList"></div>
@@ -72,7 +79,8 @@
   <h2 id="tProgs">Mis programas</h2>
   <p>Se guardan solos en este dispositivo (no se suben a ningún lado).</p>
   <ul class="plist" id="plist"></ul>
-  <div class="drow"><button id="pnew" class="btn primary" type="button">Nuevo programa</button><button id="popen" class="btn" type="button">Abrir archivo .c</button><button class="btn" type="button" data-close>Cerrar</button></div>
+  <div class="drow"><button id="pnew" class="btn primary" type="button">Nuevo programa</button><button id="popen" class="btn" type="button">Abrir archivo .c</button></div>
+  <div class="drow"><button id="pexp" class="btn" type="button" title="Descarga todos tus programas en un solo archivo .json (copia de seguridad)">Exportar todo (.json)</button><button id="pimp" class="btn" type="button" title="Agrega los programas de un archivo .json exportado antes; no pisa los que ya tenés">Importar (.json)</button><button class="btn" type="button" data-close>Cerrar</button></div>
 </dialog>
 
 <dialog id="dSet" aria-labelledby="tSet">
@@ -86,7 +94,23 @@
   <div class="srow"><label for="theme">Tema</label>
     <select id="theme" class="btn sel"><option value="auto">Automático (según el dispositivo)</option><option value="light">Claro</option><option value="dark">Oscuro</option></select></div>
   <div class="srow"><span id="fsLbl">Tamaño de letra</span><span class="grp" role="group" aria-labelledby="fsLbl"><button id="fsm" class="btn icon" type="button" title="Letra más chica" aria-label="Letra más chica">A−</button><output id="fsv" class="fsv"></output><button id="fsp" class="btn icon" type="button" title="Letra más grande" aria-label="Letra más grande">A+</button></span></div>
+  <div class="srow" id="mutedRow" hidden><span id="mutedTxt"></span><button id="mutedReset" class="btn" type="button">Mostrar de nuevo</button></div>
   <div class="drow"><button id="helpBtn" class="btn" type="button">Ayuda y atajos</button><button class="btn primary" type="button" data-close>Listo</button></div>
+</dialog>
+
+<dialog id="dShot" aria-labelledby="tShot" class="wide">
+  <h2 id="tShot">Vista previa de la captura</h2>
+  <label class="chk" id="shotInRow"><input type="checkbox" id="shotIn" checked> Incluir los datos de entrada</label>
+  <div class="shotbox"><img id="shotImg" alt="Vista previa de la captura: cabecera, código, entrada y salida"></div>
+  <div class="drow"><button id="shotDl" class="btn primary" type="button">Descargar PNG</button><button id="shotShare" class="btn" type="button" hidden>Compartir</button><button class="btn" type="button" data-close>Cancelar</button></div>
+</dialog>
+
+<dialog id="dImp" aria-labelledby="tImp">
+  <h2 id="tImp">Importar programas</h2>
+  <p id="impTxt"></p>
+  <ul id="impList"></ul>
+  <p class="fine">No se borra ni se pisa ningún programa que ya tengas.</p>
+  <div class="drow"><button id="impOk" class="btn primary" type="button">Importar</button><button class="btn" type="button" data-close>Cancelar</button></div>
 </dialog>
 
 <dialog id="dlg" aria-labelledby="tHelp">
@@ -114,6 +138,7 @@
   <div class="drow"><button class="btn primary" type="button" data-close>Entendido</button></div>
 </dialog>
 <input type="file" id="file" accept=".c,.h,.txt,text/plain" hidden>
+<input type="file" id="fileJson" accept=".json,application/json" hidden>
 <!--@@JS@@-->
 </body>
 </html>
