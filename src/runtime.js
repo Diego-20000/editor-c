@@ -317,7 +317,7 @@
     function rand() { return nextRand(); }
 
     return {
-      printf(fmt, args) { const s = cformat(fmt, args); io.write(s); return s.length; },
+      printf(fmt, args, line) { let s; try { s = cformat(fmt, args); } catch (e) { if (e instanceof CRuntimeError && e.cline == null) e.cline = line; throw e; } io.write(s); return s.length; },
       puts(s) { io.write(s + '\n'); return 1; },
       putchar(c) { io.write(String.fromCharCode(c & 255)); return c; },
       scanf, getchar,
@@ -329,12 +329,12 @@
         return i;
       },
       d2i(v) { return (v > -2147483649 && v < 2147483648) ? (v | 0) : -2147483648; },
-      mk(dims, fill) {
+      mk(dims, fill, line) {
         dims = dims.map(Number);
         const build = (k) => { const a = new Array(dims[k]); for (let i = 0; i < dims[k]; i++) a[i] = k === dims.length - 1 ? fill : build(k + 1); return a; };
-        for (const d of dims) if (!(d > 0)) throw new CRuntimeError('tamaño de arreglo inválido (' + d + ')');
+        for (const d of dims) if (!(d > 0)) throw new CRuntimeError('tamaño de arreglo inválido (' + d + ')', line);
         const total = dims.reduce((a, b) => a * b, 1);
-        if (total > 20000000) throw new CRuntimeError('el arreglo es demasiado grande para este editor (' + total + ' elementos; el máximo es 20 millones). En un programa real esto suele cerrarse por falta de memoria de pila');
+        if (total > 20000000) throw new CRuntimeError('el arreglo es demasiado grande para este editor (' + total + ' elementos; el máximo es 20 millones). En un programa real esto suele cerrarse por falta de memoria de pila', line);
         return build(0);
       },
       pad(list, dims) {
@@ -344,8 +344,8 @@
         else while (out.length < d) out.push(0);
         return out;
       },
-      init(list, dims, fill) {
-        const arr = this.mk(dims, fill === undefined ? 0 : fill);
+      init(list, dims, fill, line) {
+        const arr = this.mk(dims, fill === undefined ? 0 : fill, line);
         const fillFrom = (a, ds, lst, st) => {
           for (let k = 0; k < ds[0]; k++) {
             if (st.i >= lst.length) break;
