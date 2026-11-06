@@ -83,8 +83,8 @@ h1, h2, h3, p { margin: 0; }
 .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); margin-left: 6px; }
 
 .find { padding: 6px 8px; border-bottom: 1px solid var(--line); background: var(--panel2); display: grid; gap: 6px; }
-.frow { display: flex; gap: 6px; align-items: center; }
-.frow input { flex: 1; min-width: 0; height: 32px; padding: 0 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel); color: var(--text); font: 14px var(--mono); }
+.frow { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.frow input { flex: 1 1 140px; min-width: 0; height: 32px; padding: 0 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel); color: var(--text); font: 14px var(--mono); }
 .fcount { font-size: 12px; color: var(--muted); min-width: 4.5em; text-align: right; white-space: nowrap; }
 
 .editor { position: relative; flex: 1; display: flex; min-height: 0; font: var(--fs)/1.5 var(--mono); }
@@ -204,7 +204,8 @@ fieldset input { height: 38px; padding: 0 10px; border-radius: 8px; border: 1px 
   .dhead { min-height: 44px; }
   .eofbtn { min-height: 44px; padding: 0 12px; }
   .diag .it > button { min-height: 44px; }
-  .frow input, fieldset input { height: 44px; }
+  .frow input, fieldset input { height: 44px; font-size: 16px; }
+  .stdin input, .plist input { font-size: 16px; }
   .stdin input { display: block; padding: 12px 0; margin: -12px 0; }
   .plist input { height: 44px; }
   .divider { min-width: 20px; min-height: 20px; }
@@ -2535,6 +2536,9 @@ int main() {
   function toast(msg, label, fn, sticky) {
     let t = $('toast');
     if (!t) { t = document.createElement('div'); t.id = 'toast'; t.className = 'toast'; t.setAttribute('role', 'status'); document.body.appendChild(t); }
+    const dlgAbierto = document.querySelector('dialog[open]');
+    const anfitrion = dlgAbierto || document.body;
+    if (t.parentNode !== anfitrion) anfitrion.appendChild(t);
     t.textContent = msg + ' ';
     if (label) {
       const b = document.createElement('button'); b.type = 'button'; b.className = 'btn mini'; b.textContent = label;
@@ -2699,6 +2703,19 @@ int main() {
   }
 
   let guard = false;
+  // si el alumno tipea la '}' final y ya hay una '}' automática en la línea de abajo (programa balanceado), la pisa en vez de agregar otra
+  function pisarLlave(v, s, en) {
+    if (s !== en) return false;
+    const ls = lineStart(v, s);
+    if (!/^[ \t]*$/.test(v.slice(ls, s))) return false;
+    const m = /^[ \t]*\n([ \t]*)\}/.exec(v.slice(en));
+    if (!m) return false;
+    const ab = (v.match(/\{/g) || []).length, ce = (v.match(/\}/g) || []).length;
+    if (ab !== ce) return false;
+    const fin = en + m[0].length;
+    guard = true; try { ta.setSelectionRange(ls, fin); insert(m[1] + '}'); const pos = ls + m[1].length + 1; ta.setSelectionRange(pos, pos); } finally { guard = false; }
+    return true;
+  }
   const OPEN = { '(': ')', '[': ']', '{': '}', '"': '"', "'": "'" };
   const CLOSE = new Set([')', ']', '}', '"', "'"]);
   ta.addEventListener('beforeinput', (e) => {
@@ -2706,6 +2723,7 @@ int main() {
     const v = ta.value, s = ta.selectionStart, en = ta.selectionEnd;
     if (e.inputType === 'insertText' && e.data && e.data.length === 1) {
       const ch = e.data, nx = v[en], pv = v[s - 1];
+      if (ch === '}' && pisarLlave(v, s, en)) { e.preventDefault(); return; }
       if (CLOSE.has(ch) && s === en && nx === ch) { e.preventDefault(); ta.setSelectionRange(s + 1, s + 1); return; }
       const close = OPEN[ch];
       if (!close) return;
@@ -2720,6 +2738,7 @@ int main() {
     }
   });
 
+  document.addEventListener('keydown', (e) => { if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's' && e.target !== ta) { e.preventDefault(); save(); } });
   ta.addEventListener('keydown', (e) => {
     const mod = e.ctrlKey || e.metaKey;
     if (mod && e.key.toLowerCase() === 's') { e.preventDefault(); save(); return; }
@@ -2748,6 +2767,7 @@ int main() {
       return;
     }
     if (e.key === '}' && !mod) {
+      if (pisarLlave(v, s, en)) { e.preventDefault(); return; }
       const ls = lineStart(v, s);
       if (s === en && /^ +$/.test(v.slice(ls, s)) && s - ls >= 4) { e.preventDefault(); guard = true; try { ta.setSelectionRange(s - 4, s); insert('}'); } finally { guard = false; } }
     }

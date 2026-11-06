@@ -24,6 +24,9 @@
   function toast(msg, label, fn, sticky) {
     let t = $('toast');
     if (!t) { t = document.createElement('div'); t.id = 'toast'; t.className = 'toast'; t.setAttribute('role', 'status'); document.body.appendChild(t); }
+    const dlgAbierto = document.querySelector('dialog[open]');
+    const anfitrion = dlgAbierto || document.body;
+    if (t.parentNode !== anfitrion) anfitrion.appendChild(t);
     t.textContent = msg + ' ';
     if (label) {
       const b = document.createElement('button'); b.type = 'button'; b.className = 'btn mini'; b.textContent = label;
@@ -188,6 +191,19 @@
   }
 
   let guard = false;
+  // si el alumno tipea la '}' final y ya hay una '}' automática en la línea de abajo (programa balanceado), la pisa en vez de agregar otra
+  function pisarLlave(v, s, en) {
+    if (s !== en) return false;
+    const ls = lineStart(v, s);
+    if (!/^[ \t]*$/.test(v.slice(ls, s))) return false;
+    const m = /^[ \t]*\n([ \t]*)\}/.exec(v.slice(en));
+    if (!m) return false;
+    const ab = (v.match(/\{/g) || []).length, ce = (v.match(/\}/g) || []).length;
+    if (ab !== ce) return false;
+    const fin = en + m[0].length;
+    guard = true; try { ta.setSelectionRange(ls, fin); insert(m[1] + '}'); const pos = ls + m[1].length + 1; ta.setSelectionRange(pos, pos); } finally { guard = false; }
+    return true;
+  }
   const OPEN = { '(': ')', '[': ']', '{': '}', '"': '"', "'": "'" };
   const CLOSE = new Set([')', ']', '}', '"', "'"]);
   ta.addEventListener('beforeinput', (e) => {
@@ -195,6 +211,7 @@
     const v = ta.value, s = ta.selectionStart, en = ta.selectionEnd;
     if (e.inputType === 'insertText' && e.data && e.data.length === 1) {
       const ch = e.data, nx = v[en], pv = v[s - 1];
+      if (ch === '}' && pisarLlave(v, s, en)) { e.preventDefault(); return; }
       if (CLOSE.has(ch) && s === en && nx === ch) { e.preventDefault(); ta.setSelectionRange(s + 1, s + 1); return; }
       const close = OPEN[ch];
       if (!close) return;
@@ -209,6 +226,7 @@
     }
   });
 
+  document.addEventListener('keydown', (e) => { if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's' && e.target !== ta) { e.preventDefault(); save(); } });
   ta.addEventListener('keydown', (e) => {
     const mod = e.ctrlKey || e.metaKey;
     if (mod && e.key.toLowerCase() === 's') { e.preventDefault(); save(); return; }
@@ -237,6 +255,7 @@
       return;
     }
     if (e.key === '}' && !mod) {
+      if (pisarLlave(v, s, en)) { e.preventDefault(); return; }
       const ls = lineStart(v, s);
       if (s === en && /^ +$/.test(v.slice(ls, s)) && s - ls >= 4) { e.preventDefault(); guard = true; try { ta.setSelectionRange(s - 4, s); insert('}'); } finally { guard = false; } }
     }
