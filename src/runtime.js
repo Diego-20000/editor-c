@@ -103,6 +103,7 @@
     let ai = 0;
     return fmt.replace(SPEC, function (m, flags, width, prec, len, conv) {
       if (conv === '%') return '%';
+      if ((width !== undefined && width !== '*' && parseInt(width, 10) > 100000) || (prec !== undefined && prec !== '*' && prec !== '' && parseInt(prec, 10) > 100000)) throw new CRuntimeError('el ancho o la precisión del formato es demasiado grande para este editor (máximo 100000)');
       let w = width === undefined ? 0 : (width === '*' ? (Number(args[ai++]) | 0) : parseInt(width, 10));
       let left = flags.indexOf('-') >= 0, zero = flags.indexOf('0') >= 0, plus = flags.indexOf('+') >= 0,
         space = flags.indexOf(' ') >= 0, alt = flags.indexOf('#') >= 0;
@@ -332,6 +333,8 @@
         dims = dims.map(Number);
         const build = (k) => { const a = new Array(dims[k]); for (let i = 0; i < dims[k]; i++) a[i] = k === dims.length - 1 ? fill : build(k + 1); return a; };
         for (const d of dims) if (!(d > 0)) throw new CRuntimeError('tamaño de arreglo inválido (' + d + ')');
+        const total = dims.reduce((a, b) => a * b, 1);
+        if (total > 20000000) throw new CRuntimeError('el arreglo es demasiado grande para este editor (' + total + ' elementos; el máximo es 20 millones). En un programa real esto suele cerrarse por falta de memoria de pila');
         return build(0);
       },
       pad(list, dims) {
@@ -404,6 +407,7 @@
     } catch (e) {
       if (e instanceof ExitSignal) return e.code === -999 ? { stopped: true, code: 0 } : { code: e.code };
       if (e instanceof CRuntimeError) return { error: e.message, line: e.cline, code: 136 };
+      if (e instanceof RangeError && /Invalid (string|array) length|allocation/i.test(e.message)) return { error: 'el programa pidió más memoria de la que el editor puede darle', code: 139 };
       if (e instanceof RangeError && /call stack/i.test(e.message)) return { error: 'desbordamiento de la pila (recursión infinita o muy profunda)', code: 139 };
       return { error: 'Error inesperado del editor (no es culpa de tu programa): ' + (e && e.message) + '. Avisale al profe.', code: 1 };
     }

@@ -29,6 +29,8 @@ Avisos y errores en español con el número de línea, entre ellos: variable sin
 
 ## Importante
 
+Qué se promete y qué no: ver [docs/COMPATIBILIDAD.md](docs/COMPATIBILIDAD.md).
+
 No es gcc. Es un intérprete del subconjunto de C que se usa al empezar a programar. La salida de `printf` (incluido el redondeo) se comparó contra gcc con los casos de `test/cases` y con programas generados al azar. Quedan diferencias solo en comportamientos que C no define (por ejemplo conversiones de decimal a entero fuera de rango o desbordes de `long` mayores a 2^63). Si algo se comporta distinto que en gcc, abrí un issue.
 
 ## Desarrollo
@@ -37,6 +39,7 @@ No es gcc. Es un intérprete del subconjunto de C que se usa al empezar a progra
 node build.js            # genera el sitio a partir de src/ (sin dependencias)
 node tools/ui-smoke.js   # prueba de la interfaz con Chromium headless (necesita playwright)
 bash test/run_all.sh     # compara la salida de test/cases contra gcc (necesita gcc)
+bash test/fuzz_run.sh    # programas aleatorios contra gcc
 ```
 
 `build.js` produce, y se suben al repositorio:
