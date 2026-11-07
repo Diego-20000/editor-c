@@ -70,16 +70,20 @@
     clearTimeout(saveTimer); saveTimer = null;
     if (!cur) return;
     cur.code = ta.value; cur.input = inTxt.value; cur.t = Date.now();
+    try { cur.proc = proc.serializar() || undefined; } catch (e) { /* sin evidencia de proceso: el programa se guarda igual */ }
     persist();
   }
   window.addEventListener('pagehide', flushSave);
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flushSave(); });
   window.addEventListener('beforeunload', flushSave);
 
-  function showProgram(p) {
+  // origen: de dónde viene el texto si el programa no trae datos de proceso ('c' archivo o ejemplo, 'a' plantilla, 'u' programa de antes)
+  function showProgram(p, origen) {
     cur = p;
     stopRun(true);
     ta.value = p.code; inTxt.value = p.input || '';
+    try { if (p.proc) proc.restaurar(p.proc, p.code); else proc.marcarCargado(p.code, origen || 'u'); } catch (e) { proc.marcarCargado(p.code, 'u'); }
+    cerrarBurbuja();
     ta.scrollTop = 0; ta.scrollLeft = 0;
     clearProblems(); clearConsole(); setStatus('Listo');
     $('pnameTxt').textContent = p.name; $('pname').setAttribute('aria-label', 'Programa actual: ' + p.name + '. Abrir lista de programas');
@@ -90,7 +94,7 @@
   function newProgram(name, code, input) {
     if (cur) flushSave();
     const p = { id: uid(), name: nextName(name), code: code === undefined ? template() : code, input: input || '', t: Date.now() };
-    progs.push(p); showProgram(p);
+    progs.push(p); showProgram(p, code === undefined ? 'a' : 'c');
     return p;
   }
   function isPristine(code) { return !code.trim() || EXAMPLES.some((x) => x.c === code) || code === template(); }
@@ -144,6 +148,20 @@
     syncScroll();
   }
   function syncScroll() { layers.forEach((l) => { l.scrollTop = ta.scrollTop; l.scrollLeft = ta.scrollLeft; }); gut.scrollTop = ta.scrollTop; }
+  /* evidencia de proceso: mide de dónde viene cada carácter (tipeado, pegado, automático, cargado). Todo queda en este dispositivo. */
+  const PROC_NULO = { marcarAuto(fn) { return fn(); }, marcarCargado() {}, restaurar() {}, serializar() { return null; }, resumen() { return null; }, linea() { return ''; }, ejecutar() {} };
+  let proc = PROC_NULO, practica = false;
+  try {
+    if (window.Proceso) {
+      practica = Proceso.politicaDesdeEnlace(location.search, () => toast('Modo práctica: en este enlace no se puede pegar. Escribilo vos.'));
+      proc = Proceso.conectar(ta, { tipoInicial: 'u' });
+    }
+  } catch (e) { proc = PROC_NULO; practica = false; }
+  $('practica').hidden = !practica;
+  const auto = (fn, o) => proc.marcarAuto(fn, o);
+  /* cierre automático de llaves, paréntesis y comillas: apagado por defecto (que el alumno tipee todo) */
+  let autoCierre = store.get('autocierre', '') === '1';
+
   ta.addEventListener('scroll', syncScroll);
   ta.addEventListener('input', () => {
     if (problems.length && ta.value.split('\n').length !== problemLines) clearProblems();
@@ -166,7 +184,7 @@
   function editRange(s, e, text) {
     const prev = document.activeElement;
     guard = true;
-    try { ta.focus({ preventScroll: true }); ta.setSelectionRange(s, e); insert(text); } finally { guard = false; }
+    try { auto(() => { ta.focus({ preventScroll: true }); ta.setSelectionRange(s, e); insert(text); }); } finally { guard = false; }
     if (prev && prev !== ta && prev.focus) prev.focus({ preventScroll: true });
   }
   function lineStart(v, pos) { return v.lastIndexOf('\n', pos - 1) + 1; }
@@ -187,13 +205,13 @@
       nl = lines.map((l) => (l.trim() ? l.slice(0, ind) + '// ' + l.slice(ind) : l));
     }
     const text = nl.join('\n');
-    guard = true; try { ta.setSelectionRange(a, bb); insert(text); ta.setSelectionRange(a, a + text.length); } finally { guard = false; }
+    guard = true; try { auto(() => { ta.setSelectionRange(a, bb); insert(text); ta.setSelectionRange(a, a + text.length); }); } finally { guard = false; }
   }
 
   let guard = false;
   // si el alumno tipea la '}' final y ya hay una '}' automática en la línea de abajo (programa balanceado), la pisa en vez de agregar otra
   function pisarLlave(v, s, en) {
-    if (s !== en) return false;
+    if (!autoCierre || s !== en) return false;
     const ls = lineStart(v, s);
     if (!/^[ \t]*$/.test(v.slice(ls, s))) return false;
     const m = /^[ \t]*\n([ \t]*)\}/.exec(v.slice(en));
@@ -201,13 +219,13 @@
     const ab = (v.match(/\{/g) || []).length, ce = (v.match(/\}/g) || []).length;
     if (ab !== ce) return false;
     const fin = en + m[0].length;
-    guard = true; try { ta.setSelectionRange(ls, fin); insert(m[1] + '}'); const pos = ls + m[1].length + 1; ta.setSelectionRange(pos, pos); } finally { guard = false; }
+    guard = true; try { auto(() => { ta.setSelectionRange(ls, fin); insert(m[1] + '}'); const pos = ls + m[1].length + 1; ta.setSelectionRange(pos, pos); }); } finally { guard = false; }
     return true;
   }
   const OPEN = { '(': ')', '[': ']', '{': '}', '"': '"', "'": "'" };
   const CLOSE = new Set([')', ']', '}', '"', "'"]);
   ta.addEventListener('beforeinput', (e) => {
-    if (guard || e.isComposing) return;
+    if (guard || e.isComposing || !autoCierre) return;
     const v = ta.value, s = ta.selectionStart, en = ta.selectionEnd;
     if (e.inputType === 'insertText' && e.data && e.data.length === 1) {
       const ch = e.data, nx = v[en], pv = v[s - 1];
@@ -215,14 +233,14 @@
       if (CLOSE.has(ch) && s === en && nx === ch) { e.preventDefault(); ta.setSelectionRange(s + 1, s + 1); return; }
       const close = OPEN[ch];
       if (!close) return;
-      if (s !== en) { e.preventDefault(); guard = true; try { insert(ch + v.slice(s, en) + close); ta.setSelectionRange(s + 1, en + 1); } finally { guard = false; } return; }
+      if (s !== en) { e.preventDefault(); guard = true; try { auto(() => { insert(ch + v.slice(s, en) + close); ta.setSelectionRange(s + 1, en + 1); }); } finally { guard = false; } return; }
       if (v.slice(lineStart(v, s), s).indexOf('//') >= 0) return;
       const quote = ch === '"' || ch === "'";
       if (quote && (/\w/.test(pv || '') || /\w/.test(nx || ''))) return;
       if (!quote && nx && !/[\s)\]};,]/.test(nx)) return;
-      e.preventDefault(); guard = true; try { insert(ch + close); ta.setSelectionRange(s + 1, s + 1); } finally { guard = false; }
+      e.preventDefault(); guard = true; try { auto(() => { insert(ch + close); ta.setSelectionRange(s + 1, s + 1); }, { primerCaracterTipeado: true }); } finally { guard = false; }
     } else if (e.inputType === 'deleteContentBackward' && s === en && s > 0 && OPEN[v[s - 1]] === v[s]) {
-      e.preventDefault(); guard = true; try { ta.setSelectionRange(s - 1, s + 1); document.execCommand('delete'); } finally { guard = false; }
+      e.preventDefault(); guard = true; try { auto(() => { ta.setSelectionRange(s - 1, s + 1); document.execCommand('delete'); }); } finally { guard = false; }
     }
   });
 
@@ -234,12 +252,12 @@
     const v = ta.value, s = ta.selectionStart, en = ta.selectionEnd;
     if (e.key === 'Tab') {
       e.preventDefault();
-      if (s === en && !e.shiftKey) { insert('    '); return; }
+      if (s === en && !e.shiftKey) { auto(() => insert('    ')); return; }
       const a = lineStart(v, s);
       const b = en > s && v[en - 1] === '\n' ? en - 1 : en;
       const block = v.slice(a, b).split('\n');
       const nb = block.map((l) => e.shiftKey ? l.replace(/^( {1,4}|\t)/, '') : '    ' + l).join('\n');
-      guard = true; try { ta.setSelectionRange(a, b); insert(nb); ta.setSelectionRange(a, a + nb.length); } finally { guard = false; }
+      guard = true; try { auto(() => { ta.setSelectionRange(a, b); insert(nb); ta.setSelectionRange(a, a + nb.length); }); } finally { guard = false; }
       return;
     }
     if (e.key === 'Enter' && !e.shiftKey && !mod && !e.altKey) {
@@ -249,15 +267,17 @@
       const before = v[s - 1], after = v[en];
       guard = true;
       try {
-        if (before === '{' && after === '}') { insert('\n' + ind + '    \n' + ind); const p = s + 1 + ind.length + 4; ta.setSelectionRange(p, p); }
-        else insert('\n' + ind + (before === '{' ? '    ' : ''));
+        auto(() => {
+          if (before === '{' && after === '}') { insert('\n' + ind + '    \n' + ind); const p = s + 1 + ind.length + 4; ta.setSelectionRange(p, p); }
+          else insert('\n' + ind + (before === '{' ? '    ' : ''));
+        }, { primerCaracterTipeado: true });
       } finally { guard = false; }
       return;
     }
     if (e.key === '}' && !mod) {
       if (pisarLlave(v, s, en)) { e.preventDefault(); return; }
       const ls = lineStart(v, s);
-      if (s === en && /^ +$/.test(v.slice(ls, s)) && s - ls >= 4) { e.preventDefault(); guard = true; try { ta.setSelectionRange(s - 4, s); insert('}'); } finally { guard = false; } }
+      if (s === en && /^ +$/.test(v.slice(ls, s)) && s - ls >= 4) { e.preventDefault(); guard = true; try { auto(() => { ta.setSelectionRange(s - 4, s); insert('}'); }, { primerCaracterTipeado: true }); } finally { guard = false; } }
     }
   });
 
@@ -362,7 +382,7 @@
   function clearProblems() {
     problems = [];
     if (marks.size) { marks = new Map(); renderGutter(true); }
-    diag.hidden = true; diagList.innerHTML = '';
+    diag.hidden = true; diagList.innerHTML = ''; pistasEstado.clear();
     paintProblems();
   }
   function paintProblems() {
@@ -398,12 +418,12 @@
     const lines = ta.value.split('\n');
     const items = [];
     let hidden = 0;
-    (res.errors || []).forEach((e) => items.push({ k: 'e', line: e.line, msg: e.msg, code: typeof e.code === 'string' ? e.code : '' }));
+    (res.errors || []).forEach((e) => items.push({ k: 'e', line: e.line, msg: e.msg, code: typeof e.code === 'string' ? e.code : '', kb: typeof e.kb === 'string' ? e.kb : '' }));
     if (rtErr) items.push({ k: 'e', line: rtErr.line, msg: rtErr.msg, rt: true });
     (res.warnings || []).forEach((w) => {
       const code = typeof w.code === 'string' ? w.code : '';
       if (code && muted.indexOf(code) >= 0) { hidden++; return; }
-      items.push({ k: 'w', line: w.line, msg: w.msg, code });
+      items.push({ k: 'w', line: w.line, msg: w.msg, code, kb: typeof w.kb === 'string' ? w.kb : '' });
     });
     problems = items; problemLines = lines.length;
     marks = new Map();
@@ -412,11 +432,14 @@
     diagList.innerHTML = '';
     items.forEach((it) => {
       const wrap = document.createElement('div'); wrap.className = 'it ' + it.k;
+      if (it.line) { wrap.dataset.line = String(it.line); wrap.dataset.txt = lines[it.line - 1] || ''; }
+      const ay = ayudaItem(it);
       const b = document.createElement('button'); b.type = 'button';
       const tag = document.createElement('span'); tag.className = 'tag';
       tag.textContent = (it.k === 'e' ? (it.rt ? 'Error al ejecutar' : 'Error') : 'Aviso') + (it.line ? ' · línea ' + it.line : '');
       const body = document.createElement('span'); body.className = 'body';
-      const t = document.createElement('span'); t.textContent = it.msg; body.appendChild(t);
+      const t = document.createElement('span'); t.className = 'msg'; t.textContent = ay.texto || it.msg; body.appendChild(t);
+      if (ay.texto) { const o = document.createElement('span'); o.className = 'orig'; o.textContent = 'Compilador: ' + it.msg; body.appendChild(o); }
       if (it.line && lines[it.line - 1] !== undefined && lines[it.line - 1].trim()) { const c = document.createElement('code'); c.textContent = lines[it.line - 1].trim(); body.appendChild(c); }
       if (it.code) { const c = document.createElement('span'); c.className = 'cd'; c.textContent = it.code; body.appendChild(c); }
       b.appendChild(tag); b.appendChild(body);
@@ -428,6 +451,7 @@
         m.addEventListener('click', () => { if (muted.indexOf(it.code) < 0) muted.push(it.code); saveMuted(); renderDiag(res, rtErr, true); toast('Aviso silenciado: ' + it.code + '.', 'Deshacer', () => { muted = muted.filter((x) => x !== it.code); saveMuted(); renderDiag(res, rtErr, true); }); });
         wrap.appendChild(m);
       }
+      if (ay.bloque) wrap.appendChild(ay.bloque);
       diagList.appendChild(wrap);
     });
     if (hidden && items.length) {
@@ -445,6 +469,445 @@
     if (first && !noScroll) scrollToPos(lineOffset(first.line), false);
   }
   function lineOffset(n) { const l = ta.value.split('\n'); let p = 0; for (let i = 0; i < n - 1 && i < l.length; i++) p += l[i].length + 1; return p; }
+
+  /* ---------- ayuda por niveles, panel «Ayuda», «¿Qué es esto?» y casos sin respuesta ----------
+     Todo sale de la base fija (window.KB, datos en assets/kb-data.js): sin red y sin IA. Los scripts de la base
+     se cargan después de este (defer), así que siempre se piden de forma perezosa. */
+  const el = (tag, cls, txt) => { const n = document.createElement(tag); if (cls) n.className = cls; if (txt !== undefined && txt !== null) n.textContent = txt; return n; };
+  const btnEl = (txt, cls, fn, aria) => { const b = el('button', 'btn ' + (cls || ''), txt); b.type = 'button'; if (aria) b.setAttribute('aria-label', aria); if (fn) b.addEventListener('click', fn); return b; };
+  const KBx = () => (window.KB && window.KB.cargado ? window.KB : null);
+  const kbDatos = () => (window.KB_DATA && typeof window.KB_DATA === 'object' ? window.KB_DATA : { errores: [], ayuda: [], lecciones: [] });
+  const asLista = (v) => (Array.isArray(v) ? v.filter((x) => typeof x === 'string') : typeof v === 'string' && v ? [v] : []);
+  const NIVELES_TXT = ['Solo se muestra el mensaje del compilador, con el número de línea.', 'Se muestra un mensaje corto y vos pedís las pistas de a una. Nunca aparece la solución sola.', 'Se muestra el mensaje y una explicación del concepto; las pistas las pedís vos, de a una.'];
+  // nivel de ayuda: ?ayuda=0|1|2 en el enlace (se recuerda en el dispositivo) > lo guardado > 1
+  let nivelAyuda = (function () {
+    let q = null; try { q = new URLSearchParams(location.search).get('ayuda'); } catch (e) { q = null; }
+    if (q !== null && /^\s*[012]\s*$/.test(q)) { store.set('ayuda', q.trim()); return +q.trim(); }
+    const g = store.get('ayuda', ''); return /^[012]$/.test(g) ? +g : 1;
+  })();
+  const almacen = { getItem(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, setItem(k, v) { localStorage.setItem(k, v); } };
+
+  /* --- de un diagnóstico a una explicación --- */
+  let ambCache = null;
+  // Si muchos casos de la base comparten el mismo mensaje del editor no se sabe cuál es el del alumno: no se afirma nada
+  function esAmbiguo(ex) {
+    if (!ex || ex.via === 'kb') return false;
+    if (!ambCache) { ambCache = {}; (kbDatos().errores || []).forEach((e) => { const k = (e.codigo_editor_actual || '') + '|' + (e.mensaje_editor_actual || ''); ambCache[k] = (ambCache[k] || 0) + 1; }); }
+    const e = ex.entrada || {};
+    return ambCache[(e.codigo_editor_actual || '') + '|' + (e.mensaje_editor_actual || '')] > 1;
+  }
+  function explicarDiag(d) {
+    const K = KBx(); if (!K) return { estado: 'sinkb' };
+    let ex = null;
+    try { ex = K.explicar({ line: d.line, msg: d.msg, code: d.code, kb: d.kb }, nivelAyuda); } catch (e) { ex = null; }
+    if (!ex || !ex.entrada) return { estado: 'sinexp' };
+    if (esAmbiguo(ex)) return { estado: 'ambiguo' };
+    return { estado: 'ok', entrada: ex.entrada };
+  }
+  // los textos de la base nombran las variables y la línea de un programa de ejemplo: se llevan a las del alumno
+  function adaptador(d, e) {
+    const mapa = {};
+    const a = ((e && e.mensaje_editor_actual) || '').match(/'[^']*'/g) || [], b = ((d && d.msg) || '').match(/'[^']*'/g) || [];
+    a.forEach((x, i) => {
+      const u = (b[i] || '').slice(1, -1), v = x.slice(1, -1);
+      if (u && v && u !== v && /^[A-Za-z_]\w*$/.test(u) && /^[A-Za-z_]\w*$/.test(v)) mapa[v] = u;
+    });
+    const claves = Object.keys(mapa);
+    const re = claves.length ? new RegExp('(?<![\\p{L}\\d_])(' + claves.map((k) => k.replace(/[^\w]/g, '\\$&')).join('|') + ')(?![\\p{L}\\d_])', 'gu') : null;
+    return (t) => {
+      if (typeof t !== 'string') return '';
+      t = t.replace(/^L[ií]nea \d+:\s*/, '');
+      if (re) t = t.replace(re, (m, g, off, all) => {
+        // una "A" de frase («A scanf le falta…») es la preposición, no la variable
+        if (m.length === 1 && (off === 0 || /[.:]\s$/.test(all.slice(Math.max(0, off - 2), off))) && /^\s[a-záéíóú]/.test(all.slice(off + 1, off + 3))) return m;
+        return mapa[g];
+      });
+      return t;
+    };
+  }
+
+  /* --- pistas de a una --- */
+  const pistasEstado = new Map();
+  function pistasWidget(entrada, clave, adapt, extra) {
+    const K = KBx(), box = el('div', 'pistasbox'), ol = el('ol', 'pistas'), act = el('div', 'hact');
+    box.appendChild(ol); box.appendChild(act);
+    const total = asLista(entrada.pistas).length;
+    function pintar(confirmando) {
+      const v = pistasEstado.get(clave) || 0;
+      ol.innerHTML = ''; act.innerHTML = '';
+      ol.hidden = !v;
+      for (let n = 1; n <= v; n++) {
+        const r = K && K.pista(entrada, n, { vistas: n - 1, confirmar: n === 3 });
+        if (!r || r.bloqueada) continue;
+        const li = el('li', r.esSolucion ? 'sol' : '', adapt(r.texto));
+        if (r.esSolucion) li.insertBefore(el('b', '', 'Casi la solución: '), li.firstChild);
+        ol.appendChild(li);
+      }
+      if (extra) act.appendChild(extra);
+      if (v >= total) return;
+      if (confirmando) {
+        const c = el('div', 'conf');
+        c.appendChild(el('span', '', 'Esta pista es casi la solución. ¿Probaste con las anteriores? ¿La querés ver igual?'));
+        c.appendChild(btnEl('Sí, mostrarla', 'mini', () => { pistasEstado.set(clave, v + 1); pintar(false); }));
+        const no = btnEl('Todavía no', 'mini', () => { pintar(false); act.querySelector('button').focus(); });
+        c.appendChild(no); act.appendChild(c); no.focus();
+        return;
+      }
+      const sol = v === 2 && total >= 3;
+      const b = btnEl(sol ? 'Mostrar la solución' : v === 0 ? 'Pista' : 'Otra pista', 'mini', () => {
+        if (sol) { pintar(true); return; }
+        pistasEstado.set(clave, v + 1); pintar(false);
+        const items = ol.querySelectorAll('li'); if (items.length) items[items.length - 1].scrollIntoView({ block: 'nearest' });
+        const nb = act.querySelector('button'); if (nb) nb.focus();
+      });
+      b.setAttribute('aria-label', sol ? 'Mostrar la solución (pide confirmación)' : v === 0 ? 'Pedir una pista' : 'Pedir otra pista');
+      act.insertBefore(b, act.firstChild);
+    }
+    pintar(false);
+    return box;
+  }
+
+  /* --- casos sin respuesta: se guardan en el dispositivo; mandarlos es decisión del alumno --- */
+  function guardarCaso(it) {
+    if (!window.Compartir) return null;
+    try {
+      const caso = Compartir.nuevoCaso({ codigo: ta.value, entrada: inTxt.value, diag: { nivel: it.k === 'w' ? 'aviso' : 'error', code: it.code, msg: it.msg, line: it.line }, nivelAyuda, version: (window.CONFIG && CONFIG.VERSION) || '' });
+      Compartir.guardar(caso, almacen);
+      return Compartir.clave(caso);
+    } catch (e) { return null; }
+  }
+
+  /* --- ayuda de un diagnóstico: { texto, orig, bloque } --- */
+  function relacionDe(e) {
+    const D = kbDatos(), id = e.id;
+    const lec = (D.lecciones || []).find((l) => asLista(l.errores_ids).indexOf(id) >= 0);
+    if (lec) return { tipo: 'leccion', entrada: lec };
+    const ay = (D.ayuda || []).find((a) => asLista(a.errores_ids).indexOf(id) >= 0);
+    if (ay) return { tipo: 'ayuda', entrada: ay };
+    return { tipo: 'error', entrada: e };
+  }
+  function ayudaItem(it) {
+    const r = explicarDiag(it);
+    let clave = null;
+    if (r.estado === 'sinexp') clave = guardarCaso(it);
+    if (nivelAyuda === 0 || r.estado === 'sinkb') return { texto: null, bloque: null };
+    const bloque = el('div', 'help');
+    if (r.estado === 'sinexp') {
+      bloque.appendChild(el('p', 'sinexp', 'Todavía no tengo una explicación para esto. Mirá el mensaje del compilador y la línea marcada.'));
+      const act = el('div', 'hact');
+      act.appendChild(btnEl('Mandárselo a Diego', 'mini', () => abrirCasos(clave ? [clave] : null)));
+      act.appendChild(btnEl('Buscar en la ayuda', 'mini link', () => abrirAyuda({ q: (it.msg || '').replace(/['"‹›]/g, ' ').slice(0, 80) })));
+      bloque.appendChild(act);
+      return { texto: null, bloque };
+    }
+    if (r.estado === 'ambiguo') {
+      bloque.appendChild(el('p', 'sinexp', 'Fijate bien en la línea marcada. Si querés más ayuda, buscá en el panel.'));
+      const act = el('div', 'hact');
+      act.appendChild(btnEl('Buscar en la ayuda', 'mini', () => abrirAyuda({ q: (it.msg || '').replace(/['"‹›]/g, ' ').slice(0, 80) })));
+      bloque.appendChild(act);
+      return { texto: null, bloque };
+    }
+    const e = r.entrada, ad = adaptador(it, e);
+    if (nivelAyuda >= 2 && e.explicacion) bloque.appendChild(el('p', 'hexp', ad(e.explicacion)));
+    const que = btnEl('¿Qué es esto?', 'mini link', () => abrirAyuda({ ver: relacionDe(e) }));
+    if (asLista(e.pistas).length) bloque.appendChild(pistasWidget(e, e.id + '|' + it.line + '|' + it.k, ad, que));
+    else { const act = el('div', 'hact'); act.appendChild(que); bloque.appendChild(act); }
+    return { texto: ad(e.mensaje_editor || e.nombre_corto || ''), bloque };
+  }
+  // al editar la línea marcada, la ayuda de ese problema se esconde sola (se vuelve a calcular al ejecutar)
+  function revisarViejos() {
+    if (!problems.length) return;
+    const lines = ta.value.split('\n');
+    diagList.querySelectorAll('.it').forEach((w) => {
+      const ln = +w.dataset.line;
+      if (!ln) return;
+      w.classList.toggle('stale', (lines[ln - 1] || '') !== w.dataset.txt);
+    });
+  }
+  ta.addEventListener('input', revisarViejos);
+
+  /* ---------- panel «Ayuda»: buscador y detalle ---------- */
+  const dA = $('dAyuda'), aQ = $('aQ'), aList = $('aList'), aDet = $('aDet'), aRes = $('aRes'), aLive = $('aLive'), aSug = $('aSug');
+  const TIPO_TXT = { error: 'Error', ayuda: 'Ayuda', leccion: 'Lección' };
+  const SUGERENCIAS = ['¿por qué 7/2 da 3?', 'scanf', '&', '%d', 'for', 'while', 'if y else', 'prototipo'];
+  let aHist = [];
+  function filaResultado(r) {
+    const li = el('li'), b = el('button'); b.type = 'button';
+    const t = el('span'); t.appendChild(el('span', 'tipo ' + r.tipo, TIPO_TXT[r.tipo] || r.tipo)); t.appendChild(document.createTextNode(' ')); t.appendChild(el('b', '', r.titulo));
+    b.appendChild(t);
+    if (r.resumen) b.appendChild(el('span', 'sub', r.resumen));
+    b.addEventListener('click', () => mostrarDetalle({ tipo: r.tipo, entrada: r.entrada }));
+    li.appendChild(b); return li;
+  }
+  function mostrarResultados(q) {
+    aHist = []; aQ.value = q; aDet.hidden = true; aRes.hidden = false; aList.innerHTML = '';
+    const K = KBx();
+    if (!K) { aSug.hidden = true; aLive.textContent = 'La ayuda no está disponible en este momento.'; return; }
+    if (!q.trim()) {
+      aSug.hidden = false; aSug.innerHTML = '';
+      SUGERENCIAS.forEach((s) => aSug.appendChild(btnEl(s, 'mini', () => { mostrarResultados(s); aQ.focus(); })));
+      (kbDatos().lecciones || []).forEach((l) => aList.appendChild(filaResultado({ tipo: 'leccion', titulo: l.titulo, resumen: '', entrada: l })));
+      aLive.textContent = 'Escribí una palabra o una pregunta, o elegí una lección.';
+      return;
+    }
+    aSug.hidden = true;
+    let res = []; try { res = K.buscar(q, { max: 12 }); } catch (e) { res = []; }
+    res.forEach((r) => aList.appendChild(filaResultado(r)));
+    aLive.textContent = res.length ? res.length + (res.length === 1 ? ' resultado' : ' resultados') : 'No encontré nada para «' + q.trim().slice(0, 40) + '». Probá con otra palabra.';
+  }
+  function abrirEnEditor(codigo, entrada, nombre, tostada) {
+    cerrarBurbuja();
+    newProgram(nombre, String(codigo).replace(/\r\n?/g, '\n'), entrada || '');
+    if (dA.open) dA.close();
+    if (tabMode()) setTab('ed', true);
+    toast(tostada || 'Se abrió como programa nuevo; el anterior sigue en «Programas».');
+  }
+  function bloqueCodigo(titulo, codigo, acciones) {
+    const w = el('div');
+    w.appendChild(el('div', 'lbl', titulo));
+    w.appendChild(el('pre', 'ej', codigo));
+    if (acciones) { const r = el('div', 'row'); acciones.forEach((a) => r.appendChild(a)); w.appendChild(r); }
+    return w;
+  }
+  function relacionados(v) {
+    const K = KBx(), D = kbDatos(), out2 = [], e = v.entrada;
+    const ids = v.tipo === 'error' ? [e.id] : asLista(e.errores_ids);
+    if (v.tipo === 'error') {
+      (D.lecciones || []).filter((l) => asLista(l.errores_ids).indexOf(e.id) >= 0).forEach((l) => out2.push({ tipo: 'leccion', entrada: l }));
+      (D.ayuda || []).filter((a) => asLista(a.errores_ids).indexOf(e.id) >= 0).forEach((a) => out2.push({ tipo: 'ayuda', entrada: a }));
+    } else {
+      ids.forEach((id) => { const x = K && K.entrada(id); if (x) out2.push({ tipo: 'error', entrada: x }); });
+      (D.lecciones || []).filter((l) => l !== e && asLista(l.errores_ids).some((id) => ids.indexOf(id) >= 0)).forEach((l) => out2.push({ tipo: 'leccion', entrada: l }));
+      if (v.tipo === 'leccion') (D.ayuda || []).filter((a) => asLista(a.errores_ids).some((id) => ids.indexOf(id) >= 0)).forEach((a) => out2.push({ tipo: 'ayuda', entrada: a }));
+    }
+    return out2.filter((x, i) => out2.findIndex((y) => y.entrada === x.entrada) === i && x.entrada !== e).slice(0, 8);
+  }
+  function tituloDe(v) { const e = v.entrada; return v.tipo === 'error' ? e.nombre_corto : v.tipo === 'ayuda' ? e.elemento : e.titulo; }
+  function mostrarDetalle(v) {
+    aHist.push(v);
+    aRes.hidden = true; aDet.hidden = false; aDet.innerHTML = ''; aDet.scrollTop = 0;
+    const e = v.entrada, K = KBx();
+    const top = el('div', 'row');
+    top.appendChild(btnEl('← Volver', 'mini', () => { aHist.pop(); const prev = aHist.pop(); if (prev) mostrarDetalle(prev); else { mostrarResultados(aQ.value); aQ.focus(); } }));
+    aDet.appendChild(top);
+    const h = el('h2', 'dt'); h.tabIndex = -1;
+    h.appendChild(el('span', 'tipo ' + v.tipo, TIPO_TXT[v.tipo]));
+    h.appendChild(document.createTextNode(' ' + (tituloDe(v) || '')));
+    aDet.appendChild(h);
+    const sec = (t, txt) => { if (!txt) return; aDet.appendChild(el('div', 'lbl', t)); asLista(txt).forEach((p) => aDet.appendChild(el('p', '', p))); };
+    if (v.tipo === 'error') {
+      sec('Lo que dice el editor', e.mensaje_editor);
+      sec('Qué pasa', e.explicacion);
+      sec('Cómo arreglarlo', e.como_arreglarlo);
+      if (asLista(e.pistas).length) { aDet.appendChild(el('div', 'lbl', 'Pistas (de a una)')); aDet.appendChild(pistasWidget(e, 'panel|' + e.id, (t) => t.replace(/^L[ií]nea \d+:\s*/, ''))); }
+      if (e.codigo_mal) aDet.appendChild(bloqueCodigo('Así falla', e.codigo_mal, [btnEl('Abrir en el editor', 'mini', () => abrirEnEditor(e.codigo_mal, e.entrada, 'Ejemplo: ' + e.nombre_corto.slice(0, 30)))]));
+      if (e.codigo_bien) aDet.appendChild(bloqueCodigo('Así queda bien', e.codigo_bien, [btnEl('Abrir en el editor', 'mini', () => abrirEnEditor(e.codigo_bien, e.entrada, 'Ejemplo: ' + e.nombre_corto.slice(0, 30)))]));
+    } else if (v.tipo === 'ayuda') {
+      sec('Qué es', e.que_es);
+      if (e.como_se_usa) aDet.appendChild(bloqueCodigo('Cómo se usa', e.como_se_usa));
+      sec('Error típico', e.error_tipico);
+      if (e.en_la_materia) sec('En la materia', e.en_la_materia);
+      aDet.appendChild(btnEl('Buscar más sobre «' + e.elemento.slice(0, 20) + '»', 'mini', () => { mostrarResultados(e.elemento); aQ.focus(); }));
+    } else {
+      sec('Explicación', e.explicacion);
+      if (e.ejemplo) aDet.appendChild(bloqueCodigo('Ejemplo', e.ejemplo, [btnEl('Probar', 'mini primary', () => abrirEnEditor(e.ejemplo, e.entrada, 'Lección ' + (e.titulo || '').replace(/^\d+\.\s*/, '').slice(0, 28), 'Cargado como programa nuevo. Apretá Ejecutar para probarlo.'))]));
+      if (e.resultado) aDet.appendChild(bloqueCodigo('Resultado', e.resultado));
+    }
+    const rel = relacionados(v);
+    if (rel.length) {
+      aDet.appendChild(el('div', 'lbl', 'Relacionados'));
+      const r = el('div', 'rel');
+      rel.forEach((x) => r.appendChild(btnEl((TIPO_TXT[x.tipo] || '') + ': ' + (tituloDe(x) || '').slice(0, 40), 'mini', () => mostrarDetalle(x))));
+      aDet.appendChild(r);
+    }
+    aLive.textContent = '';
+    h.focus({ preventScroll: true });
+  }
+  function abrirAyuda(o) {
+    o = o || {};
+    cerrarBurbuja();
+    if (!dA.open) dA.showModal();
+    if (o.ver) { aHist = []; mostrarResultados(aQ.value); mostrarDetalle(o.ver); }
+    else { mostrarResultados(o.q !== undefined ? String(o.q) : ''); aQ.focus(); aQ.select(); }
+  }
+  aQ.addEventListener('input', () => mostrarResultados(aQ.value));
+  $('aForm').addEventListener('submit', (e) => e.preventDefault());
+  aQ.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown') { const b = aList.querySelector('button'); if (b && !aRes.hidden) { e.preventDefault(); b.focus(); } }
+    else if (e.key === 'Enter') { const b = aList.querySelector('button'); if (b && !aRes.hidden && aQ.value.trim()) { e.preventDefault(); b.click(); } }
+  });
+  aList.addEventListener('keydown', (e) => {
+    const bs = Array.prototype.slice.call(aList.querySelectorAll('button')), i = bs.indexOf(document.activeElement);
+    if (i < 0) return;
+    if (e.key === 'ArrowDown') { e.preventDefault(); if (bs[i + 1]) bs[i + 1].focus(); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); if (i === 0) aQ.focus(); else bs[i - 1].focus(); }
+    else if (e.key === 'Home') { e.preventDefault(); bs[0].focus(); }
+    else if (e.key === 'End') { e.preventDefault(); bs[bs.length - 1].focus(); }
+  });
+  $('ayudaBtn').addEventListener('click', () => abrirAyuda());
+
+  /* ---------- «¿Qué es esto?» sobre el código: no mueve el cursor ni toca el texto ---------- */
+  const bubble = $('bubble'), whatLay = $('whatLay'), whatBtn = $('whatBtn');
+  let whatOn = false;
+  function cerrarBurbuja() {
+    if (!bubble.hidden) { bubble.hidden = true; bubble.innerHTML = ''; if (coarse && whatOn) setWhat(false); }
+  }
+  function setWhat(on) {
+    whatOn = !!on; whatBtn.setAttribute('aria-pressed', String(whatOn)); whatLay.hidden = !whatOn;
+    if (!whatOn && !bubble.hidden) { bubble.hidden = true; bubble.innerHTML = ''; }
+    if (whatOn) toast('Tocá una palabra, un operador o un %d del código. Esc para salir.');
+  }
+  whatBtn.addEventListener('click', () => setWhat(!whatOn));
+  // carácter del textarea bajo un punto de la pantalla (fuente monoespaciada, tabulador de 4); null si cae fuera del texto
+  let cwCache = { f: '', w: 0 };
+  function offsetEn(cx, cy) {
+    const r = ta.getBoundingClientRect(), cs = getComputedStyle(ta);
+    const f = cs.fontSize + ' ' + cs.fontFamily;
+    if (cwCache.f !== f) { const c = document.createElement('canvas').getContext('2d'); c.font = f; cwCache = { f, w: c.measureText('M').width }; }
+    const lh = parseFloat(cs.lineHeight) || parseFloat(cs.fontSize) * 1.5, cw = cwCache.w || 8;
+    const x = cx - r.left - (parseFloat(cs.paddingLeft) || 0) + ta.scrollLeft, y = cy - r.top - (parseFloat(cs.paddingTop) || 0) + ta.scrollTop;
+    if (x < 0 || y < 0) return null;
+    const ln = Math.floor(y / lh), lines = ta.value.split('\n');
+    if (ln >= lines.length) return null;
+    const colV = Math.floor(x / cw), txt = lines[ln];
+    let v = 0, idx = 0;
+    for (; idx < txt.length; idx++) { const w = txt[idx] === '\t' ? 4 - (v % 4) : 1; if (colV < v + w) break; v += w; }
+    if (idx >= txt.length) return null;
+    let off = 0; for (let i = 0; i < ln; i++) off += lines[i].length + 1;
+    return off + idx;
+  }
+  function mostrarBurbuja(off, cx, cy) {
+    const K = KBx();
+    bubble.innerHTML = '';
+    let clave = null, a = null;
+    if (K && off !== null) { try { clave = K.elementoEnPosicion(ta.value, off); a = clave ? K.ayudaDe(clave) : null; } catch (e) { a = null; } }
+    const cierre = btnEl('✕', 'mini ico', () => cerrarBurbuja(), 'Cerrar la explicación');
+    if (a) {
+      const h = el('h4'); h.appendChild(el('code', '', a.elemento)); h.appendChild(cierre); bubble.appendChild(h);
+      if (a.tipo) bubble.appendChild(el('div', 'muted', a.tipo));
+      bubble.appendChild(el('p', '', a.que_es || ''));
+      if (a.como_se_usa) bubble.appendChild(el('pre', '', a.como_se_usa));
+      if (a.error_tipico) bubble.appendChild(el('p', 'muted', 'Error típico: ' + a.error_tipico));
+      const r = el('div', 'row'); r.appendChild(btnEl('Más ayuda', 'mini', () => abrirAyuda({ ver: { tipo: 'ayuda', entrada: a } }))); bubble.appendChild(r);
+    } else {
+      const h = el('h4'); h.appendChild(el('span', '', '¿Qué es esto?')); h.appendChild(cierre); bubble.appendChild(h);
+      bubble.appendChild(el('p', 'muted', K ? 'No tengo una explicación para eso: puede ser un nombre tuyo, un número o un comentario. Probá tocando una palabra de C, un operador o un %d.' : 'La ayuda no está disponible en este momento.'));
+    }
+    bubble.hidden = false;
+    if (!coarse && window.innerWidth >= 700) {
+      const bw = Math.min(380, window.innerWidth - 16);
+      bubble.style.left = Math.max(8, Math.min(window.innerWidth - bw - 8, cx + 8)) + 'px';
+      const bh = bubble.offsetHeight;
+      bubble.style.top = Math.max(8, cy + 16 + bh > window.innerHeight - 8 ? cy - bh - 12 : cy + 16) + 'px';
+    }
+  }
+  function consultar(cx, cy) { mostrarBurbuja(offsetEn(cx, cy), cx, cy); }
+  whatLay.addEventListener('click', (e) => consultar(e.clientX, e.clientY));
+  // la capa tapa el texto: la rueda y el arrastre con el dedo siguen moviendo el editor
+  whatLay.addEventListener('wheel', (e) => { e.preventDefault(); ta.scrollTop += e.deltaY; ta.scrollLeft += e.deltaX; syncScroll(); }, { passive: false });
+  let wtx = 0, wty = 0;
+  whatLay.addEventListener('touchstart', (e) => { const t = e.touches[0]; wtx = t.clientX; wty = t.clientY; }, { passive: true });
+  whatLay.addEventListener('touchmove', (e) => { const t = e.touches[0]; ta.scrollTop -= t.clientY - wty; ta.scrollLeft -= t.clientX - wtx; wtx = t.clientX; wty = t.clientY; syncScroll(); }, { passive: true });
+  ta.addEventListener('mousedown', (e) => { if (e.altKey && e.button === 0) { e.preventDefault(); consultar(e.clientX, e.clientY); } }, true);
+  ta.addEventListener('keydown', (e) => {
+    if (e.key === 'F1') { e.preventDefault(); const r = ta.getBoundingClientRect(); mostrarBurbuja(Math.min(ta.selectionStart, Math.max(0, ta.value.length - 1)), r.left + 48, r.top + 40); }
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    if (!bubble.hidden) { e.preventDefault(); bubble.hidden = true; bubble.innerHTML = ''; if (coarse && whatOn) setWhat(false); }
+    else if (whatOn && !document.querySelector('dialog[open]')) { e.preventDefault(); setWhat(false); }
+  });
+
+  /* ---------- casos para enviar ---------- */
+  const dCasos = $('dCasos');
+  let casosSel = new Set();
+  const casosLista = () => { try { return window.Compartir ? Compartir.listar(almacen) : []; } catch (e) { return []; } };
+  function abrirCasos(claves) {
+    const lista = casosLista();
+    casosSel = new Set(claves && claves.length ? claves : lista.map((c) => Compartir.clave(c)));
+    if ($('dSet').open) $('dSet').close();
+    pintarCasos();
+    if (!dCasos.open) dCasos.showModal();
+  }
+  function pintarCasos() {
+    const lista = casosLista(), ul2 = $('cList');
+    ul2.innerHTML = '';
+    lista.forEach((c) => {
+      const k = Compartir.clave(c), li = el('li'), lb = el('label'), cb = el('input');
+      cb.type = 'checkbox'; cb.checked = casosSel.has(k); cb.setAttribute('aria-label', 'Incluir este caso en el envío');
+      cb.addEventListener('change', () => { if (cb.checked) casosSel.add(k); else casosSel.delete(k); pintarVistaCasos(); });
+      const cm = el('span', 'cm'); const d = c.diag || {};
+      cm.appendChild(el('b', '', (d.line ? 'Línea ' + d.line + ': ' : '') + (d.msg || '')));
+      cm.appendChild(el('small', '', (d.nivel === 'aviso' ? 'Aviso' : 'Error') + (c.fecha ? ' · ' + c.fecha : '') + ' · ' + (c.codigo || '').split('\n').length + ' líneas de código'));
+      lb.appendChild(cb); lb.appendChild(cm); li.appendChild(lb);
+      const del = btnEl('✕', 'mini ico', () => {
+        Compartir.borrar(k, almacen); casosSel.delete(k); pintarCasos();
+        toast('Caso borrado.', 'Deshacer', () => { Compartir.guardar(c, almacen); casosSel.add(k); pintarCasos(); });
+      }, 'Borrar este caso'); del.title = 'Borrar este caso';
+      li.appendChild(del); ul2.appendChild(li);
+    });
+    $('cVacio').hidden = lista.length > 0; $('cAcc').hidden = !lista.length; $('cDelAll').hidden = !lista.length;
+    pintarVistaCasos();
+  }
+  let casosTexto = '', casosSelLista = [];
+  function pintarVistaCasos() {
+    const sel = casosLista().filter((c) => casosSel.has(Compartir.clave(c)));
+    casosSelLista = sel;
+    const wa = $('cWa'), cfgNum = (window.CONFIG && CONFIG.WHATSAPP_NUMERO) || '';
+    if (!sel.length) {
+      casosTexto = ''; $('cPrev').textContent = '(elegí al menos un caso)'; $('cNota').textContent = '';
+      wa.setAttribute('aria-disabled', 'true'); wa.removeAttribute('href'); $('cCopy').disabled = true; $('cDl').disabled = true;
+      return;
+    }
+    const texto = Compartir.mensajeWhatsApp(sel), url = Compartir.urlWhatsApp(texto, cfgNum);
+    casosTexto = Compartir.textoCompleto || texto;
+    let enviado = texto;
+    if (Compartir.recortado) { try { enviado = decodeURIComponent(url.slice(url.indexOf('?text=') + 6)); } catch (e) { enviado = texto; } }
+    $('cPrev').textContent = enviado;
+    wa.setAttribute('href', url); wa.removeAttribute('aria-disabled'); $('cCopy').disabled = false; $('cDl').disabled = false;
+    const notas = [];
+    if (!cfgNum) notas.push('Todavía no está configurado el número de Diego: WhatsApp se abre sin destinatario y elegís vos a quién mandarlo.');
+    if (Compartir.recortado) notas.push('El texto es largo y por WhatsApp va recortado (es lo que ves arriba). Usá «Copiar» para tener el texto completo.');
+    $('cNota').textContent = notas.join(' ');
+  }
+  $('casosBtn').addEventListener('click', () => abrirCasos());
+  $('cCopy').addEventListener('click', () => {
+    copyText(casosTexto, dCasos).then((ok) => {
+      if (ok) { toast('Texto copiado. Pegalo en el chat que quieras.'); return; }
+      $('cNota').textContent = 'El navegador no dejó copiar. Tocá el texto de la vista previa, copialo a mano y pegalo en el chat.';
+      const r = document.createRange(); r.selectNodeContents($('cPrev')); const s = window.getSelection(); s.removeAllRanges(); s.addRange(r); $('cPrev').focus();
+    });
+  });
+  $('cDl').addEventListener('click', () => {
+    if (!casosSelLista.length) return;
+    const d = new Date(), stamp = d.getFullYear() + pad2(d.getMonth() + 1) + pad2(d.getDate());
+    download(new Blob([Compartir.exportarJSON(casosSelLista)], { type: 'application/json' }), 'casos-editor-c-' + stamp + '.json');
+    toast('Archivo descargado. Mandalo vos si querés.');
+  });
+  $('cDelAll').addEventListener('click', () => {
+    const todos = casosLista();
+    todos.forEach(() => Compartir.borrar(0, almacen));
+    casosSel = new Set(); pintarCasos();
+    toast('Se borraron ' + todos.length + (todos.length === 1 ? ' caso.' : ' casos.'), 'Deshacer', () => { todos.forEach((c) => Compartir.guardar(c, almacen)); casosSel = new Set(todos.map((c) => Compartir.clave(c))); pintarCasos(); });
+  });
+  // un enlace de WhatsApp sin casos elegidos no debe abrirse
+  $('cWa').addEventListener('click', (e) => { if ($('cWa').getAttribute('aria-disabled') === 'true') e.preventDefault(); });
+
+  /* ---------- ajustes: ayuda, escritura, evidencia de proceso ---------- */
+  function sincronizarAjustesNuevos() {
+    $('ayudaSel').value = String(nivelAyuda); $('ayudaDesc').textContent = NIVELES_TXT[nivelAyuda];
+    $('autoCierre').checked = autoCierre;
+    $('procCap').checked = store.get('proccap', '1') !== '0';
+    const l = proc.linea(); $('procAhora').textContent = l ? 'Este programa, ahora: ' + l.replace(/^Escrito en el editor: /, '') + '.' : '';
+    const n = casosLista().length;
+    $('casosBtn').textContent = 'Casos para enviar' + (n ? ' (' + n + ')' : '');
+  }
+  $('ayudaSel').addEventListener('change', () => {
+    nivelAyuda = +$('ayudaSel').value; store.set('ayuda', String(nivelAyuda)); $('ayudaDesc').textContent = NIVELES_TXT[nivelAyuda];
+    if (lastRes && problems.length) renderDiag(lastRes, lastRt, true);
+  });
+  $('autoCierre').addEventListener('change', () => { autoCierre = $('autoCierre').checked; store.set('autocierre', autoCierre ? '1' : '0'); });
+  $('procCap').addEventListener('change', () => store.set('proccap', $('procCap').checked ? '1' : '0'));
 
   /* ---------- consola ---------- */
   let total = 0; const CAP = 400000;
@@ -477,9 +940,9 @@
   function setStatus(txt, cls) { statusEl.textContent = txt; statusEl.className = 'chip' + (cls ? ' ' + cls : ''); }
   function clearConsole() { clearTimeout(outTimer); outTimer = null; outBuf = ''; out.textContent = ''; total = 0; }
   $('clear').addEventListener('click', () => { removeInput(); clearConsole(); if ((worker || main) && waiting) showInput(); });
-  function copyText(s) {
+  function copyText(s, host) {
     const fallback = () => {
-      const t = document.createElement('textarea'); t.value = s; t.style.position = 'fixed'; t.style.opacity = '0'; document.body.appendChild(t); t.select();
+      const t = document.createElement('textarea'); t.value = s; t.style.position = 'fixed'; t.style.opacity = '0'; (host || document.body).appendChild(t); t.select();
       let ok = false; try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
       t.remove(); return ok;
     };
@@ -681,6 +1144,7 @@ self.postMessage({ type: 'ready' });`;
     resetRun();
     removeInput(); clearConsole(); clearProblems();
     flushSave();
+    proc.ejecutar();
     const src = ta.value;
     if (tabMode()) setTab('co');
     preparePreset();
@@ -779,7 +1243,16 @@ self.postMessage({ type: 'ready' });`;
     while (outRows.length > 1 && !outRows[outRows.length - 1].length) outRows.pop();
     const inRows = opts.input !== false && inTxt.value.trim() ? rowsOf([['in', inTxt.value.replace(/\n+$/, '')]], cols + 4) : [];
     const secH = 30, headH = 64, gap = 14;
-    const H = headH + gap + secH + codeRows.length * lh + 16 + (inRows.length ? gap + secH + inRows.length * lh + 16 : 0) + gap + secH + Math.max(1, outRows.length) * lh + 16 + 14;
+    // línea de evidencia de proceso (opcional): se parte en renglones para que entre en el ancho
+    const procRows = [];
+    const procTxt = opts.proc === false ? '' : proc.linea();
+    if (procTxt) {
+      ctx.font = '12px ' + UI;
+      let ln = '';
+      procTxt.split(' ').forEach((w) => { const t = ln ? ln + ' ' + w : w; if (ln && ctx.measureText(t).width > W - 2 * padX) { procRows.push(ln); ln = w; } else ln = t; });
+      if (ln) procRows.push(ln);
+    }
+    const H = headH + gap + secH + codeRows.length * lh + 16 + (inRows.length ? gap + secH + inRows.length * lh + 16 : 0) + gap + secH + Math.max(1, outRows.length) * lh + 16 + 14 + procRows.length * 17;
     let S = 2; while (W * S * H * S > 14e6 && S > 1) S -= 0.5;
     cv.width = Math.round(W * S); cv.height = Math.round(H * S); ctx.scale(S, S);
     ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, W, H);
@@ -817,6 +1290,10 @@ self.postMessage({ type: 'ready' });`;
     if (inRows.length) { y += gap; section('Datos de entrada'); drawRows(inRows, padX, '#f6f9ff', false); }
     y += gap; section('Salida');
     drawRows(outRows.length && (outRows.length > 1 || outRows[0].length) ? outRows : [[['dim', '(sin salida: ejecutá el programa antes de sacar la captura)']]], padX, '#fbfcfe', false);
+    if (procRows.length) {
+      ctx.font = '12px ' + UI; ctx.fillStyle = '#566174';
+      procRows.forEach((t, i) => ctx.fillText(t, padX, y + 12 + i * 17));
+    }
     return cv;
   }
   // Vista previa antes de descargar: se puede incluir u omitir la entrada
@@ -825,7 +1302,7 @@ self.postMessage({ type: 'ready' });`;
   function shotRender() {
     const seq = ++shotSeq;
     let cv;
-    try { cv = makePng({ input: $('shotIn').checked }); } catch (e) { toast('No se pudo armar la imagen: ' + e.message); dShot.close(); return; }
+    try { cv = makePng({ input: $('shotIn').checked, proc: $('shotProc').checked }); } catch (e) { toast('No se pudo armar la imagen: ' + e.message); dShot.close(); return; }
     cv.toBlob((blob) => {
       if (seq !== shotSeq) return;
       if (!blob) { toast('No se pudo generar la imagen.'); dShot.close(); return; }
@@ -838,12 +1315,14 @@ self.postMessage({ type: 'ready' });`;
   $('shot').addEventListener('click', () => {
     const hasIn = !!inTxt.value.trim();
     $('shotInRow').hidden = !hasIn; $('shotIn').checked = hasIn;
+    const hayProc = !!proc.linea(); $('shotProcRow').hidden = !hayProc; $('shotProc').checked = hayProc && store.get('proccap', '1') !== '0';
     const canShare = !!(coarse && typeof File === 'function' && navigator.canShare && navigator.canShare({ files: [new File([new Blob(['x'])], 'a.png', { type: 'image/png' })] }));
     $('shotShare').hidden = !canShare;
     shotBlob = null; $('shotImg').removeAttribute('src');
     dShot.showModal(); shotRender();
   });
   $('shotIn').addEventListener('change', shotRender);
+  $('shotProc').addEventListener('change', shotRender);
   dShot.addEventListener('close', () => { shotSeq++; shotBlob = null; if (shotUrl) { URL.revokeObjectURL(shotUrl); shotUrl = ''; } $('shotImg').removeAttribute('src'); });
   $('shotDl').addEventListener('click', () => {
     if (!shotBlob) { toast('La imagen todavía se está preparando.'); return; }
@@ -867,7 +1346,7 @@ self.postMessage({ type: 'ready' });`;
     const i = exSel.value; exSel.value = '';
     if (i === '') return;
     const ex = EXAMPLES[+i];
-    if (isPristine(ta.value)) { cur.name = nextName(ex.t); cur.code = ex.c; cur.input = ''; showProgram(cur); }
+    if (isPristine(ta.value)) { cur.name = nextName(ex.t); cur.code = ex.c; cur.input = ''; cur.proc = undefined; showProgram(cur, 'c'); }
     else { newProgram(ex.t, ex.c); toast('Ejemplo abierto como programa nuevo; el anterior sigue en "Programas".'); }
     $('more').open = matchMedia('(min-width: 900px)').matches;
   });
@@ -929,14 +1408,14 @@ self.postMessage({ type: 'ready' });`;
   });
   $('settings').addEventListener('click', () => {
     $('uName').value = user.name; $('uCurso').value = user.curso; $('uMat').value = user.mat; $('uCiclo').value = user.ciclo;
-    $('theme').value = store.get('theme', 'auto'); $('dSet').showModal();
+    $('theme').value = store.get('theme', 'auto'); sincronizarAjustesNuevos(); $('dSet').showModal();
   });
   let lastHeader = headerText();
   [['uName', 'name'], ['uCurso', 'curso'], ['uMat', 'mat'], ['uCiclo', 'ciclo']].forEach(([id, key]) => {
     $(id).addEventListener('input', () => {
       user[key] = $(id).value.trim(); store.set('user', JSON.stringify(user));
       const nh = headerText();
-      if (nh !== lastHeader && ta.value.startsWith(lastHeader)) { const p = ta.selectionStart; ta.value = nh + ta.value.slice(lastHeader.length); ta.setSelectionRange(Math.max(p + nh.length - lastHeader.length, 0), Math.max(p + nh.length - lastHeader.length, 0)); refresh(); scheduleSave(); }
+      if (nh !== lastHeader && ta.value.startsWith(lastHeader)) { const p = ta.selectionStart; auto(() => { ta.value = nh + ta.value.slice(lastHeader.length); }); ta.setSelectionRange(Math.max(p + nh.length - lastHeader.length, 0), Math.max(p + nh.length - lastHeader.length, 0)); refresh(); scheduleSave(); }
       lastHeader = nh;
     });
   });
@@ -1007,7 +1486,10 @@ self.postMessage({ type: 'ready' });`;
       let name = p.name;
       if (sim.some((x) => x.name === name)) { name = nm(p.name + ' (importado)'); res.renamed++; } else res.add++;
       sim.push({ name, code: p.code });
-      if (commit) progs.push({ id: uid(), name, code: p.code, input: p.input, t: p.t });
+      if (commit) {
+        let pr; try { pr = window.Proceso ? Proceso.nuevo(p.code, 'c').serializar() : undefined; } catch (e) { pr = undefined; }
+        progs.push({ id: uid(), name, code: p.code, input: p.input, t: p.t, proc: pr });
+      }
     });
     return res;
   }
@@ -1172,9 +1654,9 @@ self.postMessage({ type: 'ready' });`;
       const old = store.get('code', '');           // versión anterior: un solo programa
       p = { id: uid(), name: 'Programa 1', code: old && old.trim() ? old : template(), input: '', t: Date.now() };
       progs.push(p);
-    }
-    showProgram(p);
+      showProgram(p, old && old.trim() ? 'u' : 'a');
+    } else showProgram(p);
     if (!store.get('seen', '')) { store.set('seen', '1'); }
   })();
-  window.__editorc = { run, cfg, setCode: (s) => { ta.value = s; refresh(); scheduleSave(); }, compile: (s) => CCompiler.compile(s), showDiag: (r) => { lastRes = r; showDiag(r); } };
+  window.__editorc = { run, cfg, proceso: () => proc.resumen(), procLinea: () => proc.linea(), nivelAyuda: () => nivelAyuda, setCode: (s) => { ta.value = s; proc.marcarCargado(s, 'c'); refresh(); scheduleSave(); }, compile: (s) => CCompiler.compile(s), showDiag: (r) => { lastRes = r; showDiag(r); } };
 })();
