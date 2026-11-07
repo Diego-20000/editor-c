@@ -1,0 +1,24 @@
+{
+  "gcc": "gcc (Debian 14.2.0-19) 14.2.0",
+  "flags": [
+    "-std=gnu99",
+    "-Wall",
+    "-Wextra"
+  ],
+  "json_parseados": {
+    "errores.json": 50,
+    "ayuda.json": 153,
+    "lecciones.json": 35
+  },
+  "errores_verificados_gcc_true": 50,
+  "errores_verificados_gcc_false": 0,
+  "errores_ids_contiguos": true,
+  "mensajes_mas_de_dos_oraciones": [],
+  "categoria_cubierta": {
+    "Sintaxis y escritura": 50
+  },
+  "falta_parte_1_minimo_300": 250,
+  "ayuda_minimo_150_cumplido": true,
+  "lecciones_rango_30_40_cumplido": true,
+  "nota": "GCC 14.2 se usó en esta sesión; no sustituye una ejecución de pruebas en GCC 13 ni en el intérprete del navegador."
+}
