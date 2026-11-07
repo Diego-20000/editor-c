@@ -39,6 +39,7 @@
     M_SQRT2: [Math.SQRT2, 'double'], M_LN2: [Math.LN2, 'double'], M_LN10: [Math.LN10, 'double'], M_PI_2: [Math.PI / 2, 'double'], M_PI_4: [Math.PI / 4, 'double']
   };
 
+  const HDR_FUNCS = { 'stdio.h': ['printf', 'scanf', 'puts', 'getchar', 'putchar', 'fgets'], 'math.h': ['sqrt', 'pow', 'fabs', 'floor', 'ceil'], 'string.h': ['strlen', 'strcpy', 'strcmp', 'strcat'], 'stdlib.h': ['rand', 'srand', 'abs', 'exit', 'atoi', 'system'], 'ctype.h': ['toupper', 'tolower', 'isdigit', 'isalpha'] };
   /* ================= LEXER ================= */
   function tokenize(text, line0, top, includes, defines) {
     const out = [];
@@ -93,7 +94,14 @@
             if (!cs.length) throw new CErr('#endif sin #if', line); cs.pop();
           } else if (!active()) { /* zona descartada */ }
           else if (dir === 'undef') defines.delete(arg);
-          else if (dir === 'include') { if (/^(<[^>\s]+>|"[^"]+")$/.test(arg)) includes.push(arg); else includes.avisos.push({ line, kb: /;\s*$/.test(arg) ? 'PRE-018' : 'PRE-014', msg: 'el #include está mal escrito: tiene que ser #include <stdio.h> (con < y >) o #include "archivo.h"' }); }
+          else if (dir === 'include') {
+            if (top) {
+              let prof = 0; for (const q of out) { if (q.t === 'op' && q.v === '{') prof++; else if (q.t === 'op' && q.v === '}') prof--; }
+              const hm = /^[<"]([^>"\s]+)[>"]$/.exec(arg);
+              if (prof > 0) includes.avisos.push({ line, kb: 'PRE-041', msg: 'el #include va al principio del programa, afuera de las funciones: acá adentro rompe el programa' });
+              else if (hm && HDR_FUNCS[hm[1]]) { const usada = out.find((q) => q.t === 'id' && HDR_FUNCS[hm[1]].indexOf(q.v) >= 0); if (usada) includes.avisos.push({ line, kb: 'PRE-042', msg: "usás " + usada.v + " antes de este #include: los #include van todos al principio, antes de usar sus funciones" }); }
+            }
+            if (/^(<[^>\s]+>|"[^"]+")$/.test(arg)) includes.push(arg); else includes.avisos.push({ line, kb: /;\s*$/.test(arg) ? 'PRE-018' : 'PRE-014', msg: 'el #include está mal escrito: tiene que ser #include <stdio.h> (con < y >) o #include "archivo.h"' }); }
           else if (dir === 'pragma' || dir === 'line' || dir === 'warning') { /* se ignora */ }
           else if (dir === 'error') throw new CErr('#error: ' + arg, line);
           else if (dir === 'define') {
@@ -158,14 +166,14 @@
             const resto = text.slice(i, j);
             throw new CErr('cadena sin cerrar (falta la comilla ")', line, /\)/.test(resto) ? 'PRF-019' : 'SIN-042');
           }
-          if (text[j] === '\\') { const r = esc(text, j); s += r[0]; j = r[1]; } else s += text[j++];
+          if (text[j] === '\\') { const r = esc(text, j, { includes, line }); s += r[0]; j = r[1]; } else s += text[j++];
         }
         if (j >= n) throw new CErr('cadena sin cerrar (falta la comilla ")', line, 'PRF-019');
         out.push({ t: 'str', v: s, line }); i = j + 1; continue;
       }
       if (c === "'") {
         let j = i + 1, s;
-        if (text[j] === '\\') { const r = esc(text, j); s = r[0]; j = r[1]; } else { s = text[j++]; }
+        if (text[j] === '\\') { const r = esc(text, j, { includes, line }); s = r[0]; j = r[1]; } else { s = text[j++]; }
         if (text[j] !== "'") {
           const eol = text.indexOf('\n', i); const resto = text.slice(j, eol < 0 ? n : eol);
           const cierra = resto.indexOf("'") >= 0;
@@ -206,13 +214,14 @@
     if (cs.length) throw new CErr('falta el #endif de un #if / #ifdef', line);
     return out;
   }
-  function esc(text, j) { // text[j] === '\\'
+  function esc(text, j, ctx) { // text[j] === '\\'
     const c = text[j + 1];
     if (c >= '0' && c <= '7') { const mo = /^[0-7]{1,3}/.exec(text.slice(j + 1)); return [String.fromCharCode(parseInt(mo[0], 8) & 255), j + 1 + mo[0].length]; }
     if (c === 'e' || c === 'E') return ['\x1b', j + 2];
     const map = { n: '\n', t: '\t', r: '\r', a: '\x07', b: '\b', f: '\f', v: '\v', '\\': '\\', '"': '"', "'": "'", '?': '?' };
     if (c === 'x') { const m = /^[0-9a-fA-F]{1,2}/.exec(text.slice(j + 2)); if (m) return [String.fromCharCode(parseInt(m[0], 16)), j + 2 + m[0].length]; }
     if (c in map) return [map[c], j + 2];
+    if (ctx && c !== 'u' && c !== 'U' && c !== '\n' && c !== undefined) ctx.includes.avisos.push({ line: ctx.line, kb: 'SIN-043', msg: "'\\" + c + "' no es una secuencia de escape conocida: C la reemplaza por el carácter " + c + " solo" });
     return [c, j + 2];
   }
   const t0line = (arr) => (arr && arr[0] && arr[0].line) || 1;
@@ -737,6 +746,7 @@
         else if (ctx === 'for') { kb = 'DEC-029'; msg = "'" + name + "' no está declarada: el contador del for también hay que declararlo"; }
         else if (ctx === 'decl') { kb = 'DEC-023'; msg = "'" + name + "' no está declarada: en una declaración el '=' solo inicializa la variable que se declara"; }
         else if (ctx === 'letra' && name.length === 1) { kb = 'PRF-044'; msg = "'" + name + "' no está declarada: si querías la letra " + name + " escribila entre comillas simples; si querías una variable, usá su nombre"; }
+        else if (this.opts.defines && this.opts.defines.has(name)) { kb = 'PRE-030'; msg = "'" + name + "' se usa antes de su #define: el #define tiene que estar arriba del primer uso"; }
         else if (own(NOMBRES_KB, name)) { kb = NOMBRES_KB[name][0]; msg = NOMBRES_KB[name][1]; }
         else if (sug && sug.toLowerCase() === name.toLowerCase()) kb = 'DEC-003';
         else if (sug && ctx !== 'write') kb = 'DEC-002';
@@ -819,6 +829,11 @@
         }
       }
       if (!this.funcs.has('main')) this.err("no hay función main(): el programa empieza en 'main() { ... }'", 1);
+      else {
+        const mf = this.funcs.get('main');
+        if (mf.ret === 'void') this.warn("main tiene que devolver int: con 'void main' funciona en algunos compiladores (Code::Blocks), pero gcc avisa", mf.line, 'POR-005', 'FUN-023');
+        if (mf.params.length === 1) this.warn("main recibe cero parámetros o dos (argc y argv), no uno solo", mf.line, 'FUN-025');
+      }
       // 2) async: funciones que llegan a scanf/getchar
       for (const f of this.funcs.values()) if (f.node) this.scan(f.node.body, f);
       const llamadas = new Set();
@@ -882,6 +897,7 @@
         }
         case 'if': {
           this.checkCondAssign(s.c);
+          if (s.c.k === 'call' && (s.c.name === 'strcmp' || s.c.name === 'strncmp')) { const ss = []; each(s.a, (x) => { if (x.k === 'str') ss.push(x.v); }); if (ss.some((t) => /igual|coincid|mismo/i.test(t))) this.warn('strcmp devuelve 0 cuando los textos son iguales: usado solo, la condición se cumple cuando son DISTINTOS. Compará con 0', s.line, 'ARR-037'); }
           const c = this.cond(s.c);
           const sa = this.assignLog.length;
           this.push(); const a = this.stmt(s.a); this.pop();
@@ -936,6 +952,7 @@
           const rt = this.cur.ret;
           if (!s.e) { if (rt !== 'void') this.warn("'return' sin valor en una función que devuelve " + TNAME[rt], s.line, 'FUN-015'); return 'return' + (this.cur.name === 'main' ? ' 0' : '') + ';'; }
           if (rt === 'void') { this.err('una función void no puede devolver un valor', s.line, 'FUN-014'); this.expr(s.e); return 'return;'; }
+          if (s.e.k === 'comma' && !this.hasSideEffect(s.e.l)) this.warn("'return A, B' devuelve solo B: la coma descarta el primer valor (una función devuelve un único valor)", s.line, 'FUN-040');
           const r = this.expr(s.e);
           this.checkIntDiv(r, rt, s.line);
           return 'return ' + this.conv(r, rt) + ';';
@@ -1112,7 +1129,7 @@
           continue;
         }
         if (v.dims.length) {
-          const dimsCode = [];
+          const dimsCode = [], sizes = [];
           let ok = true;
           if (v.init && v.init.k === 'list' && v.dims[0] === null) {
             dimsCode.push(String(v.init.items.length));
@@ -1124,7 +1141,11 @@
             if (!INTLIKE.has(r.t)) { this.err('el tamaño de un arreglo debe ser un entero', v.line, 'ARR-028'); ok = false; }
             else if (this.isConstExpr(v.dims[i])) { let nv = null; try { nv = Function('return ' + this.val(r))(); } catch (x) { nv = null; } if (nv !== null && nv <= 0) { this.err('el tamaño del arreglo tiene que ser mayor que 0 (usaste ' + nv + ')', v.line, nv < 0 ? 'ARR-007' : 'ARR-006'); ok = false; } }
             dimsCode.push(this.val(r));
+            sizes.push(this.isConstExpr(v.dims[i]) ? Number(r.c) : null);
           }
+          if (v.init && v.init.k === 'list' && v.dims.some((x, i) => x !== null && sizes[i] === null && !this.isConstExpr(x))) { this.err('un arreglo cuyo tamaño no es un número fijo no se puede inicializar con llaves (una constante const no alcanza en C): usá un número o un #define', v.line, 'ARR-009'); ok = false; }
+          if (ok && v.init && v.init.k === 'list' && v.dims.length === 1 && sizes[0] !== null && Number.isFinite(sizes[0]) && v.init.items.length > sizes[0]) this.warn('el arreglo tiene ' + sizes[0] + ' lugares pero le diste ' + v.init.items.length + ' valores: los que sobran no entran', v.line, 'ARR-011');
+          if (ok && v.init && v.init.k === 'str' && v.dims.length === 1 && sizes[0] !== null && Number.isFinite(sizes[0]) && new TextEncoder().encode(v.init.v).length > sizes[0]) this.warn('el texto tiene más letras (' + new TextEncoder().encode(v.init.v).length + ') que lugares el arreglo (' + sizes[0] + '): no entra', v.line, 'ARR-030');
           this.declare(v.name, { type: d.type, js, array: true, ndims: v.dims.length, assigned: true, isConst: !!d.const }, v.line);
           if ((d.type === 'char' || d.type === 'uchar') && v.dims.length === 1 && v.init && v.init.k === 'list' && v.init.items.some((x) => x.k === 'str')) this.warn("para guardar varios textos hacen falta dos dimensiones: char " + v.name + "[cantidad][largo]. Con una sola, cada elemento guarda una letra", v.line, 'ARR-055');
           if (!ok) { parts.push('let ' + js + '=[];'); continue; }
@@ -1402,6 +1423,7 @@
       if ((op === '&' || op === '|') && (esRel(ln) || esRel(rn))) this.warn("usaste '" + op + "' (operación de bits); para " + (op === '&' ? '"y"' : '"o"') + " lógico se escribe '" + op + op + "'", line, 'OPE-005');
       if (REL.indexOf(op) >= 0 && esRel(ln) && op !== '==' && op !== '!=') this.warn("a < b < c no comprueba un rango: C evalúa primero la comparación de la izquierda (da 0 o 1). Escribilo con &&, por ejemplo: 0 < a && a < 3", line, 'CTL-034');
       if (op === '^') this.warn("en C, '^' no es potencia (es XOR de bits): 2 ^ 3 da 1. Para potencias usá pow(2, 3) de <math.h>", line, 'OPE-031');
+      if ((op === '==' || op === '!=') && ((ln.k === 'call' && (ln.name === 'strcmp' || ln.name === 'strncmp') && (numVal(rn) === 1 || numVal(rn) === -1)) || (rn.k === 'call' && (rn.name === 'strcmp' || rn.name === 'strncmp') && (numVal(ln) === 1 || numVal(ln) === -1)))) this.warn('strcmp no devuelve 1 ni -1: devuelve cualquier número positivo o negativo según las letras. Se compara con 0, o con > 0 y < 0', line, 'ARR-038');
       const esArr = (x) => { const i = x.k === 'id' ? this.lookup(x.name) : null; return !!(i && i.array); };
       if ((op === '==' || op === '!=') && ((esArr(ln) && (esArr(rn) || rn.k === 'str')) || (esArr(rn) && ln.k === 'str'))) this.cmpArr = (rn.k === 'str' || ln.k === 'str') ? 'str' : 'arr';
       const a = this.expr(ln), b = this.expr(rn);
@@ -1507,6 +1529,8 @@
       const name = n.name;
       const args = n.args;
       const usr = this.funcs.get(name);
+      const vv = this.lookup(name);
+      if (vv && !vv.array && vv.scalar && usr) { this.err("'" + name + "' es una variable en este lugar y tapa a la función del mismo nombre: no se la puede llamar. Cambiá el nombre de la variable", n.line, 'FUN-027'); args.forEach((a) => { if (a.k !== 'str') this.expr(a); }); return { c: '0', t: usr.ret === 'void' ? 'void' : usr.ret }; }
       if (usr && usr.node) return this.callUser(n, name, args);
       this.needInclude(name, n.line);
       const MATH1 = { sqrt: 'Math.sqrt', fabs: 'Math.abs', floor: 'Math.floor', ceil: 'Math.ceil', round: '$.round', trunc: 'Math.trunc', sin: 'Math.sin', cos: 'Math.cos', tan: 'Math.tan', asin: 'Math.asin', acos: 'Math.acos', atan: 'Math.atan', exp: 'Math.exp', log: 'Math.log', log10: 'Math.log10', log2: 'Math.log2', cbrt: 'Math.cbrt', sinh: 'Math.sinh', cosh: 'Math.cosh', tanh: 'Math.tanh', asinh: 'Math.asinh', acosh: 'Math.acosh', atanh: 'Math.atanh', exp2: '((x)=>Math.pow(2,x))', expm1: 'Math.expm1', log1p: 'Math.log1p' };
@@ -1576,7 +1600,7 @@
       if (name === 'gets' || name === 'fgets') {
         const ds = this.charArr(args[0]);
         if (!ds) { this.err("el primer argumento de '" + name + "' tiene que ser un arreglo de char", n.line); return { c: '0', t: 'int' }; }
-        if (name === 'gets') return { c: '(await $.gets(' + ds.c + ',' + n.line + '))', t: 'int' };
+        if (name === 'gets') { this.warn('gets fue eliminada de C11 porque no controla el tamaño y puede escribir fuera del arreglo. Se usa fgets(texto, tamaño, stdin)', n.line, 'ARR-040', 'POR-016'); return { c: '(await $.gets(' + ds.c + ',' + n.line + '))', t: 'int' }; }
         const sz = args[1] ? this.val(this.expr(args[1])) : '0';
         return { c: '(await $.fgets(' + ds.c + ',' + sz + ',' + n.line + '))', t: 'int' };
       }
@@ -1588,6 +1612,12 @@
         if (!pr || pr.t !== 'str') { this.err('puts necesita un texto entre comillas o un arreglo de char', n.line); return { c: '0', t: 'int' }; }
         return { c: '$.puts(' + (pr.dyn ? pr.c : JSON.stringify(args[0].v)) + ')', t: 'int' };
       }
+      if (name === 'system' && args[0] && args[0].k === 'str') {
+        const cm = args[0].v.trim().toLowerCase();
+        if (cm === 'pause') this.warn('system("pause") es un comando de Windows: en Linux, Programiz y OnlineGDB no existe y muestra un error. Para esperar una tecla se usa getchar()', n.line, 'POR-001', 'PRE-039');
+        else if (cm === 'cls') this.warn('system("cls") es un comando de Windows: en Linux, Programiz y OnlineGDB no existe', n.line, 'POR-002', 'PRE-040');
+      }
+      if (name === 'fflush' && args[0] && args[0].k === 'id' && args[0].name === 'stdin') this.warn('fflush(stdin) no está definido en C estándar: en Linux (gcc, Programiz, OnlineGDB) no limpia el teclado', n.line, 'POR-007', 'PRE-049');
       if (name === 'system' || name === 'fflush' || name === 'setbuf' || name === 'setvbuf') { args.forEach((a) => { if (a.k !== 'str') this.expr(a); }); return { c: '0', t: 'int' }; }
       const CT = { isdigit: ['c>=48&&c<=57', 2048], isalpha: ['(c>=65&&c<=90)||(c>=97&&c<=122)', 1024], isupper: ['c>=65&&c<=90', 256], islower: ['c>=97&&c<=122', 512], isspace: ['c===32||(c>=9&&c<=13)', 8192], isalnum: ['(c>=48&&c<=57)||(c>=65&&c<=90)||(c>=97&&c<=122)', 8], ispunct: ['(c>=33&&c<=47)||(c>=58&&c<=64)||(c>=91&&c<=96)||(c>=123&&c<=126)', 4], isprint: ['c>=32&&c<=126', 16384], isgraph: ['c>=33&&c<=126', 32768], iscntrl: ['(c>=0&&c<=31)||c===127', 2], isxdigit: ['(c>=48&&c<=57)||(c>=65&&c<=70)||(c>=97&&c<=102)', 4096], isblank: ['c===32||c===9', 1] };
       if (own(CT, name)) { const r = this.expr(args[0]); return { c: '((c=>' + CT[name][0] + ')(' + this.conv(r, 'int') + ')?' + CT[name][1] + ':0)', t: 'int' }; }
@@ -1710,6 +1740,7 @@
       rest.forEach((a, k) => {
         if (specs[k] && (specs[k].conv === 's' || specs[k].conv[0] === '[')) {
           const ca = this.charArr(a.k === 'addr' ? a.e : a);
+          if (ca && a.k === 'addr' && specs[k].conv === 's') this.warn("scanf(\"%s\", &" + (a.e.k === 'id' ? a.e.name : 'texto') + "): el nombre de un arreglo ya es su dirección, va sin &", n.line, 'ARR-034');
           if (!ca) { this.err("a '%" + (specs[k].conv === 's' ? 's' : specs[k].conv) + "' le corresponde un arreglo de char (por ejemplo char nombre[30]; scanf(\"%s\", nombre);)", n.line, 'ARR-035'); return; }
           refs.push('[()=>' + ca.c + ']'); types.push('"str"'); return;
         }
@@ -1774,7 +1805,10 @@
   grupo('preprocesador', 'PRE-015 PRE-019 PRE-020 PRE-021 PRE-026 PRE-028 PRE-029 PRE-031 PRE-032 PRE-033');
   grupo('comillas-dobles', 'ARR-045 ARR-047 ARR-056 ARR-058 FUN-028 CTL-049 TIP-015 TIP-031');
   grupo('arreglo', 'ARR-017 ARR-055 ARR-035 FUN-029');
+  grupo('funcion', 'FUN-040 FUN-027');
   grupo('asignacion-en-condicion', 'CTL-040');
+  grupo('portabilidad', 'POR-001 POR-002 POR-005 POR-007 FUN-025 ARR-040 ARR-034 SIN-043 PRE-041 PRE-042');
+  grupo('arreglo', 'ARR-009 ARR-011 ARR-030 ARR-037 ARR-038');
   grupo('palabra-reservada', 'DEC-018 DEC-038');
   // casos de la base que son el mismo error con otro nombre (otra categoría u otro enunciado): comparten el aviso
   const KB_GEMELOS = { 'LOG-002': ['OPE-013'], 'LOG-018': ['OPE-034', 'CTL-033'], 'LOG-010': ['CTL-006'], 'OPE-043': ['CTL-036'], 'OPE-011': ['CTL-037'], 'LOG-024': ['CTL-044', 'DEC-020'], 'LOG-053': ['CTL-046'],
@@ -2614,7 +2648,7 @@
       toks = expandDefines(toks, defines);
       const items = new Parser(toks).program();
       toksRef = toks;
-      const g = new Gen(items, Object.assign({}, opts, { includes }));
+      const g = new Gen(items, Object.assign({}, opts, { includes, defines }));
       const js = g.run();
       g.errors.sort((a, b) => a.line - b.line);
       g.warnings.sort((a, b) => a.line - b.line);
