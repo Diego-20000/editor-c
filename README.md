@@ -37,6 +37,8 @@ Avisos y errores en español con el número de línea, entre ellos: variable sin
 
 Qué se promete y qué no: ver [docs/COMPATIBILIDAD.md](docs/COMPATIBILIDAD.md).
 
+Contexto y reglas del proyecto (sitio estático en GitHub Pages, sin servidor, sin IA, sin conexión): ver [CLAUDE.md](CLAUDE.md).
+
 No es gcc. Es un intérprete del subconjunto de C que se usa al empezar a programar. La salida de `printf` (incluido el redondeo) se comparó contra gcc con los casos de `test/cases` y con programas generados al azar. Quedan diferencias solo en comportamientos que C no define (por ejemplo conversiones de decimal a entero fuera de rango o desbordes de `long` mayores a 2^63). Si algo se comporta distinto que en gcc, abrí un issue.
 
 ## Desarrollo
