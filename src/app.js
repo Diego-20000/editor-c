@@ -99,6 +99,17 @@
   }
   function isPristine(code) { return !code.trim() || EXAMPLES.some((x) => x.c === code) || code === template(); }
 
+  /* ---------- vista del código: sangría, espacios, renglones (solo cambian cómo se ve) ---------- */
+  let SANG = [2, 3, 4, 8].indexOf(parseInt(store.get('sang', '4'), 10)) >= 0 ? parseInt(store.get('sang', '4'), 10) : 4;
+  let verEsp = store.get('ws', '') === '1';
+  const SP = () => ' '.repeat(SANG);
+  function aplicarVista() {
+    const r = document.documentElement;
+    r.style.setProperty('--tab', String(SANG));
+    r.classList.toggle('sinrenglones', store.get('reglas', '1') === '0');
+  }
+  aplicarVista();
+
   /* ---------- resaltado ---------- */
   const HL_RE = /(\/\*[\s\S]*?\*\/|\/\*[\s\S]*$|\/\/[^\n]*)|("(?:\\.|[^"\\\n])*"?)|('(?:\\.|[^'\\\n])*'?)|(^[ \t]*#[^\n]*)|(\b(?:int|float|double|char|void|long|short|unsigned|signed|const|static|bool)\b)|(\b(?:if|else|while|do|for|return|break|continue|switch|case|default|sizeof)\b)|(\b\d+\.?\d*(?:[eE][+-]?\d+)?[fFlLuU]*\b|\.\d+\b)|(\b[A-Za-z_]\w*(?=\s*\())/gm;
   const CLS = [null, 'c', 's', 's', 'p', 't', 'k', 'n', 'f'];
@@ -139,15 +150,74 @@
     let h = '';
     for (let i = 1; i <= n; i++) { const m = marks.get(i); h += '<div' + (m ? ' class="' + m + '"' : '') + '>' + i + '</div>'; }
     gut.innerHTML = h;
+    if (gut.children[curLn]) gut.children[curLn].classList.add('cur');
     gut.scrollTop = ta.scrollTop;
   }
   function refresh() {
     hl.innerHTML = highlight(ta.value) + '\n';
+    gdEl.innerHTML = guias(ta.value);
     renderGutter(false);
     paintProblems();
     syncScroll();
+    updatePos();
   }
-  function syncScroll() { layers.forEach((l) => { l.scrollTop = ta.scrollTop; l.scrollLeft = ta.scrollLeft; }); gut.scrollTop = ta.scrollTop; }
+  const gdEl = $('gd'), brEl = $('br'), curEl = $('curline'), codeBox = $('codeBox');
+  layers.push(gdEl, brEl);
+  // guías de sangría (y espacios visibles si se pidió): una capa transparente, solo para leer la estructura
+  function guias(src) {
+    if (src.length > 300000) return '\n';
+    const ws = verEsp, dot = '<b class="sp">·</b>';
+    return src.split('\n').map((ln) => {
+      const m = /^[ \t]*/.exec(ln)[0];
+      let h = '', k = 0;
+      while (k < m.length) {
+        if (m[k] === '\t') { h += '<i class="ig' + (ws ? ' tb' : '') + '">\t</i>'; k++; }
+        else {
+          let j = k; while (j < m.length && m[j] === ' ') j++;
+          let n = j - k;
+          while (n >= SANG) { h += '<i class="ig">' + (ws ? dot.repeat(SANG) : SP()) + '</i>'; n -= SANG; }
+          if (n) h += ws ? dot.repeat(n) : ' '.repeat(n);
+          k = j;
+        }
+      }
+      if (ws) h += esc(ln.slice(m.length)).replace(/ /g, dot).replace(/\t/g, '<i class="tb">\t</i>');
+      return h;
+    }).join('\n') + '\n';
+  }
+  let curLn = 0;
+  function syncScroll() {
+    layers.forEach((l) => { l.scrollTop = ta.scrollTop; l.scrollLeft = ta.scrollLeft; });
+    gut.scrollTop = ta.scrollTop;
+    codeBox.style.setProperty('--sy', ta.scrollTop + 'px');
+    curEl.style.top = (12 + curLn * lineH() - ta.scrollTop) + 'px';
+  }
+  function lineH() { return (parseFloat(getComputedStyle(ta).fontSize) || 15) * 1.5; }
+  function marcarActual(ln) {
+    const k = gut.children;
+    if (k[curLn]) k[curLn].classList.remove('cur');
+    curLn = ln;
+    if (k[ln]) k[ln].classList.add('cur');
+    curEl.style.top = (12 + ln * lineH() - ta.scrollTop) + 'px';
+  }
+  // pareja del paréntesis, corchete o llave que toca el cursor (ignora lo que está en comentarios, textos y #líneas)
+  function marcarPareja() {
+    const v = ta.value, s = ta.selectionStart;
+    if (ta.selectionEnd !== s || v.length > 60000) { brEl.innerHTML = ''; return; }
+    const PAR = { '(': ')', '[': ']', '{': '}', ')': '(', ']': '[', '}': '{' };
+    let pos = -1;
+    if (s > 0 && PAR[v[s - 1]]) pos = s - 1; else if (s < v.length && PAR[v[s]]) pos = s;
+    if (pos < 0) { brEl.innerHTML = ''; return; }
+    const skip = new Uint8Array(v.length); let at = 0;
+    tokens(v).forEach(([c, t]) => { if (c === 'c' || c === 's' || c === 'p') skip.fill(1, at, at + t.length); at += t.length; });
+    if (skip[pos]) { brEl.innerHTML = ''; return; }
+    const ch = v[pos], op = '([{'.indexOf(ch) >= 0, other = PAR[ch], dir = op ? 1 : -1;
+    let depth = 0, m = -1;
+    for (let i = pos; i >= 0 && i < v.length; i += dir) {
+      if (skip[i]) continue;
+      if (v[i] === ch) depth++; else if (v[i] === other) { depth--; if (!depth) { m = i; break; } }
+    }
+    paint(brEl, v, m < 0 ? [{ s: pos, e: pos + 1, c: 'bu' }] : [{ s: pos, e: pos + 1, c: 'bm' }, { s: m, e: m + 1, c: 'bm' }]);
+  }
   /* evidencia de proceso: mide de dónde viene cada carácter (tipeado, pegado, automático, cargado). Todo queda en este dispositivo. */
   const PROC_NULO = { marcarAuto(fn) { return fn(); }, marcarCargado() {}, restaurar() {}, serializar() { return null; }, resumen() { return null; }, linea() { return ''; }, ejecutar() {} };
   let proc = PROC_NULO, practica = false;
@@ -171,6 +241,7 @@
   });
 
   function insert(text) {
+    if (ta.readOnly) return;
     ta.focus({ preventScroll: true });
     let ok = false;
     try { ok = document.execCommand('insertText', false, text); } catch (e) { ok = false; }
@@ -252,11 +323,11 @@
     const v = ta.value, s = ta.selectionStart, en = ta.selectionEnd;
     if (e.key === 'Tab') {
       e.preventDefault();
-      if (s === en && !e.shiftKey) { auto(() => insert('    ')); return; }
+      if (s === en && !e.shiftKey) { auto(() => insert(SP())); return; }
       const a = lineStart(v, s);
       const b = en > s && v[en - 1] === '\n' ? en - 1 : en;
       const block = v.slice(a, b).split('\n');
-      const nb = block.map((l) => e.shiftKey ? l.replace(/^( {1,4}|\t)/, '') : '    ' + l).join('\n');
+      const nb = block.map((l) => e.shiftKey ? l.replace(new RegExp('^( {1,' + SANG + '}|\\t)'), '') : SP() + l).join('\n');
       guard = true; try { auto(() => { ta.setSelectionRange(a, b); insert(nb); ta.setSelectionRange(a, a + nb.length); }); } finally { guard = false; }
       return;
     }
@@ -268,8 +339,8 @@
       guard = true;
       try {
         auto(() => {
-          if (before === '{' && after === '}') { insert('\n' + ind + '    \n' + ind); const p = s + 1 + ind.length + 4; ta.setSelectionRange(p, p); }
-          else insert('\n' + ind + (before === '{' ? '    ' : ''));
+          if (before === '{' && after === '}') { insert('\n' + ind + SP() + '\n' + ind); const p = s + 1 + ind.length + SANG; ta.setSelectionRange(p, p); }
+          else insert('\n' + ind + (before === '{' ? SP() : ''));
         }, { primerCaracterTipeado: true });
       } finally { guard = false; }
       return;
@@ -277,13 +348,14 @@
     if (e.key === '}' && !mod) {
       if (pisarLlave(v, s, en)) { e.preventDefault(); return; }
       const ls = lineStart(v, s);
-      if (s === en && /^ +$/.test(v.slice(ls, s)) && s - ls >= 4) { e.preventDefault(); guard = true; try { auto(() => { ta.setSelectionRange(s - 4, s); insert('}'); }, { primerCaracterTipeado: true }); } finally { guard = false; } }
+      if (s === en && /^ +$/.test(v.slice(ls, s)) && s - ls >= SANG) { e.preventDefault(); guard = true; try { auto(() => { ta.setSelectionRange(s - SANG, s); insert('}'); }, { primerCaracterTipeado: true }); } finally { guard = false; } }
     }
   });
 
   function updatePos() {
     const v = ta.value, s = ta.selectionStart, ln = lineIndexAt(v, s);
     $('pos').textContent = 'Lín ' + (ln + 1) + ', Col ' + (s - lineStart(v, s) + 1);
+    marcarActual(ln); marcarPareja();
   }
   document.addEventListener('selectionchange', () => { if (document.activeElement === ta) updatePos(); });
 
@@ -771,7 +843,7 @@
     if (ln >= lines.length) return null;
     const colV = Math.floor(x / cw), txt = lines[ln];
     let v = 0, idx = 0;
-    for (; idx < txt.length; idx++) { const w = txt[idx] === '\t' ? 4 - (v % 4) : 1; if (colV < v + w) break; v += w; }
+    for (; idx < txt.length; idx++) { const w = txt[idx] === '\t' ? SANG - (v % SANG) : 1; if (colV < v + w) break; v += w; }
     if (idx >= txt.length) return null;
     let off = 0; for (let i = 0; i < ln; i++) off += lines[i].length + 1;
     return off + idx;
@@ -897,6 +969,7 @@
   function sincronizarAjustesNuevos() {
     $('ayudaSel').value = String(nivelAyuda); $('ayudaDesc').textContent = NIVELES_TXT[nivelAyuda];
     $('autoCierre').checked = autoCierre;
+    $('tabSel').value = String(SANG); $('wsChk').checked = verEsp; $('ruleChk').checked = store.get('reglas', '1') !== '0';
     $('procCap').checked = store.get('proccap', '1') !== '0';
     const l = proc.linea(); $('procAhora').textContent = l ? 'Este programa, ahora: ' + l.replace(/^Escrito en el editor: /, '') + '.' : '';
     const n = casosLista().length;
@@ -907,6 +980,23 @@
     if (lastRes && problems.length) renderDiag(lastRes, lastRt, true);
   });
   $('autoCierre').addEventListener('change', () => { autoCierre = $('autoCierre').checked; store.set('autocierre', autoCierre ? '1' : '0'); });
+  $('tabSel').addEventListener('change', () => { SANG = +$('tabSel').value; store.set('sang', String(SANG)); aplicarVista(); refresh(); });
+  $('wsChk').addEventListener('change', () => { verEsp = $('wsChk').checked; store.set('ws', verEsp ? '1' : '0'); refresh(); });
+  $('ruleChk').addEventListener('change', () => { store.set('reglas', $('ruleChk').checked ? '1' : '0'); aplicarVista(); });
+  /* modo lectura: solo el código, sin barra ni consola; el texto no se puede cambiar */
+  function setLectura(on) {
+    document.documentElement.classList.toggle('lectura', on);
+    ta.readOnly = on;
+    $('readBtn').setAttribute('aria-pressed', on ? 'true' : 'false');
+    $('readTxt').textContent = on ? 'Salir' : 'Lectura';
+    $('readBtn').setAttribute('aria-label', on ? 'Salir del modo lectura' : 'Modo lectura');
+    if (on) { if (tabMode()) setTab('ed', true); findClose(); cerrarBurbuja(); }
+    refresh();
+  }
+  $('readBtn').addEventListener('click', () => setLectura(!document.documentElement.classList.contains('lectura')));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && document.documentElement.classList.contains('lectura') && $('bubble').hidden && !document.querySelector('dialog[open]')) { e.preventDefault(); setLectura(false); }
+  });
   $('procCap').addEventListener('change', () => store.set('proccap', $('procCap').checked ? '1' : '0'));
 
   /* ---------- consola ---------- */
@@ -937,7 +1027,13 @@
     return s;
   }
   function endsWithNewline() { const s = consoleText(); return !s || s.endsWith('\n'); }
-  function setStatus(txt, cls) { statusEl.textContent = txt; statusEl.className = 'chip' + (cls ? ' ' + cls : ''); }
+  function setStatus(txt, cls) {
+    statusEl.textContent = txt; statusEl.className = 'chip' + (cls ? ' ' + cls : '');
+    // cartel bien visible mientras algo corre o espera datos (no depende solo del color)
+    const rb = $('runBar'), on = cls === 'run' || cls === 'wait';
+    rb.hidden = !on; rb.className = 'runbar' + (cls === 'wait' ? ' wait' : '');
+    $('runBarTxt').textContent = cls === 'wait' ? 'Esperando datos: tipeá en la consola y apretá Enter' : txt === 'Compilando…' ? 'Compilando…' : 'Ejecutando… el programa está en marcha';
+  }
   function clearConsole() { clearTimeout(outTimer); outTimer = null; outBuf = ''; out.textContent = ''; total = 0; }
   $('clear').addEventListener('click', () => { removeInput(); clearConsole(); if ((worker || main) && waiting) showInput(); });
   function copyText(s, host) {
@@ -1201,7 +1297,7 @@ self.postMessage({ type: 'ready' });`;
     const rows = []; let row = [], n = 0;
     const push = () => { rows.push(row); row = []; n = 0; };
     segs.forEach(([cls, text]) => {
-      text.replace(/\t/g, '    ').split('\n').forEach((part, i) => {
+      text.replace(/\t/g, SP()).split('\n').forEach((part, i) => {
         if (i > 0) push();
         while (part.length) {
           const take = part.slice(0, cols - n);
@@ -1215,25 +1311,25 @@ self.postMessage({ type: 'ready' });`;
   }
   function makePng(opts) {
     opts = opts || {};
-    const COL = { k: '#cf222e', t: '#0550ae', s: '#0a7a3d', n: '#b35900', c: '#6b7587', f: '#8250df', p: '#8250df', in: '#0b5ed7', er: '#c62828', dim: '#566174', ok: '#0b7a4b' };
-    const TXT = '#1b2230', MONO = '"Liberation Mono", Menlo, Consolas, ui-monospace, monospace', UI = 'system-ui, "Segoe UI", Roboto, Arial, sans-serif';
-    const fs = 14, lh = 20, padX = 22, cv = document.createElement('canvas'), ctx = cv.getContext('2d');
+    // hoja de carpeta: fondo blanco, tinta oscura, nada de grises que se pierdan al imprimir. Lo tipeado va en negrita y subrayado (se distingue en blanco y negro).
+    const COL = { k: '#9a3412', t: '#1f4a8c', s: '#2c6a3b', n: '#0f6068', c: '#565a63', f: '#5b3f8c', p: '#7a5a1e', in: '#1b4f9c', er: '#b3261e', dim: '#4a5060', ok: '#1d6b43' };
+    const TXT = '#1c2230', RULE = '#dde3ee', INKB = '#1f4a8c', MARG = '#c0392b', BOX = '#7d8494';
+    const MONO = '"Liberation Mono", Menlo, Consolas, ui-monospace, monospace', UI = 'system-ui, "Segoe UI", Roboto, Arial, sans-serif';
+    const fs = 15, lh = 22, padX = 28, cv = document.createElement('canvas'), ctx = cv.getContext('2d');
     ctx.font = fs + 'px ' + MONO; const cw = ctx.measureText('M').width;
     const codeLines = ta.value.replace(/\n$/, '').split('\n');
-    const longest = Math.max.apply(null, codeLines.map((l) => l.replace(/\t/g, '    ').length));
-    const cols = Math.max(64, Math.min(110, longest + 1));
-    const gutW = Math.max(3, String(codeLines.length).length + 1) * cw + 14;
-    const W = Math.ceil(padX * 2 + gutW + cols * cw + 12);
-    // código: filas con número
-    const codeRows = []; let nline = 0;
+    const longest = Math.max.apply(null, codeLines.map((l) => l.replace(/\t/g, SP()).length));
+    const cols = Math.max(52, Math.min(100, longest + 1));
+    const gutW = Math.max(3, String(codeLines.length).length + 1) * cw + 16;
+    const W = Math.ceil(padX * 2 + gutW + cols * cw + 14);
+    const codeRows = [];
     let curSegs = [];
-    const lineSegs = []; // tokens separados por línea
+    const lineSegs = [];
     tokens(ta.value.replace(/\n$/, '')).forEach(([cls, text]) => {
       text.split('\n').forEach((part, i) => { if (i > 0) { lineSegs.push(curSegs); curSegs = []; } if (part) curSegs.push([cls, part]); });
     });
     lineSegs.push(curSegs);
-    lineSegs.forEach((segs, i) => { rowsOf(segs, cols).forEach((r, j) => codeRows.push({ n: j === 0 ? i + 1 : '', r })); nline++; });
-    // entrada y salida
+    lineSegs.forEach((segs, i) => { rowsOf(segs, cols).forEach((r, j) => codeRows.push({ n: j === 0 ? i + 1 : '', r })); });
     const outSegs = [];
     out.childNodes.forEach((n) => {
       if (n.nodeType === 3) outSegs.push([null, n.textContent]);
@@ -1242,57 +1338,70 @@ self.postMessage({ type: 'ready' });`;
     const outRows = rowsOf(outSegs, cols + 4);
     while (outRows.length > 1 && !outRows[outRows.length - 1].length) outRows.pop();
     const inRows = opts.input !== false && inTxt.value.trim() ? rowsOf([['in', inTxt.value.replace(/\n+$/, '')]], cols + 4) : [];
-    const secH = 30, headH = 64, gap = 14;
-    // línea de evidencia de proceso (opcional): se parte en renglones para que entre en el ancho
+    const secH = 34, headH = 84, gap = 10;
     const procRows = [];
     const procTxt = opts.proc === false ? '' : proc.linea();
     if (procTxt) {
-      ctx.font = '12px ' + UI;
+      ctx.font = '13px ' + UI;
       let ln = '';
       procTxt.split(' ').forEach((w) => { const t = ln ? ln + ' ' + w : w; if (ln && ctx.measureText(t).width > W - 2 * padX) { procRows.push(ln); ln = w; } else ln = t; });
       if (ln) procRows.push(ln);
     }
-    const H = headH + gap + secH + codeRows.length * lh + 16 + (inRows.length ? gap + secH + inRows.length * lh + 16 : 0) + gap + secH + Math.max(1, outRows.length) * lh + 16 + 14 + procRows.length * 17;
+    const blockH = (n) => n * lh + 16;
+    const H = headH + gap + secH + blockH(codeRows.length) + (inRows.length ? gap + secH + blockH(inRows.length) : 0) + gap + secH + blockH(Math.max(1, outRows.length)) + (procRows.length ? 22 + procRows.length * 19 : 0) + 22;
     let S = 2; while (W * S * H * S > 14e6 && S > 1) S -= 0.5;
     cv.width = Math.round(W * S); cv.height = Math.round(H * S); ctx.scale(S, S);
     ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, W, H);
-    // cabecera
-    ctx.fillStyle = '#f1f4f8'; ctx.fillRect(0, 0, W, headH);
-    ctx.fillStyle = '#d6dce6'; ctx.fillRect(0, headH - 1, W, 1);
+    // cabecera: tira de tinta azul arriba, filete doble abajo
+    ctx.fillStyle = INKB; ctx.fillRect(0, 0, W, 5);
     ctx.textBaseline = 'middle';
-    ctx.fillStyle = TXT; ctx.font = '700 17px ' + UI;
-    ctx.fillText(user.name || 'Editor C', padX, 22);
-    ctx.font = '13px ' + UI; ctx.fillStyle = '#566174';
-    ctx.fillText([user.curso, user.mat, user.ciclo && (/ciclo/i.test(user.ciclo) ? user.ciclo : 'Ciclo lectivo ' + user.ciclo)].filter(Boolean).join('  ·  ') || 'Captura del programa', padX, 44);
+    ctx.fillStyle = TXT; ctx.font = '700 21px ' + UI;
+    ctx.fillText(user.name || 'Editor C', padX, 34);
+    ctx.font = '14px ' + UI; ctx.fillStyle = '#3a4150';
+    ctx.fillText([user.curso, user.mat, user.ciclo && (/ciclo/i.test(user.ciclo) ? user.ciclo : 'Ciclo lectivo ' + user.ciclo)].filter(Boolean).join('  ·  ') || 'Captura del programa', padX, 60);
     const d = new Date(), stamp = pad2(d.getDate()) + '/' + pad2(d.getMonth() + 1) + '/' + d.getFullYear() + ' ' + pad2(d.getHours()) + ':' + pad2(d.getMinutes());
-    ctx.textAlign = 'right'; ctx.font = '600 13px ' + UI; ctx.fillStyle = TXT; ctx.fillText((cur ? cur.name : 'Programa') + '.c', W - padX, 22);
-    ctx.font = '12px ' + UI; ctx.fillStyle = '#566174'; ctx.fillText(stamp, W - padX, 44); ctx.textAlign = 'left';
+    ctx.textAlign = 'right'; ctx.font = '700 15px ' + UI; ctx.fillStyle = TXT; ctx.fillText((cur ? cur.name : 'Programa') + '.c', W - padX, 34);
+    ctx.font = '13px ' + UI; ctx.fillStyle = '#3a4150'; ctx.fillText(stamp, W - padX, 60); ctx.textAlign = 'left';
+    ctx.fillStyle = TXT; ctx.fillRect(padX, headH - 6, W - 2 * padX, 1.5); ctx.fillRect(padX, headH - 2, W - 2 * padX, 1);
     let y = headH + gap;
-    const section = (title, color) => {
-      ctx.font = '700 12px ' + UI; ctx.fillStyle = color || '#566174';
-      ctx.fillText(title.toUpperCase(), padX, y + secH / 2); y += secH;
+    const section = (title) => {
+      ctx.font = '700 12px ' + UI; ctx.fillStyle = TXT;
+      if ('letterSpacing' in ctx) ctx.letterSpacing = '1.5px';
+      ctx.fillText(title.toUpperCase(), padX, y + secH / 2 + 4);
+      if ('letterSpacing' in ctx) ctx.letterSpacing = '0px';
+      y += secH;
     };
-    const drawRows = (rows, x0, bg, numbers) => {
-      const h = rows.length * lh + 16;
-      ctx.fillStyle = bg; ctx.fillRect(padX - 8, y, W - 2 * padX + 16, h);
-      ctx.strokeStyle = '#d6dce6'; ctx.lineWidth = 1; ctx.strokeRect(padX - 8 + .5, y + .5, W - 2 * padX + 16 - 1, h - 1);
-      ctx.font = fs + 'px ' + MONO;
+    const drawRows = (rows, x0, numbers) => {
+      const h = blockH(rows.length), bx = padX - 8, bw = W - 2 * padX + 16;
+      // renglones de cuaderno
+      ctx.fillStyle = RULE;
+      for (let i = 0; i < rows.length; i++) ctx.fillRect(bx + 1, y + 8 + (i + 1) * lh - 1, bw - 2, 1);
+      ctx.strokeStyle = BOX; ctx.lineWidth = 1; ctx.strokeRect(bx + .5, y + .5, bw - 1, h - 1);
+      if (numbers) { ctx.fillStyle = MARG; ctx.fillRect(padX + gutW - 6, y + 1, 1.5, h - 2); }
       rows.forEach((row, i) => {
         const r = numbers ? row.r : row, yy = y + 8 + i * lh + lh / 2;
-        if (numbers) { ctx.fillStyle = '#8b95a7'; ctx.textAlign = 'right'; ctx.fillText(String(row.n), padX + gutW - 12, yy); ctx.textAlign = 'left'; }
+        if (numbers) { ctx.font = (fs - 1) + 'px ' + MONO; ctx.fillStyle = '#5a6070'; ctx.textAlign = 'right'; ctx.fillText(String(row.n), padX + gutW - 14, yy); ctx.textAlign = 'left'; }
         let x = x0;
-        r.forEach(([cls, text]) => { ctx.fillStyle = (cls && COL[cls]) || TXT; ctx.fillText(text, x, yy); x += ctx.measureText(text).width; });
+        r.forEach(([cls, text]) => {
+          const bold = cls === 'in' || cls === 't' || cls === 'er';
+          ctx.font = (bold ? '700 ' : cls === 'c' ? 'italic ' : '') + fs + 'px ' + MONO;
+          ctx.fillStyle = (cls && COL[cls]) || TXT; ctx.fillText(text, x, yy);
+          const w = ctx.measureText(text).width;
+          if (cls === 'in') { ctx.save(); ctx.strokeStyle = COL.in; ctx.lineWidth = 1.2; ctx.setLineDash([1.5, 2]); ctx.beginPath(); ctx.moveTo(x, yy + 9.5); ctx.lineTo(x + w, yy + 9.5); ctx.stroke(); ctx.restore(); }
+          x += w;
+        });
       });
       y += h;
     };
     section('Código');
-    drawRows(codeRows, padX + gutW, '#fbfcfe', true);
-    if (inRows.length) { y += gap; section('Datos de entrada'); drawRows(inRows, padX, '#f6f9ff', false); }
+    drawRows(codeRows, padX + gutW, true);
+    if (inRows.length) { y += gap; section('Datos de entrada (lo que se tipeó)'); drawRows(inRows, padX, false); }
     y += gap; section('Salida');
-    drawRows(outRows.length && (outRows.length > 1 || outRows[0].length) ? outRows : [[['dim', '(sin salida: ejecutá el programa antes de sacar la captura)']]], padX, '#fbfcfe', false);
+    drawRows(outRows.length && (outRows.length > 1 || outRows[0].length) ? outRows : [[['dim', '(sin salida: ejecutá el programa antes de sacar la captura)']]], padX, false);
     if (procRows.length) {
-      ctx.font = '12px ' + UI; ctx.fillStyle = '#566174';
-      procRows.forEach((t, i) => ctx.fillText(t, padX, y + 12 + i * 17));
+      ctx.fillStyle = RULE; ctx.fillRect(padX, y + 10, W - 2 * padX, 1);
+      ctx.font = '13px ' + UI; ctx.fillStyle = '#3a4150';
+      procRows.forEach((t, i) => ctx.fillText(t, padX, y + 24 + i * 19));
     }
     return cv;
   }

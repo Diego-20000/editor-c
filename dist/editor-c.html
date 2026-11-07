@@ -6,31 +6,38 @@
 <meta name="color-scheme" content="dark light">
 <title>Editor C</title>
 <meta name="description" content="Editor de C sin anuncios que corre en tu navegador: escribí, ejecutá y probá tus programas al instante.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%233ddc97'/%3E%3Ctext x='16' y='23' font-family='monospace' font-size='20' font-weight='700' text-anchor='middle' fill='%2306281a'%3EC%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='1.5' y='1.5' width='29' height='29' rx='3' fill='%23fbf9f2' stroke='%231f4a8c' stroke-width='3'/%3E%3Cpath d='M21 11.5a6.5 6.5 0 1 0 0 9' fill='none' stroke='%231f4a8c' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
 <meta name="theme-color" content="#141922" media="(prefers-color-scheme: dark)">
 <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
 <style>
+/* Editor C: «hoja de cuaderno». Ver docs/DISENO.md (paleta, contrastes, qué no se hace). Solo fuentes del sistema. */
 :root {
-  --bg: #0e1116; --panel: #141922; --panel2: #1a2130; --line: #263042; --text: #e6e9ef; --muted: #98a2b3;
-  --accent: #3ddc97; --accent-ink: #06281a; --danger: #ff6b6b; --warn: #ffb454; --input: #7cc4ff;
-  --kw: #ff8a80; --ty: #79c0ff; --st: #a5d6a7; --nu: #ffb86b; --co: #7d8799; --fn: #d2a8ff; --pp: #e0a5ff;
-  --sel: rgba(61, 220, 151, .22); --caret: #3ddc97; --find: rgba(255, 180, 84, .28); --findcur: rgba(255, 180, 84, .6);
+  --bg: #101216; --panel: #181b21; --panel2: #20242c; --line: #2f343e; --lineS: #6b7280; --text: #e8e6df; --muted: #a4a8b0;
+  --accent: #8db4f0; --accent-ink: #10151f; --danger: #ff8f85; --warn: #e6b45a; --input: #9cc0ff; --ok: #7fd0a0;
+  --kw: #eba07a; --ty: #8db4f0; --st: #9cc9a0; --nu: #6fc4c8; --co: #8f949c; --fn: #c6aaea; --pp: #c9b27a;
+  --gut: #8b9099; --rule: rgba(160, 170, 190, .11); --margin: rgba(255, 143, 133, .5); --guide: rgba(160, 170, 190, .22); --ws: rgba(160, 170, 190, .45);
+  --cur: rgba(141, 180, 240, .08); --pair: rgba(141, 180, 240, .26); --stripe: rgba(230, 180, 90, .22);
+  --sel: rgba(141, 180, 240, .3); --caret: #e8e6df; --find: rgba(230, 180, 90, .3); --findcur: rgba(230, 180, 90, .62);
   --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
   --ui: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --fs: 15px;
+  --fs: 15px; --tab: 4; --r: 2px;
 }
 :root[data-theme="light"] {
-  --bg: #f4f6f9; --panel: #ffffff; --panel2: #eef1f6; --line: #d6dce6; --text: #1b2230; --muted: #566174;
-  --accent: #0b7a4b; --accent-ink: #ffffff; --danger: #c62828; --warn: #9a5b00; --input: #0b5ed7;
-  --kw: #cf222e; --ty: #0550ae; --st: #0a7a3d; --nu: #b35900; --co: #6b7587; --fn: #8250df; --pp: #8250df;
-  --sel: rgba(11, 122, 75, .18); --caret: #0b7a4b; --find: rgba(255, 180, 0, .3); --findcur: rgba(255, 150, 0, .55);
+  --bg: #ece8dc; --panel: #fbf9f2; --panel2: #f2efe4; --line: #cfc8b4; --lineS: #8a8573; --text: #1c2230; --muted: #565b6b;
+  --accent: #1f4a8c; --accent-ink: #fbf9f2; --danger: #b3261e; --warn: #85500a; --input: #1b4f9c; --ok: #1d6b43;
+  --kw: #9a3412; --ty: #1f4a8c; --st: #2c6a3b; --nu: #0f6068; --co: #656770; --fn: #5b3f8c; --pp: #7a5a1e;
+  --gut: #686b73; --rule: rgba(31, 74, 140, .09); --margin: rgba(179, 38, 30, .55); --guide: rgba(60, 70, 90, .2); --ws: rgba(60, 70, 90, .4);
+  --cur: rgba(31, 74, 140, .07); --pair: rgba(31, 74, 140, .2); --stripe: rgba(133, 80, 10, .16);
+  --sel: rgba(31, 74, 140, .2); --caret: #1c2230; --find: rgba(255, 190, 0, .35); --findcur: rgba(255, 150, 0, .55);
 }
 @media (prefers-color-scheme: light) {
   :root:not([data-theme]) {
-    --bg: #f4f6f9; --panel: #ffffff; --panel2: #eef1f6; --line: #d6dce6; --text: #1b2230; --muted: #566174;
-    --accent: #0b7a4b; --accent-ink: #ffffff; --danger: #c62828; --warn: #9a5b00; --input: #0b5ed7;
-    --kw: #cf222e; --ty: #0550ae; --st: #0a7a3d; --nu: #b35900; --co: #6b7587; --fn: #8250df; --pp: #8250df;
-    --sel: rgba(11, 122, 75, .18); --caret: #0b7a4b; --find: rgba(255, 180, 0, .3); --findcur: rgba(255, 150, 0, .55);
+    --bg: #ece8dc; --panel: #fbf9f2; --panel2: #f2efe4; --line: #cfc8b4; --lineS: #8a8573; --text: #1c2230; --muted: #565b6b;
+    --accent: #1f4a8c; --accent-ink: #fbf9f2; --danger: #b3261e; --warn: #85500a; --input: #1b4f9c; --ok: #1d6b43;
+    --kw: #9a3412; --ty: #1f4a8c; --st: #2c6a3b; --nu: #0f6068; --co: #656770; --fn: #5b3f8c; --pp: #7a5a1e;
+    --gut: #686b73; --rule: rgba(31, 74, 140, .09); --margin: rgba(179, 38, 30, .55); --guide: rgba(60, 70, 90, .2); --ws: rgba(60, 70, 90, .4);
+    --cur: rgba(31, 74, 140, .07); --pair: rgba(31, 74, 140, .2); --stripe: rgba(133, 80, 10, .16);
+    --sel: rgba(31, 74, 140, .2); --caret: #1c2230; --find: rgba(255, 190, 0, .35); --findcur: rgba(255, 150, 0, .55);
   }
 }
 * { box-sizing: border-box; }
@@ -40,104 +47,128 @@ body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--
 html.vv body { position: fixed; top: var(--app-top, 0px); left: 0; right: 0; }
 h1, h2, h3, p { margin: 0; }
 [hidden] { display: none !important; }
-.bar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; padding: 10px max(16px, env(safe-area-inset-left)); background: var(--panel); border-bottom: 1px solid var(--line); }
+.i { fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+.i.fill { fill: currentColor; }
+
+/* ---------- barra superior ---------- */
+.bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; padding: 8px max(16px, env(safe-area-inset-left)); background: var(--panel); border-bottom: 1px solid var(--lineS); }
 .brand { display: flex; align-items: center; gap: 10px; margin-right: auto; }
-.logo { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 9px; background: var(--accent); color: var(--accent-ink); font: 700 18px var(--mono); }
-.brand h1 { font-size: 16px; line-height: 1.1; }
+.logo { display: grid; place-items: center; width: 34px; height: 34px; border: 1.75px solid var(--accent); border-radius: var(--r); color: var(--accent); flex: none; }
+.brand h1 { font-size: 16px; line-height: 1.15; font-weight: 600; letter-spacing: .01em; }
 .brand p { font-size: 12px; color: var(--muted); }
 .actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .grp { display: inline-flex; gap: 4px; align-items: center; }
-.btn { display: inline-flex; align-items: center; gap: 6px; min-height: 38px; padding: 0 14px; border-radius: 9px; border: 1px solid var(--line); background: var(--panel2); color: var(--text); font: 600 14px var(--ui); cursor: pointer; }
-.btn:hover:not(:disabled) { border-color: var(--muted); }
+.btn { display: inline-flex; align-items: center; gap: 6px; min-height: 38px; padding: 0 14px; border-radius: var(--r); border: 1px solid var(--line); background: var(--panel2); color: var(--text); font: 600 14px var(--ui); cursor: pointer; }
+.btn:hover:not(:disabled) { border-color: var(--lineS); }
 .btn:focus-visible, select:focus-visible, textarea:focus-visible, input:focus-visible, .console:focus-visible, summary:focus-visible, .pname:focus-visible, .dhead:focus-visible, .plist button:focus-visible, .diag button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .btn:disabled { opacity: .5; cursor: not-allowed; }
-.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: transparent; }
-.btn.danger:not(:disabled) { color: var(--danger); }
+.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.btn.danger:not(:disabled) { color: var(--danger); border-color: color-mix(in srgb, var(--danger) 55%, var(--line)); }
 .btn.icon { padding: 0; min-width: 38px; justify-content: center; }
 .btn.mini { min-height: 28px; padding: 0 10px; font-size: 12px; }
 .btn.mini.ico { padding: 0; min-width: 28px; justify-content: center; }
-.btn[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: transparent; }
+.btn[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
 .btn.sel { appearance: none; -webkit-appearance: none; padding-right: 14px; max-width: 160px; }
 
+/* ---------- hojas ---------- */
 .split { flex: 1; display: flex; flex-direction: row; padding: 10px max(10px, env(safe-area-inset-left)) max(10px, env(safe-area-inset-bottom)); min-height: 0; --split: 55; }
-.pane { display: flex; flex-direction: column; min-height: 0; min-width: 0; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.pane { display: flex; flex-direction: column; min-height: 0; min-width: 0; background: var(--panel); border: 1px solid var(--lineS); border-radius: 0; overflow: hidden; }
 .pane.ed { flex: 0 0 calc((100% - 10px) * var(--split) / 100); }
 .pane.term { flex: 1 1 0; }
 .split.dragging { user-select: none; -webkit-user-select: none; }
 .split.dragging .pane { pointer-events: none; }
-.divider { flex: none; position: relative; width: 10px; cursor: col-resize; touch-action: none; border-radius: 6px; }
-.divider::before { content: ""; position: absolute; left: 3px; right: 3px; top: 50%; height: 56px; max-height: 60%; transform: translateY(-50%); border-radius: 3px; background: var(--line); transition: background .12s; }
-.divider:hover::before, .split.dragging .divider::before { background: var(--muted); }
+.divider { flex: none; position: relative; width: 10px; cursor: col-resize; touch-action: none; }
+.divider::before { content: ""; position: absolute; left: 4px; right: 4px; top: 50%; height: 48px; max-height: 60%; transform: translateY(-50%); border-radius: 1px; background: var(--lineS); opacity: .55; }
+.divider:hover::before, .split.dragging .divider::before { opacity: 1; }
 .divider:focus-visible { outline: 2px solid var(--accent); outline-offset: -1px; }
 .divider[data-pointer]:focus-visible { outline: none; }
-.divider:focus-visible::before { background: var(--accent); }
+.divider:focus-visible::before { background: var(--accent); opacity: 1; }
 .tabs { display: none; }
-.pane-head { display: flex; align-items: center; gap: 8px; padding: 6px 10px 6px 12px; border-bottom: 1px solid var(--line); font-size: 12px; color: var(--muted); letter-spacing: .02em; min-height: 40px; }
-.pane-head .hint { margin-left: auto; font-variant-numeric: tabular-nums; }
+.pane-head { display: flex; align-items: center; gap: 8px; padding: 4px 8px 4px 12px; border-bottom: 1px solid var(--line); background: var(--panel2); font-size: 12px; font-weight: 600; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; min-height: 40px; }
+.pane-head .hint { margin-left: auto; font: 500 13px var(--mono); letter-spacing: 0; text-transform: none; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .tools { margin-left: auto; display: inline-flex; gap: 6px; }
-.pname { display: inline-flex; align-items: center; gap: 6px; max-width: 60%; min-height: 28px; padding: 0 8px; border-radius: 7px; border: 1px solid transparent; background: transparent; color: var(--text); font: 600 13px var(--ui); cursor: pointer; }
-.pname:hover { background: var(--panel2); border-color: var(--line); }
+.pname { display: inline-flex; align-items: center; gap: 6px; max-width: 60%; min-height: 28px; padding: 0 8px; border-radius: var(--r); border: 1px solid transparent; background: transparent; color: var(--text); font: 600 14px var(--ui); letter-spacing: 0; text-transform: none; cursor: pointer; }
+.pname:hover { background: var(--panel); border-color: var(--line); }
 .pname span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.chip { padding: 2px 9px; border-radius: 99px; background: var(--panel2); color: var(--muted); font-size: 12px; white-space: nowrap; }
-.chip.run { color: var(--accent); } .chip.err { color: var(--danger); } .chip.wait { color: var(--input); }
+.chip { display: inline-flex; align-items: center; gap: 6px; padding: 2px 8px; border-radius: var(--r); border: 1px solid var(--line); background: var(--panel); color: var(--muted); font: 600 12px var(--ui); letter-spacing: 0; text-transform: none; white-space: nowrap; }
+.chip::before { content: ""; width: 7px; height: 7px; background: currentColor; opacity: .55; border-radius: 0; }
+.chip.run { color: var(--accent); border-color: var(--accent); } .chip.run::before { opacity: 1; }
+.chip.err { color: var(--danger); border-color: var(--danger); } .chip.err::before { opacity: 1; transform: rotate(45deg); }
+.chip.wait { color: var(--input); border-color: var(--input); } .chip.wait::before { opacity: 1; border-radius: 50%; }
 .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); margin-left: 6px; }
 
 .find { padding: 6px 8px; border-bottom: 1px solid var(--line); background: var(--panel2); display: grid; gap: 6px; }
 .frow { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
-.frow input { flex: 1 1 140px; min-width: 0; height: 32px; padding: 0 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel); color: var(--text); font: 14px var(--mono); }
+.frow input { flex: 1 1 140px; min-width: 0; height: 32px; padding: 0 10px; border-radius: var(--r); border: 1px solid var(--lineS); background: var(--panel); color: var(--text); font: 14px var(--mono); }
 .fcount { font-size: 12px; color: var(--muted); min-width: 4.5em; text-align: right; white-space: nowrap; }
 
+/* ---------- editor ---------- */
 .editor { position: relative; flex: 1; display: flex; min-height: 0; font: var(--fs)/1.5 var(--mono); }
-.gut { flex: none; overflow: hidden; padding: 12px 0; min-width: 3.2em; text-align: right; color: var(--co); background: var(--panel); border-right: 1px solid var(--line); user-select: none; }
+.gut { flex: none; overflow: hidden; padding: 12px 0; min-width: 3.2em; text-align: right; color: var(--gut); background: var(--panel); border-right: 1px solid var(--margin); user-select: none; font-variant-numeric: tabular-nums; }
 .gut div { padding: 0 .7em 0 .5em; height: 1.5em; }
-.gut .e { color: var(--danger); background: color-mix(in srgb, var(--danger) 16%, transparent); font-weight: 700; }
+.gut .cur { color: var(--text); font-weight: 700; }
+.gut .e { color: var(--danger); background: color-mix(in srgb, var(--danger) 14%, transparent); font-weight: 700; }
 .gut .w { color: var(--warn); background: color-mix(in srgb, var(--warn) 14%, transparent); font-weight: 700; }
-.code { position: relative; flex: 1; min-width: 0; }
-.lay, #code { position: absolute; inset: 0; margin: 0; padding: 12px 14px; font: inherit; letter-spacing: 0; tab-size: 4; -moz-tab-size: 4; white-space: pre; border: 0; }
+.code { position: relative; flex: 1; min-width: 0; --sy: 0px; background-image: linear-gradient(to bottom, transparent calc(var(--fs) * 1.5 - 1px), var(--rule) calc(var(--fs) * 1.5 - 1px)); background-size: 100% calc(var(--fs) * 1.5); background-position: 0 calc(12px - var(--sy)); }
+html.sinrenglones .code { background-image: none; }
+.curline { position: absolute; left: 0; right: 0; height: calc(var(--fs) * 1.5); background: var(--cur); pointer-events: none; }
+.lay, #code { position: absolute; inset: 0; margin: 0; padding: 12px 14px; font: inherit; letter-spacing: 0; tab-size: var(--tab); -moz-tab-size: var(--tab); white-space: pre; border: 0; }
 .lay { overflow: hidden; pointer-events: none; color: transparent; }
 .hl { color: var(--text); }
+.gd i.ig { box-shadow: inset 1px 0 0 var(--guide); font-style: normal; }
+.gd b.sp { color: var(--ws); font-weight: 400; }
+.gd i.tb { box-shadow: inset 0 -1px 0 var(--ws); font-style: normal; }
+.br span.bm { background: var(--pair); outline: 1px solid var(--accent); outline-offset: -1px; border-radius: 1px; }
+.br span.bu { background: color-mix(in srgb, var(--danger) 25%, transparent); outline: 1px solid var(--danger); outline-offset: -1px; }
 .ul .e, .ul .w { text-decoration-line: underline; text-decoration-style: wavy; text-decoration-thickness: 1.5px; text-underline-offset: 3px; }
 .ul .e { text-decoration-color: var(--danger); background: color-mix(in srgb, var(--danger) 9%, transparent); }
 .ul .w { text-decoration-color: var(--warn); background: color-mix(in srgb, var(--warn) 8%, transparent); }
-.fm span { background: var(--find); border-radius: 2px; }
+.fm span { background: var(--find); border-radius: 1px; }
 .fm span.cur { background: var(--findcur); }
 #code { overflow: auto; resize: none; background: transparent; color: transparent; caret-color: var(--caret); outline: 0; -webkit-text-fill-color: transparent; }
 #code::selection { background: var(--sel); -webkit-text-fill-color: transparent; }
-.k { color: var(--kw); } .t { color: var(--ty); } .s { color: var(--st); } .n { color: var(--nu); } .c { color: var(--co); font-style: italic; } .f { color: var(--fn); } .p { color: var(--pp); }
+.k { color: var(--kw); } .t { color: var(--ty); font-weight: 600; } .s { color: var(--st); } .n { color: var(--nu); } .c { color: var(--co); font-style: italic; } .f { color: var(--fn); } .p { color: var(--pp); }
+html.lectura #code { caret-color: transparent; }
 
+/* ---------- entrada y consola ---------- */
 .inbox { padding: 8px 10px; border-bottom: 1px solid var(--line); background: var(--panel2); display: grid; gap: 4px; }
 .inbox label { font-size: 12px; font-weight: 600; color: var(--text); }
 .inbox label span { font-weight: 400; color: var(--muted); }
-.inbox textarea { width: 100%; resize: vertical; min-height: 56px; max-height: 40vh; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel); color: var(--input); font: 14px/1.4 var(--mono); }
+.inbox textarea { width: 100%; resize: vertical; min-height: 56px; max-height: 40vh; padding: 8px 10px; border-radius: var(--r); border: 1px solid var(--lineS); background: var(--panel); color: var(--input); font: 14px/1.4 var(--mono); }
 
-.console { flex: 1; overflow: auto; padding: 12px 14px; font: var(--fs)/1.5 var(--mono); background: var(--bg); min-height: 0; }
+.runbar { display: flex; align-items: center; gap: 10px; padding: 6px 12px; border-bottom: 1px solid var(--line); background: repeating-linear-gradient(-45deg, var(--stripe) 0 6px, transparent 6px 12px), var(--panel); font-size: 13px; font-weight: 600; }
+.runbar span { background: var(--panel); padding: 1px 8px; border: 1px solid var(--line); border-radius: var(--r); }
+.runbar.wait { --stripe: color-mix(in srgb, var(--input) 18%, transparent); }
+.console { flex: 1; overflow: auto; padding: 12px 14px; font: var(--fs)/1.5 var(--mono); background: var(--panel); min-height: 0; }
 .console:focus-visible { outline-offset: -2px; }
 #out { margin: 0; font: inherit; white-space: pre-wrap; overflow-wrap: anywhere; color: var(--text); }
-#out .in { color: var(--input); }
+#out .in { color: var(--input); text-decoration: underline dotted 1px; text-underline-offset: 4px; }
 #out .er { color: var(--danger); }
 #out .dim { color: var(--muted); }
-#out .ok { color: var(--accent); }
-.stdin { display: inline-block; vertical-align: baseline; border-bottom: 1px dashed var(--input); }
+#out .ok { color: var(--ok); }
+.stdin { display: inline-block; vertical-align: baseline; border-bottom: 1px dotted var(--input); }
 .stdin input { font: inherit; color: var(--input); background: transparent; border: 0; padding: 0; margin: 0; width: 1ch; min-width: 1ch; max-width: 100%; outline: 0; caret-color: var(--input); }
-.eofbtn { margin-left: 10px; font: 600 11px var(--ui); color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 6px; padding: 2px 7px; cursor: pointer; }
+.eofbtn { margin-left: 10px; font: 600 11px var(--ui); color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: var(--r); padding: 2px 7px; cursor: pointer; }
 
-.diag { max-height: 40%; overflow: auto; border-top: 1px solid var(--line); background: var(--panel); font-size: 13px; }
-.dhead { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; padding: 6px 12px; background: var(--panel2); border: 0; color: var(--muted); font: 700 12px var(--ui); letter-spacing: .03em; text-transform: uppercase; cursor: pointer; position: sticky; top: 0; }
-.dhead svg { transition: transform .15s; }
+/* ---------- problemas ---------- */
+.diag { max-height: 40%; overflow: auto; border-top: 1px solid var(--lineS); background: var(--panel); font-size: 13px; }
+.dhead { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; padding: 6px 12px; background: var(--panel2); border: 0; border-bottom: 1px solid var(--line); color: var(--text); font: 700 11px var(--ui); letter-spacing: .08em; text-transform: uppercase; cursor: pointer; position: sticky; top: 0; }
+.dhead svg { transition: transform .12s; }
 .dhead[aria-expanded="false"] svg { transform: rotate(-90deg); }
 #diagList { padding: 4px 8px 6px; }
-.diag .it > button { display: flex; align-items: flex-start; gap: 8px; width: 100%; text-align: left; background: transparent; color: var(--text); border: 0; border-radius: 8px; padding: 6px 8px; font: inherit; line-height: 1.35; cursor: pointer; }
+.diag .it > button { display: flex; align-items: flex-start; gap: 8px; width: 100%; text-align: left; background: transparent; color: var(--text); border: 0; border-radius: var(--r); padding: 6px 8px; font: inherit; line-height: 1.4; cursor: pointer; }
 .diag .it > button:hover { background: var(--panel2); }
-.diag .tag { flex: none; font: 700 11px var(--mono); padding: 2px 6px; border-radius: 5px; margin-top: 1px; white-space: nowrap; }
-.diag .e .tag { background: color-mix(in srgb, var(--danger) 20%, transparent); color: var(--danger); }
-.diag .w .tag { background: color-mix(in srgb, var(--warn) 20%, transparent); color: var(--warn); }
+.diag .tag { flex: none; font: 700 11px var(--mono); padding: 1px 6px; border-radius: var(--r); margin-top: 1px; white-space: nowrap; border: 1px solid currentColor; }
+.diag .e .tag { color: var(--danger); }
+.diag .w .tag { color: var(--warn); }
 .diag .body { display: grid; gap: 3px; min-width: 0; }
 .diag code { font: 12px var(--mono); color: var(--muted); white-space: pre; overflow: hidden; text-overflow: ellipsis; }
 
-dialog { width: min(540px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); overflow: auto; border: 1px solid var(--line); border-radius: 14px; background: var(--panel); color: var(--text); padding: 22px; }
-dialog::backdrop { background: rgba(0, 0, 0, .55); }
-dialog h2 { font-size: 18px; margin-bottom: 8px; }
-dialog h3 { font-size: 14px; margin: 14px 0 6px; }
+/* ---------- diálogos ---------- */
+dialog { width: min(540px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); overflow: auto; border: 1px solid var(--lineS); border-radius: 3px; background: var(--panel); color: var(--text); padding: 22px; }
+dialog::backdrop { background: rgba(16, 18, 22, .5); }
+dialog h2 { font-size: 18px; font-weight: 600; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--line); }
+dialog h3 { font-size: 13px; font-weight: 700; margin: 14px 0 6px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
 dialog p { color: var(--muted); font-size: 14px; line-height: 1.5; margin-bottom: 10px; }
 dialog ul { margin: 0 0 12px; padding-left: 20px; font-size: 14px; line-height: 1.55; }
 dialog .fine { font-size: 12px; }
@@ -145,22 +176,23 @@ dialog .fine { font-size: 12px; }
 .drow .btn:last-child { margin-left: auto; }
 .keys { display: grid; grid-template-columns: max-content 1fr; gap: 6px 14px; margin: 0 0 10px; font-size: 13px; }
 .keys dt { white-space: nowrap; } .keys dd { margin: 0; color: var(--muted); }
-kbd { font: 600 11px var(--mono); padding: 1px 5px; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 5px; background: var(--panel2); }
-fieldset { border: 1px solid var(--line); border-radius: 10px; margin: 8px 0 14px; padding: 8px 12px 12px; display: grid; gap: 8px; }
-legend { font-size: 12px; color: var(--muted); padding: 0 6px; }
+kbd { font: 600 11px var(--mono); padding: 1px 5px; border: 1px solid var(--lineS); border-bottom-width: 2px; border-radius: var(--r); background: var(--panel2); }
+fieldset { border: 1px solid var(--line); border-radius: var(--r); margin: 8px 0 14px; padding: 8px 12px 12px; display: grid; gap: 8px; }
+legend { font-size: 12px; font-weight: 600; color: var(--muted); padding: 0 6px; }
 fieldset label { display: grid; gap: 3px; font-size: 12px; color: var(--muted); }
-fieldset input { height: 38px; padding: 0 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--text); font: 15px var(--ui); }
+fieldset input:not([type]), fieldset input[type="text"] { height: 38px; padding: 0 10px; border-radius: var(--r); border: 1px solid var(--lineS); background: var(--panel); color: var(--text); font: 15px var(--ui); }
 .srow { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 8px 0; font-size: 14px; }
 .fsv { min-width: 2.6em; text-align: center; font: 600 13px var(--mono); }
 .plist { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; max-height: 50dvh; overflow: auto; }
-.plist li { display: flex; align-items: center; gap: 6px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel2); }
-.plist li.cur { border-color: var(--accent); }
-.plist .open { flex: 1; min-width: 0; display: grid; gap: 1px; text-align: left; padding: 8px 10px; background: transparent; border: 0; color: var(--text); font: 600 14px var(--ui); cursor: pointer; border-radius: 10px; }
+.plist li { display: flex; align-items: center; gap: 6px; border: 1px solid var(--line); border-radius: var(--r); background: var(--panel2); }
+.plist li.cur { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 7%, var(--panel2)); }
+.plist .open { flex: 1; min-width: 0; display: grid; gap: 1px; text-align: left; padding: 8px 10px; background: transparent; border: 0; color: var(--text); font: 600 14px var(--ui); cursor: pointer; border-radius: var(--r); }
 .plist .open small { font: 400 12px var(--ui); color: var(--muted); }
 .plist .open b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .plist .btn { margin-right: 6px; }
-.plist input { flex: 1; margin: 6px; height: 34px; padding: 0 8px; border-radius: 8px; border: 1px solid var(--accent); background: var(--bg); color: var(--text); font: 600 14px var(--ui); }
+.plist input { flex: 1; margin: 6px; height: 34px; padding: 0 8px; border-radius: var(--r); border: 1px solid var(--accent); background: var(--panel); color: var(--text); font: 600 14px var(--ui); }
 
+/* ---------- menú (celular y ventana angosta) ---------- */
 .more { position: relative; display: contents; }
 .more > summary { list-style: none; cursor: pointer; display: none; }
 .more > summary::-webkit-details-marker { display: none; }
@@ -168,7 +200,7 @@ fieldset input { height: 38px; padding: 0 10px; border-radius: 8px; border: 1px 
 @media (max-width: 899px) {
   .more { display: block; }
   .more > summary { display: inline-flex; }
-  .menu { position: absolute; right: 0; top: calc(100% + 8px); z-index: 10; width: min(320px, calc(100vw - 32px)); padding: 12px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 14px 34px rgba(0, 0, 0, .35); }
+  .menu { position: absolute; right: 0; top: calc(100% + 8px); z-index: 10; width: min(320px, calc(100vw - 32px)); padding: 12px; background: var(--panel); border: 1px solid var(--lineS); border-radius: 3px; box-shadow: 2px 2px 0 var(--line); }
   .menu .btn.sel { max-width: none; flex: 1 1 100%; }
   .menu .btn { flex: 1 1 40%; justify-content: center; }
   .menu .btn.icon { flex: 0 0 auto; }
@@ -178,16 +210,16 @@ fieldset input { height: 38px; padding: 0 10px; border-radius: 8px; border: 1px 
   .split { flex-direction: column; }
   .pane.ed { flex: 0 0 calc((100% - 10px) * var(--split) / 100); }
   .divider { width: auto; height: 10px; cursor: row-resize; }
-  .divider::before { left: 50%; right: auto; top: 3px; bottom: 3px; width: 56px; max-width: 60%; height: auto; max-height: none; transform: translateX(-50%); }
+  .divider::before { left: 50%; right: auto; top: 4px; bottom: 4px; width: 48px; max-width: 60%; height: auto; max-height: none; transform: translateX(-50%); }
 }
 /* celular (o pantalla muy baja): una sola vista a la vez, con pestañas Editor / Consola */
 @media (max-width: 699px), (max-height: 480px) {
-  .tabs { display: flex; gap: 6px; padding: 6px max(10px, env(safe-area-inset-left)) 0; background: var(--bg); }
-  .tab { flex: 1; min-height: 40px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; border: 1px solid var(--line); border-bottom: 0; border-radius: 10px 10px 0 0; background: var(--panel2); color: var(--muted); font: 700 14px var(--ui); cursor: pointer; }
-  .tab[aria-selected="true"] { background: var(--panel); color: var(--text); box-shadow: inset 0 3px 0 var(--accent); }
+  .tabs { display: flex; gap: 4px; padding: 6px max(10px, env(safe-area-inset-left)) 0; background: var(--bg); }
+  .tab { flex: 1; min-height: 40px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; border: 1px solid var(--line); border-bottom: 0; border-radius: var(--r) var(--r) 0 0; background: var(--panel2); color: var(--muted); font: 600 14px var(--ui); cursor: pointer; }
+  .tab[aria-selected="true"] { background: var(--panel); color: var(--text); border-color: var(--lineS); box-shadow: inset 0 2px 0 var(--accent); position: relative; z-index: 1; margin-bottom: -1px; }
   .tab:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
   .split { position: relative; padding: 0 max(10px, env(safe-area-inset-left)) max(8px, env(safe-area-inset-bottom)); }
-  .split > .pane { position: absolute; inset: 0 max(10px, env(safe-area-inset-left)) max(8px, env(safe-area-inset-bottom)); border-radius: 0 0 12px 12px; }
+  .split > .pane { position: absolute; inset: 0 max(10px, env(safe-area-inset-left)) max(8px, env(safe-area-inset-bottom)); }
   .split > .pane:not(.on) { visibility: hidden; pointer-events: none; }
   .divider { display: none; }
   .pane-head { flex-wrap: wrap; row-gap: 2px; }
@@ -204,7 +236,7 @@ fieldset input { height: 38px; padding: 0 10px; border-radius: 8px; border: 1px 
   .dhead { min-height: 44px; }
   .eofbtn { min-height: 44px; padding: 0 12px; }
   .diag .it > button { min-height: 44px; }
-  .frow input, fieldset input { height: 44px; font-size: 16px; }
+  .frow input, fieldset input:not([type]), fieldset input[type="text"] { height: 44px; font-size: 16px; }
   .stdin input, .plist input { font-size: 16px; }
   .stdin input { display: block; padding: 12px 0; margin: -12px 0; }
   .plist input { height: 44px; }
@@ -217,15 +249,16 @@ fieldset input { height: 38px; padding: 0 10px; border-radius: 8px; border: 1px 
   #stop { padding: 0; min-width: 44px; justify-content: center; }
   .btn { padding: 0 11px; }
   .btn span { font-size: 13px; }
-  .pane-head .hint { display: none; }
+  .pane-head .hint { font-size: 12px; }
   .pname { margin-right: auto; }
   .tools { gap: 4px; }
   .btn.mini { padding: 0 8px; }
 }
 @media (max-width: 440px) { .brand h1 { display: none; } }
 @media (prefers-reduced-motion: no-preference) { .btn { transition: border-color .12s, background .12s; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; } }
 
-.toast { position: fixed; left: 50%; bottom: max(16px, env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 20; display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--panel2); color: var(--text); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 10px 28px rgba(0, 0, 0, .4); font-size: 14px; max-width: calc(100vw - 24px); }
+.toast { position: fixed; left: 50%; bottom: max(16px, env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 20; display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--panel); color: var(--text); border: 1px solid var(--lineS); border-radius: 3px; box-shadow: 2px 2px 0 var(--line); font-size: 14px; max-width: calc(100vw - 24px); }
 .toast[hidden] { display: none; }
 .toast .btn.mini { margin-left: 0; }
 
@@ -237,7 +270,7 @@ fieldset input { height: 38px; padding: 0 10px; border-radius: 8px; border: 1px 
 /* problemas: código estable y silenciar */
 .diag .it { display: flex; align-items: flex-start; gap: 4px; }
 .diag .it > button:first-child { flex: 1; min-width: 0; }
-.diag .cd { font: 11px var(--mono); color: var(--muted); opacity: .85; }
+.diag .cd { font: 11px var(--mono); color: var(--muted); }
 .diag .it > button.mute { flex: none; width: auto; display: inline-flex; margin: 4px 2px 0 0; padding: 0 10px; }
 .dfoot { padding: 4px 8px 2px; font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 
@@ -246,77 +279,79 @@ dialog.wide { width: min(760px, calc(100vw - 32px)); }
 .chk { display: flex; align-items: center; gap: 8px; margin: 6px 0 10px; font-size: 14px; min-height: 28px; }
 .chk input { width: 18px; height: 18px; accent-color: var(--accent); }
 @media (pointer: coarse) { .chk { min-height: 44px; } .chk input { width: 24px; height: 24px; } }
-.shotbox { max-height: 55dvh; overflow: auto; border: 1px solid var(--line); border-radius: 10px; background: #fff; }
+.shotbox { max-height: 55dvh; overflow: auto; border: 1px solid var(--lineS); background: #fff; }
 .shotbox img { display: block; width: 100%; height: auto; }
 #impList li { margin-bottom: 2px; }
 
 /* ---------- ayuda por niveles en el panel de problemas ---------- */
 .diag .it { flex-wrap: wrap; }
-.diag .it.stale { opacity: .55; }
+.diag .it.stale { opacity: .6; }
 .diag .it.stale .help { display: none; }
 .diag .orig { font: 12px var(--mono); color: var(--muted); }
-.help { flex: 1 0 100%; display: grid; gap: 6px; padding: 0 10px 8px; font-size: 13px; line-height: 1.45; }
+.help { flex: 1 0 100%; display: grid; gap: 6px; margin: 0 8px 8px 44px; padding: 8px 0 0; border-top: 1px dotted var(--lineS); font-size: 13px; line-height: 1.45; }
 .help p { margin: 0; color: var(--text); font-size: 13px; }
 .help .hexp { color: var(--muted); }
 .help .pistas { margin: 0; padding-left: 20px; display: grid; gap: 2px; }
 .help .pistas li { margin: 0; }
 .help .pistas .sol { font-family: var(--mono); }
 .help .hact { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
-.help .conf { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; padding: 6px 8px; border: 1px dashed var(--line); border-radius: 8px; }
+.help .conf { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; padding: 6px 8px; border: 1px dashed var(--lineS); border-radius: var(--r); }
 .help .sinexp { color: var(--muted); }
-.btn.link { background: transparent; border-color: transparent; color: var(--accent); text-decoration: underline; padding: 0 8px; }
+.btn.link { background: transparent; border-color: transparent; color: var(--accent); text-decoration: underline; text-underline-offset: 3px; padding: 0 8px; }
 .btn.link:hover:not(:disabled) { border-color: transparent; }
+@media (max-width: 560px) { .help { margin-left: 8px; } }
 
 /* ---------- panel de ayuda ---------- */
 dialog.ayuda { width: min(720px, calc(100vw - 32px)); padding: 16px 18px 18px; }
 .ahead { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
-.ahead h2 { margin: 0; }
+.ahead h2 { margin: 0; border: 0; padding: 0; }
 #aForm { margin: 0; }
-#aQ { width: 100%; height: 42px; padding: 0 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--text); font: 16px var(--ui); }
+#aQ { width: 100%; height: 42px; padding: 0 12px; border-radius: var(--r); border: 1px solid var(--lineS); background: var(--panel); color: var(--text); font: 16px var(--ui); }
 #aQ:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .alive { margin: 4px 0 6px; min-height: 1.2em; }
 .sugs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
 .sugs .btn { font-weight: 500; }
-.alist { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; max-height: 52dvh; overflow: auto; }
-.alist button { width: 100%; display: grid; gap: 2px; text-align: left; padding: 8px 10px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel2); color: var(--text); font: 14px var(--ui); cursor: pointer; }
-.alist button:hover { border-color: var(--muted); }
-.alist button:focus-visible, .adet button:focus-visible, .clist label:focus-within, .bubble button:focus-visible, #cPrev:focus-visible, #cWa:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.alist b { font-weight: 700; }
+.alist { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; max-height: 52dvh; overflow: auto; border-top: 1px solid var(--line); }
+.alist li { border-bottom: 1px solid var(--line); }
+.alist button { width: 100%; display: grid; gap: 2px; text-align: left; padding: 8px 10px; border: 0; border-radius: 0; background: transparent; color: var(--text); font: 14px var(--ui); cursor: pointer; }
+.alist button:hover { background: var(--panel2); }
+.alist button:focus-visible, .adet button:focus-visible, .clist label:focus-within, .bubble button:focus-visible, #cPrev:focus-visible, #cWa:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.alist b { font-weight: 600; }
 .alist .sub { color: var(--muted); font-size: 13px; }
-.tipo { display: inline-block; font: 700 11px var(--mono); padding: 1px 6px; border-radius: 5px; margin-right: 6px; background: var(--panel); border: 1px solid var(--line); color: var(--muted); vertical-align: 1px; }
-.tipo.error { color: var(--danger); } .tipo.ayuda { color: var(--input); } .tipo.leccion { color: var(--accent); }
+.tipo { display: inline-block; font: 700 11px var(--mono); padding: 0 6px; border-radius: var(--r); margin-right: 6px; background: transparent; border: 1px solid currentColor; color: var(--muted); vertical-align: 1px; }
+.tipo.error { color: var(--danger); } .tipo.ayuda { color: var(--input); } .tipo.leccion { color: var(--ok); }
 .adet { max-height: 62dvh; overflow: auto; display: grid; gap: 8px; align-content: start; }
-.adet h3 { margin: 10px 0 2px; font-size: 14px; }
+.adet h3 { margin: 10px 0 2px; font-size: 12px; }
 .adet h2.dt { font-size: 18px; margin: 4px 0 0; }
 .adet h2.dt:focus { outline: none; }
 .adet p, .adet li { color: var(--text); font-size: 14px; line-height: 1.5; margin: 0; }
 .adet ul { margin: 0; }
 .adet .muted { color: var(--muted); }
-.adet pre.ej { margin: 0; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); font: 13px/1.45 var(--mono); overflow: auto; white-space: pre; color: var(--text); }
-.adet .lbl { font: 700 11px var(--ui); letter-spacing: .04em; text-transform: uppercase; color: var(--muted); margin-top: 4px; }
+.adet pre.ej { margin: 0; padding: 10px 12px; border-radius: var(--r); border: 1px solid var(--line); background: var(--panel2) linear-gradient(to bottom, transparent 20px, var(--rule) 20px) 0 10px / 100% 20px; font: 13px/20px var(--mono); overflow: auto; white-space: pre; color: var(--text); }
+.adet .lbl { font: 700 11px var(--ui); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-top: 4px; }
 .adet .row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
 .adet .rel { display: flex; flex-wrap: wrap; gap: 6px; }
 
 /* ---------- casos para enviar ---------- */
 .clist { list-style: none; padding: 0; margin: 0 0 10px; display: grid; gap: 6px; max-height: 26dvh; overflow: auto; }
-.clist li { display: flex; align-items: center; gap: 6px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel2); padding-right: 6px; }
-.clist label { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; padding: 8px 10px; cursor: pointer; border-radius: 10px; font-size: 14px; }
+.clist li { display: flex; align-items: center; gap: 6px; border: 1px solid var(--line); border-radius: var(--r); background: var(--panel2); padding-right: 6px; }
+.clist label { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; padding: 8px 10px; cursor: pointer; font-size: 14px; }
 .clist label input { width: 20px; height: 20px; flex: none; accent-color: var(--accent); }
 .clist .cm { display: grid; gap: 1px; min-width: 0; }
 .clist .cm b { font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .clist .cm small { color: var(--muted); font-size: 12px; }
-pre.prev { margin: 0 0 6px; max-height: 24dvh; overflow: auto; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); font: 12px/1.45 var(--mono); white-space: pre-wrap; overflow-wrap: anywhere; user-select: all; -webkit-user-select: all; color: var(--text); }
+pre.prev { margin: 0 0 6px; max-height: 24dvh; overflow: auto; padding: 10px 12px; border-radius: var(--r); border: 1px solid var(--line); background: var(--panel2); font: 12px/1.45 var(--mono); white-space: pre-wrap; overflow-wrap: anywhere; user-select: all; -webkit-user-select: all; color: var(--text); }
 #cAcc .drow { margin-top: 8px; }
 a.btn { text-decoration: none; }
 #cWa[aria-disabled="true"] { opacity: .5; pointer-events: none; }
 
 /* ---------- ¿Qué es esto? sobre el código ---------- */
-.whatlay { position: absolute; inset: 0; z-index: 3; cursor: help; touch-action: none; background: color-mix(in srgb, var(--accent) 5%, transparent); outline: 2px dashed color-mix(in srgb, var(--accent) 55%, transparent); outline-offset: -2px; }
-.bubble { position: fixed; z-index: 30; width: min(380px, calc(100vw - 16px)); max-height: min(60dvh, 420px); overflow: auto; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--accent); background: var(--panel); color: var(--text); box-shadow: 0 14px 34px rgba(0, 0, 0, .4); font-size: 13px; line-height: 1.45; display: grid; gap: 6px; }
-.bubble h4 { margin: 0; font-size: 15px; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-.bubble h4 code { font: 700 15px var(--mono); }
+.whatlay { position: absolute; inset: 0; z-index: 3; cursor: help; touch-action: none; background: color-mix(in srgb, var(--accent) 5%, transparent); outline: 2px dashed color-mix(in srgb, var(--accent) 60%, transparent); outline-offset: -2px; }
+.bubble { position: fixed; z-index: 30; width: min(380px, calc(100vw - 16px)); max-height: min(60dvh, 420px); overflow: auto; padding: 12px 14px; border-radius: 3px; border: 1px solid var(--accent); background: var(--panel); color: var(--text); box-shadow: 2px 2px 0 var(--accent); font-size: 13px; line-height: 1.45; display: grid; gap: 6px; }
+.bubble h4 { margin: 0; font-size: 15px; display: flex; align-items: center; justify-content: space-between; gap: 8px; padding-bottom: 4px; border-bottom: 1px solid var(--line); }
+.bubble h4 code { font: 700 15px var(--mono); color: var(--accent); }
 .bubble p { margin: 0; font-size: 13px; color: var(--text); }
-.bubble pre { margin: 0; padding: 8px 10px; border-radius: 8px; background: var(--bg); border: 1px solid var(--line); font: 12px/1.4 var(--mono); white-space: pre-wrap; }
+.bubble pre { margin: 0; padding: 8px 10px; border-radius: var(--r); background: var(--panel2); border: 1px solid var(--line); font: 12px/1.4 var(--mono); white-space: pre-wrap; }
 .bubble .row { display: flex; flex-wrap: wrap; gap: 6px; }
 .bubble .muted { color: var(--muted); }
 #whatBtn { font-weight: 800; }
@@ -331,22 +366,48 @@ dialog fieldset .fine { margin: 0; }
 @media (max-width: 560px) { #ayudaBtn span { display: none; } #ayudaBtn { padding: 0; min-width: 44px; justify-content: center; } }
 @media (pointer: coarse) { .alist button { min-height: 44px; } #aQ { height: 48px; } .clist label input { width: 24px; height: 24px; } .clist label { min-height: 44px; } }
 .adet > .btn, .adet > .row { justify-self: start; }
+
+/* ---------- modo lectura: solo el código ---------- */
+html.lectura .bar, html.lectura .tabs, html.lectura .term, html.lectura .divider, html.lectura .practica, html.lectura .find { display: none !important; }
+html.lectura .pane.ed { flex: 1 1 auto; position: relative; inset: auto; visibility: visible; pointer-events: auto; }
+html.lectura .split > .pane.ed { position: absolute; inset: 0 max(10px, env(safe-area-inset-left)) max(8px, env(safe-area-inset-bottom)); }
+html.lectura .split { padding-top: 10px; }
+html.lectura #findBtn, html.lectura #pname { display: none; }
+html.lectura .pane-head::before { content: "Modo lectura"; font: 700 11px var(--ui); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-right: auto; }
+html.lectura .split { position: relative; }
+@media (max-width: 560px) {
+  html:not(.lectura) #readTxt { display: none; }
+  #readBtn { padding: 0; min-width: 28px; justify-content: center; }
+}
+@media (max-width: 560px) and (pointer: coarse) { #readBtn { min-width: 44px; } }
+fieldset label.chk { display: flex; font-size: 14px; color: var(--text); margin: 2px 0; }
+@media (max-width: 699px), (max-height: 480px) {
+  #paneEd .pane-head { flex-wrap: nowrap; }
+  #paneEd .pname { flex: 0 1 auto; min-width: 0; max-width: none; margin-right: auto; }
+  #paneEd .pname span { max-width: 14ch; }
+}
+@media (max-width: 560px) {
+  #paneEd .pane-head { gap: 4px; padding: 4px 6px 4px 6px; }
+  #paneEd .pane-head .hint { font-size: 12px; flex: none; }
+  #paneEd .pname { font-size: 13px; padding: 0 4px; }
+}
+html.lectura .pane-head .hint { margin-right: 8px; }
 </style>
 </head>
 <body>
 <header class="bar">
-  <div class="brand"><span class="logo" aria-hidden="true">C</span><div><h1>Editor C</h1><p>Sin anuncios · corre en tu navegador</p></div></div>
+  <div class="brand"><span class="logo" aria-hidden="true"><svg class="i" viewBox="0 0 24 24" width="22" height="22" style="stroke-width:2.4"><path d="M17 8a6 6 0 1 0 0 8"/></svg></span><div><h1>Editor C</h1><p>Sin anuncios · corre en tu navegador</p></div></div>
   <div class="actions">
-    <button id="run" class="btn primary" title="Ejecutar (Ctrl+Enter o F5)"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M7 4.5v15l12-7.5z" fill="currentColor"/></svg><span>Ejecutar</span></button>
-    <button id="stop" class="btn danger" title="Detener la ejecución" aria-label="Detener" disabled><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="1.5" fill="currentColor"/></svg><span>Detener</span></button>
-    <button id="ayudaBtn" class="btn" title="Ayuda: buscá una duda de C o de un error" aria-label="Ayuda" aria-haspopup="dialog"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9.6 9.4a2.5 2.5 0 1 1 3.5 2.3c-.8.4-1.1.9-1.1 1.8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="16.8" r="1.2" fill="currentColor"/></svg><span>Ayuda</span></button>
-    <details class="more" id="more"><summary class="btn" aria-label="Más opciones"><span>Más</span><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></summary>
+    <button id="run" class="btn primary" title="Ejecutar (Ctrl+Enter o F5)"><svg class="i fill" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M7 5v14l11-7z"/></svg><span>Ejecutar</span></button>
+    <button id="stop" class="btn danger" title="Detener la ejecución" aria-label="Detener" disabled><svg class="i fill" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><rect x="6.5" y="6.5" width="11" height="11" rx="1"/></svg><span>Detener</span></button>
+    <button id="ayudaBtn" class="btn" title="Ayuda: buscá una duda de C o de un error" aria-label="Ayuda" aria-haspopup="dialog"><svg class="i" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.6a2.5 2.5 0 1 1 3.6 2.2c-.8.4-1.2.9-1.2 1.8"/><path d="M12 16.9v.2"/></svg><span>Ayuda</span></button>
+    <details class="more" id="more"><summary class="btn" aria-label="Más opciones"><span>Más</span><svg class="i" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
     <div class="menu">
-      <button id="progs" class="btn" title="Mis programas guardados en este dispositivo"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><span>Programas</span></button>
+      <button id="progs" class="btn" title="Mis programas guardados en este dispositivo"><svg class="i" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 4.5h14v15H5z"/><path d="M9 4.5v15M12 9h4M12 13h4"/></svg><span>Programas</span></button>
       <select id="examples" class="btn sel" aria-label="Ejemplos"><option value="">Ejemplos…</option></select>
-      <button id="shot" class="btn" title="Descargar una imagen PNG con el código y la salida"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 8h3l2-2.5h6L17 8h3v11H4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="13" r="3.2" fill="none" stroke="currentColor" stroke-width="2"/></svg><span>Captura</span></button>
+      <button id="shot" class="btn" title="Descargar una imagen PNG con el código y la salida"><svg class="i" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 8h3.5L9 5.5h6L16.5 8H20v11H4z"/><circle cx="12" cy="13" r="3.2"/></svg><span>Captura</span></button>
       <button id="save" class="btn" title="Descargar como archivo .c (Ctrl+S)"><span>Guardar .c</span></button>
-      <button id="settings" class="btn icon" title="Ajustes: mis datos, tema, tamaño de letra" aria-label="Ajustes"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><circle cx="16" cy="7" r="2.2" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="8" cy="17" r="2.2" fill="none" stroke="currentColor" stroke-width="2"/></svg></button>
+      <button id="settings" class="btn icon" title="Ajustes: mis datos, tema, tamaño de letra" aria-label="Ajustes"><svg class="i" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 7h9M19 7h1M4 17h1M11 17h9"/><circle cx="16" cy="7" r="2.5"/><circle cx="8" cy="17" r="2.5"/></svg></button>
     </div></details>
   </div>
 </header>
@@ -358,21 +419,25 @@ dialog fieldset .fine { margin: 0; }
 <main class="split" id="split">
   <section class="pane ed on" id="paneEd" aria-label="Editor de código">
     <div class="pane-head">
-      <button id="pname" class="pname" title="Cambiar de programa o ponerle nombre" aria-label="Programa actual: Programa 1. Abrir lista de programas"><span id="pnameTxt">Programa 1</span><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <button id="pname" class="pname" title="Cambiar de programa o ponerle nombre" aria-label="Programa actual: Programa 1. Abrir lista de programas"><span id="pnameTxt">Programa 1</span><svg class="i" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
       <span class="hint" id="pos" aria-hidden="true">Lín 1, Col 1</span>
-      <button id="findBtn" class="btn mini ico" title="Buscar y reemplazar (Ctrl+F)" aria-label="Buscar y reemplazar"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M15 15l5 5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button>
+      <button id="findBtn" class="btn mini ico" title="Buscar y reemplazar (Ctrl+F)" aria-label="Buscar y reemplazar"><svg class="i" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5 5"/></svg></button>
+      <button id="readBtn" class="btn mini" aria-pressed="false" title="Modo lectura: solo el código, sin distracciones (Esc para salir)"><svg class="i" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M12 6.5C10 5 7 4.5 4 5v13c3-.5 6 0 8 1.5 2-1.5 5-2 8-1.5V5c-3-.5-6 0-8 1.5zM12 6.5v13"/></svg><span id="readTxt">Lectura</span></button>
       <button id="whatBtn" class="btn mini ico" aria-pressed="false" title="¿Qué es esto? Tocá una palabra, un operador o un %d del código para ver qué significa (en escritorio también Alt+clic)" aria-label="¿Qué es esto? Explicar una palabra del código">?</button>
     </div>
     <div class="find" id="find" hidden>
       <div class="frow"><input id="fq" type="text" placeholder="Buscar" aria-label="Buscar" autocomplete="off" spellcheck="false" autocapitalize="off"><span id="fcount" class="fcount" aria-live="polite"></span>
-        <button id="fprev" class="btn mini ico" title="Anterior (Shift+Enter)" aria-label="Coincidencia anterior">▲</button><button id="fnext" class="btn mini ico" title="Siguiente (Enter)" aria-label="Coincidencia siguiente">▼</button>
-        <button id="fcase" class="btn mini ico" title="Distinguir mayúsculas" aria-label="Distinguir mayúsculas" aria-pressed="false">Aa</button><button id="fclose" class="btn mini ico" title="Cerrar (Esc)" aria-label="Cerrar búsqueda">✕</button></div>
+        <button id="fprev" class="btn mini ico" title="Anterior (Shift+Enter)" aria-label="Coincidencia anterior"><svg class="i" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg></button><button id="fnext" class="btn mini ico" title="Siguiente (Enter)" aria-label="Coincidencia siguiente"><svg class="i" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+        <button id="fcase" class="btn mini ico" title="Distinguir mayúsculas" aria-label="Distinguir mayúsculas" aria-pressed="false">Aa</button><button id="fclose" class="btn mini ico" title="Cerrar (Esc)" aria-label="Cerrar búsqueda"><svg class="i" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
       <div class="frow"><input id="fr" type="text" placeholder="Reemplazar con" aria-label="Reemplazar con" autocomplete="off" spellcheck="false" autocapitalize="off">
         <button id="frep" class="btn mini">Reemplazar</button><button id="frepall" class="btn mini">Todos</button></div>
     </div>
     <div class="editor" id="editor">
       <div class="gut" id="gut" aria-hidden="true"></div>
-      <div class="code">
+      <div class="code" id="codeBox">
+        <div class="curline" id="curline" aria-hidden="true"></div>
+        <pre class="lay gd" id="gd" aria-hidden="true"></pre>
+        <pre class="lay br" id="br" aria-hidden="true"></pre>
         <pre class="lay ul" id="ul" aria-hidden="true"></pre>
         <pre class="lay fm" id="fm" aria-hidden="true"></pre>
         <pre class="lay hl" id="hl" aria-hidden="true"></pre>
@@ -393,10 +458,11 @@ dialog fieldset .fine { margin: 0; }
       <label for="inTxt">Datos de entrada <span>(una línea por cada Enter; el programa los usa antes de preguntarte)</span></label>
       <textarea id="inTxt" rows="3" spellcheck="false" autocomplete="off" autocapitalize="off" placeholder="5&#10;8"></textarea>
     </div>
+    <div class="runbar" id="runBar" role="status" hidden><span id="runBarTxt"></span></div>
     <div class="console" id="console" tabindex="0" role="log" aria-label="Salida del programa"><pre id="out" aria-live="polite"></pre></div>
     <div class="slow" id="slow" role="status" hidden><span id="slowTxt"></span><button type="button" id="slowStop" class="btn mini danger">Detener</button></div>
     <div class="diag" id="diag" role="region" aria-label="Problemas" hidden>
-      <button type="button" id="diagHead" class="dhead" aria-expanded="true"><span id="diagTitle">Problemas</span><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <button type="button" id="diagHead" class="dhead" aria-expanded="true"><span id="diagTitle">Problemas</span><svg class="i" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
       <div id="diagList"></div>
     </div>
   </section>
@@ -421,6 +487,13 @@ dialog fieldset .fine { margin: 0; }
   <div class="srow"><label for="theme">Tema</label>
     <select id="theme" class="btn sel"><option value="auto">Automático (según el dispositivo)</option><option value="light">Claro</option><option value="dark">Oscuro</option></select></div>
   <div class="srow"><span id="fsLbl">Tamaño de letra</span><span class="grp" role="group" aria-labelledby="fsLbl"><button id="fsm" class="btn icon" type="button" title="Letra más chica" aria-label="Letra más chica">A−</button><output id="fsv" class="fsv"></output><button id="fsp" class="btn icon" type="button" title="Letra más grande" aria-label="Letra más grande">A+</button></span></div>
+  <fieldset><legend>Cómo se ve el código</legend>
+    <label for="tabSel">Tamaño de la sangría (Tab)</label>
+    <select id="tabSel" class="btn sel wsel"><option value="2">2 espacios</option><option value="3">3 espacios</option><option value="4">4 espacios</option><option value="8">8 espacios</option></select>
+    <label class="chk"><input type="checkbox" id="wsChk"> Mostrar espacios y tabulaciones</label>
+    <label class="chk"><input type="checkbox" id="ruleChk" checked> Renglones de cuaderno de fondo</label>
+    <p class="fine">Solo cambia cómo se ve. Las guías de sangría y el resaltado de la llave o el paréntesis que hace pareja con el cursor siempre están: te ayudan a leer la estructura, no escriben nada.</p>
+  </fieldset>
   <fieldset><legend>Ayuda cuando algo no compila</legend>
     <label for="ayudaSel">Cuánta ayuda querés</label>
     <select id="ayudaSel" class="btn sel wsel"><option value="0">0 · Solo el mensaje del compilador</option><option value="1">1 · Mensaje corto y pistas (recomendado)</option><option value="2">2 · Mensaje, explicación y pistas</option></select>
@@ -479,13 +552,14 @@ dialog fieldset .fine { margin: 0; }
     <dt><kbd>Tab</kbd> / <kbd>Shift</kbd>+<kbd>Tab</kbd></dt><dd>Sangrar / quitar sangría</dd>
     <dt><kbd>Ctrl</kbd>+<kbd>F</kbd> / <kbd>Ctrl</kbd>+<kbd>H</kbd></dt><dd>Buscar / reemplazar</dd>
     <dt><kbd>F1</kbd> / <kbd>Alt</kbd>+clic</dt><dd>¿Qué es esto? de lo que está bajo el cursor o el clic</dd>
+    <dt><kbd>Esc</kbd></dt><dd>Cerrar la búsqueda, la burbuja o el modo lectura</dd>
     <dt><kbd>Ctrl</kbd>+<kbd>D</kbd></dt><dd>Fin de entrada (cuando el programa espera datos)</dd>
   </dl>
   <p class="fine">Tu código no sale de tu navegador. Se guarda solo en este dispositivo.</p>
   <div class="drow"><button class="btn primary" type="button" data-close>Entendido</button></div>
 </dialog>
 <dialog id="dAyuda" class="wide ayuda" aria-labelledby="tAyuda">
-  <div class="ahead"><h2 id="tAyuda">Ayuda</h2><button type="button" class="btn mini ico" data-close aria-label="Cerrar la ayuda" title="Cerrar (Esc)">✕</button></div>
+  <div class="ahead"><h2 id="tAyuda">Ayuda</h2><button type="button" class="btn mini ico" data-close aria-label="Cerrar la ayuda" title="Cerrar (Esc)"><svg class="i" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
   <form id="aForm" role="search" autocomplete="off"><input id="aQ" type="search" placeholder="Buscá una duda: scanf, %d, ¿por qué 7/2 da 3?" aria-label="Buscar en la ayuda" spellcheck="false" autocapitalize="off" enterkeyhint="search"></form>
   <p class="fine alive" id="aLive" role="status" aria-live="polite"></p>
   <div id="aRes">
@@ -4274,6 +4348,17 @@ int main() {
   }
   function isPristine(code) { return !code.trim() || EXAMPLES.some((x) => x.c === code) || code === template(); }
 
+  /* ---------- vista del código: sangría, espacios, renglones (solo cambian cómo se ve) ---------- */
+  let SANG = [2, 3, 4, 8].indexOf(parseInt(store.get('sang', '4'), 10)) >= 0 ? parseInt(store.get('sang', '4'), 10) : 4;
+  let verEsp = store.get('ws', '') === '1';
+  const SP = () => ' '.repeat(SANG);
+  function aplicarVista() {
+    const r = document.documentElement;
+    r.style.setProperty('--tab', String(SANG));
+    r.classList.toggle('sinrenglones', store.get('reglas', '1') === '0');
+  }
+  aplicarVista();
+
   /* ---------- resaltado ---------- */
   const HL_RE = /(\/\*[\s\S]*?\*\/|\/\*[\s\S]*$|\/\/[^\n]*)|("(?:\\.|[^"\\\n])*"?)|('(?:\\.|[^'\\\n])*'?)|(^[ \t]*#[^\n]*)|(\b(?:int|float|double|char|void|long|short|unsigned|signed|const|static|bool)\b)|(\b(?:if|else|while|do|for|return|break|continue|switch|case|default|sizeof)\b)|(\b\d+\.?\d*(?:[eE][+-]?\d+)?[fFlLuU]*\b|\.\d+\b)|(\b[A-Za-z_]\w*(?=\s*\())/gm;
   const CLS = [null, 'c', 's', 's', 'p', 't', 'k', 'n', 'f'];
@@ -4314,15 +4399,74 @@ int main() {
     let h = '';
     for (let i = 1; i <= n; i++) { const m = marks.get(i); h += '<div' + (m ? ' class="' + m + '"' : '') + '>' + i + '</div>'; }
     gut.innerHTML = h;
+    if (gut.children[curLn]) gut.children[curLn].classList.add('cur');
     gut.scrollTop = ta.scrollTop;
   }
   function refresh() {
     hl.innerHTML = highlight(ta.value) + '\n';
+    gdEl.innerHTML = guias(ta.value);
     renderGutter(false);
     paintProblems();
     syncScroll();
+    updatePos();
   }
-  function syncScroll() { layers.forEach((l) => { l.scrollTop = ta.scrollTop; l.scrollLeft = ta.scrollLeft; }); gut.scrollTop = ta.scrollTop; }
+  const gdEl = $('gd'), brEl = $('br'), curEl = $('curline'), codeBox = $('codeBox');
+  layers.push(gdEl, brEl);
+  // guías de sangría (y espacios visibles si se pidió): una capa transparente, solo para leer la estructura
+  function guias(src) {
+    if (src.length > 300000) return '\n';
+    const ws = verEsp, dot = '<b class="sp">·</b>';
+    return src.split('\n').map((ln) => {
+      const m = /^[ \t]*/.exec(ln)[0];
+      let h = '', k = 0;
+      while (k < m.length) {
+        if (m[k] === '\t') { h += '<i class="ig' + (ws ? ' tb' : '') + '">\t</i>'; k++; }
+        else {
+          let j = k; while (j < m.length && m[j] === ' ') j++;
+          let n = j - k;
+          while (n >= SANG) { h += '<i class="ig">' + (ws ? dot.repeat(SANG) : SP()) + '</i>'; n -= SANG; }
+          if (n) h += ws ? dot.repeat(n) : ' '.repeat(n);
+          k = j;
+        }
+      }
+      if (ws) h += esc(ln.slice(m.length)).replace(/ /g, dot).replace(/\t/g, '<i class="tb">\t</i>');
+      return h;
+    }).join('\n') + '\n';
+  }
+  let curLn = 0;
+  function syncScroll() {
+    layers.forEach((l) => { l.scrollTop = ta.scrollTop; l.scrollLeft = ta.scrollLeft; });
+    gut.scrollTop = ta.scrollTop;
+    codeBox.style.setProperty('--sy', ta.scrollTop + 'px');
+    curEl.style.top = (12 + curLn * lineH() - ta.scrollTop) + 'px';
+  }
+  function lineH() { return (parseFloat(getComputedStyle(ta).fontSize) || 15) * 1.5; }
+  function marcarActual(ln) {
+    const k = gut.children;
+    if (k[curLn]) k[curLn].classList.remove('cur');
+    curLn = ln;
+    if (k[ln]) k[ln].classList.add('cur');
+    curEl.style.top = (12 + ln * lineH() - ta.scrollTop) + 'px';
+  }
+  // pareja del paréntesis, corchete o llave que toca el cursor (ignora lo que está en comentarios, textos y #líneas)
+  function marcarPareja() {
+    const v = ta.value, s = ta.selectionStart;
+    if (ta.selectionEnd !== s || v.length > 60000) { brEl.innerHTML = ''; return; }
+    const PAR = { '(': ')', '[': ']', '{': '}', ')': '(', ']': '[', '}': '{' };
+    let pos = -1;
+    if (s > 0 && PAR[v[s - 1]]) pos = s - 1; else if (s < v.length && PAR[v[s]]) pos = s;
+    if (pos < 0) { brEl.innerHTML = ''; return; }
+    const skip = new Uint8Array(v.length); let at = 0;
+    tokens(v).forEach(([c, t]) => { if (c === 'c' || c === 's' || c === 'p') skip.fill(1, at, at + t.length); at += t.length; });
+    if (skip[pos]) { brEl.innerHTML = ''; return; }
+    const ch = v[pos], op = '([{'.indexOf(ch) >= 0, other = PAR[ch], dir = op ? 1 : -1;
+    let depth = 0, m = -1;
+    for (let i = pos; i >= 0 && i < v.length; i += dir) {
+      if (skip[i]) continue;
+      if (v[i] === ch) depth++; else if (v[i] === other) { depth--; if (!depth) { m = i; break; } }
+    }
+    paint(brEl, v, m < 0 ? [{ s: pos, e: pos + 1, c: 'bu' }] : [{ s: pos, e: pos + 1, c: 'bm' }, { s: m, e: m + 1, c: 'bm' }]);
+  }
   /* evidencia de proceso: mide de dónde viene cada carácter (tipeado, pegado, automático, cargado). Todo queda en este dispositivo. */
   const PROC_NULO = { marcarAuto(fn) { return fn(); }, marcarCargado() {}, restaurar() {}, serializar() { return null; }, resumen() { return null; }, linea() { return ''; }, ejecutar() {} };
   let proc = PROC_NULO, practica = false;
@@ -4346,6 +4490,7 @@ int main() {
   });
 
   function insert(text) {
+    if (ta.readOnly) return;
     ta.focus({ preventScroll: true });
     let ok = false;
     try { ok = document.execCommand('insertText', false, text); } catch (e) { ok = false; }
@@ -4427,11 +4572,11 @@ int main() {
     const v = ta.value, s = ta.selectionStart, en = ta.selectionEnd;
     if (e.key === 'Tab') {
       e.preventDefault();
-      if (s === en && !e.shiftKey) { auto(() => insert('    ')); return; }
+      if (s === en && !e.shiftKey) { auto(() => insert(SP())); return; }
       const a = lineStart(v, s);
       const b = en > s && v[en - 1] === '\n' ? en - 1 : en;
       const block = v.slice(a, b).split('\n');
-      const nb = block.map((l) => e.shiftKey ? l.replace(/^( {1,4}|\t)/, '') : '    ' + l).join('\n');
+      const nb = block.map((l) => e.shiftKey ? l.replace(new RegExp('^( {1,' + SANG + '}|\\t)'), '') : SP() + l).join('\n');
       guard = true; try { auto(() => { ta.setSelectionRange(a, b); insert(nb); ta.setSelectionRange(a, a + nb.length); }); } finally { guard = false; }
       return;
     }
@@ -4443,8 +4588,8 @@ int main() {
       guard = true;
       try {
         auto(() => {
-          if (before === '{' && after === '}') { insert('\n' + ind + '    \n' + ind); const p = s + 1 + ind.length + 4; ta.setSelectionRange(p, p); }
-          else insert('\n' + ind + (before === '{' ? '    ' : ''));
+          if (before === '{' && after === '}') { insert('\n' + ind + SP() + '\n' + ind); const p = s + 1 + ind.length + SANG; ta.setSelectionRange(p, p); }
+          else insert('\n' + ind + (before === '{' ? SP() : ''));
         }, { primerCaracterTipeado: true });
       } finally { guard = false; }
       return;
@@ -4452,13 +4597,14 @@ int main() {
     if (e.key === '}' && !mod) {
       if (pisarLlave(v, s, en)) { e.preventDefault(); return; }
       const ls = lineStart(v, s);
-      if (s === en && /^ +$/.test(v.slice(ls, s)) && s - ls >= 4) { e.preventDefault(); guard = true; try { auto(() => { ta.setSelectionRange(s - 4, s); insert('}'); }, { primerCaracterTipeado: true }); } finally { guard = false; } }
+      if (s === en && /^ +$/.test(v.slice(ls, s)) && s - ls >= SANG) { e.preventDefault(); guard = true; try { auto(() => { ta.setSelectionRange(s - SANG, s); insert('}'); }, { primerCaracterTipeado: true }); } finally { guard = false; } }
     }
   });
 
   function updatePos() {
     const v = ta.value, s = ta.selectionStart, ln = lineIndexAt(v, s);
     $('pos').textContent = 'Lín ' + (ln + 1) + ', Col ' + (s - lineStart(v, s) + 1);
+    marcarActual(ln); marcarPareja();
   }
   document.addEventListener('selectionchange', () => { if (document.activeElement === ta) updatePos(); });
 
@@ -4946,7 +5092,7 @@ int main() {
     if (ln >= lines.length) return null;
     const colV = Math.floor(x / cw), txt = lines[ln];
     let v = 0, idx = 0;
-    for (; idx < txt.length; idx++) { const w = txt[idx] === '\t' ? 4 - (v % 4) : 1; if (colV < v + w) break; v += w; }
+    for (; idx < txt.length; idx++) { const w = txt[idx] === '\t' ? SANG - (v % SANG) : 1; if (colV < v + w) break; v += w; }
     if (idx >= txt.length) return null;
     let off = 0; for (let i = 0; i < ln; i++) off += lines[i].length + 1;
     return off + idx;
@@ -5072,6 +5218,7 @@ int main() {
   function sincronizarAjustesNuevos() {
     $('ayudaSel').value = String(nivelAyuda); $('ayudaDesc').textContent = NIVELES_TXT[nivelAyuda];
     $('autoCierre').checked = autoCierre;
+    $('tabSel').value = String(SANG); $('wsChk').checked = verEsp; $('ruleChk').checked = store.get('reglas', '1') !== '0';
     $('procCap').checked = store.get('proccap', '1') !== '0';
     const l = proc.linea(); $('procAhora').textContent = l ? 'Este programa, ahora: ' + l.replace(/^Escrito en el editor: /, '') + '.' : '';
     const n = casosLista().length;
@@ -5082,6 +5229,23 @@ int main() {
     if (lastRes && problems.length) renderDiag(lastRes, lastRt, true);
   });
   $('autoCierre').addEventListener('change', () => { autoCierre = $('autoCierre').checked; store.set('autocierre', autoCierre ? '1' : '0'); });
+  $('tabSel').addEventListener('change', () => { SANG = +$('tabSel').value; store.set('sang', String(SANG)); aplicarVista(); refresh(); });
+  $('wsChk').addEventListener('change', () => { verEsp = $('wsChk').checked; store.set('ws', verEsp ? '1' : '0'); refresh(); });
+  $('ruleChk').addEventListener('change', () => { store.set('reglas', $('ruleChk').checked ? '1' : '0'); aplicarVista(); });
+  /* modo lectura: solo el código, sin barra ni consola; el texto no se puede cambiar */
+  function setLectura(on) {
+    document.documentElement.classList.toggle('lectura', on);
+    ta.readOnly = on;
+    $('readBtn').setAttribute('aria-pressed', on ? 'true' : 'false');
+    $('readTxt').textContent = on ? 'Salir' : 'Lectura';
+    $('readBtn').setAttribute('aria-label', on ? 'Salir del modo lectura' : 'Modo lectura');
+    if (on) { if (tabMode()) setTab('ed', true); findClose(); cerrarBurbuja(); }
+    refresh();
+  }
+  $('readBtn').addEventListener('click', () => setLectura(!document.documentElement.classList.contains('lectura')));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && document.documentElement.classList.contains('lectura') && $('bubble').hidden && !document.querySelector('dialog[open]')) { e.preventDefault(); setLectura(false); }
+  });
   $('procCap').addEventListener('change', () => store.set('proccap', $('procCap').checked ? '1' : '0'));
 
   /* ---------- consola ---------- */
@@ -5112,7 +5276,13 @@ int main() {
     return s;
   }
   function endsWithNewline() { const s = consoleText(); return !s || s.endsWith('\n'); }
-  function setStatus(txt, cls) { statusEl.textContent = txt; statusEl.className = 'chip' + (cls ? ' ' + cls : ''); }
+  function setStatus(txt, cls) {
+    statusEl.textContent = txt; statusEl.className = 'chip' + (cls ? ' ' + cls : '');
+    // cartel bien visible mientras algo corre o espera datos (no depende solo del color)
+    const rb = $('runBar'), on = cls === 'run' || cls === 'wait';
+    rb.hidden = !on; rb.className = 'runbar' + (cls === 'wait' ? ' wait' : '');
+    $('runBarTxt').textContent = cls === 'wait' ? 'Esperando datos: tipeá en la consola y apretá Enter' : txt === 'Compilando…' ? 'Compilando…' : 'Ejecutando… el programa está en marcha';
+  }
   function clearConsole() { clearTimeout(outTimer); outTimer = null; outBuf = ''; out.textContent = ''; total = 0; }
   $('clear').addEventListener('click', () => { removeInput(); clearConsole(); if ((worker || main) && waiting) showInput(); });
   function copyText(s, host) {
@@ -5376,7 +5546,7 @@ self.postMessage({ type: 'ready' });`;
     const rows = []; let row = [], n = 0;
     const push = () => { rows.push(row); row = []; n = 0; };
     segs.forEach(([cls, text]) => {
-      text.replace(/\t/g, '    ').split('\n').forEach((part, i) => {
+      text.replace(/\t/g, SP()).split('\n').forEach((part, i) => {
         if (i > 0) push();
         while (part.length) {
           const take = part.slice(0, cols - n);
@@ -5390,25 +5560,25 @@ self.postMessage({ type: 'ready' });`;
   }
   function makePng(opts) {
     opts = opts || {};
-    const COL = { k: '#cf222e', t: '#0550ae', s: '#0a7a3d', n: '#b35900', c: '#6b7587', f: '#8250df', p: '#8250df', in: '#0b5ed7', er: '#c62828', dim: '#566174', ok: '#0b7a4b' };
-    const TXT = '#1b2230', MONO = '"Liberation Mono", Menlo, Consolas, ui-monospace, monospace', UI = 'system-ui, "Segoe UI", Roboto, Arial, sans-serif';
-    const fs = 14, lh = 20, padX = 22, cv = document.createElement('canvas'), ctx = cv.getContext('2d');
+    // hoja de carpeta: fondo blanco, tinta oscura, nada de grises que se pierdan al imprimir. Lo tipeado va en negrita y subrayado (se distingue en blanco y negro).
+    const COL = { k: '#9a3412', t: '#1f4a8c', s: '#2c6a3b', n: '#0f6068', c: '#565a63', f: '#5b3f8c', p: '#7a5a1e', in: '#1b4f9c', er: '#b3261e', dim: '#4a5060', ok: '#1d6b43' };
+    const TXT = '#1c2230', RULE = '#dde3ee', INKB = '#1f4a8c', MARG = '#c0392b', BOX = '#7d8494';
+    const MONO = '"Liberation Mono", Menlo, Consolas, ui-monospace, monospace', UI = 'system-ui, "Segoe UI", Roboto, Arial, sans-serif';
+    const fs = 15, lh = 22, padX = 28, cv = document.createElement('canvas'), ctx = cv.getContext('2d');
     ctx.font = fs + 'px ' + MONO; const cw = ctx.measureText('M').width;
     const codeLines = ta.value.replace(/\n$/, '').split('\n');
-    const longest = Math.max.apply(null, codeLines.map((l) => l.replace(/\t/g, '    ').length));
-    const cols = Math.max(64, Math.min(110, longest + 1));
-    const gutW = Math.max(3, String(codeLines.length).length + 1) * cw + 14;
-    const W = Math.ceil(padX * 2 + gutW + cols * cw + 12);
-    // código: filas con número
-    const codeRows = []; let nline = 0;
+    const longest = Math.max.apply(null, codeLines.map((l) => l.replace(/\t/g, SP()).length));
+    const cols = Math.max(52, Math.min(100, longest + 1));
+    const gutW = Math.max(3, String(codeLines.length).length + 1) * cw + 16;
+    const W = Math.ceil(padX * 2 + gutW + cols * cw + 14);
+    const codeRows = [];
     let curSegs = [];
-    const lineSegs = []; // tokens separados por línea
+    const lineSegs = [];
     tokens(ta.value.replace(/\n$/, '')).forEach(([cls, text]) => {
       text.split('\n').forEach((part, i) => { if (i > 0) { lineSegs.push(curSegs); curSegs = []; } if (part) curSegs.push([cls, part]); });
     });
     lineSegs.push(curSegs);
-    lineSegs.forEach((segs, i) => { rowsOf(segs, cols).forEach((r, j) => codeRows.push({ n: j === 0 ? i + 1 : '', r })); nline++; });
-    // entrada y salida
+    lineSegs.forEach((segs, i) => { rowsOf(segs, cols).forEach((r, j) => codeRows.push({ n: j === 0 ? i + 1 : '', r })); });
     const outSegs = [];
     out.childNodes.forEach((n) => {
       if (n.nodeType === 3) outSegs.push([null, n.textContent]);
@@ -5417,57 +5587,70 @@ self.postMessage({ type: 'ready' });`;
     const outRows = rowsOf(outSegs, cols + 4);
     while (outRows.length > 1 && !outRows[outRows.length - 1].length) outRows.pop();
     const inRows = opts.input !== false && inTxt.value.trim() ? rowsOf([['in', inTxt.value.replace(/\n+$/, '')]], cols + 4) : [];
-    const secH = 30, headH = 64, gap = 14;
-    // línea de evidencia de proceso (opcional): se parte en renglones para que entre en el ancho
+    const secH = 34, headH = 84, gap = 10;
     const procRows = [];
     const procTxt = opts.proc === false ? '' : proc.linea();
     if (procTxt) {
-      ctx.font = '12px ' + UI;
+      ctx.font = '13px ' + UI;
       let ln = '';
       procTxt.split(' ').forEach((w) => { const t = ln ? ln + ' ' + w : w; if (ln && ctx.measureText(t).width > W - 2 * padX) { procRows.push(ln); ln = w; } else ln = t; });
       if (ln) procRows.push(ln);
     }
-    const H = headH + gap + secH + codeRows.length * lh + 16 + (inRows.length ? gap + secH + inRows.length * lh + 16 : 0) + gap + secH + Math.max(1, outRows.length) * lh + 16 + 14 + procRows.length * 17;
+    const blockH = (n) => n * lh + 16;
+    const H = headH + gap + secH + blockH(codeRows.length) + (inRows.length ? gap + secH + blockH(inRows.length) : 0) + gap + secH + blockH(Math.max(1, outRows.length)) + (procRows.length ? 22 + procRows.length * 19 : 0) + 22;
     let S = 2; while (W * S * H * S > 14e6 && S > 1) S -= 0.5;
     cv.width = Math.round(W * S); cv.height = Math.round(H * S); ctx.scale(S, S);
     ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, W, H);
-    // cabecera
-    ctx.fillStyle = '#f1f4f8'; ctx.fillRect(0, 0, W, headH);
-    ctx.fillStyle = '#d6dce6'; ctx.fillRect(0, headH - 1, W, 1);
+    // cabecera: tira de tinta azul arriba, filete doble abajo
+    ctx.fillStyle = INKB; ctx.fillRect(0, 0, W, 5);
     ctx.textBaseline = 'middle';
-    ctx.fillStyle = TXT; ctx.font = '700 17px ' + UI;
-    ctx.fillText(user.name || 'Editor C', padX, 22);
-    ctx.font = '13px ' + UI; ctx.fillStyle = '#566174';
-    ctx.fillText([user.curso, user.mat, user.ciclo && (/ciclo/i.test(user.ciclo) ? user.ciclo : 'Ciclo lectivo ' + user.ciclo)].filter(Boolean).join('  ·  ') || 'Captura del programa', padX, 44);
+    ctx.fillStyle = TXT; ctx.font = '700 21px ' + UI;
+    ctx.fillText(user.name || 'Editor C', padX, 34);
+    ctx.font = '14px ' + UI; ctx.fillStyle = '#3a4150';
+    ctx.fillText([user.curso, user.mat, user.ciclo && (/ciclo/i.test(user.ciclo) ? user.ciclo : 'Ciclo lectivo ' + user.ciclo)].filter(Boolean).join('  ·  ') || 'Captura del programa', padX, 60);
     const d = new Date(), stamp = pad2(d.getDate()) + '/' + pad2(d.getMonth() + 1) + '/' + d.getFullYear() + ' ' + pad2(d.getHours()) + ':' + pad2(d.getMinutes());
-    ctx.textAlign = 'right'; ctx.font = '600 13px ' + UI; ctx.fillStyle = TXT; ctx.fillText((cur ? cur.name : 'Programa') + '.c', W - padX, 22);
-    ctx.font = '12px ' + UI; ctx.fillStyle = '#566174'; ctx.fillText(stamp, W - padX, 44); ctx.textAlign = 'left';
+    ctx.textAlign = 'right'; ctx.font = '700 15px ' + UI; ctx.fillStyle = TXT; ctx.fillText((cur ? cur.name : 'Programa') + '.c', W - padX, 34);
+    ctx.font = '13px ' + UI; ctx.fillStyle = '#3a4150'; ctx.fillText(stamp, W - padX, 60); ctx.textAlign = 'left';
+    ctx.fillStyle = TXT; ctx.fillRect(padX, headH - 6, W - 2 * padX, 1.5); ctx.fillRect(padX, headH - 2, W - 2 * padX, 1);
     let y = headH + gap;
-    const section = (title, color) => {
-      ctx.font = '700 12px ' + UI; ctx.fillStyle = color || '#566174';
-      ctx.fillText(title.toUpperCase(), padX, y + secH / 2); y += secH;
+    const section = (title) => {
+      ctx.font = '700 12px ' + UI; ctx.fillStyle = TXT;
+      if ('letterSpacing' in ctx) ctx.letterSpacing = '1.5px';
+      ctx.fillText(title.toUpperCase(), padX, y + secH / 2 + 4);
+      if ('letterSpacing' in ctx) ctx.letterSpacing = '0px';
+      y += secH;
     };
-    const drawRows = (rows, x0, bg, numbers) => {
-      const h = rows.length * lh + 16;
-      ctx.fillStyle = bg; ctx.fillRect(padX - 8, y, W - 2 * padX + 16, h);
-      ctx.strokeStyle = '#d6dce6'; ctx.lineWidth = 1; ctx.strokeRect(padX - 8 + .5, y + .5, W - 2 * padX + 16 - 1, h - 1);
-      ctx.font = fs + 'px ' + MONO;
+    const drawRows = (rows, x0, numbers) => {
+      const h = blockH(rows.length), bx = padX - 8, bw = W - 2 * padX + 16;
+      // renglones de cuaderno
+      ctx.fillStyle = RULE;
+      for (let i = 0; i < rows.length; i++) ctx.fillRect(bx + 1, y + 8 + (i + 1) * lh - 1, bw - 2, 1);
+      ctx.strokeStyle = BOX; ctx.lineWidth = 1; ctx.strokeRect(bx + .5, y + .5, bw - 1, h - 1);
+      if (numbers) { ctx.fillStyle = MARG; ctx.fillRect(padX + gutW - 6, y + 1, 1.5, h - 2); }
       rows.forEach((row, i) => {
         const r = numbers ? row.r : row, yy = y + 8 + i * lh + lh / 2;
-        if (numbers) { ctx.fillStyle = '#8b95a7'; ctx.textAlign = 'right'; ctx.fillText(String(row.n), padX + gutW - 12, yy); ctx.textAlign = 'left'; }
+        if (numbers) { ctx.font = (fs - 1) + 'px ' + MONO; ctx.fillStyle = '#5a6070'; ctx.textAlign = 'right'; ctx.fillText(String(row.n), padX + gutW - 14, yy); ctx.textAlign = 'left'; }
         let x = x0;
-        r.forEach(([cls, text]) => { ctx.fillStyle = (cls && COL[cls]) || TXT; ctx.fillText(text, x, yy); x += ctx.measureText(text).width; });
+        r.forEach(([cls, text]) => {
+          const bold = cls === 'in' || cls === 't' || cls === 'er';
+          ctx.font = (bold ? '700 ' : cls === 'c' ? 'italic ' : '') + fs + 'px ' + MONO;
+          ctx.fillStyle = (cls && COL[cls]) || TXT; ctx.fillText(text, x, yy);
+          const w = ctx.measureText(text).width;
+          if (cls === 'in') { ctx.save(); ctx.strokeStyle = COL.in; ctx.lineWidth = 1.2; ctx.setLineDash([1.5, 2]); ctx.beginPath(); ctx.moveTo(x, yy + 9.5); ctx.lineTo(x + w, yy + 9.5); ctx.stroke(); ctx.restore(); }
+          x += w;
+        });
       });
       y += h;
     };
     section('Código');
-    drawRows(codeRows, padX + gutW, '#fbfcfe', true);
-    if (inRows.length) { y += gap; section('Datos de entrada'); drawRows(inRows, padX, '#f6f9ff', false); }
+    drawRows(codeRows, padX + gutW, true);
+    if (inRows.length) { y += gap; section('Datos de entrada (lo que se tipeó)'); drawRows(inRows, padX, false); }
     y += gap; section('Salida');
-    drawRows(outRows.length && (outRows.length > 1 || outRows[0].length) ? outRows : [[['dim', '(sin salida: ejecutá el programa antes de sacar la captura)']]], padX, '#fbfcfe', false);
+    drawRows(outRows.length && (outRows.length > 1 || outRows[0].length) ? outRows : [[['dim', '(sin salida: ejecutá el programa antes de sacar la captura)']]], padX, false);
     if (procRows.length) {
-      ctx.font = '12px ' + UI; ctx.fillStyle = '#566174';
-      procRows.forEach((t, i) => ctx.fillText(t, padX, y + 12 + i * 17));
+      ctx.fillStyle = RULE; ctx.fillRect(padX, y + 10, W - 2 * padX, 1);
+      ctx.font = '13px ' + UI; ctx.fillStyle = '#3a4150';
+      procRows.forEach((t, i) => ctx.fillText(t, padX, y + 24 + i * 19));
     }
     return cv;
   }
@@ -5844,7 +6027,7 @@ window.KB_DATA={"errores":[{"id":"ARR-001","categoria":"arreglos y textos","nomb
    (por ejemplo '5491112345678'). Vacío = el botón abre WhatsApp sin destinatario. */
 (function (root) {
   'use strict';
-  var CONFIG = { WHATSAPP_NUMERO: '', VERSION: '44dac19344f3' };
+  var CONFIG = { WHATSAPP_NUMERO: '', VERSION: '33bf4b0e8ce5' };
   if (typeof module !== 'undefined' && module.exports) module.exports = CONFIG;
   else root.CONFIG = CONFIG;
 })(typeof self !== 'undefined' ? self : this);

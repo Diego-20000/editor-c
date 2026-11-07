@@ -100,3 +100,29 @@ Se integran en la interfaz los módulos ya hechos (`src/kb.js`, `src/compartir.j
 3. **Base**: los mensajes de `mensaje_editor` traen «Línea N:» y nombres de variable de un programa de ejemplo. La interfaz los reemplaza por la línea y los nombres del alumno cuando el mensaje del editor trae las mismas comillas simples; sería más seguro que la base use marcadores (`{LINEA}`, `{VAR}`).
 4. **`KB.explicar`**: devolver `null` (o una marca de ambigüedad) cuando varias entradas comparten plantilla, en lugar de elegir la última.
 5. **`src/config.js`**: falta el número real de `WHATSAPP_NUMERO` (pregunta abierta 1 del CLAUDE.md).
+
+## 6. Pulido de diseño: «hoja de cuaderno»
+
+Dirección, paleta (con contrastes WCAG AA verificados en claro y oscuro), tipografía, radios, íconos y lista de lo que NO se hace: `docs/DISENO.md`. Resumen: hoja crema o grafito, tinta azul para lo propio y lo tipeado, tinta roja solo para corregir, renglones y raya de margen en el editor, sin degradados, sombras difusas ni tarjetas redondeadas.
+
+**Qué cambió (solo apariencia; ningún texto funcional ni comportamiento)**
+- `src/app.css` reescrito sobre variables: paneles como hojas (radio 0), controles de 2 px, bordes de 1 px, sombra solo en menú, aviso y burbuja (desplazamiento duro de 2 px). Sintaxis más sobria y legible; los tipos van en seminegrita, los comentarios en cursiva.
+- Íconos SVG propios y coherentes (trazo 1,75 px) en la barra; marca «C» de lapicera; favicon nuevo; sin glifos de texto (▲ ▼ ✕).
+- Consola: lo tipeado va en azul con subrayado punteado (no solo color); estado como chip con forma distinta por estado (cuadrado, rombo, círculo).
+- Problemas y ayuda por niveles: mensaje primero; la explicación y las pistas quedan sangradas bajo un filete punteado; etiquetas «Error · línea N» con borde en lugar de relleno.
+- Ayuda, Ajustes, Programas, Casos y la burbuja «¿qué es esto?»: lista con filetes en lugar de tarjetas, títulos de sección en mayúscula chica.
+- Imagen de la captura rehecha como hoja de carpeta (tira azul, cabecera con filete doble, secciones subrayadas, renglones, raya de margen roja, datos tipeados en negrita y subrayado para que se lean impresos en blanco y negro). Más angosta (mínimo de 52 columnas) para verla en el celular.
+- Celular: cabecera del editor en una sola fila (el botón «Lectura» queda solo con ícono), objetivos de 44 px.
+
+**Funciones nuevas (ninguna escribe por el alumno)**
+- Línea actual resaltada (banda y número en negrita) y contador «Lín N, Col M» en monoespaciada.
+- Pareja de `()`, `[]`, `{}` del cursor: se marcan las dos; sin pareja se marca en rojo. Ignora lo que está en comentarios, textos y `#líneas`.
+- Guías de sangría tenues (capa transparente, no interceptan clics).
+- Ajustes → «Cómo se ve el código»: tamaño de la sangría (2, 3, 4 u 8; también la usan Tab, Enter y `}`), mostrar espacios y tabulaciones, renglones de cuaderno de fondo (se pueden apagar).
+- Cartel «Ejecutando…» / «Esperando datos» sobre la consola (rayado fijo, sin animación).
+- Modo lectura: botón «Lectura» en la cabecera del editor; oculta barra y consola, el código queda de solo lectura (Esc o «Salir» para volver).
+- Hoja de atajos: se agregó Esc. F1 y «?» no chocan con nada.
+
+**Pruebas.** `tools/ui-smoke.js` suma `disenoSuite` (escritorio y celular, `file://` y `dist/`): pareja de llaves, línea actual, guías, sangría/espacios/renglones, cartel de ejecución, modo lectura (solo lectura real), contraste AA de la paleta, objetivos táctiles, imagen de la captura. `tools/capturas-diseno.js <prefijo>` genera las capturas de revisión en `docs/capturas/` (`antes-*` y `despues-*`).
+
+**Pendiente.** Fuente monoespaciada propia con licencia libre embebida (hay que elegirla y descargarla con aprobación de Diego); hoy se usan las del sistema.

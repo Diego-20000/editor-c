@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="dark light">
 <title>Editor C</title>
 <meta name="description" content="Editor de C sin anuncios que corre en tu navegador: escribí, ejecutá y probá tus programas al instante.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%233ddc97'/%3E%3Ctext x='16' y='23' font-family='monospace' font-size='20' font-weight='700' text-anchor='middle' fill='%2306281a'%3EC%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='1.5' y='1.5' width='29' height='29' rx='3' fill='%23fbf9f2' stroke='%231f4a8c' stroke-width='3'/%3E%3Cpath d='M21 11.5a6.5 6.5 0 1 0 0 9' fill='none' stroke='%231f4a8c' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <meta name="theme-color" content="#141922" media="(prefers-color-scheme: dark)">
@@ -15,18 +15,18 @@
 </head>
 <body>
 <header class="bar">
-  <div class="brand"><span class="logo" aria-hidden="true">C</span><div><h1>Editor C</h1><p>Sin anuncios · corre en tu navegador</p></div></div>
+  <div class="brand"><span class="logo" aria-hidden="true"><svg class="i" viewBox="0 0 24 24" width="22" height="22" style="stroke-width:2.4"><path d="M17 8a6 6 0 1 0 0 8"/></svg></span><div><h1>Editor C</h1><p>Sin anuncios · corre en tu navegador</p></div></div>
   <div class="actions">
-    <button id="run" class="btn primary" title="Ejecutar (Ctrl+Enter o F5)"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M7 4.5v15l12-7.5z" fill="currentColor"/></svg><span>Ejecutar</span></button>
-    <button id="stop" class="btn danger" title="Detener la ejecución" aria-label="Detener" disabled><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="1.5" fill="currentColor"/></svg><span>Detener</span></button>
-    <button id="ayudaBtn" class="btn" title="Ayuda: buscá una duda de C o de un error" aria-label="Ayuda" aria-haspopup="dialog"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9.6 9.4a2.5 2.5 0 1 1 3.5 2.3c-.8.4-1.1.9-1.1 1.8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="16.8" r="1.2" fill="currentColor"/></svg><span>Ayuda</span></button>
-    <details class="more" id="more"><summary class="btn" aria-label="Más opciones"><span>Más</span><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></summary>
+    <button id="run" class="btn primary" title="Ejecutar (Ctrl+Enter o F5)"><svg class="i fill" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M7 5v14l11-7z"/></svg><span>Ejecutar</span></button>
+    <button id="stop" class="btn danger" title="Detener la ejecución" aria-label="Detener" disabled><svg class="i fill" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><rect x="6.5" y="6.5" width="11" height="11" rx="1"/></svg><span>Detener</span></button>
+    <button id="ayudaBtn" class="btn" title="Ayuda: buscá una duda de C o de un error" aria-label="Ayuda" aria-haspopup="dialog"><svg class="i" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.6a2.5 2.5 0 1 1 3.6 2.2c-.8.4-1.2.9-1.2 1.8"/><path d="M12 16.9v.2"/></svg><span>Ayuda</span></button>
+    <details class="more" id="more"><summary class="btn" aria-label="Más opciones"><span>Más</span><svg class="i" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
     <div class="menu">
-      <button id="progs" class="btn" title="Mis programas guardados en este dispositivo"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><span>Programas</span></button>
+      <button id="progs" class="btn" title="Mis programas guardados en este dispositivo"><svg class="i" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 4.5h14v15H5z"/><path d="M9 4.5v15M12 9h4M12 13h4"/></svg><span>Programas</span></button>
       <select id="examples" class="btn sel" aria-label="Ejemplos"><option value="">Ejemplos…</option></select>
-      <button id="shot" class="btn" title="Descargar una imagen PNG con el código y la salida"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 8h3l2-2.5h6L17 8h3v11H4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="13" r="3.2" fill="none" stroke="currentColor" stroke-width="2"/></svg><span>Captura</span></button>
+      <button id="shot" class="btn" title="Descargar una imagen PNG con el código y la salida"><svg class="i" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 8h3.5L9 5.5h6L16.5 8H20v11H4z"/><circle cx="12" cy="13" r="3.2"/></svg><span>Captura</span></button>
       <button id="save" class="btn" title="Descargar como archivo .c (Ctrl+S)"><span>Guardar .c</span></button>
-      <button id="settings" class="btn icon" title="Ajustes: mis datos, tema, tamaño de letra" aria-label="Ajustes"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><circle cx="16" cy="7" r="2.2" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="8" cy="17" r="2.2" fill="none" stroke="currentColor" stroke-width="2"/></svg></button>
+      <button id="settings" class="btn icon" title="Ajustes: mis datos, tema, tamaño de letra" aria-label="Ajustes"><svg class="i" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 7h9M19 7h1M4 17h1M11 17h9"/><circle cx="16" cy="7" r="2.5"/><circle cx="8" cy="17" r="2.5"/></svg></button>
     </div></details>
   </div>
 </header>
@@ -38,21 +38,25 @@
 <main class="split" id="split">
   <section class="pane ed on" id="paneEd" aria-label="Editor de código">
     <div class="pane-head">
-      <button id="pname" class="pname" title="Cambiar de programa o ponerle nombre" aria-label="Programa actual: Programa 1. Abrir lista de programas"><span id="pnameTxt">Programa 1</span><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <button id="pname" class="pname" title="Cambiar de programa o ponerle nombre" aria-label="Programa actual: Programa 1. Abrir lista de programas"><span id="pnameTxt">Programa 1</span><svg class="i" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
       <span class="hint" id="pos" aria-hidden="true">Lín 1, Col 1</span>
-      <button id="findBtn" class="btn mini ico" title="Buscar y reemplazar (Ctrl+F)" aria-label="Buscar y reemplazar"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M15 15l5 5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button>
+      <button id="findBtn" class="btn mini ico" title="Buscar y reemplazar (Ctrl+F)" aria-label="Buscar y reemplazar"><svg class="i" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5 5"/></svg></button>
+      <button id="readBtn" class="btn mini" aria-pressed="false" title="Modo lectura: solo el código, sin distracciones (Esc para salir)"><svg class="i" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M12 6.5C10 5 7 4.5 4 5v13c3-.5 6 0 8 1.5 2-1.5 5-2 8-1.5V5c-3-.5-6 0-8 1.5zM12 6.5v13"/></svg><span id="readTxt">Lectura</span></button>
       <button id="whatBtn" class="btn mini ico" aria-pressed="false" title="¿Qué es esto? Tocá una palabra, un operador o un %d del código para ver qué significa (en escritorio también Alt+clic)" aria-label="¿Qué es esto? Explicar una palabra del código">?</button>
     </div>
     <div class="find" id="find" hidden>
       <div class="frow"><input id="fq" type="text" placeholder="Buscar" aria-label="Buscar" autocomplete="off" spellcheck="false" autocapitalize="off"><span id="fcount" class="fcount" aria-live="polite"></span>
-        <button id="fprev" class="btn mini ico" title="Anterior (Shift+Enter)" aria-label="Coincidencia anterior">▲</button><button id="fnext" class="btn mini ico" title="Siguiente (Enter)" aria-label="Coincidencia siguiente">▼</button>
-        <button id="fcase" class="btn mini ico" title="Distinguir mayúsculas" aria-label="Distinguir mayúsculas" aria-pressed="false">Aa</button><button id="fclose" class="btn mini ico" title="Cerrar (Esc)" aria-label="Cerrar búsqueda">✕</button></div>
+        <button id="fprev" class="btn mini ico" title="Anterior (Shift+Enter)" aria-label="Coincidencia anterior"><svg class="i" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg></button><button id="fnext" class="btn mini ico" title="Siguiente (Enter)" aria-label="Coincidencia siguiente"><svg class="i" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+        <button id="fcase" class="btn mini ico" title="Distinguir mayúsculas" aria-label="Distinguir mayúsculas" aria-pressed="false">Aa</button><button id="fclose" class="btn mini ico" title="Cerrar (Esc)" aria-label="Cerrar búsqueda"><svg class="i" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
       <div class="frow"><input id="fr" type="text" placeholder="Reemplazar con" aria-label="Reemplazar con" autocomplete="off" spellcheck="false" autocapitalize="off">
         <button id="frep" class="btn mini">Reemplazar</button><button id="frepall" class="btn mini">Todos</button></div>
     </div>
     <div class="editor" id="editor">
       <div class="gut" id="gut" aria-hidden="true"></div>
-      <div class="code">
+      <div class="code" id="codeBox">
+        <div class="curline" id="curline" aria-hidden="true"></div>
+        <pre class="lay gd" id="gd" aria-hidden="true"></pre>
+        <pre class="lay br" id="br" aria-hidden="true"></pre>
         <pre class="lay ul" id="ul" aria-hidden="true"></pre>
         <pre class="lay fm" id="fm" aria-hidden="true"></pre>
         <pre class="lay hl" id="hl" aria-hidden="true"></pre>
@@ -73,10 +77,11 @@
       <label for="inTxt">Datos de entrada <span>(una línea por cada Enter; el programa los usa antes de preguntarte)</span></label>
       <textarea id="inTxt" rows="3" spellcheck="false" autocomplete="off" autocapitalize="off" placeholder="5&#10;8"></textarea>
     </div>
+    <div class="runbar" id="runBar" role="status" hidden><span id="runBarTxt"></span></div>
     <div class="console" id="console" tabindex="0" role="log" aria-label="Salida del programa"><pre id="out" aria-live="polite"></pre></div>
     <div class="slow" id="slow" role="status" hidden><span id="slowTxt"></span><button type="button" id="slowStop" class="btn mini danger">Detener</button></div>
     <div class="diag" id="diag" role="region" aria-label="Problemas" hidden>
-      <button type="button" id="diagHead" class="dhead" aria-expanded="true"><span id="diagTitle">Problemas</span><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <button type="button" id="diagHead" class="dhead" aria-expanded="true"><span id="diagTitle">Problemas</span><svg class="i" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
       <div id="diagList"></div>
     </div>
   </section>
@@ -101,6 +106,13 @@
   <div class="srow"><label for="theme">Tema</label>
     <select id="theme" class="btn sel"><option value="auto">Automático (según el dispositivo)</option><option value="light">Claro</option><option value="dark">Oscuro</option></select></div>
   <div class="srow"><span id="fsLbl">Tamaño de letra</span><span class="grp" role="group" aria-labelledby="fsLbl"><button id="fsm" class="btn icon" type="button" title="Letra más chica" aria-label="Letra más chica">A−</button><output id="fsv" class="fsv"></output><button id="fsp" class="btn icon" type="button" title="Letra más grande" aria-label="Letra más grande">A+</button></span></div>
+  <fieldset><legend>Cómo se ve el código</legend>
+    <label for="tabSel">Tamaño de la sangría (Tab)</label>
+    <select id="tabSel" class="btn sel wsel"><option value="2">2 espacios</option><option value="3">3 espacios</option><option value="4">4 espacios</option><option value="8">8 espacios</option></select>
+    <label class="chk"><input type="checkbox" id="wsChk"> Mostrar espacios y tabulaciones</label>
+    <label class="chk"><input type="checkbox" id="ruleChk" checked> Renglones de cuaderno de fondo</label>
+    <p class="fine">Solo cambia cómo se ve. Las guías de sangría y el resaltado de la llave o el paréntesis que hace pareja con el cursor siempre están: te ayudan a leer la estructura, no escriben nada.</p>
+  </fieldset>
   <fieldset><legend>Ayuda cuando algo no compila</legend>
     <label for="ayudaSel">Cuánta ayuda querés</label>
     <select id="ayudaSel" class="btn sel wsel"><option value="0">0 · Solo el mensaje del compilador</option><option value="1">1 · Mensaje corto y pistas (recomendado)</option><option value="2">2 · Mensaje, explicación y pistas</option></select>
@@ -159,13 +171,14 @@
     <dt><kbd>Tab</kbd> / <kbd>Shift</kbd>+<kbd>Tab</kbd></dt><dd>Sangrar / quitar sangría</dd>
     <dt><kbd>Ctrl</kbd>+<kbd>F</kbd> / <kbd>Ctrl</kbd>+<kbd>H</kbd></dt><dd>Buscar / reemplazar</dd>
     <dt><kbd>F1</kbd> / <kbd>Alt</kbd>+clic</dt><dd>¿Qué es esto? de lo que está bajo el cursor o el clic</dd>
+    <dt><kbd>Esc</kbd></dt><dd>Cerrar la búsqueda, la burbuja o el modo lectura</dd>
     <dt><kbd>Ctrl</kbd>+<kbd>D</kbd></dt><dd>Fin de entrada (cuando el programa espera datos)</dd>
   </dl>
   <p class="fine">Tu código no sale de tu navegador. Se guarda solo en este dispositivo.</p>
   <div class="drow"><button class="btn primary" type="button" data-close>Entendido</button></div>
 </dialog>
 <dialog id="dAyuda" class="wide ayuda" aria-labelledby="tAyuda">
-  <div class="ahead"><h2 id="tAyuda">Ayuda</h2><button type="button" class="btn mini ico" data-close aria-label="Cerrar la ayuda" title="Cerrar (Esc)">✕</button></div>
+  <div class="ahead"><h2 id="tAyuda">Ayuda</h2><button type="button" class="btn mini ico" data-close aria-label="Cerrar la ayuda" title="Cerrar (Esc)"><svg class="i" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
   <form id="aForm" role="search" autocomplete="off"><input id="aQ" type="search" placeholder="Buscá una duda: scanf, %d, ¿por qué 7/2 da 3?" aria-label="Buscar en la ayuda" spellcheck="false" autocapitalize="off" enterkeyhint="search"></form>
   <p class="fine alive" id="aLive" role="status" aria-live="polite"></p>
   <div id="aRes">
