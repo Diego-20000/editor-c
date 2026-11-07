@@ -162,9 +162,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "el else se pega al if más cercano (el de B > 0), no al de A > 0, aunque lo hayas escrito alineado con el primero. Usá llaves para decir a cuál pertenece.",
+  "codigo_editor_actual": "W-else-colgante",
   "verificado_editor_corrige": true
  },
  {
@@ -359,7 +359,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "se esperaba ':' pero se encontró ','",
+  "mensaje_editor_actual": "un case lleva un solo valor: para agrupar varios, escribí un case debajo del otro",
   "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
@@ -387,7 +387,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "se esperaba ':' pero se encontró ';'",
+  "mensaje_editor_actual": "se esperaba ':' después del valor del case",
   "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
@@ -527,7 +527,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "falta un ';' al final de esta línea (antes de ')')",
+  "mensaje_editor_actual": "las tres partes del for se separan con ';' y no con comas",
   "codigo_editor_actual": "E-falta-punto-coma",
   "verificado_editor_corrige": true
  },
@@ -555,7 +555,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "falta un ';' al final de esta línea (antes de ')')",
+  "mensaje_editor_actual": "al for le falta una parte: se esperaba ';' antes de ')'",
   "codigo_editor_actual": "E-falta-punto-coma",
   "verificado_editor_corrige": true
  },
@@ -918,9 +918,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "la condición A < 1 && A > 10 nunca se cumple: ningún valor de A puede cumplir las dos cosas a la vez. Si querías \"o\" (por ejemplo fuera de un rango), se usa ||.",
+  "codigo_editor_actual": "W-condicion-imposible",
   "verificado_editor_corrige": true
  },
  {
@@ -1002,9 +1002,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "&& se calcula antes que ||, así que la condición se agrupa distinto a como la leés (A == 1 || B == 1 && C == 1). Usá paréntesis para dejarlo claro.",
+  "codigo_editor_actual": "W-precedencia-and-or",
   "verificado_editor_corrige": true
  },
  {
@@ -1030,9 +1030,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "A != 1 || A != 2 es siempre verdadera: cualquier número es distinto de 1 o distinto de 2. Para \"ni 1 ni 2\" usá &&.",
+  "codigo_editor_actual": "W-siempre-verdadera",
   "verificado_editor_corrige": true
  },
  {
@@ -1060,7 +1060,7 @@
   "verificado_gcc13": true,
   "detectado_editor": true,
   "mensaje_editor_actual": "\"mayor o igual\" se escribe '>=' (no '=>')",
-  "codigo_editor_actual": "E-otro",
+  "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
  {
@@ -1088,7 +1088,7 @@
   "verificado_gcc13": true,
   "detectado_editor": true,
   "mensaje_editor_actual": "en C \"distinto\" se escribe '!=' (no '<>')",
-  "codigo_editor_actual": "E-otro",
+  "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
  {
@@ -1115,7 +1115,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "hay una asignación '=' dentro de la condición: ¿querías comparar con '=='?",
+  "mensaje_editor_actual": "'=!' no es 'distinto': C lo lee como asignar el contrario. Para \"distinto\" se escribe '!='",
   "codigo_editor_actual": "W-asignacion-en-condicion",
   "verificado_editor_corrige": true
  },
@@ -1143,7 +1143,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "se esperaba '(' pero se encontró 'A'",
+  "mensaje_editor_actual": "se esperaba '(' después del if: la condición va entre paréntesis",
   "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
@@ -1226,9 +1226,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "S = 0 dentro del lazo borra el total en cada vuelta, y al final solo queda el último dato. La inicialización va antes del lazo.",
+  "codigo_editor_actual": "W-acumulador-reiniciado",
   "verificado_editor_corrige": true
  },
  {
@@ -1282,9 +1282,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "I = I + 1 dentro del cuerpo se suma al cambio que ya hace el for (I++), y el lazo da menos vueltas de las que esperás. Dejá que el for cuente solo.",
+  "codigo_editor_actual": "W-for-variable-modificada",
   "verificado_editor_corrige": true
  },
  {
@@ -1339,7 +1339,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "a la izquierda del = tiene que haber una variable",
+  "mensaje_editor_actual": "a la izquierda del '=' tiene que haber una variable, y esto es una cuenta. Para comparar se usa '=='",
   "codigo_editor_actual": "E-otro",
   "verificado_editor_corrige": true
  },
@@ -1367,8 +1367,8 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "no se puede operar con un texto entre comillas",
-  "codigo_editor_actual": "E-otro",
+  "mensaje_editor_actual": "no se puede operar con un texto entre comillas: una letra va con comillas simples ('A') y para comparar textos se usa strcmp",
+  "codigo_editor_actual": "E-comillas-dobles",
   "verificado_editor_corrige": true
  },
  {

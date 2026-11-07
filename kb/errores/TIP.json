@@ -416,8 +416,8 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "no se puede usar un texto entre comillas como número",
-  "codigo_editor_actual": "E-otro",
+  "mensaje_editor_actual": "un char se escribe con comillas simples ('A'): las comillas dobles son para textos",
+  "codigo_editor_actual": "E-comillas-dobles",
   "verificado_editor_corrige": true
  },
  {
@@ -864,8 +864,8 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "no se puede operar con un texto entre comillas",
-  "codigo_editor_actual": "E-otro",
+  "mensaje_editor_actual": "no se puede operar con un texto entre comillas: una letra va con comillas simples ('A') y para comparar textos se usa strcmp",
+  "codigo_editor_actual": "E-comillas-dobles",
   "verificado_editor_corrige": true
  },
  {

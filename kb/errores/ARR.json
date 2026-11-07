@@ -246,9 +246,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "error",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "un arreglo cuyo tamaño no es un número fijo no se puede inicializar con llaves (una constante const no alcanza en C): usá un número o un #define",
+  "codigo_editor_actual": "E-arreglo",
   "verificado_editor_corrige": true
  },
  {
@@ -302,9 +302,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "el arreglo tiene 3 lugares pero le diste 4 valores: los que sobran no entran",
+  "codigo_editor_actual": "W-arreglo",
   "verificado_editor_corrige": true
  },
  {
@@ -331,7 +331,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "falta una expresión antes de '{'",
+  "mensaje_editor_actual": "las llaves { } solo sirven para dar valores al declarar un arreglo; después hay que cargar posición por posición",
   "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
@@ -471,8 +471,8 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "'M' tiene 2 dimensión(es) y se usó con 1",
-  "codigo_editor_actual": "E-otro",
+  "mensaje_editor_actual": "una matriz se indexa con un corchete por dimensión: M[I][J], no M[I, J]",
+  "codigo_editor_actual": "E-arreglo",
   "verificado_editor_corrige": true
  },
  {
@@ -555,7 +555,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "se esperaba ']' pero se encontró ','",
+  "mensaje_editor_actual": "una matriz se declara con un corchete por dimensión: int M[2][3], no M[2, 3]",
   "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
@@ -834,9 +834,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "el texto tiene más letras (4) que lugares el arreglo (3): no entra",
+  "codigo_editor_actual": "W-arreglo",
   "verificado_editor_corrige": true
  },
  {
@@ -946,9 +946,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "scanf(\"%s\", &T): el nombre de un arreglo ya es su dirección, va sin &",
+  "codigo_editor_actual": "W-portabilidad",
   "verificado_editor_corrige": true
  },
  {
@@ -1030,9 +1030,9 @@
   "riesgo_falso_positivo": "if (strcmp(A, B)) es correcto si se quiere actuar cuando son distintos.",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "strcmp devuelve 0 cuando los textos son iguales: usado solo, la condición se cumple cuando son DISTINTOS. Compará con 0",
+  "codigo_editor_actual": "W-arreglo",
   "verificado_editor_corrige": true
  },
  {
@@ -1058,9 +1058,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "strcmp no devuelve 1 ni -1: devuelve cualquier número positivo o negativo según las letras. Se compara con 0, o con > 0 y < 0",
+  "codigo_editor_actual": "W-arreglo",
   "verificado_editor_corrige": true
  },
  {
@@ -1114,9 +1114,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "gets fue eliminada de C11 porque no controla el tamaño y puede escribir fuera del arreglo. Se usa fgets(texto, tamaño, stdin)",
+  "codigo_editor_actual": "W-portabilidad",
   "verificado_editor_corrige": true
  },
  {
@@ -1255,8 +1255,8 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "no se puede usar un texto entre comillas como número",
-  "codigo_editor_actual": "E-otro",
+  "mensaje_editor_actual": "un int guarda un número, no un texto",
+  "codigo_editor_actual": "E-comillas-dobles",
   "verificado_editor_corrige": true
  },
  {
@@ -1283,8 +1283,8 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "carácter con comillas simples mal escrito (usá 'a' con un solo carácter)",
-  "codigo_editor_actual": "E-otro",
+  "mensaje_editor_actual": "entre comillas simples va un solo carácter: un texto lleva comillas dobles (\"Hola\")",
+  "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
  {
@@ -1311,8 +1311,8 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "no se puede usar un texto entre comillas como número",
-  "codigo_editor_actual": "E-otro",
+  "mensaje_editor_actual": "un char se escribe con comillas simples ('A'): las comillas dobles son para textos",
+  "codigo_editor_actual": "E-comillas-dobles",
   "verificado_editor_corrige": true
  },
  {
@@ -1535,8 +1535,8 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "printf: '%s' es para textos (un arreglo de char) y el argumento 1 es un número (char): usá '%d' o '%f'",
-  "codigo_editor_actual": "W-printf-formato",
+  "mensaje_editor_actual": "para guardar varios textos hacen falta dos dimensiones: char N[cantidad][largo]. Con una sola, cada elemento guarda una letra",
+  "codigo_editor_actual": "W-arreglo",
   "verificado_editor_corrige": true
  },
  {
@@ -1563,8 +1563,8 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "no se puede operar con un texto entre comillas",
-  "codigo_editor_actual": "E-otro",
+  "mensaje_editor_actual": "no se puede operar con un texto entre comillas: una letra va con comillas simples ('A') y para comparar textos se usa strcmp",
+  "codigo_editor_actual": "E-comillas-dobles",
   "verificado_editor_corrige": true
  },
  {
@@ -1619,8 +1619,8 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "los textos (char arrays) todavía no están soportados: solo se usan dentro de printf",
-  "codigo_editor_actual": "E-texto-no-soportado",
+  "mensaje_editor_actual": "un elemento de un arreglo de char guarda una sola letra: se escribe con comillas simples ('A'), no con comillas dobles",
+  "codigo_editor_actual": "E-comillas-dobles",
   "verificado_editor_corrige": true
  },
  {
@@ -1647,8 +1647,8 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "carácter con comillas simples mal escrito (usá 'a' con un solo carácter)",
-  "codigo_editor_actual": "E-otro",
+  "mensaje_editor_actual": "entre comillas simples va un solo carácter: un texto lleva comillas dobles (\"Hola\")",
+  "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
  {

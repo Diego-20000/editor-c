@@ -134,9 +134,9 @@
   "riesgo_falso_positivo": "Un programa que muestra el código a propósito: printf(\"%d\", L);",
   "nivel": "informacion",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "%d muestra el número del carácter (65), no la letra. Para ver la letra se usa %c.",
+  "codigo_editor_actual": "W-char-con-d",
   "verificado_editor_corrige": true
  },
  {
@@ -528,7 +528,7 @@
   "verificado_gcc13": true,
   "detectado_editor": true,
   "mensaje_editor_actual": "cadena sin cerrar (falta la comilla \")",
-  "codigo_editor_actual": "E-otro",
+  "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
  {
@@ -555,8 +555,8 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "carácter con comillas simples mal escrito (usá 'a' con un solo carácter)",
-  "codigo_editor_actual": "E-otro",
+  "mensaje_editor_actual": "entre comillas simples va un solo carácter: un texto lleva comillas dobles (\"Hola\")",
+  "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
  {
@@ -583,7 +583,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "se esperaba ')' pero se encontró 'A'",
+  "mensaje_editor_actual": "falta una coma entre el texto y 'A'",
   "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
@@ -639,7 +639,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "la función 'Printf' no está declarada. ¿Quisiste decir 'printf'? (en C todo va en minúscula y se escribe igual)",
+  "mensaje_editor_actual": "'Printf' no existe: en C todo se escribe en minúscula, la función es printf",
   "codigo_editor_actual": "E-no-declarada",
   "verificado_editor_corrige": true
  },
@@ -667,7 +667,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "el operador '&' solo se usa dentro de scanf",
+  "mensaje_editor_actual": "con & no se muestra el valor sino la dirección de memoria: el & es para scanf, en printf va la variable sola",
   "codigo_editor_actual": "E-otro",
   "verificado_editor_corrige": true
  },
@@ -722,9 +722,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "mostrás SUMA antes de calcularla en la línea 5 (SUMA = A + B), por eso aparece el valor viejo. Primero se calcula y después se muestra.",
+  "codigo_editor_actual": "W-mostrar-antes-de-calcular",
   "verificado_editor_corrige": true
  },
  {
@@ -947,7 +947,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "se esperaba ')' pero se encontró 'hola'",
+  "mensaje_editor_actual": "las comillas de adentro cierran el texto antes de tiempo: para mostrar comillas hay que escribir \\\"",
   "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
@@ -975,7 +975,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "printf necesita un texto entre comillas como primer argumento",
+  "mensaje_editor_actual": "en C no se pueden unir un texto y un valor con '+': el valor se muestra con un % dentro del texto y se pasa como otro argumento, separado por coma",
   "codigo_editor_actual": "E-funcion",
   "verificado_editor_corrige": true
  },
@@ -1227,7 +1227,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "'A' no está declarada. ¿Quisiste decir 'L'? (C distingue mayúsculas y minúsculas)",
+  "mensaje_editor_actual": "'A' no está declarada: si querías la letra A escribila entre comillas simples; si querías una variable, usá su nombre",
   "codigo_editor_actual": "E-no-declarada",
   "verificado_editor_corrige": true
  },

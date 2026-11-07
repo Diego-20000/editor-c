@@ -415,8 +415,8 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "no se entiende 'include' fuera de una función",
-  "codigo_editor_actual": "E-funcion",
+  "mensaje_editor_actual": "falta el # al principio de include",
+  "codigo_editor_actual": "E-preprocesador",
   "verificado_editor_corrige": true
  },
  {
@@ -527,8 +527,8 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "los punteros todavía no están soportados en este editor",
-  "codigo_editor_actual": "E-no-soportado",
+  "mensaje_editor_actual": "el ';' del #define de 'PI' se copia en cada uso y deja una instrucción suelta: sacalo del #define",
+  "codigo_editor_actual": "E-preprocesador",
   "verificado_editor_corrige": true
  },
  {
@@ -555,8 +555,8 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "falta una expresión antes de '='",
-  "codigo_editor_actual": "E-sintaxis",
+  "mensaje_editor_actual": "el #define de 'N' no lleva '=': es #define N valor",
+  "codigo_editor_actual": "E-preprocesador",
   "verificado_editor_corrige": true
  },
  {
@@ -583,8 +583,8 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "los punteros todavía no están soportados en este editor",
-  "codigo_editor_actual": "E-no-soportado",
+  "mensaje_editor_actual": "'N' está definida sin valor (#define N) y al usarla queda una cuenta incompleta",
+  "codigo_editor_actual": "E-preprocesador",
   "verificado_editor_corrige": true
  },
  {
@@ -695,7 +695,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "se esperaba ')' pero se encontró ';'",
+  "mensaje_editor_actual": "el ';' del #define de 'MAX' se copia dentro de la cuenta: sacalo del #define",
   "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
@@ -723,8 +723,8 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "solo se pueden llamar funciones por su nombre",
-  "codigo_editor_actual": "E-otro",
+  "mensaje_editor_actual": "solo se pueden llamar funciones por su nombre: ¿el #define tiene un espacio entre el nombre y el paréntesis?",
+  "codigo_editor_actual": "E-preprocesador",
   "verificado_editor_corrige": true
  },
  {
@@ -779,8 +779,8 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "a la izquierda del = tiene que haber una variable",
-  "codigo_editor_actual": "E-otro",
+  "mensaje_editor_actual": "'N' es un valor que se copia (#define), no una variable: no se le puede asignar otro valor",
+  "codigo_editor_actual": "E-preprocesador",
   "verificado_editor_corrige": true
  },
  {
@@ -807,8 +807,8 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "a la izquierda del = tiene que haber una variable",
-  "codigo_editor_actual": "E-otro",
+  "mensaje_editor_actual": "'N' es una constante #define, no una variable: no hay dónde guardar el dato. Declará una variable",
+  "codigo_editor_actual": "E-preprocesador",
   "verificado_editor_corrige": true
  },
  {
@@ -863,8 +863,8 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "se esperaba un nombre pero se encontró '10'",
-  "codigo_editor_actual": "E-sintaxis",
+  "mensaje_editor_actual": "'A' está definida con #define: acá se reemplaza por su valor y queda un nombre inválido. Cambiá el nombre de la constante o el de la variable",
+  "codigo_editor_actual": "E-preprocesador",
   "verificado_editor_corrige": true
  },
  {
@@ -891,8 +891,8 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "no se entiende 'define' fuera de una función",
-  "codigo_editor_actual": "E-funcion",
+  "mensaje_editor_actual": "falta el # delante de define",
+  "codigo_editor_actual": "E-preprocesador",
   "verificado_editor_corrige": true
  },
  {
@@ -919,8 +919,8 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "no se entiende 'N' fuera de una función",
-  "codigo_editor_actual": "E-funcion",
+  "mensaje_editor_actual": "#define no lleva el tipo: el nombre de la constante va primero y después su valor (#define N 5)",
+  "codigo_editor_actual": "E-preprocesador",
   "verificado_editor_corrige": true
  },
  {
@@ -1086,9 +1086,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "system(\"pause\") es un comando de Windows: en Linux, Programiz y OnlineGDB no existe y muestra un error. Para esperar una tecla se usa getchar()",
+  "codigo_editor_actual": "W-portabilidad",
   "verificado_editor_corrige": true
  },
  {
@@ -1114,9 +1114,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "system(\"cls\") es un comando de Windows: en Linux, Programiz y OnlineGDB no existe",
+  "codigo_editor_actual": "W-portabilidad",
   "verificado_editor_corrige": true
  },
  {
@@ -1142,9 +1142,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "el #include va al principio del programa, afuera de las funciones: acá adentro rompe el programa",
+  "codigo_editor_actual": "W-portabilidad",
   "verificado_editor_corrige": true
  },
  {
@@ -1170,9 +1170,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "usás printf antes de este #include: los #include van todos al principio, antes de usar sus funciones",
+  "codigo_editor_actual": "W-portabilidad",
   "verificado_editor_corrige": true
  },
  {
@@ -1311,7 +1311,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "la función 'itoa' no está declarada",
+  "mensaje_editor_actual": "itoa no es del estándar de C y no existe en gcc",
   "codigo_editor_actual": "E-no-declarada",
   "verificado_editor_corrige": true
  },
@@ -1339,7 +1339,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "la función 'strrev' no está declarada. ¿Quisiste decir 'strlen'? (en C todo va en minúscula y se escribe igual)",
+  "mensaje_editor_actual": "strrev no existe en gcc (es de Windows)",
   "codigo_editor_actual": "E-no-declarada",
   "verificado_editor_corrige": true
  },
@@ -1366,9 +1366,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "fflush(stdin) no está definido en C estándar: en Linux (gcc, Programiz, OnlineGDB) no limpia el teclado",
+  "codigo_editor_actual": "W-portabilidad",
   "verificado_editor_corrige": true
  }
 ]

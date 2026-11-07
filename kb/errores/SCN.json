@@ -695,7 +695,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "falta una expresión antes de '%'",
+  "mensaje_editor_actual": "el formato de scanf va entre comillas: scanf(\"%d\", ...)",
   "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
@@ -723,7 +723,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "scanf necesita un texto entre comillas como primer argumento",
+  "mensaje_editor_actual": "scanf necesita un texto entre comillas como primer argumento: falta la coma entre el formato y la variable",
   "codigo_editor_actual": "E-funcion",
   "verificado_editor_corrige": true
  },
@@ -751,7 +751,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "la función 'Scanf' no está declarada. ¿Quisiste decir 'scanf'? (en C todo va en minúscula y se escribe igual)",
+  "mensaje_editor_actual": "'Scanf' no existe: la función se escribe scanf, todo en minúscula",
   "codigo_editor_actual": "E-no-declarada",
   "verificado_editor_corrige": true
  },
@@ -778,9 +778,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "calculás B = A * 2 antes de leer A con scanf (línea 5), por eso la cuenta usa los valores viejos. Leé los datos primero y calculá después.",
+  "codigo_editor_actual": "W-calcular-antes-de-leer",
   "verificado_editor_corrige": true
  },
  {
@@ -1031,8 +1031,8 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "carácter con comillas simples mal escrito (usá 'a' con un solo carácter)",
-  "codigo_editor_actual": "E-otro",
+  "mensaje_editor_actual": "entre comillas simples va un solo carácter: un texto lleva comillas dobles (\"Hola\")",
+  "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  }
 ]
