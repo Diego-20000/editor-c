@@ -78,9 +78,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "el (float) se aplica al resultado de A / B, que ya se truncó porque son dos enteros. El cast tiene que ir sobre un operando, antes de dividir.",
+  "codigo_editor_actual": "W-cast-despues-de-dividir",
   "verificado_editor_corrige": true
  },
  {
@@ -106,9 +106,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "9 / 5 son dos enteros y da 1, no 1.8. La división se trunca antes de seguir con la cuenta.",
+  "codigo_editor_actual": "W-division-entera-formula",
   "verificado_editor_corrige": true
  },
  {
@@ -134,9 +134,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "PARTE / TOTAL divide dos enteros y la división se trunca antes de seguir con la cuenta (por ejemplo 3 / 4 da 0).",
+  "codigo_editor_actual": "W-division-entera-formula",
   "verificado_editor_corrige": true
  },
  {
@@ -162,9 +162,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "1 / 2 son dos enteros y da 0, no 0.5. La división se trunca antes de seguir con la cuenta.",
+  "codigo_editor_actual": "W-division-entera-formula",
   "verificado_editor_corrige": true
  },
  {
@@ -190,9 +190,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "1 / N es una división entera: da 1 solo cuando N vale 1 y 0 con los demás.",
+  "codigo_editor_actual": "W-division-entera-formula",
   "verificado_editor_corrige": true
  },
  {
@@ -274,9 +274,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "200 no entra en un char con signo, que llega hasta 127. Se guarda como -56.",
+  "codigo_editor_actual": "W-char-fuera-de-rango",
   "verificado_editor_corrige": true,
   "notas": "gcc 13 con -Wall -Wextra no avisa de esta conversión; solo lo haría con -Wconversion."
  },
@@ -331,9 +331,9 @@
   "riesgo_falso_positivo": "Cuando se quiere mostrar el código ASCII a propósito.",
   "nivel": "informacion",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "%d muestra el número del carácter (65), no la letra. Para ver la letra se usa %c.",
+  "codigo_editor_actual": "W-char-con-d",
   "verificado_editor_corrige": true
  },
  {
@@ -499,9 +499,9 @@
   "riesgo_falso_positivo": "Cuando se quiere la parte entera a propósito.",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "al guardar el decimal X en el entero R se pierden los decimales sin redondear: 3.99 se guarda como 3. Si lo querés así, escribí el cast (int) para que se note.",
+  "codigo_editor_actual": "W-truncamiento",
   "verificado_editor_corrige": true
  },
  {
@@ -527,9 +527,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "informacion",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "IMPORTE * 100 puede dar un número como 28.999999 y al guardarlo en un entero se corta a 28. Sumá 0.5 antes de guardarlo para redondear.",
+  "codigo_editor_actual": "W-truncamiento-centavos",
   "verificado_editor_corrige": true
  },
  {
@@ -583,9 +583,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "U es unsigned y nunca es negativo, así que U >= 0 siempre es verdadero. Si es la condición de un bucle, no termina nunca: usá un int.",
+  "codigo_editor_actual": "W-unsigned-siempre-verdadero",
   "verificado_editor_corrige": true
  },
  {
@@ -611,9 +611,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "A - B es unsigned y nunca es negativo, así que la condición A - B < 0 no se cumple jamás. Compará los valores directamente (por ejemplo A < B).",
+  "codigo_editor_actual": "W-unsigned-nunca-negativo",
   "verificado_editor_corrige": true
  },
  {
@@ -835,9 +835,9 @@
   "riesgo_falso_positivo": "Cuando se quiere usar el código ASCII.",
   "nivel": "informacion",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "'5' es el carácter cuyo código es 53, no el número 5. Las cuentas con N usan ese código.",
+  "codigo_editor_actual": "W-digito-como-numero",
   "verificado_editor_corrige": true
  },
  {
@@ -1004,9 +1004,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "100000 * 100000 no entra en un int (llega hasta 2147483647): el resultado se pasa del máximo y da un valor equivocado. Usá long o decimales.",
+  "codigo_editor_actual": "W-constante-desborda",
   "verificado_editor_corrige": true
  },
  {
@@ -1088,9 +1088,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "I es char y solo va de -128 a 127: I < 200 es siempre verdadera. Usá un int para este contador.",
+  "codigo_editor_actual": "W-char-comparacion-fuera",
   "verificado_editor_corrige": true
  },
  {
@@ -1144,9 +1144,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "se comparan un int (A) y un unsigned (B): un valor negativo se convierte en un número enorme y la comparación da otro resultado.",
+  "codigo_editor_actual": "W-int-con-unsigned",
   "verificado_editor_corrige": true
  }
 ]

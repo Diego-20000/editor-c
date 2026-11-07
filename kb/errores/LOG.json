@@ -22,9 +22,9 @@
   "riesgo_falso_positivo": "Si el mensaje no nombra las variables no hay forma de saber el orden pedido: no avisar. Un programa que pide 'B y luego A' a propósito sería un falso positivo.",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "el mensaje pide primero A y después B, pero el scanf los lee en otro orden (B, A). El primer número que escribe el usuario va a parar a B.",
+  "codigo_editor_actual": "W-orden-lectura",
   "verificado_editor_corrige": true
  },
  {
@@ -50,9 +50,9 @@
   "riesgo_falso_positivo": "X = A + B / 2 es correcto en otros contextos (por ejemplo A + media de B). Restringir la sospecha a nombres PROM/PROMEDIO.",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "en N1 + N2 / 2 la división se hace antes que la suma, así que solo N2 se divide por 2. Falta un paréntesis alrededor de la suma.",
+  "codigo_editor_actual": "W-promedio-sin-parentesis",
   "verificado_editor_corrige": true
  },
  {
@@ -106,9 +106,9 @@
   "riesgo_falso_positivo": "Hay programas donde se quiere A = B y después B = A a propósito (dejar los dos igual); es muy raro en la materia.",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "después de A = B ya perdiste el valor original de A, y la línea siguiente (B = A) le devuelve el mismo valor. Hace falta una variable auxiliar para intercambiar.",
+  "codigo_editor_actual": "W-intercambio-sin-auxiliar",
   "verificado_editor_corrige": true
  },
  {
@@ -134,9 +134,9 @@
   "riesgo_falso_positivo": "Una variable que se muestra dos veces (antes y después de la cuenta, a propósito) no debe avisar.",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "mostrás S antes de calcularla en la línea 7 (S = A + B), por eso aparece el valor viejo. Primero se calcula y después se muestra.",
+  "codigo_editor_actual": "W-mostrar-antes-de-calcular",
   "verificado_editor_corrige": true
  },
  {
@@ -162,9 +162,9 @@
   "riesgo_falso_positivo": "Si la variable se vuelve a calcular después del scanf, no hay problema; revisar que no haya otra asignación posterior a S.",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "calculás S = A + B antes de leer A y B con scanf (línea 7), por eso la cuenta usa los valores viejos. Leé los datos primero y calculá después.",
+  "codigo_editor_actual": "W-calcular-antes-de-leer",
   "verificado_editor_corrige": true
  },
  {
@@ -190,9 +190,9 @@
   "riesgo_falso_positivo": "Los nombres engañan: un MAYOR que cuenta algo distinto sería un falso positivo. Avisar solo con if (X < Y) { MAYOR = X; }.",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "la condición A < B es verdadera cuando A es el menor, pero en ese caso guardás A en MAYOR. Los lados V y F están cruzados.",
+  "codigo_editor_actual": "W-condicion-invertida",
   "verificado_editor_corrige": true
  },
  {
@@ -218,9 +218,9 @@
   "riesgo_falso_positivo": "Un lado vacío a propósito (if (X > 0) { } else { ... }) es válido pero casi nunca se escribe así; se puede reescribir con la condición contraria.",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "el lado verdadero del if está vacío, así que cuando se cumple (NOTA >= 6) no pasa nada. Falta decir qué hace el programa en ese caso.",
+  "codigo_editor_actual": "W-rama-verdadera-vacia",
   "verificado_editor_corrige": true
  },
  {
@@ -246,9 +246,9 @@
   "riesgo_falso_positivo": "Dos if independientes son correctos si los casos no se excluyen; avisar solo si las condiciones son mutuamente excluyentes por construcción.",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "el else es del segundo if (N < 0), así que cuando se cumple N > 0 aparece también lo del else. Los casos tienen que ir encadenados con else if.",
+  "codigo_editor_actual": "W-ifs-sueltos",
   "verificado_editor_corrige": true
  },
  {
@@ -274,9 +274,9 @@
   "riesgo_falso_positivo": "Ninguno si el cuerpo del if externo ya tiene llaves.",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "el else se pega al if más cercano (el de B > 0), no al de A > 0, aunque lo hayas escrito alineado con el primero. Usá llaves para decir a cuál pertenece.",
+  "codigo_editor_actual": "W-else-colgante",
   "verificado_editor_corrige": true
  },
  {
@@ -302,9 +302,9 @@
   "riesgo_falso_positivo": "Cadena con <= y orden creciente correcta; comparar siempre el sentido (>= decreciente, <= creciente).",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "nunca se llega a NOTA >= 7, porque todo lo que cumple eso ya entró en NOTA >= 4 más arriba. Probá primero la condición más exigente.",
+  "codigo_editor_actual": "W-rama-inalcanzable",
   "verificado_editor_corrige": true
  },
  {
@@ -360,9 +360,9 @@
   "riesgo_falso_positivo": "Muy específico del patrón; en otros programas, && con !=  y == sobre restos distintos es válido.",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "unidas por && las condiciones R100 != 0 y R400 == 0 no pueden cumplirse a la vez: un múltiplo de 400 siempre es múltiplo de 100. Revisá qué condiciones van con && y cuáles con ||.",
+  "codigo_editor_actual": "W-condicion-imposible",
   "verificado_editor_corrige": true,
   "solucion_ejercicio": true
  },
@@ -389,9 +389,9 @@
   "riesgo_falso_positivo": "R = N / 3 con otro uso (promedio, cociente) sería falso positivo; limitar a nombres R, R3, RESTO y mensajes con 'múltiplo'.",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "N / 3 da el cociente y no el resto, por eso R == 0 no dice si es múltiplo. Para saber si divide justo hace falta el resto: N % 3.",
+  "codigo_editor_actual": "W-resto-con-division",
   "verificado_editor_corrige": true
  },
  {
@@ -417,9 +417,9 @@
   "riesgo_falso_positivo": "if (R) para detectar 'no es múltiplo' es correcto; limitar el aviso al caso con mensaje de múltiplo en la rama V.",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "if (R) es verdadero cuando el resto es distinto de 0, es decir, cuando NO es múltiplo. Comparalo con 0 para que se lea como lo pensaste.",
+  "codigo_editor_actual": "W-resto-sin-comparar",
   "verificado_editor_corrige": true
  },
  {
@@ -501,9 +501,9 @@
   "riesgo_falso_positivo": "Ninguno mientras las constantes sean fijas; con variables no se puede decidir de forma estática.",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "la condición N < 0 && N > 10 nunca se cumple: ningún valor de N puede cumplir las dos cosas a la vez. Si querías \"o\" (por ejemplo fuera de un rango), se usa ||.",
+  "codigo_editor_actual": "W-condicion-imposible",
   "verificado_editor_corrige": true
  },
  {
@@ -529,9 +529,9 @@
   "riesgo_falso_positivo": "Si el rango excluye un extremo, la cuenta sin +1 es la correcta: no avisar sin pista del texto.",
   "nivel": "informacion",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "de LI a LS con los dos extremos incluidos hay LS - LI + 1 números, y N = LS - LI deja uno menos. Falta sumar 1.",
+  "codigo_editor_actual": "W-cuenta-sin-mas-uno",
   "verificado_editor_corrige": true
  },
  {
@@ -557,9 +557,9 @@
   "riesgo_falso_positivo": "Imposible decidir sin leer el enunciado.",
   "nivel": "informacion",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "entre LI y LS, sin contar los extremos, hay LS - LI - 1 números, y N = LS - LI + 1 cuenta de más. Hay que restar 1 en lugar de sumarlo.",
+  "codigo_editor_actual": "W-cuenta-con-mas-uno",
   "verificado_editor_corrige": true
  },
  {
@@ -613,9 +613,9 @@
   "riesgo_falso_positivo": "Si i se usa como valor (de 1 a N-1 a propósito) es correcto: no avisar cuando i aparece en el cuerpo.",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "el for arranca en 1 y corta en i < N: da N - 1 vueltas, un dato menos de los que pediste.",
+  "codigo_editor_actual": "W-for-una-vuelta-menos",
   "verificado_editor_corrige": true
  },
  {
@@ -641,9 +641,9 @@
   "riesgo_falso_positivo": "Si el algoritmo pide N + 1 repeticiones (valores de 0 a N a propósito) y usa i en el cuerpo, no avisar.",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "el for arranca en 0 y usa i <= N: da N + 1 vueltas, una de más, y la última lectura falla y vuelve a sumar el último valor.",
+  "codigo_editor_actual": "W-for-una-vuelta-mas",
   "verificado_editor_corrige": true
  },
  {
@@ -669,9 +669,9 @@
   "riesgo_falso_positivo": "Un total parcial que se reinicia a propósito (promedio por grupo) tiene que mostrarse dentro del lazo; no avisar si hay un printf de esa variable en el mismo cuerpo.",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "A = 0 dentro del lazo borra el total en cada vuelta, y al final solo queda el último dato. La inicialización va antes del lazo.",
+  "codigo_editor_actual": "W-acumulador-reiniciado",
   "verificado_editor_corrige": true
  },
  {
@@ -697,9 +697,9 @@
   "riesgo_falso_positivo": "Un contador que arranca en 1 porque ya contó un caso (el primer dato) es correcto en Opción B de lectura adelantada; revisar que el primer dato se cuente.",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "CP arranca en 1, así que cuenta 1 más de los que hay. Un contador empieza en 0.",
+  "codigo_editor_actual": "W-contador-en-uno",
   "verificado_editor_corrige": true
  },
  {
@@ -781,9 +781,9 @@
   "riesgo_falso_positivo": "Si el if tiene un else que acumula lo mismo, N puede ser correcto; verificar que acumulador y contador comparten el if.",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "dividís AE (la suma de los que cumplen) por N (todos los datos) en vez de por C (los que se sumaron). El promedio da menos de lo que corresponde.",
+  "codigo_editor_actual": "W-promedio-con-total",
   "verificado_editor_corrige": true
  },
  {
@@ -809,9 +809,9 @@
   "riesgo_falso_positivo": "Un mínimo inicializado con un valor tope a propósito (32767) es válido; limitar el aviso al literal 0.",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "MENOR arranca en 0, que no es uno de los datos, y ningún dato positivo es menor que 0. El resultado queda siempre en 0.",
+  "codigo_editor_actual": "W-minimo-en-cero",
   "verificado_editor_corrige": true
  },
  {
@@ -893,9 +893,9 @@
   "riesgo_falso_positivo": "Ninguno si se pide siempre llaves; no avisar si la segunda instrucción no tiene sangría extra y está claramente fuera.",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "sin llaves, el if solo controla la primera instrucción, y lo que sigue en la misma línea (CN++) se ejecuta siempre. Poné llaves para agrupar lo que depende de la condición.",
+  "codigo_editor_actual": "W-if-sin-llaves",
   "verificado_editor_corrige": true
  },
  {
@@ -949,9 +949,9 @@
   "riesgo_falso_positivo": "Si la segunda instrucción es el cierre del programa (printf final) no avisar.",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "sin llaves, el for repite solo el scanf, y lo que sigue (if (V < 0)) se hace una sola vez con el último dato. Encerrá todo el cuerpo del lazo entre llaves.",
+  "codigo_editor_actual": "W-for-sin-llaves",
   "verificado_editor_corrige": true
  },
  {
@@ -977,9 +977,9 @@
   "riesgo_falso_positivo": "Sumar i a propósito (suma de 0 a N-1) es correcto; avisar solo si hay un scanf cuyo dato no se usa.",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "sumás i (el número de vuelta) en lugar del dato leído V: V se lee pero no se usa.",
+  "codigo_editor_actual": "W-contador-como-dato",
   "verificado_editor_corrige": true
  },
  {
@@ -1005,9 +1005,9 @@
   "riesgo_falso_positivo": "Un 'contador' que acumula a propósito tiene otro nombre en la materia (A, S, T): limitar al prefijo C.",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "CP suma el valor de V en lugar de sumar 1, así que ya no cuenta sino que acumula. Un contador crece de a uno.",
+  "codigo_editor_actual": "W-contador-suma-dato",
   "verificado_editor_corrige": true
  },
  {
@@ -1033,9 +1033,9 @@
   "riesgo_falso_positivo": "Un contador llamado A con +1 intencional existe; avisar solo si el scanf queda sin uso.",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "A suma 1 en cada vuelta, así que cuenta datos en lugar de sumarlos. El dato V se lee y no se usa.",
+  "codigo_editor_actual": "W-acumulador-suma-uno",
   "verificado_editor_corrige": true
  },
  {
@@ -1118,9 +1118,9 @@
   "riesgo_falso_positivo": "Ninguno.",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "V vale 0 al llegar al while y la condición V != 0 ya es falsa, así que el lazo no se ejecuta ni una vez. El valor inicial forzado tiene que hacer verdadera la condición.",
+  "codigo_editor_actual": "W-lazo-no-entra",
   "verificado_editor_corrige": true
  },
  {
@@ -1146,9 +1146,9 @@
   "riesgo_falso_positivo": "Si el centinela debe contarse (por ejemplo cantidad de lecturas), avisar en nivel 'informacion'.",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "cuando se lee el 0 de corte, igual se suma y se cuenta como un dato más (S = S + V). El valor de corte no es un dato y no debería procesarse.",
+  "codigo_editor_actual": "W-centinela-procesado",
   "verificado_editor_corrige": true
  },
  {
@@ -1174,9 +1174,9 @@
   "riesgo_falso_positivo": "Un lazo que descarta datos a propósito es raro en la materia.",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "leés el siguiente dato con scanf antes de procesar el actual, así que el primero que leíste antes del while (línea 5) se pierde. Primero se procesa el dato leído y después se lee el siguiente.",
+  "codigo_editor_actual": "W-lectura-adelantada",
   "verificado_editor_corrige": true
  },
  {
@@ -1258,9 +1258,9 @@
   "riesgo_falso_positivo": "Si el algoritmo tiene otro criterio para el resto (por ejemplo 'estrictamente menor') es diferente; ninguno en la materia.",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "con R > DEN, cuando R vale justo DEN ya no resta y el resto queda igual al divisor (10 / 5 da cociente 1 y resto 5). El resto nunca puede ser igual al divisor: probá con >=.",
+  "codigo_editor_actual": "W-resto-igual-divisor",
   "verificado_editor_corrige": true
  },
  {
@@ -1315,9 +1315,9 @@
   "riesgo_falso_positivo": "Si el programa muestra el resto con esa variable a propósito, no avisar; limitar al caso de que se muestre junto con el divisor original.",
   "nivel": "informacion",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "NUM terminó valiendo el resto, no el dividendo original, y el mensaje lo muestra como si fuera el dividendo. Restá sobre una copia de NUM.",
+  "codigo_editor_actual": "W-dividendo-pisado",
   "verificado_editor_corrige": true
  },
  {
@@ -1373,9 +1373,9 @@
   "riesgo_falso_positivo": "Ninguno.",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "el for arranca en 0 y usa i <= VE2: da VE2 + 1 vueltas, una de más.",
+  "codigo_editor_actual": "W-for-una-vuelta-mas",
   "verificado_editor_corrige": true
  },
  {
@@ -1401,9 +1401,9 @@
   "riesgo_falso_positivo": "Difícil de generalizar; avisar solo cuando una variable leída aparece en una sola comparación de una cadena de 3.",
   "nivel": "informacion",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "si A no cumple A > B && A > C, queda por decidir entre B y C, pero el else asume uno de los dos sin compararlos.",
+  "codigo_editor_actual": "W-mayor-de-tres",
   "verificado_editor_corrige": true
  },
  {
@@ -1457,9 +1457,9 @@
   "riesgo_falso_positivo": "Ninguno cuando la variable destino es float y los operandos son int.",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "A / B divide dos enteros y la división se trunca antes de seguir con la cuenta (por ejemplo 3 / 4 da 0).",
+  "codigo_editor_actual": "W-division-entera-formula",
   "verificado_editor_corrige": true
  },
  {
@@ -1485,9 +1485,9 @@
   "riesgo_falso_positivo": "Un salto controlado a propósito (i += 2) es válido pero no se usa en la materia.",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "i++ dentro del cuerpo se suma al cambio que ya hace el for (i++), y el lazo da menos vueltas de las que esperás. Dejá que el for cuente solo.",
+  "codigo_editor_actual": "W-for-variable-modificada",
   "verificado_editor_corrige": true
  }
 ]

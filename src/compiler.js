@@ -1,5 +1,5 @@
 /* Compilador del Editor C: subconjunto de C de la materia -> JavaScript.
-   Entrada: texto C. Salida: { js, errors:[{line,msg}], warnings:[{line,msg}] } */
+   Entrada: texto C. Salida: { js, errors:[{line,msg,code,kb?}], warnings:[{line,msg,code,kb?,kbAlt?}] } */
 (function (root) {
   'use strict';
 
@@ -147,7 +147,7 @@
         let j = i + 1, s;
         if (text[j] === '\\') { const r = esc(text, j); s = r[0]; j = r[1]; } else { s = text[j++]; }
         if (text[j] !== "'") throw new CErr("carácter con comillas simples mal escrito (usá 'a' con un solo carácter)", line);
-        out.push({ t: 'num', v: s.charCodeAt(0), kind: 'int', line }); i = j + 1; continue;
+        out.push({ t: 'num', v: s.charCodeAt(0), kind: 'int', line, ch: true }); i = j + 1; continue;
       }
       let op = null;
       for (const o of OPS) if (text.startsWith(o, i)) { op = o; break; }
@@ -155,7 +155,16 @@
       if (c === '\\') throw new CErr("carácter no válido '\\': si querías escribir un texto, ponelo entre comillas, por ejemplo printf(\"Hola\\n\");", line);
       if (c === '“' || c === '”' || c === '‘' || c === '’') throw new CErr("las comillas tipográficas " + c + " no sirven en C: usá las comillas rectas " + (c === '“' || c === '”' ? '"' : "'"), line);
       if (!op) throw new CErr("carácter no válido '" + c + "'", line);
-      out.push({ t: 'op', v: op, line }); i += op.length;
+      // OPE-016: «X =+ Y» / «X =- Y» (el signo pegado al = y separado del operando) no es += ni -=
+      if ((op === '+' || op === '-') && out.length >= 2) {
+        const eq = out[out.length - 1], nm = out[out.length - 2];
+        if (eq.t === 'op' && eq.v === '=' && eq.e === i && (nm.t === 'id' || (nm.t === 'op' && nm.v === ']')) && (text[i + 1] === ' ' || text[i + 1] === '\t')) {
+          const nom = nm.t === 'id' ? nm.v : 'variable';
+          const mo = /^\s*([A-Za-z_]\w*|\d[\w.]*)/.exec(text.slice(i + 1, i + 40)); const opd = mo ? mo[1] : 'valor';
+          includes.avisos.push({ line, kb: 'OPE-016', msg: nom + ' =' + op + ' ' + opd + ' asigna ' + op + opd + ' en lugar de ' + (op === '+' ? 'sumar' : 'restar') + ". En C el operador es '" + op + "=', o escribí " + nom + ' = ' + nom + ' ' + op + ' ' + opd + '.' });
+        }
+      }
+      out.push(op === '=' ? { t: 'op', v: op, line, e: i + 1 } : { t: 'op', v: op, line }); i += op.length;
     }
     if (cs.length) throw new CErr('falta el #endif de un #if / #ifdef', line);
     return out;
@@ -512,7 +521,7 @@
     }
     primary() {
       const t = this.next();
-      if (t.t === 'num') return { k: 'num', v: t.v, kind: t.kind, big: t.big, line: t.line };
+      if (t.t === 'num') return { k: 'num', v: t.v, kind: t.kind, big: t.big, line: t.line, ch: t.ch };
       if (t.t === 'str') {
         let s = t.v;
         while (this.peek().t === 'str') s += this.next().v;
@@ -523,7 +532,7 @@
         if (RESERVED.has(t.v)) throw new CErr("no se esperaba '" + t.v + "' acá", t.line);
         return { k: 'id', name: t.v, line: t.line };
       }
-      if (t.t === 'op' && t.v === '(') { const e = this.expr(); this.expect(')'); return e; }
+      if (t.t === 'op' && t.v === '(') { const e = this.expr(); this.expect(')'); e.par = true; return e; }
       const found = t.t === 'eof' ? 'el final del archivo' : "'" + t.v + "'";
       const line = t.t === 'eof' ? this.prevLine() : t.line;
       const ant = this.t[this.p - 2];
@@ -564,8 +573,9 @@
       this.ntemp = 0; this.fnHoist = []; this.assignLog = []; this.curLine = 1; this.loopDepth = 0; this.switchDepth = 0; this.undeclared = new Set(); this.inSC = 0;
       this.incl = new Set((this.opts.includes || []).map((h) => h.replace(/^[<"]|[>"]$/g, '')));
     }
-    err(msg, line) { this.errors.push({ line: line || this.curLine, msg }); }
-    warn(msg, line) { line = line || this.curLine; const k = line + '|' + msg; if (this.seenW.has(k)) return; this.seenW.add(k); this.warnings.push({ line, msg }); }
+    // kb = id del caso de la base de conocimiento (kb/errores) que explica este diagnóstico; alt = ids de casos gemelos
+    err(msg, line, kb) { const d = { line: line || this.curLine, msg }; if (kb) d.kb = kb; this.errors.push(d); }
+    warn(msg, line, kb, alt) { line = line || this.curLine; const k = line + '|' + msg; if (this.seenW.has(k)) return; this.seenW.add(k); const d = { line, msg }; if (kb) d.kb = kb; if (alt) d.kbAlt = [].concat(alt); this.warnings.push(d); }
     push() { this.scopes.push(new Map()); }
     pop() { this.scopes.pop(); }
     declare(name, info, line) {
@@ -596,7 +606,7 @@
     }
 
     checkIncludes() {
-      for (const a of ((this.opts.includes && this.opts.includes.avisos) || [])) this.warn(a.msg, a.line);
+      for (const a of ((this.opts.includes && this.opts.includes.avisos) || [])) this.warn(a.msg, a.line, a.kb);
       const ok = ['stdio.h', 'math.h', 'stdlib.h', 'string.h', 'ctype.h', 'time.h', 'limits.h', 'stdbool.h', 'conio.h', 'float.h', 'stdint.h', 'stddef.h', 'assert.h', 'errno.h', 'locale.h', 'stdarg.h', 'inttypes.h', 'signal.h'];
       for (const h of (this.opts.includes || [])) {
         const nm = h.replace(/^[<"]|[>"]$/g, '');
@@ -640,6 +650,7 @@
       for (const it of this.items) if (it.k === 'func') fcs.push(this.funcCode(it));
       for (const h of this.hoisted) out.push(h);
       for (const f of fcs) out.push(f);
+      if (!this.errors.length) reglasKB(this, this.items);
       out.push('return f_main;');
       return out.join('\n');
     }
@@ -1472,6 +1483,813 @@
     }
   }
 
+  /* ================= REGLAS DEL ENTRENADOR (kb/errores) =================
+     Reconocen, sobre el árbol del programa, los errores de la base de conocimiento que gcc no marca
+     (lógica del algoritmo, tipos, operadores). Cada aviso lleva el id del caso en `kb`; el texto largo
+     (explicación, pistas) lo muestra la interfaz desde la base. REGLA DE ORO: ningún falso positivo:
+     ante la duda, la regla no avisa (ver kb/PENDIENTES-REGLAS.md). Una falla acá nunca rompe la compilación. */
+  const KB_CODIGO = {
+    'LOG-001': 'orden-lectura', 'LOG-002': 'promedio-sin-parentesis', 'LOG-004': 'intercambio-sin-auxiliar', 'LOG-005': 'mostrar-antes-de-calcular', 'LOG-006': 'calcular-antes-de-leer',
+    'LOG-007': 'condicion-invertida', 'LOG-008': 'rama-verdadera-vacia', 'LOG-009': 'ifs-sueltos', 'LOG-010': 'else-colgante', 'LOG-011': 'rama-inalcanzable',
+    'LOG-013': 'condicion-imposible', 'LOG-014': 'resto-con-division', 'LOG-015': 'resto-sin-comparar', 'LOG-018': 'condicion-imposible', 'LOG-019': 'cuenta-sin-mas-uno', 'LOG-020': 'cuenta-con-mas-uno',
+    'LOG-022': 'for-una-vuelta-menos', 'LOG-023': 'for-una-vuelta-mas', 'LOG-049': 'for-una-vuelta-mas', 'LOG-024': 'acumulador-reiniciado', 'LOG-025': 'contador-en-uno',
+    'LOG-028': 'promedio-con-total', 'LOG-029': 'minimo-en-cero', 'LOG-032': 'if-sin-llaves', 'LOG-034': 'for-sin-llaves', 'LOG-035': 'contador-como-dato', 'LOG-036': 'contador-suma-dato',
+    'LOG-037': 'acumulador-suma-uno', 'LOG-040': 'lazo-no-entra', 'LOG-041': 'centinela-procesado', 'LOG-042': 'lectura-adelantada', 'LOG-045': 'resto-igual-divisor', 'LOG-047': 'dividendo-pisado',
+    'LOG-050': 'mayor-de-tres', 'LOG-053': 'for-variable-modificada',
+    'TIP-003': 'cast-despues-de-dividir', 'TIP-004': 'division-entera-formula', 'TIP-005': 'division-entera-formula', 'TIP-006': 'division-entera-formula', 'TIP-007': 'division-entera-formula',
+    'TIP-010': 'char-fuera-de-rango', 'TIP-012': 'char-con-d', 'TIP-018': 'truncamiento', 'TIP-019': 'truncamiento-centavos', 'TIP-021': 'unsigned-siempre-verdadero', 'TIP-022': 'unsigned-nunca-negativo',
+    'TIP-030': 'digito-como-numero', 'TIP-036': 'constante-desborda', 'TIP-039': 'char-comparacion-fuera', 'TIP-041': 'int-con-unsigned',
+    'OPE-004': 'and-de-bits', 'OPE-009': 'comparacion-encadenada', 'OPE-011': 'siempre-verdadera', 'OPE-014': 'negacion-sin-parentesis', 'OPE-015': 'negacion-con-resto', 'OPE-016': 'asignacion-invertida',
+    'OPE-017': 'doble-modificacion', 'OPE-024': 'division-decimal-cero', 'OPE-025': 'coma-decimal', 'OPE-026': 'coma-en-condicion', 'OPE-027': 'asignacion-encadenada',
+    'OPE-037': 'resto-con-division', 'OPE-042': 'comparacion-guardada', 'OPE-043': 'precedencia-and-or', 'OPE-046': 'decremento-en-condicion', 'OPE-047': 'condicion-a-medias', 'OPE-048': 'incremento-sin-efecto'
+  };
+  // casos de la base que son el mismo error con otro nombre (otra categoría u otro enunciado): comparten el aviso
+  const KB_GEMELOS = { 'LOG-002': ['OPE-013'], 'LOG-018': ['OPE-034', 'CTL-033'], 'LOG-010': ['CTL-006'], 'OPE-043': ['CTL-036'], 'OPE-011': ['CTL-037'], 'LOG-024': ['CTL-044', 'DEC-020'], 'LOG-053': ['CTL-046'],
+    'TIP-021': ['EJE-020'], 'TIP-012': ['PRF-005'], 'LOG-005': ['PRF-026'], 'LOG-006': ['SCN-028'], 'TIP-005': ['LOG-052'] };
+  const REL_OPS = ['<', '>', '<=', '>=', '==', '!='];
+  const SIN_SIGNO = new Set(['uint', 'ulong', 'uchar', 'ushort']);
+  const MATH_DOUBLE = new Set(['sqrt', 'pow', 'sin', 'cos', 'tan', 'fabs', 'floor', 'ceil', 'exp', 'log', 'log10', 'fmod', 'atan', 'atan2', 'asin', 'acos', 'round', 'trunc', 'cbrt', 'hypot', 'sinh', 'cosh', 'tanh']);
+  const SMALL_T = new Set(['char', 'uchar', 'short', 'ushort', 'bool']);
+  const prom = (t) => (SMALL_T.has(t) ? 'int' : t);
+  // recorre todos los nodos con `k`; si fn devuelve false no baja a los hijos
+  function each(n, fn, parent) {
+    if (!n || typeof n !== 'object') return;
+    if (Array.isArray(n)) { for (const x of n) each(x, fn, parent); return; }
+    if (n.k && fn(n, parent) === false) return;
+    for (const key in n) { if (key === 'line' || key === 'end') continue; const v = n[key]; if (v && typeof v === 'object') each(v, fn, n.k ? n : parent); }
+  }
+  const mentions = (n, name) => { let r = false; each(n, (x) => { if (x.k === 'id' && x.name === name) r = true; return !r; }); return r; };
+  const rootName = (n) => { while (n && n.k === 'idx') n = n.base; return n && n.k === 'id' ? n.name : null; };
+  const mentionsAnyId = (n) => { let r = false; each(n, (x) => { if (x.k === 'id') r = true; return !r; }); return r; };
+  const stmtsOf = (b) => (!b ? [] : b.k === 'block' ? b.body : [b]);
+  const numVal = (x) => (x && x.k === 'num' ? x.v : x && x.k === 'un' && x.op === '-' && x.e.k === 'num' ? -x.e.v : null);
+  const esLit = (x) => numVal(x) !== null;
+  function txt(e) {
+    if (!e) return '';
+    const p = (x) => (x.par && (x.k === 'bin' || x.k === 'cond' || x.k === 'assign' || x.k === 'comma') ? '(' + txt(x) + ')' : txt(x));
+    switch (e.k) {
+      case 'id': return e.name;
+      case 'num': return e.ch ? "'" + String.fromCharCode(e.v) + "'" : (e.kind === 'double' && Number.isInteger(e.v) ? e.v + '.0' : String(e.v));
+      case 'str': return JSON.stringify(e.v);
+      case 'bin': return p(e.l) + ' ' + e.op + ' ' + p(e.r);
+      case 'un': return e.op + p(e.e);
+      case 'idx': return txt(e.base) + '[' + txt(e.i) + ']';
+      case 'call': return e.name + '(' + e.args.map(txt).join(', ') + ')';
+      case 'cast': return '(' + e.type + ')' + p(e.e);
+      case 'incdec': return e.prefix ? e.op + txt(e.e) : txt(e.e) + e.op;
+      case 'assign': return txt(e.l) + ' ' + e.op + ' ' + txt(e.r);
+      case 'cond': return p(e.c) + ' ? ' + txt(e.a) + ' : ' + txt(e.b);
+      case 'comma': return txt(e.l) + ', ' + txt(e.r);
+      default: return '...';
+    }
+  }
+  // intervalos de una comparación "X op K" (K constante); en variables enteras se normalizan los extremos
+  function intervalo(op, k, entero) {
+    let lo = -Infinity, hi = Infinity, loI = false, hiI = false;
+    if (op === '<') hi = k; else if (op === '<=') { hi = k; hiI = true; } else if (op === '>') lo = k; else if (op === '>=') { lo = k; loI = true; } else if (op === '==') { lo = hi = k; loI = hiI = true; } else return null;
+    if (entero) {
+      if (hi !== Infinity) { hi = hiI ? Math.floor(hi) : Math.ceil(hi) - 1; hiI = true; }
+      if (lo !== -Infinity) { lo = loI ? Math.ceil(lo) : Math.floor(lo) + 1; loI = true; }
+    }
+    return { lo, hi, loI, hiI };
+  }
+  const ivVacio = (a) => a.lo > a.hi || (a.lo === a.hi && !(a.loI && a.hiI));
+  const ivInter = (a, b) => {
+    const r = { lo: a.lo, loI: a.loI, hi: a.hi, hiI: a.hiI };
+    if (b.lo > r.lo || (b.lo === r.lo && !b.loI)) { r.lo = b.lo; r.loI = b.loI; }
+    if (b.hi < r.hi || (b.hi === r.hi && !b.hiI)) { r.hi = b.hi; r.hiI = b.hiI; }
+    return r;
+  };
+  const ivEn = (a, b) => (a.lo > b.lo || (a.lo === b.lo && (b.loI || !a.loI))) && (a.hi < b.hi || (a.hi === b.hi && (b.hiI || !a.hiI)));
+  const FLIP = { '<': '>', '>': '<', '<=': '>=', '>=': '<=', '==': '==', '!=': '!=' };
+  const S0 = { loops: [], ifs: [], cond: false };
+  const CONT_NOMBRE = /^(C\d?|CP|CN|CC|CI|CPOS|CNEG|CCERO|CONT\w*)$/i;
+  const PROM_NOMBRE = /^(PROM\w*|MEDIA\w*)$/i;
+  const MULT_TEXTO = /m[úu]ltiplo|divisible|\bpar(es)?\b|\bimpar(es)?\b/i;
+
+  class Reglas {
+    constructor(g, items) { this.g = g; this.items = items; this.globals = new Map(); this.fi = null; this.cadenas = new Set(); }
+    w(kb, msg, line, alt) { const a = [].concat(KB_GEMELOS[kb] || [], alt || []).filter((x, i, arr) => arr.indexOf(x) === i); this.g.warn(msg, line, kb, a.length ? a : undefined); }
+    run() {
+      for (const it of this.items) if (it.k === 'decl') for (const v of it.vars) this.globals.set(v.name, { type: it.type, array: v.dims.length > 0 || v.ptr, init: v.init, global: true, line: v.line });
+      for (const it of this.items) if (it.k === 'func') {
+        try { this.func(it); } catch (e) { if (typeof process !== 'undefined' && process.env && process.env.EDITOR_C_DEBUG) throw e; }
+      }
+    }
+    addVar(name, info) {
+      const prev = this.fi.vars.get(name);
+      if (prev) { prev.dup = true; return; }
+      this.fi.vars.set(name, info);
+    }
+    func(f) {
+      const fi = this.fi = { f, vars: new Map(), writes: new Map(), reads: new Map(), pure: new Set(), condNames: new Set(), rem: new Map(), quo: new Map(), sq: new Map(), nseq: 0, seqNow: 0 };
+      for (const [k, v] of this.globals) fi.vars.set(k, Object.assign({}, v));
+      for (const p of f.params) this.addVar(p.name, { type: p.type, array: p.array, param: true });
+      each(f.body, (n) => { if (n.k === 'decl') for (const v of n.vars) this.addVar(v.name, { type: n.type, array: v.dims.length > 0 || v.ptr, init: v.init, line: v.line, decl: n }); });
+      this.walk(f.body, S0, null, (n, st, par) => this.recolectar(n, st, par));
+      for (const [nm, ws] of fi.writes) {
+        if (ws.length !== 1) continue;
+        const w = ws[0]; const r = w.kind === 'assign' && w.node.op === '=' ? w.node.r : w.kind === 'decl' ? w.node : null;
+        if (r && r.k === 'bin' && (r.op === '%' || r.op === '/') && numVal(r.r) > 0 && r.l.k !== 'num') (r.op === '%' ? fi.rem : fi.quo).set(nm, { e: r, m: numVal(r.r), key: txt(r.l) });
+      }
+      this.walk(f.body, S0, null, (n, st, par) => this.regla(n, st, par));
+    }
+    // recorre el árbol con el contexto { loops, ifs, cond }
+    walk(n, st, par, fn) {
+      if (!n || typeof n !== 'object') return;
+      if (Array.isArray(n)) { for (const x of n) this.walk(x, st, par, fn); return; }
+      if (!n.k) { for (const key in n) { const v = n[key]; if (key !== 'line' && v && typeof v === 'object') this.walk(v, st, par, fn); } return; }
+      fn(n, st, par);
+      const W = (c, s2) => this.walk(c, s2, n, fn);
+      const cs = Object.assign({}, st, { cond: true });
+      switch (n.k) {
+        case 'if': { const si = Object.assign({}, st, { ifs: st.ifs.concat({ n, nl: st.loops.length }) }); W(n.c, cs); W(n.a, si); W(n.b, si); return; }
+        case 'while': case 'do': { const sl = Object.assign({}, st, { loops: st.loops.concat(n) }); W(n.c, Object.assign({}, sl, { cond: true })); W(n.body, sl); return; }
+        case 'for': { const sl = Object.assign({}, st, { loops: st.loops.concat(n) }); W(n.init, sl); W(n.c, Object.assign({}, sl, { cond: true })); W(n.step, sl); W(n.body, sl); return; }
+        case 'cond': W(n.c, cs); W(n.a, st); W(n.b, st); return;
+        default: for (const key in n) { const v = n[key]; if (key !== 'line' && key !== 'end' && v && typeof v === 'object') W(v, st); }
+      }
+    }
+    addW(name, kind, node, st, line) {
+      if (!name) return;
+      if (!this.fi.writes.has(name)) this.fi.writes.set(name, []);
+      this.fi.writes.get(name).push({ kind, node, st, line: line || node.line, seq: this.fi.seqNow });
+    }
+    recolectar(n, st) {
+      const fi = this.fi;
+      fi.sq.set(n, fi.seqNow = ++fi.nseq);
+      if (n.k === 'decl') for (const v of n.vars) if (v.init) this.addW(v.name, 'decl', v.init, st, v.line);
+      if (n.k === 'assign') { const r = rootName(n.l); this.addW(r, 'assign', n, st); if (n.op === '=' && n.l.k === 'id') fi.pure.add(n.l); }
+      if (n.k === 'incdec') this.addW(rootName(n.e), 'inc', n, st);
+      if (n.k === 'call' && n.name === 'scanf') for (const a of n.args.slice(1)) {
+        if (a.k === 'addr') { this.addW(rootName(a.e), 'scanf', n, st); if (a.e.k === 'id') fi.pure.add(a.e); } else if (a.k === 'id') this.addW(a.name, 'scanf', n, st);
+      }
+      if (n.k === 'id') {
+        if (!fi.pure.has(n)) { if (!fi.reads.has(n.name)) fi.reads.set(n.name, []); fi.reads.get(n.name).push(fi.seqNow); }
+        if (st.cond) fi.condNames.add(n.name);
+      }
+    }
+    // ---------- utilidades ----------
+    info(name) { const v = this.fi.vars.get(name); return v && !v.dup ? v : null; }
+    esEscalar(name) { const v = this.info(name); return !!v && !v.array && !v.param && !v.global; }
+    tipoDe(name) { const v = this.info(name); return v && !v.array ? v.type : null; }
+    tipo(e) {
+      if (!e) return null;
+      switch (e.k) {
+        case 'num': return e.kind;
+        case 'id': return this.tipoDe(e.name);
+        case 'idx': { const nm = rootName(e); const v = nm && this.info(nm); return v ? v.type : null; }
+        case 'call': {
+          if (MATH_DOUBLE.has(e.name) || e.name === 'atof') return 'double';
+          if (e.name === 'strlen') return 'ulong';
+          if (['abs', 'atoi', 'rand', 'toupper', 'tolower', 'getchar'].indexOf(e.name) >= 0) return 'int';
+          const f = this.g.funcs.get(e.name); return f ? f.ret : null;
+        }
+        case 'cast': return e.type;
+        case 'un': { if (e.op === '!') return 'int'; const t = this.tipo(e.e); return t === null ? null : prom(t); }
+        case 'bin': {
+          if (REL_OPS.indexOf(e.op) >= 0 || e.op === '&&' || e.op === '||') return 'int';
+          const a = this.tipo(e.l), b = this.tipo(e.r);
+          if (a === null || b === null) return null;
+          return e.op === '<<' || e.op === '>>' ? prom(a) : arith(a, b);
+        }
+        case 'assign': return this.tipo(e.l);
+        case 'incdec': return this.tipo(e.e);
+        case 'comma': return this.tipo(e.r);
+        case 'cond': { const a = this.tipo(e.a), b = this.tipo(e.b); return a === null || b === null ? null : arith(a, b); }
+        default: return null;
+      }
+    }
+    entero(t) { return t !== null && INTLIKE.has(t); }
+    decimal(t) { return t !== null && FLOATLIKE.has(t); }
+    leidas(name, despuesDeSeq) { return (this.fi.reads.get(name) || []).filter((q) => despuesDeSeq === undefined || q > despuesDeSeq).length; }
+    seqIni(n) { return this.fi.sq.get(n) || 0; }
+    seqFin(n) { let m = this.seqIni(n); each(n, (x) => { const q = this.fi.sq.get(x); if (q > m) m = q; }); return m; }
+    escrituras(name, tipos) { return (this.fi.writes.get(name) || []).filter((w) => !tipos || tipos.indexOf(w.kind) >= 0); }
+    // comparación simple "X op K" con X variable escalar y K constante
+    cmp(e) {
+      if (!e || e.k !== 'bin' || REL_OPS.indexOf(e.op) < 0) return null;
+      let a = e.l, b = e.r, op = e.op;
+      if (a.k !== 'id' && esLit(a) && b.k === 'id') { const t = a; a = b; b = t; op = FLIP[op]; }
+      if (a.k !== 'id' || !esLit(b)) return null;
+      const t = this.tipoDe(a.name);
+      return { v: a.name, op, k: numVal(b), t, ent: this.entero(t) };
+    }
+    // condición como intervalo de una sola variable ("X >= 4" o "X >= 4 && X < 7")
+    condIv(e) {
+      const cj = this.conj(e); let v = null, iv = null;
+      for (const t of cj) {
+        const c = this.cmp(t); if (!c || c.op === '!=' || (v !== null && c.v !== v)) return null;
+        v = c.v; const x = intervalo(c.op, c.k, c.ent); iv = iv ? ivInter(iv, x) : x;
+      }
+      return iv ? { v, iv } : null;
+    }
+    conj(e) { return e.k === 'bin' && e.op === '&&' ? this.conj(e.l).concat(this.conj(e.r)) : [e]; }
+    disj(e) { return e.k === 'bin' && e.op === '||' ? this.disj(e.l).concat(this.disj(e.r)) : [e]; }
+    sinEfectos(e) { return !this.g.hasSideEffect(e); }
+    cadenasDe(n) { const r = []; each(n, (x) => { if (x.k === 'str') r.push(x.v); }); return r; }
+    esExprCall(s, nombre) { return s && s.k === 'expr' && s.e.k === 'call' && s.e.name === nombre; }
+    scanfDe(s, v) { return this.esExprCall(s, 'scanf') && s.e.args.some((a) => a.k === 'addr' && a.e.k === 'id' && a.e.name === v); }
+    scanVars(call) { return call.args.slice(1).filter((a) => a.k === 'addr' && a.e.k === 'id').map((a) => a.e.name); }
+    asigSimple(s) { return s && s.k === 'expr' && s.e.k === 'assign' && s.e.op === '=' && s.e.l.k === 'id' ? s.e : null; }
+    // X = X + e  /  X += e  -> { v, e }  (suma sobre sí misma)
+    acum(s) {
+      const a = s && s.k === 'expr' && s.e.k === 'assign' ? s.e : null;
+      if (!a || a.l.k !== 'id') return null;
+      if (a.op === '+=') return { v: a.l.name, e: a.r, node: a };
+      if (a.op === '=' && a.r.k === 'bin' && a.r.op === '+' && a.r.l.k === 'id' && a.r.l.name === a.l.name && !mentions(a.r.r, a.l.name)) return { v: a.l.name, e: a.r.r, node: a };
+      return null;
+    }
+    esInc(s) { // C++  /  C += 1  /  C = C + 1
+      if (!s || s.k !== 'expr') return null;
+      const e = s.e;
+      if (e.k === 'incdec' && e.op === '++' && e.e.k === 'id') return e.e.name;
+      const a = this.acum(s); if (a && numVal(a.e) === 1) return a.v;
+      return null;
+    }
+
+    // ---------- reglas por nodo ----------
+    regla(n, st, par) {
+      switch (n.k) {
+        case 'block': this.lista(n.body, st, n); break;
+        case 'if': this.reglaIf(n, st, par); break;
+        case 'for': case 'while': case 'do': this.reglaLazo(n); break;
+        case 'bin': this.reglaBin(n, st, par); break;
+        case 'assign': this.reglaAsig(n, st, par); break;
+        case 'decl': for (const v of n.vars) if (v.init && v.init.k !== 'list') this.reglaInit(v.name, v.init, v.line, n.type, v.dims.length > 0 || v.ptr); break;
+        case 'call': this.reglaCall(n, st); break;
+        case 'cast': this.reglaCast(n); break;
+        case 'comma': if (st.cond && par && (par.k === 'if' || par.k === 'while' || par.k === 'do') && par.c === n && this.sinEfectos(n.l)) this.w('OPE-026', 'la coma descarta la primera condición y el ' + (par.k === 'if' ? 'if' : par.k) + ' solo mira la segunda (' + txt(n.r) + '). Para pedir las dos usá &&.', n.line); else this.reglaComa(n, par); break;
+        default:
+      }
+      if (n.k === 'while' && n.c.k === 'incdec' && n.c.op === '--' && n.c.e.k === 'id') this.w('OPE-046', txt(n.c) + ' resta 1 antes de entrar al cuerpo del while, así que adentro ' + n.c.e.name + ' ya vale uno menos (con ' + n.c.e.name + ' = 3 el cuerpo ve 2, 1, 0 y no 3, 2, 1).', n.line);
+      if (n.k === 'for' && n.step && ['bin', 'id', 'num'].indexOf(n.step.k) >= 0 && this.sinEfectos(n.step)) this.w('OPE-048', 'el tercer campo del for (' + txt(n.step) + ') calcula un valor pero no lo guarda, así que la variable nunca cambia. Usá ' + (n.step.k === 'bin' && n.step.l.k === 'id' ? n.step.l.name + '++' : 'i++') + ' o ' + (n.step.k === 'bin' && n.step.l.k === 'id' ? n.step.l.name + ' = ' + txt(n.step) : 'i = i + 1') + '.', n.line);
+    }
+    reglaComa(n, par) { // X = 3,5;  (coma en lugar de punto decimal)
+      if (n.l.k === 'assign' && n.l.op === '=' && n.l.r.k === 'num' && n.r.k === 'num' && !n.r.ch && !n.l.r.ch && par && par.k === 'expr') {
+        this.w('OPE-025', 'en C los decimales se escriben con punto (' + n.l.r.v + '.' + n.r.v + '). La coma separa instrucciones, así que ' + txt(n.l.l) + ' recibe solo el ' + n.l.r.v + '.', n.line);
+      }
+    }
+    reglaCast(n) {
+      if (FLOATLIKE.has(n.type) && n.e.k === 'bin' && n.e.op === '/' && this.entero(this.tipo(n.e.l)) && this.entero(this.tipo(n.e.r)) && !(esLit(n.e.l) && esLit(n.e.r) && numVal(n.e.l) % numVal(n.e.r) === 0)) {
+        this.w('TIP-003', 'el (' + n.type + ') se aplica al resultado de ' + txt(n.e) + ', que ya se truncó porque son dos enteros. El cast tiene que ir sobre un operando, antes de dividir.', n.line);
+      }
+    }
+    reglaCall(n, st) {
+      if (n.name === 'printf') this.reglaPrintf(n, st);
+    }
+    pares(call) { // [{ sp, a }]: cada argumento de printf con su especificación
+      if (!call.args.length || call.args[0].k !== 'str') return [];
+      const slots = []; for (const sp of this.g.parseFmt(call.args[0].v)) { if (sp.w === '*') slots.push(null); if (sp.p === '*') slots.push(null); slots.push(sp); }
+      return call.args.slice(1).map((a, i) => ({ sp: slots[i] || null, a }));
+    }
+    reglaPrintf(n) {
+      const fmt = n.args[0] && n.args[0].k === 'str' ? n.args[0].v : null; if (fmt === null) return;
+      for (const { sp, a } of this.pares(n)) {
+        if (!sp || a.k !== 'id' || !this.esEscalar(a.name)) continue;
+        // TIP-012: char (una letra) mostrado con %d
+        if ((sp.conv === 'd' || sp.conv === 'i') && this.tipoDe(a.name) === 'char' && !/ascii|c[oó]digo|n[uú]mero|valor/i.test(fmt)) {
+          const ws = this.escrituras(a.name);
+          const letra = ws.length > 0 && ws.every((w) => (w.kind === 'decl' && w.node.k === 'num' && w.node.ch) || (w.kind === 'assign' && w.node.op === '=' && w.node.r.k === 'num' && w.node.r.ch) );
+          let conC = false; each(this.fi.f.body, (x) => { if (x.k === 'call' && x.name === 'printf') for (const q of this.pares(x)) if (q.sp && q.sp.conv === 'c' && q.a.k === 'id' && q.a.name === a.name) conC = true; });
+          if (letra && !conC) { const w0 = ws[0]; const cod = w0.kind === 'decl' ? w0.node.v : w0.kind === 'assign' ? w0.node.r.v : null; this.w('TIP-012', '%d muestra el número del carácter' + (cod !== null ? ' (' + cod + ')' : '') + ', no la letra. Para ver la letra se usa %c.', n.line); }
+        }
+        // LOG-019 / LOG-020: cantidad de enteros entre dos valores según lo que dice el texto
+        if ((sp.conv === 'd' || sp.conv === 'i') && this.entero(this.tipoDe(a.name))) {
+          const ws = this.escrituras(a.name);
+          if (ws.length === 1 && ws[0].kind === 'assign' && ws[0].node.op === '=') {
+            const r = ws[0].node.r;
+            const resta = (x) => x.k === 'bin' && x.op === '-' && x.l.k === 'id' && x.r.k === 'id' && !x.par ? x : null;
+            if (resta(r) && /incluid/i.test(fmt) && !/excluid|sin incluir|sin contar/i.test(fmt)) this.w('LOG-019', 'de ' + txt(r.r) + ' a ' + txt(r.l) + ' con los dos extremos incluidos hay ' + txt(r) + ' + 1 números, y ' + a.name + ' = ' + txt(r) + ' deja uno menos. Falta sumar 1.', ws[0].line);
+            else if (r.k === 'bin' && r.op === '+' && numVal(r.r) === 1 && resta(r.l) && /excluid|sin contar|sin incluir/i.test(fmt)) this.w('LOG-020', 'entre ' + txt(r.l.r) + ' y ' + txt(r.l.l) + ', sin contar los extremos, hay ' + txt(r.l) + ' - 1 números, y ' + a.name + ' = ' + txt(r.l) + ' + 1 cuenta de más. Hay que restar 1 en lugar de sumarlo.', ws[0].line);
+          }
+        }
+      }
+    }
+    reglaInit(nombre, rhs, line, tipoDest, esArr) { // declaración con valor inicial
+      if (esArr) return;
+      this.reglaDestino(nombre, rhs, line, '=', tipoDest, true);
+      if (PROM_NOMBRE.test(nombre)) this.promSinParen(nombre, rhs, line);
+    }
+    reglaAsig(n, st, par) {
+      const l = n.l;
+      if (l.k === 'id') {
+        this.reglaDestino(l.name, n.r, n.line, n.op, this.tipoDe(l.name), false);
+        if (n.op === '=' && PROM_NOMBRE.test(l.name)) this.promSinParen(l.name, n.r, n.line);
+        // OPE-017: A = A++
+        if (n.op === '=') { let m = false; each(n.r, (x) => { if (x.k === 'incdec' && x.e.k === 'id' && x.e.name === l.name) m = true; }); if (m) this.w('OPE-017', txt(n) + ' modifica ' + l.name + ' dos veces en la misma instrucción y el resultado no está definido. Alcanza con ' + l.name + (/--/.test(txt(n.r)) ? '--' : '++') + ';.', n.line); }
+        // OPE-042: MAX = A > B;
+        if (n.op === '=' && n.r.k === 'bin' && REL_OPS.indexOf(n.r.op) >= 0 && /^(MAX|MAYOR|MIN|MENOR|MAXIMO|MINIMO)$/i.test(l.name)) this.w('OPE-042', txt(n.r) + ' no da el ' + (/^(MAX|MAYOR|MAXIMO)$/i.test(l.name) ? 'mayor' : 'menor') + ': da 1 si es verdadero y 0 si es falso. Para quedarte con el ' + (/^(MAX|MAYOR|MAXIMO)$/i.test(l.name) ? 'mayor' : 'menor') + ' hay que usar un if.', n.line);
+        // OPE-027: A = B = 2.5 con tipos distintos
+        if (n.op === '=' && n.r.k === 'assign' && n.r.op === '=' && n.r.l.k === 'id' && this.entero(this.tipoDe(l.name)) && this.decimal(this.tipoDe(n.r.l.name))) this.w('OPE-027', 'en ' + txt(n) + ' la variable ' + l.name + ' es ' + TNAME[this.tipoDe(l.name)] + ' y se queda sin los decimales de ' + n.r.l.name + '. Las dos variables de la cadena deberían ser del mismo tipo.', n.line);
+      }
+      void st; void par;
+    }
+    // destino escalar: división entera dentro de una fórmula decimal, truncamientos
+    reglaDestino(nombre, rhs, line, op, tipoDest, esInit) {
+      if (!tipoDest) return;
+      if (this.decimal(tipoDest)) {
+        const d = this.buscarDiv(rhs, true);
+        if (d && (d !== rhs || op !== '=') && !(esInit && d === rhs)) this.avisoDiv(d, line);
+      } else if (this.entero(tipoDest) && tipoDest !== 'bool') {
+        if (op !== '=') return;
+        if (rhs.k === 'id' && this.decimal(this.tipoDe(rhs.name)) && this.esEscalar(rhs.name) && this.escrituras(rhs.name, ['scanf']).length) this.w('TIP-018', 'al guardar el decimal ' + rhs.name + ' en el entero ' + nombre + ' se pierden los decimales sin redondear: 3.99 se guarda como 3. Si lo querés así, escribí el cast (int) para que se note.', line);
+        else if (rhs.k === 'bin' && rhs.op === '*' && ((rhs.l.k === 'id' && this.decimal(this.tipo(rhs.l)) && numVal(rhs.r) !== null && [10, 100, 1000].indexOf(numVal(rhs.r)) >= 0) || (rhs.r.k === 'id' && this.decimal(this.tipo(rhs.r)) && numVal(rhs.l) !== null && [10, 100, 1000].indexOf(numVal(rhs.l)) >= 0))) this.w('TIP-019', txt(rhs) + ' puede dar un número como 28.999999 y al guardarlo en un entero se corta a 28. Sumá 0.5 antes de guardarlo para redondear.', line);
+        // TIP-010 va aparte (char)
+      }
+      if (tipoDest === 'char' && op === '=') {
+        const v = numVal(rhs);
+        if (v !== null && !(rhs.k === 'num' && rhs.ch) && Number.isInteger(v) && (v > 127 || v < -128)) this.w('TIP-010', v + ' no entra en un char con signo, que llega hasta 127. Se guarda como ' + (((v % 256) + 256 + 128) % 256 - 128) + '.', line);
+      }
+      // TIP-030: dígito en un char guardado en un int que después se usa en cuentas
+      if (op === '=' && this.entero(tipoDest) && tipoDest !== 'char' && rhs.k === 'id' && this.tipoDe(rhs.name) === 'char' && this.esEscalar(rhs.name)) {
+        const ws = this.escrituras(rhs.name);
+        if (ws.length > 0 && ws.every((w) => w.kind === 'decl' && w.node.k === 'num' && w.node.ch && w.node.v >= 48 && w.node.v <= 57)) {
+          let aritm = false; each(this.fi.f.body, (x) => { if (x.k === 'bin' && '+-*/%'.indexOf(x.op) >= 0 && ((x.l.k === 'id' && x.l.name === nombre && !(x.r.k === 'num' && x.r.ch)) || (x.r.k === 'id' && x.r.name === nombre && !(x.l.k === 'num' && x.l.ch)))) aritm = true; });
+          if (aritm) this.w('TIP-030', "'" + String.fromCharCode(ws[0].node.v) + "' es el carácter cuyo código es " + ws[0].node.v + ', no el número ' + String.fromCharCode(ws[0].node.v) + ". Las cuentas con " + nombre + ' usan ese código.', line);
+        }
+      }
+    }
+    // busca una división entre dos enteros que entra a una cuenta decimal
+    buscarDiv(e) {
+      if (!e) return null;
+      switch (e.k) {
+        case 'bin':
+          if (e.op === '/') {
+            if (this.entero(this.tipo(e.l)) && this.entero(this.tipo(e.r))) return esLit(e.l) && esLit(e.r) && numVal(e.l) % numVal(e.r) === 0 ? null : e;
+            return this.buscarDiv(e.l) || this.buscarDiv(e.r);
+          }
+          if (e.op === '+' || e.op === '-' || e.op === '*') return this.buscarDiv(e.l) || this.buscarDiv(e.r);
+          return null;
+        case 'un': return e.op === '-' || e.op === '+' ? this.buscarDiv(e.e) : null;
+        default: return null;
+      }
+    }
+    avisoDiv(d, line) {
+      const a = d.l, b = d.r; const ent = txt(d);
+      let kb, msg;
+      if (esLit(a) && esLit(b)) { kb = numVal(a) === 1 ? 'TIP-006' : 'TIP-004'; msg = ent + ' son dos enteros y da ' + Math.trunc(numVal(a) / numVal(b)) + ', no ' + numVal(a) / numVal(b) + '. La división se trunca antes de seguir con la cuenta.'; }
+      else if (numVal(a) === 1) { kb = 'TIP-007'; msg = ent + ' es una división entera: da 1 solo cuando ' + txt(b) + ' vale 1 y 0 con los demás.'; }
+      else { kb = 'TIP-005'; msg = ent + ' divide dos enteros y la división se trunca antes de seguir con la cuenta (por ejemplo 3 / 4 da 0).'; }
+      this.w(kb, msg, line, kb === 'TIP-005' ? 'LOG-052' : undefined);
+    }
+    promSinParen(nombre, rhs, line) { // PROM = A + B / 2
+      if (rhs.k !== 'bin' || rhs.op !== '+' || rhs.par) return;
+      const dv = rhs.r;
+      if (dv.k !== 'bin' || dv.op !== '/' || dv.par || dv.l.k !== 'id' || !(dv.r.k === 'num' || dv.r.k === 'id')) return;
+      let ids = 0; each(rhs.l, (x) => { if (x.k === 'id') ids++; });
+      if (ids < 1) return;
+      this.w('LOG-002', 'en ' + txt(rhs) + ' la división se hace antes que la suma, así que solo ' + txt(dv.l) + ' se divide por ' + txt(dv.r) + '. Falta un paréntesis alrededor de la suma.', line, 'OPE-013');
+    }
+    reglaBin(n, st, par) {
+      const { op, l, r } = n;
+      const lt = this.tipo(l), rt = this.tipo(r);
+      // cadenas && / ||
+      if ((op === '&&' || op === '||') && !(par && par.k === 'bin' && par.op === op)) {
+        if (op === '&&') this.cadenaY(n); else this.cadenaO(n);
+      }
+      // OPE-043: && dentro de || sin paréntesis
+      if (op === '||' || op === '&&') {
+        if (op === '||' && mentionsAnyId(n)) for (const c of [l, r]) if (c.k === 'bin' && c.op === '&&' && !c.par) { this.w('OPE-043', '&& se calcula antes que ||, así que la condición se agrupa distinto a como la leés (' + txt(n) + '). Usá paréntesis para dejarlo claro.', n.line); break; }
+        // OPE-047: variable sola junto a una comparación
+        for (const [a, b] of [[l, r], [r, l]]) {
+          if (a.k === 'id' && b.k === 'bin' && REL_OPS.indexOf(b.op) >= 0 && !b.par && this.esEscalar(a.name) && !this.esBandera(a.name)) {
+            const ta = this.tipoDe(a.name);
+            if (ta === null || !(this.entero(ta) || this.decimal(ta))) continue;
+            const otra = b.l.k === 'id' ? b.l : (b.r.k === 'id' ? b.r : null);
+            if (otra && otra.name !== a.name && esLit(b.l.k === 'id' ? b.r : b.l)) { this.w('OPE-047', txt(n) + ' solo pregunta si ' + a.name + ' es distinto de 0, no si cumple la comparación de ' + otra.name + '. Repetí la comparación con cada variable.', n.line); break; }
+          }
+        }
+      }
+      // OPE-004: & o | entre variables en una condición
+      if ((op === '&' || op === '|') && st.cond && l.k === 'id' && r.k === 'id') this.w('OPE-004', "usaste '" + op + "' (operación de bits); para " + (op === '&' ? '"y"' : '"o"') + " lógico se escribe '" + op + op + "'.", n.line);
+      // OPE-009: a == b == c
+      if ((op === '==' || op === '!=') && l.k === 'bin' && (l.op === '==' || l.op === '!=') && !l.par && (r.k === 'id' || (r.k === 'num' && numVal(r) !== 0 && numVal(r) !== 1))) this.w('OPE-009', txt(n) + ' no compara los tres: primero ' + txt(l) + ' da 1 o 0 y después se compara ese resultado con ' + txt(r) + '. Unilos con &&.', n.line);
+      // OPE-014 / OPE-015: negación sin paréntesis
+      if (REL_OPS.indexOf(op) >= 0) {
+        const neg = (x) => x.k === 'un' && x.op === '!' && !x.par && (x.e.k === 'id');
+        if ((neg(l) && !(r.k === 'un' && r.op === '!') && r.k !== 'num') || (neg(r) && !(l.k === 'un' && l.op === '!') && l.k !== 'num')) this.w('OPE-014', 'la negación se aplica solo a ' + (neg(l) ? l.e.name : r.e.name) + ', no a la comparación completa (' + txt(n) + '). Poné la comparación entre paréntesis o usá !=.', n.line);
+      }
+      if (op === '%' && l.k === 'un' && l.op === '!' && !l.par && l.e.k === 'id') this.w('OPE-015', txt(n) + ' se calcula como (' + txt(l) + ') % ' + txt(r) + ', no como !(' + txt(l.e) + ' % ' + txt(r) + ').', n.line);
+      // OPE-024: dividir un decimal por cero
+      if (op === '/' && esLit(r) && numVal(r) === 0 && (r.kind === 'double' || r.kind === 'float' || this.decimal(lt))) this.w('OPE-024', 'división por cero: con decimales no se cierra, pero el resultado es ' + (numVal(l) === 0 ? 'nan (no es un número)' : 'inf (infinito)') + '.', n.line);
+      // TIP-021 / TIP-022: sin signo contra cero
+      if (REL_OPS.indexOf(op) >= 0) {
+        for (const [a, b, o] of [[l, r, op], [r, l, FLIP[op]]]) {
+          if (esLit(b) && numVal(b) === 0 && !(b.k === 'un')) {
+            const ta = a.k === 'id' ? this.tipoDe(a.name) : this.tipo(a);
+            if (ta !== null && SIN_SIGNO.has(ta) && (a.k === 'id' || (a.k === 'bin' && '+-*/%'.indexOf(a.op) >= 0 && (ta === 'uint' || ta === 'ulong')))) {
+              if (o === '>=') { this.w('TIP-021', txt(a) + ' es unsigned y nunca es negativo, así que ' + txt(a) + ' >= 0 siempre es verdadero. Si es la condición de un bucle, no termina nunca: usá un int.', n.line); break; }
+              if (o === '<') { this.w('TIP-022', txt(a) + ' es unsigned y nunca es negativo, así que la condición ' + txt(a) + ' < 0 no se cumple jamás. Compará los valores directamente (por ejemplo A < B).', n.line); break; }
+            }
+          }
+        }
+        // TIP-039: char contra una constante fuera de rango
+        for (const [a, b, o] of [[l, r, op], [r, l, FLIP[op]]]) {
+          if (a.k === 'id' && this.tipoDe(a.name) === 'char' && this.esEscalar(a.name) && esLit(b) && !(b.k === 'num' && b.ch) && o !== '==' && o !== '!=') {
+            const k = numVal(b); const sempre = (o === '<' && k > 127) || (o === '<=' && k >= 127) || (o === '>' && k < -128) || (o === '>=' && k <= -128);
+            const nunca = (o === '>' && k >= 127) || (o === '>=' && k > 127) || (o === '<' && k <= -128) || (o === '<=' && k < -128);
+            if (sempre || nunca) { this.w('TIP-039', a.name + ' es char y solo va de -128 a 127: ' + a.name + ' ' + o + ' ' + k + ' es ' + (sempre ? 'siempre verdadera' : 'siempre falsa') + '. Usá un int para este contador.', n.line); break; }
+          }
+        }
+        // TIP-041: int contra unsigned
+        if (lt === 'int' && rt === 'uint' && l.k === 'id' && r.k === 'id') this.w('TIP-041', 'se comparan un int (' + txt(l) + ') y un unsigned (' + txt(r) + '): un valor negativo se convierte en un número enorme y la comparación da otro resultado.', n.line);
+        else if (lt === 'uint' && rt === 'int' && l.k === 'id' && r.k === 'id') this.w('TIP-041', 'se comparan un unsigned (' + txt(l) + ') y un int (' + txt(r) + '): un valor negativo se convierte en un número enorme y la comparación da otro resultado.', n.line);
+      }
+      // TIP-036: constantes que se pasan del rango de int
+      if ((op === '+' || op === '-' || op === '*')) {
+        const a = this.plegar(l), b = this.plegar(r);
+        if (a !== null && b !== null) {
+          const v = op === '+' ? a + b : op === '-' ? a - b : a * b;
+          if (v > 2147483647n || v < -2147483648n) this.w('TIP-036', txt(n) + ' no entra en un int (llega hasta 2147483647): el resultado se pasa del máximo y da un valor equivocado. Usá long o decimales.', n.line);
+        }
+      }
+      // división con / en vez de % para la paridad / múltiplos: N / 2 == 0
+      if ((op === '==' || op === '!=') && ((l.k === 'bin' && l.op === '/' && numVal(r) === 0) || (r.k === 'bin' && r.op === '/' && numVal(l) === 0))) {
+        const d = l.k === 'bin' ? l : r;
+        if (d.l.k === 'id' && numVal(d.r) >= 2 && this.entero(this.tipo(d.l)) && par && par.k === 'if' && par.c === n && op === '==') {
+          const ss = this.cadenasDe([par.a, par.b]).join(' ');
+          if (MULT_TEXTO.test(ss)) this.w('OPE-037', txt(d) + ' es el cociente, no el resto. Para saber si ' + txt(d.l) + ' es múltiplo de ' + txt(d.r) + ' hace falta ' + txt(d.l) + ' % ' + txt(d.r) + '.', n.line);
+        }
+      }
+    }
+    esBandera(nombre) { // variable que solo toma 0/1 o resultados de condiciones
+      const ws = this.escrituras(nombre);
+      if (this.info(nombre) && this.info(nombre).param) return true;
+      if (!ws.length) return true;
+      const okR = (r) => r && ((r.k === 'num' && (r.v === 0 || r.v === 1)) || (r.k === 'bin' && (REL_OPS.indexOf(r.op) >= 0 || r.op === '&&' || r.op === '||')) || (r.k === 'un' && r.op === '!') || r.k === 'call');
+      return ws.every((w) => (w.kind === 'decl' && okR(w.node)) || (w.kind === 'assign' && w.node.op === '=' && okR(w.node.r)));
+    }
+    plegar(e) { // valor de una constante entera (BigInt) o null
+      if (e.k === 'num') return (e.kind === 'int' && Number.isInteger(e.v)) ? BigInt(e.v) : null;
+      if (e.k === 'un' && e.op === '-') { const v = this.plegar(e.e); return v === null ? null : -v; }
+      if (e.k === 'bin' && '+-*'.indexOf(e.op) >= 0) {
+        const a = this.plegar(e.l), b = this.plegar(e.r); if (a === null || b === null) return null;
+        const v = e.op === '+' ? a + b : e.op === '-' ? a - b : a * b;
+        return v > 2147483647n || v < -2147483648n ? null : v; // si ya se pasó, se avisa en ese nodo
+      }
+      return null;
+    }
+    // términos de una cadena de && : contradicciones
+    cadenaY(n) {
+      const cj = this.conj(n); if (cj.length < 2) return;
+      const porVar = new Map();
+      for (const t of cj) {
+        const c = this.cmp(t); if (!c || c.op === '!=') continue;
+        const iv = intervalo(c.op, c.k, c.ent);
+        porVar.set(c.v, porVar.has(c.v) ? { iv: ivInter(porVar.get(c.v).iv, iv), n: porVar.get(c.v).n + 1, t: porVar.get(c.v).t.concat(t) } : { iv, n: 1, t: [t] });
+      }
+      for (const [v, o] of porVar) if (o.n >= 2 && ivVacio(o.iv)) {
+        this.w('LOG-018', 'la condición ' + o.t.map(txt).join(' && ') + ' nunca se cumple: ningún valor de ' + v + ' puede cumplir las dos cosas a la vez. Si querías "o" (por ejemplo fuera de un rango), se usa ||.', n.line, 'OPE-034');
+        return;
+      }
+      // restos: E % m != 0 y E % n == 0 con m divisor de n
+      const terms = [];
+      for (const t of cj) {
+        const x = this.restoTermino(t); if (x) terms.push(x);
+      }
+      for (const a of terms) for (const b of terms) if (a.nz && !b.nz && a.key === b.key && b.m % a.m === 0) {
+        this.w('LOG-013', 'unidas por && las condiciones ' + txt(a.t) + ' y ' + txt(b.t) + ' no pueden cumplirse a la vez: un múltiplo de ' + b.m + ' siempre es múltiplo de ' + a.m + '. Revisá qué condiciones van con && y cuáles con ||.', n.line);
+        return;
+      }
+    }
+    restoTermino(t) { // E % m != 0 | E % m == 0 | !(E % m) | (E % m) | R != 0 | R == 0 | !R | R  -> { key, m, nz }
+      const rem = (x) => { if (x.k === 'bin' && x.op === '%' && numVal(x.r) > 0 && x.l.k !== 'num') return { key: txt(x.l), m: numVal(x.r) }; if (x.k === 'id' && this.fi.rem.has(x.name)) { const r = this.fi.rem.get(x.name); return { key: r.key, m: r.m }; } return null; };
+      let a = null, nz;
+      if (t.k === 'bin' && (t.op === '==' || t.op === '!=') && numVal(t.r) === 0) { a = rem(t.l); nz = t.op === '!='; }
+      else if (t.k === 'un' && t.op === '!') { a = rem(t.e); nz = false; }
+      else { a = rem(t); nz = true; }
+      return a ? { key: a.key, m: a.m, nz, t } : null;
+    }
+    cadenaO(n) {
+      const dj = this.disj(n); if (dj.length < 2) return;
+      const dist = new Map();
+      for (const t of dj) { const c = this.cmp(t); if (c && c.op === '!=') { if (!dist.has(c.v)) dist.set(c.v, new Set()); dist.get(c.v).add(c.k); } }
+      for (const [v, ks] of dist) if (ks.size >= 2) { const arr = Array.from(ks); this.w('OPE-011', v + ' != ' + arr[0] + ' || ' + v + ' != ' + arr[1] + ' es siempre verdadera: cualquier número es distinto de ' + arr[0] + ' o distinto de ' + arr[1] + '. Para "ni ' + arr[0] + ' ni ' + arr[1] + '" usá &&.', n.line); return; }
+    }
+    // ---------- if ----------
+    reglaIf(s, st, par) {
+      const esElseIf = par && par.k === 'if' && par.b === s;
+      // LOG-008: lado verdadero vacío
+      if (s.a.k === 'block' && s.a.body.length === 0 && s.b && s.b.k !== 'empty' && !(s.b.k === 'block' && s.b.body.length === 0)) this.w('LOG-008', 'el lado verdadero del if está vacío, así que cuando se cumple (' + txt(s.c) + ') no pasa nada. Falta decir qué hace el programa en ese caso.', s.line);
+      // LOG-010: else colgante
+      if (s.a.k === 'if' && !s.b && s.a.b) this.w('LOG-010', 'el else se pega al if más cercano (el de ' + txt(s.a.c) + '), no al de ' + txt(s.c) + ', aunque lo hayas escrito alineado con el primero. Usá llaves para decir a cuál pertenece.', s.line);
+      // LOG-011: rangos en orden incorrecto (cabeza de la cadena)
+      if (!esElseIf && s.b && s.b.k === 'if') this.cadenaRangos(s);
+      // LOG-007: condición invertida en mayor/menor
+      const cc = s.c;
+      if (cc.k === 'bin' && ['<', '<=', '>', '>='].indexOf(cc.op) >= 0 && cc.l.k === 'id' && cc.r.k === 'id') {
+        const menor = cc.op[0] === '<' ? cc.l.name : cc.r.name, mayor = cc.op[0] === '<' ? cc.r.name : cc.l.name;
+        const as = stmtsOf(s.a).length === 1 ? this.asigSimple(stmtsOf(s.a)[0]) : null;
+        if (as && as.r.k === 'id') {
+          if (/^(MAYOR|MAX|MAXIMO)$/i.test(as.l.name) && as.r.name === menor) this.w('LOG-007', 'la condición ' + txt(cc) + ' es verdadera cuando ' + menor + ' es el menor, pero en ese caso guardás ' + menor + ' en ' + as.l.name + '. Los lados V y F están cruzados.', s.line);
+          else if (/^(MENOR|MIN|MINIMO)$/i.test(as.l.name) && as.r.name === mayor) this.w('LOG-007', 'la condición ' + txt(cc) + ' es verdadera cuando ' + mayor + ' es el mayor, pero en ese caso guardás ' + mayor + ' en ' + as.l.name + '. Los lados V y F están cruzados.', s.line);
+        }
+      }
+      // LOG-050: mayor de tres sin comparar los dos últimos
+      if (cc.k === 'bin' && cc.op === '&&' && s.b && s.b.k !== 'if') {
+        const p = cc.l, q = cc.r;
+        if (p.k === 'bin' && q.k === 'bin' && p.op === q.op && ['>', '>=', '<', '<='].indexOf(p.op) >= 0 && p.l.k === 'id' && q.l.k === 'id' && p.r.k === 'id' && q.r.k === 'id' && p.l.name === q.l.name && p.r.name !== q.r.name && p.l.name !== p.r.name && p.l.name !== q.r.name) {
+          const Y = p.r.name, Z = q.r.name; let compara = false;
+          each(s.b, (x) => { if ((x.k === 'bin' && REL_OPS.indexOf(x.op) >= 0 && (mentions(x, Y) || mentions(x, Z))) || x.k === 'cond' || x.k === 'if' || x.k === 'switch') compara = true; });
+          if (!compara && this.esEscalar(Y) && this.esEscalar(Z)) this.w('LOG-050', 'si ' + p.l.name + ' no cumple ' + txt(cc) + ', queda por decidir entre ' + Y + ' y ' + Z + ', pero el else asume uno de los dos sin compararlos.', s.line);
+        }
+      }
+      // LOG-014 / LOG-015: resto / cociente mal usado como pregunta de múltiplo
+      const sT = this.cadenasDe([s.a]).join(' '), sF = this.cadenasDe([s.b]).join(' ');
+      let R = null, igual0 = false;
+      if (cc.k === 'bin' && cc.op === '==' && cc.l.k === 'id' && numVal(cc.r) === 0) { R = cc.l.name; igual0 = true; }
+      if (R && this.fi.quo.has(R) && MULT_TEXTO.test(sT + ' ' + sF) && this.esEscalar(R)) {
+        const q = this.fi.quo.get(R); if (numVal(q.e.r) >= 2 && this.entero(this.tipo(q.e.l))) this.w('LOG-014', txt(q.e) + ' da el cociente y no el resto, por eso ' + R + ' == 0 no dice si es múltiplo. Para saber si divide justo hace falta el resto: ' + txt(q.e.l) + ' % ' + txt(q.e.r) + '.', q.e.line || s.line);
+      }
+      void igual0;
+      const rem = cc.k === 'id' && this.fi.rem.has(cc.name) ? this.fi.rem.get(cc.name) : (cc.k === 'bin' && cc.op === '%' && numVal(cc.r) >= 2 && cc.l.k !== 'num' && cc.l.k !== 'un' ? { e: cc, m: numVal(cc.r), key: txt(cc.l) } : null);
+      if (rem && sT && MULT_TEXTO.test(sT) && !/\bno\b|impar/i.test(sT) && /\bno\b|impar/i.test(sF + ' ')) this.w('LOG-015', 'if (' + txt(cc) + ') es verdadero cuando el resto es distinto de 0, es decir, cuando NO es múltiplo. Comparalo con 0 para que se lea como lo pensaste.', s.line);
+      // LOG-009 va en lista(); LOG-011 en cadenaRangos
+    }
+    cadenaRangos(head) {
+      const ramas = []; let x = head;
+      while (x && x.k === 'if') { ramas.push(x); x = x.b; }
+      const ivs = ramas.map((r) => (this.sinEfectos(r.c) ? this.condIv(r.c) : null));
+      for (let k = 1; k < ramas.length; k++) {
+        if (!ivs[k] || ivVacio(ivs[k].iv)) continue;
+        for (let j = 0; j < k; j++) if (ivs[j] && ivs[j].v === ivs[k].v && ivEn(ivs[k].iv, ivs[j].iv)) {
+          this.w('LOG-011', 'nunca se llega a ' + txt(ramas[k].c) + ', porque todo lo que cumple eso ya entró en ' + txt(ramas[j].c) + ' más arriba. Probá primero la condición más exigente.', ramas[k].line);
+          break;
+        }
+      }
+    }
+    // ---------- listas de instrucciones ----------
+    lista(L, st, blk) {
+      const fi = this.fi;
+      if (L.length > 300) return;
+      for (let i = 0; i < L.length; i++) {
+        const s = L[i], nx = L[i + 1];
+        // LOG-004: A = B; B = A;
+        const a1 = this.asigSimple(s), a2 = this.asigSimple(nx);
+        if (a1 && a2 && a1.r.k === 'id' && a2.r.k === 'id' && a1.l.name !== a1.r.name && a2.l.name === a1.r.name && a2.r.name === a1.l.name) this.w('LOG-004', 'después de ' + txt(a1) + ' ya perdiste el valor original de ' + a1.l.name + ', y la línea siguiente (' + txt(a2) + ') le devuelve el mismo valor. Hace falta una variable auxiliar para intercambiar.', s.line);
+        // LOG-032: if sin llaves y otra instrucción en la misma línea
+        if (s.k === 'if' && nx && !(blk && blk.line === s.line) && !(i > 0 && L[i - 1].line === s.line)) {
+          let last = s.b || s.a; while (last && last.k === 'if') last = last.b || last.a;
+          if (last && last.k === 'expr' && last.line === nx.line && last.line > 0) this.w('LOG-032', 'sin llaves, el if solo controla la primera instrucción, y lo que sigue en la misma línea (' + (nx.k === 'expr' ? txt(nx.e) : nx.k) + ') se ejecuta siempre. Poné llaves para agrupar lo que depende de la condición.', s.line);
+        }
+        // LOG-009: ifs sueltos donde va else
+        if (s.k === 'if' && !s.b && nx && nx.k === 'if' && nx.b) {
+          const c1 = this.condIv(s.c), c2 = this.condIv(nx.c);
+          if (c1 && c2 && c1.v === c2.v && !ivVacio(c1.iv) && !ivVacio(c2.iv) && ivVacio(ivInter(c1.iv, c2.iv)) && !this.escribeVar(s.a, c1.v)) this.w('LOG-009', 'el else es del segundo if (' + txt(nx.c) + '), así que cuando se cumple ' + txt(s.c) + ' aparece también lo del else. Los casos tienen que ir encadenados con else if.', nx.line);
+        }
+        // LOG-034: for sin llaves seguido de una instrucción que usa el dato leído
+        if (s.k === 'for' && s.body.k === 'expr' && nx) {
+          const call = s.body.e.k === 'call' && s.body.e.name === 'scanf' ? s.body.e : null;
+          if (call) for (const V of this.scanVars(call)) if (this.esEscalar(V)) {
+            const usa = (nx.k === 'if' && mentions(nx.c, V)) || (nx.k === 'expr' && nx.e.k === 'assign' && mentions(nx.e.r, V));
+            if (usa) { this.w('LOG-034', 'sin llaves, el for repite solo el scanf, y lo que sigue (' + (nx.k === 'if' ? 'if (' + txt(nx.c) + ')' : txt(nx.e)) + ') se hace una sola vez con el último dato. Encerrá todo el cuerpo del lazo entre llaves.', s.line); break; }
+          }
+        }
+        // LOG-040: valor inicial que impide entrar al lazo
+        if (s.k === 'while') {
+          const c = this.cmp(s.c);
+          if (c && c.t !== null) {
+            for (let m = i - 1; m >= 0; m--) {
+              if (!mentions(L[m], c.v)) continue;
+              const as = this.asigSimple(L[m]);
+              let val = null;
+              if (as && as.l.name === c.v && as.r.k === 'num' && !as.r.ch) val = as.r.v;
+              else if (L[m].k === 'decl') { const dv = L[m].vars.find((v) => v.name === c.v); if (dv && dv.init && dv.init.k === 'num') val = dv.init.v; }
+              if (val !== null) {
+                const cumple = { '<': val < c.k, '<=': val <= c.k, '>': val > c.k, '>=': val >= c.k, '==': val === c.k, '!=': val !== c.k }[c.op];
+                if (cumple === false && this.sinEfectos(s.c)) this.w('LOG-040', c.v + ' vale ' + val + ' al llegar al while y la condición ' + txt(s.c) + ' ya es falsa, así que el lazo no se ejecuta ni una vez. El valor inicial forzado tiene que hacer verdadera la condición.', s.line);
+              }
+              break;
+            }
+          }
+        }
+        // LOG-042: lectura adelantada que salta el primer dato
+        if (s.k === 'while') {
+          const cuerpo = stmtsOf(s.body);
+          for (const V of cuerpo.length && this.esExprCall(cuerpo[0], 'scanf') ? this.scanVars(cuerpo[0].e) : []) {
+            if (!mentions(s.c, V) || !this.esEscalar(V)) continue;
+            let prev = null; for (let m = i - 1; m >= 0; m--) if (mentions(L[m], V)) { prev = L[m]; break; }
+            if (prev && this.scanfDe(prev, V)) { this.w('LOG-042', 'leés el siguiente dato con scanf antes de procesar el actual, así que el primero que leíste antes del while (línea ' + prev.line + ') se pierde. Primero se procesa el dato leído y después se lee el siguiente.', cuerpo[0].line); break; }
+          }
+        }
+        // LOG-041: centinela procesado como si fuera un dato
+        if (s.k === 'while' && s.body.k === 'block') {
+          const c = this.cmp(s.c);
+          const b = s.body.body;
+          let prevL = null; if (c) for (let m = i - 1; m >= 0; m--) if (mentions(L[m], c.v)) { prevL = L[m]; break; }
+          if (c && c.op === '!=' && b.length >= 2 && this.esExprCall(b[0], 'scanf') && this.scanVars(b[0].e).indexOf(c.v) >= 0 && !(prevL && this.scanfDe(prevL, c.v))) {
+            for (let q = 1; q < b.length; q++) {
+              if (['if', 'break', 'continue', 'return', 'switch', 'while', 'for', 'do'].indexOf(b[q].k) >= 0) break;
+              const ac = this.acum(b[q]);
+              if (ac && mentions(ac.e, c.v) && ac.v !== c.v) { this.w('LOG-041', 'cuando se lee el ' + c.k + ' de corte, igual se suma y se cuenta como un dato más (' + txt(b[q].e) + '). El valor de corte no es un dato y no debería procesarse.', b[q].line); break; }
+            }
+          }
+        }
+        // LOG-045: división por restas con > en vez de >=
+        if (s.k === 'while' && s.c.k === 'bin' && s.c.op === '>' && s.c.l.k === 'id' && s.c.r.k === 'id') {
+          const R = s.c.l.name, D = s.c.r.name; let resta = false, cuenta = false;
+          for (const t of stmtsOf(s.body)) {
+            const a = t.k === 'expr' && t.e.k === 'assign' ? t.e : null;
+            if (a && a.l.k === 'id' && a.l.name === R && ((a.op === '-=' && a.r.k === 'id' && a.r.name === D) || (a.op === '=' && a.r.k === 'bin' && a.r.op === '-' && a.r.l.k === 'id' && a.r.l.name === R && a.r.r.k === 'id' && a.r.r.name === D))) resta = true;
+            if (this.esInc(t)) cuenta = true;
+          }
+          if (resta && cuenta) this.w('LOG-045', 'con ' + txt(s.c) + ', cuando ' + R + ' vale justo ' + D + ' ya no resta y el resto queda igual al divisor (10 / 5 da cociente 1 y resto 5). El resto nunca puede ser igual al divisor: probá con >=.', s.line);
+        }
+        // LOG-047: se pisa el dividendo y se muestra como si fuera el original
+        if (s.k === 'while' && s.c.k === 'bin' && (s.c.op === '>=' || s.c.op === '>') && s.c.l.k === 'id' && s.c.r.k === 'id') {
+          const R = s.c.l.name, D = s.c.r.name;
+          const pisa = stmtsOf(s.body).some((t) => { const a = t.k === 'expr' && t.e.k === 'assign' ? t.e : null; return a && a.l.k === 'id' && a.l.name === R && ((a.op === '-=' && a.r.k === 'id' && a.r.name === D) || (a.op === '=' && a.r.k === 'bin' && a.r.op === '-' && a.r.l.k === 'id' && a.r.l.name === R && a.r.r.k === 'id' && a.r.r.name === D)); });
+          if (pisa && this.escrituras(R, ['scanf']).length && this.escrituras(R, ['scanf'])[0].seq < this.seqIni(s)) {
+            for (let m = i + 1; m < L.length; m++) {
+              if (this.esExprCall(L[m], 'printf') && L[m].e.args[0].k === 'str' && L[m].e.args[1] && L[m].e.args[1].k === 'id' && L[m].e.args[1].name === R && L[m].e.args[2] && L[m].e.args[2].k === 'id' && L[m].e.args[2].name === D && /%\w*\s*\/\s*%/.test(L[m].e.args[0].v)) { this.w('LOG-047', R + ' terminó valiendo el resto, no el dividendo original, y el mensaje lo muestra como si fuera el dividendo. Restá sobre una copia de ' + R + '.', L[m].line); break; }
+            }
+          }
+        }
+        // LOG-005 / LOG-006 solo fuera de los lazos
+        if (!esLoopCtx(st)) this.mostrarCalcular(L, i);
+        // LOG-001: orden de lectura distinto del pedido
+        if (this.esExprCall(s, 'printf') && s.e.args[0] && s.e.args[0].k === 'str' && nx && this.esExprCall(nx, 'scanf')) {
+          const nom = []; const re = /\(([A-Za-z_]\w*)\)/g; let m; while ((m = re.exec(s.e.args[0].v))) nom.push(m[1]);
+          const lei = nx.e.args.slice(1).map((a) => (a.k === 'addr' && a.e.k === 'id' ? a.e.name : null));
+          if (nom.length >= 2 && lei.length === nom.length && lei.every((x) => x) && nom.every((x) => this.esEscalar(x)) && new Set(nom).size === nom.length && [...nom].sort().join() === [...lei].sort().join() && nom.join() !== lei.join()) {
+            this.w('LOG-001', 'el mensaje pide primero ' + nom[0] + ' y después ' + nom[1] + ', pero el scanf los lee en otro orden (' + lei.join(', ') + '). El primer número que escribe el usuario va a parar a ' + lei[0] + '.', nx.line);
+          }
+        }
+      }
+      void fi;
+    }
+    escribeVar(n, v) { let r = false; each(n, (x) => { if ((x.k === 'assign' && rootName(x.l) === v) || (x.k === 'incdec' && rootName(x.e) === v) || (x.k === 'call' && x.name === 'scanf' && x.args.some((a) => a.k === 'addr' && rootName(a.e) === v))) r = true; }); return r; }
+    mostrarCalcular(L, i) {
+      const s = L[i];
+      // LOG-005: printf de S y recién después S = cuenta
+      if (this.esExprCall(s, 'printf')) {
+        const vistos = new Set();
+        for (const a of s.e.args.slice(1)) if (a.k === 'id' && this.esEscalar(a.name) && !vistos.has(a.name)) {
+          vistos.add(a.name); const V = a.name;
+          for (let j = i + 1; j < L.length; j++) {
+            if (!mentions(L[j], V)) continue;
+            const as = this.asigSimple(L[j]);
+            if (as && as.l.name === V && !mentions(as.r, V) && as.r.k === 'bin' && this.sinEfectos(as.r) && this.leidas(V, this.seqFin(L[j])) === 0 && this.escrituras(V).every((w) => w.seq <= this.seqFin(L[j]))) this.w('LOG-005', 'mostrás ' + V + ' antes de calcularla en la línea ' + L[j].line + ' (' + txt(as) + '), por eso aparece el valor viejo. Primero se calcula y después se muestra.', s.line);
+            break;
+          }
+        }
+      }
+      // LOG-006: S = cuenta con datos que recién después se leen con scanf
+      const as = this.asigSimple(s);
+      if (as && as.r.k === 'bin' && this.sinEfectos(as.r) && this.esEscalar(as.l.name) && !mentions(as.r, as.l.name)) {
+        const S = as.l.name; const deps = new Set(); each(as.r, (x) => { if (x.k === 'id') deps.add(x.name); });
+        if (![...deps].every((d) => this.esEscalar(d))) return;
+        for (let j = i + 1; j < L.length; j++) {
+          if (mentions(L[j], S)) break;
+          if (!this.esExprCall(L[j], 'scanf')) continue;
+          const leidos = this.scanVars(L[j].e).filter((v) => deps.has(v));
+          if (!leidos.length) continue;
+          const antes = leidos.some((v) => this.escrituras(v, ['scanf']).some((w) => w.seq < this.seqIni(s)));
+          const reasig = this.escrituras(S).some((w) => w.seq > this.seqFin(s));
+          if (!antes && !reasig && this.leidas(S, this.seqFin(L[j])) > 0) this.w('LOG-006', 'calculás ' + txt(as) + ' antes de leer ' + leidos.join(' y ') + ' con scanf (línea ' + L[j].line + '), por eso la cuenta usa los valores viejos. Leé los datos primero y calculá después.', s.line);
+          break;
+        }
+      }
+    }
+    // ---------- lazos ----------
+    forInfo(s) { // for (i = a; i op b; i++)
+      if (s.k !== 'for' || !s.c || !s.step) return null;
+      let v = null, ini = null;
+      if (s.init && s.init.k === 'expr' && s.init.e.k === 'assign' && s.init.e.op === '=' && s.init.e.l.k === 'id') { v = s.init.e.l.name; ini = s.init.e.r; }
+      else if (s.init && s.init.k === 'decl' && s.init.vars.length === 1 && s.init.vars[0].init) { v = s.init.vars[0].name; ini = s.init.vars[0].init; }
+      if (!v || numVal(ini) === null) return null;
+      const c = s.c;
+      if (c.k !== 'bin' || c.l.k !== 'id' || c.l.name !== v) return null;
+      const st = s.step;
+      const sube = (st.k === 'incdec' && st.op === '++' && st.e.k === 'id' && st.e.name === v);
+      return { v, ini: numVal(ini), op: c.op, bound: c.r, sube };
+    }
+    reglaLazo(s) {
+      const cuerpo = s.body;
+      const fl = this.forInfo(s);
+      const scans = []; each(cuerpo, (x) => { if (x.k === 'call' && x.name === 'scanf') scans.push(x); });
+      const leidoEnLazo = []; for (const c of scans) for (const v of this.scanVars(c)) if (this.esEscalar(v)) leidoEnLazo.push(v);
+      if (fl && fl.sube && !mentions(cuerpo, fl.v)) {
+        // LOG-022: arranca en 1 con i < N y lee datos que no se leyeron antes
+        if (fl.ini === 1 && fl.op === '<' && this.soloLeeLimite(s) && leidoEnLazo.some((v) => !this.escrituras(v, ['scanf', 'assign']).some((w) => w.seq < this.seqIni(s)))) {
+          this.w('LOG-022', 'el for arranca en 1 y corta en ' + txt(s.c) + ': da ' + (fl.bound.k === 'num' ? fl.bound.v - 1 : txt(fl.bound) + ' - 1') + ' vueltas, un dato menos de los que pediste.', s.line);
+        }
+        // LOG-023 / LOG-049: i <= N desde 0
+        if (fl.ini === 0 && fl.op === '<=' && fl.bound.k === 'id' && this.esEscalar(fl.bound.name) && this.escrituras(fl.bound.name, ['scanf']).length && !this.escribeVar(cuerpo, fl.bound.name) && stmtsOf(cuerpo).length) {
+          const kb = scans.length ? 'LOG-023' : 'LOG-049';
+          this.w(kb, 'el for arranca en 0 y usa ' + txt(s.c) + ': da ' + txt(fl.bound) + ' + 1 vueltas, una de más' + (scans.length ? ', y la última lectura falla y vuelve a sumar el último valor' : '') + '.', s.line);
+        }
+      }
+      // LOG-035: se suma i en lugar del dato leído
+      if (fl && fl.sube && leidoEnLazo.length && leidoEnLazo.every((v) => this.leidas(v) === 0)) {
+        for (const t of stmtsOf(cuerpo)) { const ac = this.acum(t); if (ac && ac.e.k === 'id' && ac.e.name === fl.v) { this.w('LOG-035', 'sumás ' + fl.v + ' (el número de vuelta) en lugar del dato leído ' + leidoEnLazo[0] + ': ' + leidoEnLazo[0] + ' se lee pero no se usa.', t.line); break; } }
+      }
+      // LOG-037: se suma una constante en lugar del dato leído (cualquier lazo)
+      if (leidoEnLazo.length && leidoEnLazo.every((v) => this.leidas(v) === 0)) {
+        for (const t of stmtsOf(cuerpo)) {
+          const ac = this.acum(t);
+          if (ac && ac.node.op && numVal(ac.e) !== null && ac.e.k === 'num' && !CONT_NOMBRE.test(ac.v) && this.leidas(ac.v, this.seqFin(s)) > 0) { this.w('LOG-037', ac.v + ' suma ' + numVal(ac.e) + ' en cada vuelta, así que cuenta datos en lugar de sumarlos. El dato ' + leidoEnLazo[0] + ' se lee y no se usa.', t.line); break; }
+        }
+      }
+      // LOG-036: contador que suma el dato en vez de 1
+      each(cuerpo, (t) => {
+        if (t.k !== 'expr') return;
+        const ac = this.acum(t);
+        if (ac && CONT_NOMBRE.test(ac.v) && ac.e.k === 'id' && ac.e.name !== ac.v && this.escrituras(ac.e.name, ['scanf']).length) this.w('LOG-036', ac.v + ' suma el valor de ' + ac.e.name + ' en lugar de sumar 1, así que ya no cuenta sino que acumula. Un contador crece de a uno.', t.line);
+      });
+      // LOG-053: se modifica la variable del for dentro del lazo
+      if (fl && fl.sube) {
+        let l53 = null;
+        each(stmtsOf(cuerpo).filter((t) => t.k === 'expr').map((t) => t.e), (x) => {
+          if (l53) return false;
+          if (x.k === 'incdec' && x.e.k === 'id' && x.e.name === fl.v) l53 = x;
+          else if (x.k === 'assign' && x.l.k === 'id' && x.l.name === fl.v && (x.op === '+=' || x.op === '-=' || (x.op === '=' && x.r.k === 'bin' && (x.r.op === '+' || x.r.op === '-') && x.r.l.k === 'id' && x.r.l.name === fl.v))) l53 = x;
+          return !l53;
+        });
+        if (l53) this.w('LOG-053', txt(l53) + ' dentro del cuerpo se suma al cambio que ya hace el for (' + txt(s.step) + '), y el lazo da menos vueltas de las que esperás. Dejá que el for cuente solo.', l53.line);
+      }
+      // LOG-024: acumulador que se reinicia en cada vuelta
+      if (cuerpo.k === 'block') {
+        const b = cuerpo.body;
+        for (let p = 0; p < b.length; p++) {
+          const as = this.asigSimple(b[p]); if (!as || as.r.k !== 'num' || as.r.v !== 0 || as.r.ch) continue;
+          const A = as.l.name; if (!this.esEscalar(A)) continue;
+          const usos = b.filter((t, ix) => ix !== p && mentions(t, A));
+          if (usos.length === 1 && b.indexOf(usos[0]) > p && (this.acum(usos[0]) || (this.esInc(usos[0]) === A)) && this.leidas(A, this.seqFin(s)) > 0) { this.w('LOG-024', txt(as) + ' dentro del lazo borra el total en cada vuelta, y al final solo queda el último dato. La inicialización va antes del lazo.', b[p].line); break; }
+        }
+      }
+      // LOG-025: contador inicializado en un valor distinto de 0
+      this.contadorEnUno(s, cuerpo, leidoEnLazo);
+      // LOG-029: mínimo inicializado en 0
+      this.minimoEnCero(s, cuerpo, leidoEnLazo);
+      // LOG-026 y LOG-028 van sobre divisiones
+      this.promedios(s, cuerpo);
+    }
+    soloLeeLimite(s) { // antes del lazo solo se leyeron datos que forman parte de la condición del lazo (el límite)
+      const enCond = new Set(); each(s.c, (x) => { if (x.k === 'id') enCond.add(x.name); });
+      for (const [nm, ws] of this.fi.writes) if (ws.some((w) => w.kind === 'scanf' && w.seq < this.seqIni(s)) && !enCond.has(nm)) return false;
+      return true;
+    }
+    contadorEnUno(s, cuerpo, leidoEnLazo) {
+      const cands = new Set();
+      this.walk(cuerpo, { loops: [s], ifs: [], cond: false }, null, (x, st) => {
+        if (x.k === 'incdec' && x.op === '++' && x.e.k === 'id' && st.ifs.length) cands.add(x.e.name);
+      });
+      for (const C of cands) {
+        if (!this.esEscalar(C)) continue;
+        const ws = this.escrituras(C);
+        const iniciales = ws.filter((w) => w.seq < this.seqIni(s));
+        const dentro = ws.filter((w) => w.seq >= this.seqIni(s));
+        if (iniciales.length !== 1) continue;
+        const w0 = iniciales[0]; const val = w0.kind === 'decl' ? numVal(w0.node) : w0.kind === 'assign' && w0.node.op === '=' ? numVal(w0.node.r) : null;
+        if (val === null || val === 0 || w0.st.loops.length || w0.st.ifs.length) continue;
+        if (!dentro.every((w) => w.kind === 'inc' && w.node.op === '++' && w.st.ifs.length)) continue;
+        // el if que cuenta debe depender de un dato que se lee en el lazo y no antes
+        let ok = false;
+        this.walk(cuerpo, { loops: [s], ifs: [], cond: false }, null, (x) => {
+          if (x.k === 'if') { let cuenta = false; each([x.a, x.b], (y) => { if (y.k === 'incdec' && y.e.k === 'id' && y.e.name === C) cuenta = true; }); if (cuenta) for (const V of leidoEnLazo) if (mentions(x.c, V) && !this.escrituras(V, ['scanf', 'assign']).some((w) => w.seq < this.seqIni(s))) ok = true; }
+        });
+        if (ok && this.leidas(C, this.seqFin(s)) > 0) this.w('LOG-025', C + ' arranca en ' + val + ', así que cuenta ' + val + ' más de los que hay. Un contador empieza en 0.', w0.line);
+      }
+    }
+    minimoEnCero(s, cuerpo, leidoEnLazo) {
+      this.walk(cuerpo, { loops: [s], ifs: [], cond: false }, null, (x) => {
+        if (x.k !== 'if' || x.b) return;
+        const c = x.c; if (c.k !== 'bin' || (c.op !== '<' && c.op !== '>') || c.l.k !== 'id' || c.r.k !== 'id') return;
+        const pequeno = c.op === '<' ? c.l.name : c.r.name, grande = c.op === '<' ? c.r.name : c.l.name; // V < M  => V es el dato, M el mínimo
+        const as = stmtsOf(x.a).length === 1 ? this.asigSimple(stmtsOf(x.a)[0]) : null;
+        if (!as || as.r.k !== 'id' || as.r.name !== pequeno || as.l.name !== grande) return;
+        const M = grande, V = pequeno;
+        if (!this.esEscalar(M) || leidoEnLazo.indexOf(V) < 0) return;
+        const ws = this.escrituras(M); const ini = ws.filter((w) => w.seq < this.seqIni(s));
+        if (ini.length !== 1) return;
+        const w0 = ini[0]; const val = w0.kind === 'decl' ? w0.node : w0.kind === 'assign' && w0.node.op === '=' ? w0.node.r : null;
+        if (!val || val.k !== 'num' || val.v !== 0 || val.ch) return;
+        if (ws.filter((w) => w.seq >= this.seqIni(s)).some((w) => !(w.kind === 'assign' && w.node === as))) return;
+        this.w('LOG-029', M + ' arranca en 0, que no es uno de los datos, y ningún dato positivo es menor que 0. El resultado queda siempre en 0.', w0.line);
+      });
+    }
+    promedios(s, cuerpo) {
+      // acumulador y contador que cambian dentro del mismo if
+      const pares = [];
+      this.walk(cuerpo, { loops: [s], ifs: [], cond: false }, null, (x) => {
+        if (x.k !== 'if') return;
+        const ls = stmtsOf(x.a); let acc = null, cnt = null;
+        for (const t of ls) { const a = this.acum(t); if (a && numVal(a.e) !== 1) acc = acc || a.v; const c = this.esInc(t); if (c) cnt = cnt || c; }
+        if (acc && cnt && acc !== cnt) pares.push({ acc, cnt });
+      });
+      for (const { acc, cnt } of pares) {
+        each(this.fi.f.body, (x) => {
+          if (x.k === 'bin' && x.op === '/' && x.l.k === 'id' && x.l.name === acc && x.r.k === 'id' && x.r.name !== cnt && this.fi.sq.get(x) > this.seqFin(s) && mentions(s.c, x.r.name) && this.esEscalar(x.r.name)) this.w('LOG-028', 'dividís ' + acc + ' (la suma de los que cumplen) por ' + x.r.name + ' (todos los datos) en vez de por ' + cnt + ' (los que se sumaron). El promedio da menos de lo que corresponde.', x.line);
+        });
+      }
+    }
+  }
+  const esLoopCtx = (st) => !!(st && st.loops && st.loops.length);
+  // llamada desde Gen.run
+  function reglasKB(g, items) { new Reglas(g, items).run(); }
+
   const CODIGOS = [
     [/comparar un decimal|a < b < c|XOR|operación de bits/, 'comparacion'], [/sin condición de corte|nunca termina|no termina nunca|probable que nunca/, 'bucle-infinito'],
     [/falta un ';'/, 'falta-punto-coma'], [/falta cerrar la llave/, 'llave-sin-cerrar'],
@@ -1483,7 +2301,7 @@
     [/siempre es verdadero/, 'condicion-constante'], [/arreglo|índice/, 'arreglo'], [/función|argumento/, 'funcion'],
     [/se esperaba|falta una expresión|carácter no válido|carácter invisible|no es un tipo|no existe en C|no se escribe|no se entiende|símbolo|número .* no es válido|literal/, 'sintaxis']
   ];
-  function conCodigo(arr, pref) { return arr.map((d) => { let code = pref + 'otro'; for (const [re, c] of CODIGOS) if (re.test(d.msg)) { code = pref + c; break; } return Object.assign({ code }, d); }); }
+  function conCodigo(arr, pref) { return arr.map((d) => { let code = pref + 'otro'; if (d.kb && own(KB_CODIGO, d.kb)) code = pref + KB_CODIGO[d.kb]; else for (const [re, c] of CODIGOS) if (re.test(d.msg)) { code = pref + c; break; } return Object.assign({ code }, d); }); }
   function compile(src, opts) {
     const includes = [], defines = new Map();
     includes.avisos = [];

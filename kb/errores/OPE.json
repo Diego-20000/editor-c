@@ -106,9 +106,9 @@
   "riesgo_falso_positivo": "Programas de bits con & a propósito (no se ven en la materia).",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "usaste '&' (operación de bits); para \"y\" lógico se escribe '&&'.",
+  "codigo_editor_actual": "W-and-de-bits",
   "verificado_editor_corrige": true
  },
  {
@@ -246,9 +246,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "A == B == C no compara los tres: primero A == B da 1 o 0 y después se compara ese resultado con C. Unilos con &&.",
+  "codigo_editor_actual": "W-comparacion-encadenada",
   "verificado_editor_corrige": true
  },
  {
@@ -302,9 +302,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "X != 1 || X != 2 es siempre verdadera: cualquier número es distinto de 1 o distinto de 2. Para \"ni 1 ni 2\" usá &&.",
+  "codigo_editor_actual": "W-siempre-verdadera",
   "verificado_editor_corrige": true
  },
  {
@@ -358,9 +358,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "informacion",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "en A + B / 2 la división se hace antes que la suma, así que solo B se divide por 2. Falta un paréntesis alrededor de la suma.",
+  "codigo_editor_actual": "W-promedio-sin-parentesis",
   "verificado_editor_corrige": true
  },
  {
@@ -386,9 +386,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "la negación se aplica solo a A, no a la comparación completa (!A == B). Poné la comparación entre paréntesis o usá !=.",
+  "codigo_editor_actual": "W-negacion-sin-parentesis",
   "verificado_editor_corrige": true
  },
  {
@@ -414,9 +414,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "!N % 2 se calcula como (!N) % 2, no como !(N % 2).",
+  "codigo_editor_actual": "W-negacion-con-resto",
   "verificado_editor_corrige": true
  },
  {
@@ -442,9 +442,9 @@
   "riesgo_falso_positivo": "Una asignación a un valor con signo escrita con espacios, por ejemplo X = +1.",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "SUMA =+ I asigna +I en lugar de sumar. En C el operador es '+=', o escribí SUMA = SUMA + I.",
+  "codigo_editor_actual": "W-asignacion-invertida",
   "verificado_editor_corrige": true
  },
  {
@@ -470,9 +470,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "A = A++ modifica A dos veces en la misma instrucción y el resultado no está definido. Alcanza con A++;.",
+  "codigo_editor_actual": "W-doble-modificacion",
   "verificado_editor_corrige": true
  },
  {
@@ -666,9 +666,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "división por cero: con decimales no se cierra, pero el resultado es inf (infinito).",
+  "codigo_editor_actual": "W-division-decimal-cero",
   "verificado_editor_corrige": true
  },
  {
@@ -694,9 +694,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "en C los decimales se escriben con punto (3.5). La coma separa instrucciones, así que X recibe solo el 3.",
+  "codigo_editor_actual": "W-coma-decimal",
   "verificado_editor_corrige": true
  },
  {
@@ -722,9 +722,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "la coma descarta la primera condición y el if solo mira la segunda (B > 5). Para pedir las dos usá &&.",
+  "codigo_editor_actual": "W-coma-en-condicion",
   "verificado_editor_corrige": true
  },
  {
@@ -750,9 +750,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "en A = B = 2.5 la variable A es int y se queda sin los decimales de B. Las dos variables de la cadena deberían ser del mismo tipo.",
+  "codigo_editor_actual": "W-asignacion-encadenada",
   "verificado_editor_corrige": true
  },
  {
@@ -946,9 +946,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "la condición X < 0 && X > 10 nunca se cumple: ningún valor de X puede cumplir las dos cosas a la vez. Si querías \"o\" (por ejemplo fuera de un rango), se usa ||.",
+  "codigo_editor_actual": "W-condicion-imposible",
   "verificado_editor_corrige": true
  },
  {
@@ -1030,9 +1030,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "N / 2 es el cociente, no el resto. Para saber si N es múltiplo de 2 hace falta N % 2.",
+  "codigo_editor_actual": "W-resto-con-division",
   "verificado_editor_corrige": true
  },
  {
@@ -1171,9 +1171,9 @@
   "riesgo_falso_positivo": "Una variable que guarda a propósito un verdadero/falso.",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "A > B no da el mayor: da 1 si es verdadero y 0 si es falso. Para quedarte con el mayor hay que usar un if.",
+  "codigo_editor_actual": "W-comparacion-guardada",
   "verificado_editor_corrige": true
  },
  {
@@ -1199,9 +1199,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "&& se calcula antes que ||, así que la condición se agrupa distinto a como la leés (A == 1 || A == 2 && B == 3). Usá paréntesis para dejarlo claro.",
+  "codigo_editor_actual": "W-precedencia-and-or",
   "verificado_editor_corrige": true
  },
  {
@@ -1283,9 +1283,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "informacion",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "N-- resta 1 antes de entrar al cuerpo del while, así que adentro N ya vale uno menos (con N = 3 el cuerpo ve 2, 1, 0 y no 3, 2, 1).",
+  "codigo_editor_actual": "W-decremento-en-condicion",
   "verificado_editor_corrige": true
  },
  {
@@ -1311,9 +1311,9 @@
   "riesgo_falso_positivo": "Una variable usada como bandera (0 o 1).",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "A && B > 5 solo pregunta si A es distinto de 0, no si cumple la comparación de B. Repetí la comparación con cada variable.",
+  "codigo_editor_actual": "W-condicion-a-medias",
   "verificado_editor_corrige": true
  },
  {
@@ -1339,9 +1339,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "el tercer campo del for (I + 1) calcula un valor pero no lo guarda, así que la variable nunca cambia. Usá I++ o I = I + 1.",
+  "codigo_editor_actual": "W-incremento-sin-efecto",
   "verificado_editor_corrige": true
  }
 ]
