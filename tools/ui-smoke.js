@@ -74,7 +74,7 @@ async function suite(browser, target, mobile) {
   const page = await ctx.newPage();
   const errors = [], net = [];
   page.on('console', (m) => { if (m.type() === 'error' || m.type() === 'warning') errors.push(m.text()); });
-  page.on('pageerror', (e) => errors.push('pageerror: ' + e.message));
+  page.on('pageerror', (e) => { errors.push('pageerror: ' + e.message); if (process.env.DBG) console.log('PAGEERROR', e.message); });
   const allowed = target.origin;
   ctx.on('request', (r) => { const u = r.url(); if (/^(file|data|blob|about):/.test(u)) return; if (allowed && u.startsWith(allowed)) return; net.push(u); });
   await page.goto(target.url);
@@ -350,6 +350,130 @@ async function suite(browser, target, mobile) {
 }
 
 // ------------------------------------------------------------------ escritorio: divisor
+// ------------------------------------------------------------------ diseño: «hoja de cuaderno» y ayudas de lectura
+async function disenoSuite(browser, target, mobile) {
+  console.log('\n== diseño y lectura · ' + target.label + (mobile ? ' (celular)' : ' (escritorio)'));
+  const ctx = await newCtx(browser, mobile), page = await ctx.newPage();
+  const errors = []; page.on('console', (m) => { if (m.type() === 'error' || m.type() === 'warning') errors.push(m.text()); }); page.on('pageerror', (e) => errors.push(e.message));
+  const H = helpers(page, mobile);
+  await page.goto(target.url); await page.waitForSelector('#code');
+  const PROG = '#include <stdio.h>\nint main() {\n    int A;\n    if (A > 0) {\n        printf("}(");\n    }\n    return 0;\n}\n';
+  await H.setCode(PROG);
+  const caret = (pos) => page.evaluate((p) => { const t = document.getElementById('code'); t.focus(); t.setSelectionRange(p, p); document.dispatchEvent(new Event('selectionchange')); }, pos);
+  const marks = (c) => page.evaluate((k) => document.querySelectorAll('#br .' + k).length, c);
+  // 1) pareja de llaves
+  await caret(PROG.indexOf('{') + 1); await page.waitForTimeout(80);
+  ok(await marks('bm') === 2, 'pareja: con el cursor junto a "{" se marcan las dos llaves del bloque');
+  const txt = await page.evaluate(() => Array.from(document.querySelectorAll('#br .bm')).map((e) => e.textContent).join(''));
+  ok(txt === '{}', 'pareja: las marcadas son "{" y "}" (' + txt + ')');
+  await caret(PROG.indexOf('(', PROG.indexOf('if')) + 1); await page.waitForTimeout(80);
+  const par = await page.evaluate(() => document.getElementById('br').textContent);
+  ok(await marks('bm') === 2, 'pareja: con "(" del if se marcan los dos paréntesis (los de la cadena "}(" no cuentan)');
+  await caret(PROG.indexOf('A;') ); await page.waitForTimeout(80);
+  ok(await marks('bm') === 0 && await marks('bu') === 0, 'pareja: sin llave junto al cursor no se marca nada');
+  await H.setCode('int main() {\n    return 0;\n');
+  await caret(12); await page.waitForTimeout(80);
+  ok(await marks('bu') === 1 && await marks('bm') === 0, 'pareja: una llave sin cerrar se marca como sin pareja');
+  await H.setCode(PROG);
+  // 2) línea actual
+  await caret(PROG.indexOf('return')); await page.waitForTimeout(80);
+  const cur = await page.evaluate(() => { const g = document.querySelector('#gut .cur'); return g ? g.textContent : null; });
+  ok(cur === '7', 'línea actual: el número de la línea del cursor está resaltado (' + cur + ')');
+  const geo = await page.evaluate(() => { const c = document.getElementById('curline').getBoundingClientRect(), g = document.querySelector('#gut .cur').getBoundingClientRect(); return { dy: Math.abs((c.top + c.height / 2) - (g.top + g.height / 2)), h: c.height }; });
+  ok(geo.dy < 2 && geo.h > 10, 'línea actual: la banda coincide con el renglón (desvío ' + geo.dy.toFixed(1) + ' px)');
+  const pos = await page.textContent('#pos');
+  ok(/Lín 7, Col 5/.test(pos), 'contador: Lín/Col del cursor (' + pos + ')');
+  // 3) guías de sangría y espacios
+  const guides = () => page.evaluate(() => document.querySelectorAll('#gd i.ig').length);
+  ok(await guides() >= 6, 'guías de sangría: hay guías en las líneas sangradas (' + await guides() + ')');
+  ok(await page.evaluate(() => getComputedStyle(document.getElementById('gd')).pointerEvents === 'none'), 'guías: la capa no intercepta clics');
+  // 4) ajustes: sangría, espacios, renglones
+  await H.menu(); await H.tap('#settings'); await page.waitForSelector('#tabSel', { state: 'visible' });
+  await page.selectOption('#tabSel', '2');
+  ok(await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--tab').trim() === '2'), 'sangría: --tab pasa a 2');
+  ok(await guides() >= 12, 'sangría 2: las guías se recalculan (' + await guides() + ')');
+  await page.check('#wsChk');
+  ok(await page.evaluate(() => document.querySelectorAll('#gd b.sp').length) > 5, 'espacios visibles: se dibujan puntos en los espacios');
+  await page.uncheck('#wsChk');
+  ok(await page.evaluate(() => document.querySelectorAll('#gd b.sp').length) === 0, 'espacios visibles: se apagan');
+  await page.uncheck('#ruleChk');
+  ok(await page.evaluate(() => document.documentElement.classList.contains('sinrenglones') && getComputedStyle(document.getElementById('codeBox')).backgroundImage === 'none'), 'renglones de fondo: se pueden apagar');
+  await page.check('#ruleChk');
+  ok(await page.evaluate(() => getComputedStyle(document.getElementById('codeBox')).backgroundImage !== 'none'), 'renglones de fondo: se vuelven a prender');
+  await page.evaluate(() => { document.getElementById('dSet').close(); if (innerWidth < 900) document.getElementById('more').open = false; });
+  await H.setCode('int main() {\n');
+  await page.evaluate(() => { const t = document.getElementById('code'); t.focus(); t.setSelectionRange(t.value.length, t.value.length); });
+  await page.keyboard.press('Tab');
+  ok((await page.$eval('#code', (t) => t.value)) === 'int main() {\n  ', 'sangría 2: Tab inserta 2 espacios');
+  await H.menu(); await H.tap('#settings'); await page.selectOption('#tabSel', '4'); await page.evaluate(() => { document.getElementById('dSet').close(); if (innerWidth < 900) document.getElementById('more').open = false; });
+  ok(await page.evaluate(() => localStorage.getItem('editorc.sang')) === '4', 'sangría: se recuerda en el dispositivo');
+  // 5) cartel de ejecución
+  await H.setCode(LOOP);
+  await H.run(); await H.tab('co');
+  await page.waitForSelector('#runBar:not([hidden])', { timeout: 4000 });
+  await page.waitForFunction(() => /Ejecutando/.test(document.getElementById('runBarTxt').textContent), null, { timeout: 8000 });
+  ok(/Ejecutando/.test(await page.textContent('#runBarTxt')), 'cartel: mientras corre dice "Ejecutando…" (' + await page.textContent('#runBarTxt') + ')');
+  await H.tap('#stop'); await page.waitForTimeout(500);
+  ok(await page.evaluate(() => document.getElementById('runBar').hidden), 'cartel: se oculta al detener');
+  await H.setCode(SCANF); await H.tab('ed'); await H.run();
+  await page.waitForSelector('.stdin input');
+  ok(/Esperando datos/.test(await page.textContent('#runBarTxt')) && await page.evaluate(() => document.getElementById('runBar').classList.contains('wait')), 'cartel: pidiendo datos dice "Esperando datos"');
+  await H.typeLine('1'); await H.typeLine('2'); await H.done();
+  ok(await page.evaluate(() => document.getElementById('runBar').hidden), 'cartel: al terminar no queda a la vista');
+  ok(await page.evaluate(() => { const i = document.querySelector('#out .in'); return !!i && getComputedStyle(i).textDecorationLine.indexOf('underline') >= 0; }), 'consola: lo tipeado se distingue (color y subrayado punteado), no solo por el color');
+  // 6) modo lectura
+  await H.tab('ed'); await H.setCode(PROG);
+  await H.tap('#readBtn'); await page.waitForTimeout(150);
+  ok(await page.evaluate(() => document.documentElement.classList.contains('lectura') && document.getElementById('code').readOnly), 'lectura: se activa y el código queda de solo lectura');
+  ok(await page.evaluate(() => getComputedStyle(document.querySelector('.bar')).display === 'none' && getComputedStyle(document.getElementById('paneCo')).display === 'none'), 'lectura: se ocultan la barra y la consola');
+  const r0 = await page.$eval('#code', (t) => t.value);
+  await page.evaluate(() => { const t = document.getElementById('code'); t.focus(); t.setSelectionRange(0, 0); });
+  await page.keyboard.type('zzz'); await page.keyboard.press('Tab'); await page.keyboard.press('Enter');
+  ok((await page.$eval('#code', (t) => t.value)) === r0, 'lectura: tipear, Tab y Enter no cambian el código');
+  const rb = await page.locator('#readBtn').boundingBox();
+  ok(rb && rb.height >= (mobile ? 43.5 : 27), 'lectura: el botón para salir está a la vista (' + Math.round(rb.width) + 'x' + Math.round(rb.height) + ')');
+  ok(!(await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth)), 'lectura: sin desplazamiento horizontal de la página');
+  await page.screenshot({ path: path.join(STEP, 'd-lectura-' + (mobile ? 'cel' : 'esc') + '.png') });
+  await page.keyboard.press('Escape'); await page.waitForTimeout(100);
+  ok(await page.evaluate(() => !document.documentElement.classList.contains('lectura') && !document.getElementById('code').readOnly), 'lectura: Esc vuelve a editar');
+  ok(await page.evaluate(() => getComputedStyle(document.querySelector('.bar')).display !== 'none'), 'lectura: vuelve la barra');
+  // 7) contraste WCAG AA de la paleta (claro y oscuro)
+  const lum = (h) => { const c = [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16) / 255).map((v) => v <= .03928 ? v / 12.92 : Math.pow((v + .055) / 1.055, 2.4)); return .2126 * c[0] + .7152 * c[1] + .0722 * c[2]; };
+  const cr = (a, b) => { const x = lum(a), y = lum(b); return (Math.max(x, y) + .05) / (Math.min(x, y) + .05); };
+  for (const th of ['light', 'dark']) {
+    const v = await page.evaluate((t) => { document.documentElement.dataset.theme = t; const cs = getComputedStyle(document.documentElement), o = {}; ['panel', 'panel2', 'bg', 'text', 'muted', 'accent', 'accent-ink', 'danger', 'warn', 'input', 'ok', 'kw', 'ty', 'st', 'nu', 'co', 'fn', 'pp', 'gut', 'lineS'].forEach((k) => { o[k] = cs.getPropertyValue('--' + k).trim(); }); return o; }, th);
+    const bad = [];
+    for (const k of ['text', 'muted', 'accent', 'danger', 'warn', 'input', 'ok', 'kw', 'ty', 'st', 'nu', 'co', 'fn', 'pp', 'gut']) for (const bg of ['panel', 'panel2']) if (cr(v[k], v[bg]) < 4.5) bad.push(k + ' sobre ' + bg + ' ' + cr(v[k], v[bg]).toFixed(2));
+    for (const k of ['text', 'muted', 'danger', 'warn', 'input', 'ok']) if (cr(v[k], v.bg) < 4.5) bad.push(k + ' sobre bg ' + cr(v[k], v.bg).toFixed(2));
+    if (cr(v['accent-ink'], v.accent) < 4.5) bad.push('texto de botón primario');
+    if (cr(v.lineS, v.panel) < 3) bad.push('borde de campos');
+    ok(bad.length === 0, 'contraste WCAG AA (' + th + '): texto >= 4,5:1 y bordes de campos >= 3:1' + (bad.length ? ' -> ' + bad.join('; ') : ''));
+  }
+  await page.evaluate(() => { delete document.documentElement.dataset.theme; });
+  // 8) hoja de atajos incluye Esc; tabla de atajos sin choque con F1/?
+  await page.evaluate(() => document.getElementById('dlg').showModal());
+  ok(/Esc/.test(await page.textContent('#dlg .keys')) && /F1/.test(await page.textContent('#dlg .keys')), 'atajos: la hoja muestra F1 y Esc');
+  await page.evaluate(() => document.getElementById('dlg').close());
+  // 9) celular: nada se sale, cabecera de la hoja en una sola fila
+  if (mobile) {
+    const hh = await page.$eval('#paneEd .pane-head', (e) => e.getBoundingClientRect().height);
+    ok(hh <= 60, 'celular: la cabecera del editor cabe en una fila (' + Math.round(hh) + ' px)');
+    ok(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), 'celular: sin desplazamiento horizontal');
+    const small = await page.evaluate(() => Array.from(document.querySelectorAll('.bar .btn, .tab, #readBtn, #findBtn, #whatBtn, #pname')).filter((e) => e.offsetParent && (e.getBoundingClientRect().height < 43.5 || e.getBoundingClientRect().width < 43.5)).map((e) => e.id || e.className));
+    ok(small.length === 0, 'celular: objetivos táctiles de 44 px en la barra, pestañas y cabecera' + (small.length ? ' -> ' + small.join(',') : ''));
+  }
+  // 10) la imagen de la captura: hoja blanca con tira azul arriba, sin pedir nada a la red
+  await H.setCode(PROG);
+  await H.menu(); await H.tap('#shot'); await page.waitForFunction(() => document.getElementById('shotImg').getAttribute('src'));
+  await page.waitForTimeout(300);
+  const px = await page.evaluate(() => new Promise((res) => { const im = new Image(); im.onload = () => { const c = document.createElement('canvas'); c.width = im.width; c.height = im.height; const x = c.getContext('2d', { willReadFrequently: true }); x.drawImage(im, 0, 0); const g = (a, b) => Array.from(x.getImageData(a, b, 1, 1).data); res({ w: im.width, h: im.height, top: g(5, 3), body: g(6, 60), foot: g(6, im.height - 6) }); }; im.src = document.getElementById('shotImg').src; }));
+  ok(px.top[2] > 100 && px.top[0] < 60 && px.body.slice(0, 3).every((v) => v > 250) && px.foot.slice(0, 3).every((v) => v > 250), 'captura: tira de tinta azul arriba y fondo blanco (' + px.w + 'x' + px.h + ')');
+  ok(px.w <= 1400, 'captura: ancho razonable para verla en el celular (' + px.w + ' px)');
+  await page.evaluate(() => { document.getElementById('dShot').close(); if (innerWidth < 900) document.getElementById('more').open = false; });
+  ok(errors.length === 0, 'diseño: sin errores ni avisos en la consola del navegador' + (errors.length ? ' -> ' + errors.slice(0, 2).join(' | ') : ''));
+  await ctx.close();
+}
+
 async function dividerSuite(browser, target) {
   console.log('\n== divisor · ' + target.label + ' (escritorio)');
   const ctx = await newCtx(browser, false), page = await ctx.newPage();
@@ -515,7 +639,7 @@ async function pwaSuite(browser, mobile) {
   const ctx = await newCtx(browser, mobile), page = await ctx.newPage();
   const errors = [], net = [];
   page.on('console', (m) => { if (m.type() === 'error' || m.type() === 'warning') errors.push(m.text()); });
-  page.on('pageerror', (e) => errors.push('pageerror: ' + e.message));
+  page.on('pageerror', (e) => { errors.push('pageerror: ' + e.message); if (process.env.DBG) console.log('PAGEERROR', e.message); });
   ctx.on('request', (r) => { if (!r.url().startsWith(S.url) && !/^(data|blob|about):/.test(r.url())) net.push(r.url()); });
   await page.goto(S.url + 'index.html');
   await until(page, () => navigator.serviceWorker.getRegistration().then((r) => !!(r && r.active)), 15000);
@@ -589,7 +713,7 @@ async function entrenadorSuite(browser, target, mobile) {
   const page = await ctx.newPage();
   const errors = [], net = [], extra = [];
   page.on('console', (m) => { if (m.type() === 'error' || m.type() === 'warning') errors.push(m.text()); });
-  page.on('pageerror', (e) => errors.push('pageerror: ' + e.message));
+  page.on('pageerror', (e) => { errors.push('pageerror: ' + e.message); if (process.env.DBG) console.log('PAGEERROR', e.message); });
   ctx.on('page', (p) => extra.push(p.url()));
   ctx.on('request', (r) => { const u = r.url(); if (/^(file|data|blob|about):/.test(u)) return; if (target.origin && u.startsWith(target.origin)) return; net.push(u); });
   const H = helpers(page, mobile), tg = (mobile ? 'm' : 'd') + '-ent-' + label.replace(/\W+/g, '');
@@ -834,7 +958,7 @@ async function procesoSuite(browser, target) {
   const ctx = await newCtx(browser, false), page = await ctx.newPage();
   const errors = [], net = [];
   page.on('console', (m) => { if (m.type() === 'error' || m.type() === 'warning') errors.push(m.text()); });
-  page.on('pageerror', (e) => errors.push('pageerror: ' + e.message));
+  page.on('pageerror', (e) => { errors.push('pageerror: ' + e.message); if (process.env.DBG) console.log('PAGEERROR', e.message); });
   ctx.on('request', (r) => { const u = r.url(); if (/^(file|data|blob|about):/.test(u)) return; if (target.origin && u.startsWith(target.origin)) return; net.push(u); });
   const H = helpers(page, false);
   // copia texto con teclado real: textarea temporal, Ctrl+A, Ctrl+C
@@ -959,6 +1083,10 @@ async function finalShots(browser, url) {
   await guard('proceso dist', () => procesoSuite(browser, T.one));
   await guard('divisor', () => dividerSuite(browser, T.idx));
   await guard('divisor dist', () => dividerSuite(browser, T.one));
+  await guard('diseño index', () => disenoSuite(browser, T.idx, false));
+  await guard('diseño dist', () => disenoSuite(browser, T.one, false));
+  await guard('diseño index celular', () => disenoSuite(browser, T.idx, true));
+  await guard('diseño dist celular', () => disenoSuite(browser, T.one, true));
   await guard('celular index', () => phoneSuite(browser, T.idx));
   await guard('celular dist', () => phoneSuite(browser, T.one));
   await guard('sin worker', () => fallbackSuite(browser, T.idx));

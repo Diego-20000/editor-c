@@ -27,6 +27,10 @@ async function ctx(br, mobile, tema) {
       await p.evaluate((s) => window.__editorc.setCode(s), PROG);
       await p.waitForTimeout(200);
       await S(p, M + '-' + T + '-editor');
+      await p.evaluate(() => { const t = document.getElementById('code'); t.focus(); const i = t.value.indexOf('if (PROM') ; const k = t.value.indexOf('{', i) + 1; t.setSelectionRange(k, k); document.dispatchEvent(new Event('selectionchange')); });
+      await p.waitForTimeout(150);
+      await S(p, M + '-' + T + '-pareja-llaves');
+      if (tema === 'light') { await p.click('#readBtn'); await p.waitForTimeout(200); await S(p, M + '-' + T + '-lectura'); await p.click('#readBtn'); }
       // ejecutar con datos de entrada precargados
       await p.evaluate(() => { document.getElementById('inTxt').value = '6\n9'; document.getElementById('inTxt').dispatchEvent(new Event('input')); });
       if (mobile) await p.tap('#run'); else await p.click('#run');
@@ -39,7 +43,7 @@ async function ctx(br, mobile, tema) {
       if (mobile) await p.tap('#run'); else await p.click('#run');
       await p.waitForTimeout(800);
       if (mobile) await p.tap('#tabCo');
-      const b = await p.$('.help .hact button'); if (b) { await b.click(); await p.waitForTimeout(200); }
+      const b = await p.$('.help .hact button:has-text("ista")'); if (b) { await b.click(); await p.waitForTimeout(200); }
       await S(p, M + '-' + T + '-problemas');
       if (!mobile || tema === 'light') {
         // ayuda
