@@ -1,5 +1,18 @@
 # Cambios de interfaz
 
+## Rediseño: neutro, tipo iPhone, con identidad propia (rama ent-d2)
+
+Reemplaza por completo la capa «hoja de cuaderno» (papel crema, renglones, margen rojo, lapiceras, subrayado punteado). Dirección completa en `docs/DISENO.md`; logo, paleta, íconos y guía en `docs/identidad/index.html`.
+
+- **Estilo**: tipografía del sistema, listas agrupadas con filetes, botón primario relleno, selectores segmentados (Editor/Consola en celular, tema, nivel de ayuda), interruptores para los demás ajustes, hojas que suben desde abajo en celular (con asa) y diálogos centrados en escritorio, radios de 8 a 16 px, sin degradados ni emoji, movimiento mínimo (se anula con `prefers-reduced-motion`).
+- **Temas**: Automático / Claro / Oscuro (el automático sigue `prefers-color-scheme`); dos `<meta name="theme-color">` y ajuste por JS cuando se elige un tema a mano. Contraste AA verificado por prueba en los tres temas.
+- **Identidad**: logo propio (una C y el cursor de texto), SVG del símbolo y del nombre (horizontal, apilado, mono, fondo oscuro), ícono de app 192/512/maskable, apple-touch-icon 180, favicon SVG/PNG/ICO, pantalla de inicio de iPhone, manifest actualizado. Se generan con `node tools/generar-identidad.js && node tools/generar-iconos.js`; `build.js` solo copia (sigue necesitando solo node).
+- **Íconos**: 30 íconos propios en un sprite inline (`docs/identidad/iconos.svg`), con `<use>`; funciona por file:// y en `dist/editor-c.html`.
+- **Captura de entrega** rehecha: hoja blanca, cabecera con datos, secciones en mayúscula con filetes, código con números de línea, salida sobre gris claro, evidencia de proceso y la marca al pie.
+- **Se conserva**: pareja de llaves, línea actual, guías de sangría, tamaño de sangría, mostrar espacios, modo lectura, cartel «ejecutando» (ahora plano). **Se quitó** el ajuste «Renglones de cuaderno de fondo». Lo tipeado en la consola va en turquesa y negrita (no subrayado punteado).
+- **Pruebas**: `tools/ui-smoke.js` ganó la suite «identidad» (temas con la preferencia del sistema emulada, contraste AA, íconos del manifest y zona segura del maskable, favicon, sprite, marca igual al SVG, píxeles de la captura). `tools/capturas-diseno.js` saca las capturas `ios-*` en `docs/capturas/`.
+
+
 Rama: `ui-pendientes` (primera tanda: `worktree-agent-aebad1991ae07a35f`). No se tocó `src/compiler.js`, `src/runtime.js` ni `test/`; el motor se usa solo por `CCompiler.compile(src, opts)` y `CRT.runProgram`.
 
 ## 1. Estructura

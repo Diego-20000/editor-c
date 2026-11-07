@@ -1,6 +1,12 @@
 (function () {
   'use strict';
   const $ = (id) => document.getElementById(id);
+  // íconos propios (sprite inline en la página, docs/identidad/iconos.svg): <svg class="i"><use href="#i-nombre"/></svg>
+  const NS = 'http://www.w3.org/2000/svg';
+  function ico(nombre) {
+    const sv = document.createElementNS(NS, 'svg'), u = document.createElementNS(NS, 'use');
+    sv.setAttribute('class', 'i'); sv.setAttribute('aria-hidden', 'true'); u.setAttribute('href', '#i-' + nombre); sv.appendChild(u); return sv;
+  }
   const ta = $('code'), hl = $('hl'), ul = $('ul'), fm = $('fm'), gut = $('gut'), out = $('out'), cons = $('console'),
     diag = $('diag'), diagList = $('diagList'), statusEl = $('status'), runBtn = $('run'), stopBtn = $('stop'), exSel = $('examples'),
     inTxt = $('inTxt'), layers = [hl, ul, fm];
@@ -99,14 +105,13 @@
   }
   function isPristine(code) { return !code.trim() || EXAMPLES.some((x) => x.c === code) || code === template(); }
 
-  /* ---------- vista del código: sangría, espacios, renglones (solo cambian cómo se ve) ---------- */
+  /* ---------- vista del código: sangría y espacios (solo cambian cómo se ve) ---------- */
   let SANG = [2, 3, 4, 8].indexOf(parseInt(store.get('sang', '4'), 10)) >= 0 ? parseInt(store.get('sang', '4'), 10) : 4;
   let verEsp = store.get('ws', '') === '1';
   const SP = () => ' '.repeat(SANG);
   function aplicarVista() {
     const r = document.documentElement;
     r.style.setProperty('--tab', String(SANG));
-    r.classList.toggle('sinrenglones', store.get('reglas', '1') === '0');
   }
   aplicarVista();
 
@@ -508,7 +513,8 @@
       const ay = ayudaItem(it);
       const b = document.createElement('button'); b.type = 'button';
       const tag = document.createElement('span'); tag.className = 'tag';
-      tag.textContent = (it.k === 'e' ? (it.rt ? 'Error al ejecutar' : 'Error') : 'Aviso') + (it.line ? ' · línea ' + it.line : '');
+      tag.appendChild(ico(it.k === 'e' ? 'error' : 'aviso'));
+      tag.appendChild(document.createTextNode((it.k === 'e' ? (it.rt ? 'Error al ejecutar' : 'Error') : 'Aviso') + (it.line ? ' · línea ' + it.line : '')));
       const body = document.createElement('span'); body.className = 'body';
       const t = document.createElement('span'); t.className = 'msg'; t.textContent = ay.texto || it.msg; body.appendChild(t);
       if (ay.texto) { const o = document.createElement('span'); o.className = 'orig'; o.textContent = 'Compilador: ' + it.msg; body.appendChild(o); }
@@ -853,7 +859,7 @@
     bubble.innerHTML = '';
     let clave = null, a = null;
     if (K && off !== null) { try { clave = K.elementoEnPosicion(ta.value, off); a = clave ? K.ayudaDe(clave) : null; } catch (e) { a = null; } }
-    const cierre = btnEl('✕', 'mini ico', () => cerrarBurbuja(), 'Cerrar la explicación');
+    const cierre = btnEl('', 'mini ico', () => cerrarBurbuja(), 'Cerrar la explicación'); cierre.appendChild(ico('cerrar'));
     if (a) {
       const h = el('h4'); h.appendChild(el('code', '', a.elemento)); h.appendChild(cierre); bubble.appendChild(h);
       if (a.tipo) bubble.appendChild(el('div', 'muted', a.tipo));
@@ -912,10 +918,10 @@
       cm.appendChild(el('b', '', (d.line ? 'Línea ' + d.line + ': ' : '') + (d.msg || '')));
       cm.appendChild(el('small', '', (d.nivel === 'aviso' ? 'Aviso' : 'Error') + (c.fecha ? ' · ' + c.fecha : '') + ' · ' + (c.codigo || '').split('\n').length + ' líneas de código'));
       lb.appendChild(cb); lb.appendChild(cm); li.appendChild(lb);
-      const del = btnEl('✕', 'mini ico', () => {
+      const del = btnEl('', 'mini ico', () => {
         Compartir.borrar(k, almacen); casosSel.delete(k); pintarCasos();
         toast('Caso borrado.', 'Deshacer', () => { Compartir.guardar(c, almacen); casosSel.add(k); pintarCasos(); });
-      }, 'Borrar este caso'); del.title = 'Borrar este caso';
+      }, 'Borrar este caso'); del.title = 'Borrar este caso'; del.appendChild(ico('borrar'));
       li.appendChild(del); ul2.appendChild(li);
     });
     $('cVacio').hidden = lista.length > 0; $('cAcc').hidden = !lista.length; $('cDelAll').hidden = !lista.length;
@@ -965,24 +971,39 @@
   // un enlace de WhatsApp sin casos elegidos no debe abrirse
   $('cWa').addEventListener('click', (e) => { if ($('cWa').getAttribute('aria-disabled') === 'true') e.preventDefault(); });
 
+  /* selector segmentado (role=radiogroup): el valor está en data-v de cada botón */
+  function segSet(g, v) { g.querySelectorAll('button').forEach((b) => { const on = b.dataset.v === String(v); b.setAttribute('aria-checked', on ? 'true' : 'false'); b.tabIndex = on ? 0 : -1; }); }
+  const segGet = (g) => { const b = g.querySelector('[aria-checked="true"]'); return b ? b.dataset.v : ''; };
+  function segInit(g, fn) {
+    const bs = Array.from(g.querySelectorAll('button'));
+    const pick = (b) => { segSet(g, b.dataset.v); fn(b.dataset.v); };
+    bs.forEach((b, i) => {
+      b.addEventListener('click', () => pick(b));
+      b.addEventListener('keydown', (e) => {
+        const d = e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : e.key === 'ArrowLeft' || e.key === 'ArrowUp' ? -1 : 0;
+        if (d) { e.preventDefault(); const n = bs[(i + d + bs.length) % bs.length]; n.focus(); pick(n); }
+      });
+    });
+  }
+  window.__seg = { get: segGet, set: segSet };
+
   /* ---------- ajustes: ayuda, escritura, evidencia de proceso ---------- */
   function sincronizarAjustesNuevos() {
-    $('ayudaSel').value = String(nivelAyuda); $('ayudaDesc').textContent = NIVELES_TXT[nivelAyuda];
+    segSet($('ayudaSel'), String(nivelAyuda)); $('ayudaDesc').textContent = NIVELES_TXT[nivelAyuda];
     $('autoCierre').checked = autoCierre;
-    $('tabSel').value = String(SANG); $('wsChk').checked = verEsp; $('ruleChk').checked = store.get('reglas', '1') !== '0';
+    $('tabSel').value = String(SANG); $('wsChk').checked = verEsp;
     $('procCap').checked = store.get('proccap', '1') !== '0';
     const l = proc.linea(); $('procAhora').textContent = l ? 'Este programa, ahora: ' + l.replace(/^Escrito en el editor: /, '') + '.' : '';
     const n = casosLista().length;
     $('casosBtn').textContent = 'Casos para enviar' + (n ? ' (' + n + ')' : '');
   }
-  $('ayudaSel').addEventListener('change', () => {
-    nivelAyuda = +$('ayudaSel').value; store.set('ayuda', String(nivelAyuda)); $('ayudaDesc').textContent = NIVELES_TXT[nivelAyuda];
+  segInit($('ayudaSel'), (v) => {
+    nivelAyuda = +v; store.set('ayuda', String(nivelAyuda)); $('ayudaDesc').textContent = NIVELES_TXT[nivelAyuda];
     if (lastRes && problems.length) renderDiag(lastRes, lastRt, true);
   });
   $('autoCierre').addEventListener('change', () => { autoCierre = $('autoCierre').checked; store.set('autocierre', autoCierre ? '1' : '0'); });
   $('tabSel').addEventListener('change', () => { SANG = +$('tabSel').value; store.set('sang', String(SANG)); aplicarVista(); refresh(); });
   $('wsChk').addEventListener('change', () => { verEsp = $('wsChk').checked; store.set('ws', verEsp ? '1' : '0'); refresh(); });
-  $('ruleChk').addEventListener('change', () => { store.set('reglas', $('ruleChk').checked ? '1' : '0'); aplicarVista(); });
   /* modo lectura: solo el código, sin barra ni consola; el texto no se puede cambiar */
   function setLectura(on) {
     document.documentElement.classList.toggle('lectura', on);
@@ -1311,10 +1332,11 @@ self.postMessage({ type: 'ready' });`;
   }
   function makePng(opts) {
     opts = opts || {};
-    // hoja de carpeta: fondo blanco, tinta oscura, nada de grises que se pierdan al imprimir. Lo tipeado va en negrita y subrayado (se distingue en blanco y negro).
-    const COL = { k: '#9a3412', t: '#1f4a8c', s: '#2c6a3b', n: '#0f6068', c: '#565a63', f: '#5b3f8c', p: '#7a5a1e', in: '#1b4f9c', er: '#b3261e', dim: '#4a5060', ok: '#1d6b43' };
-    const TXT = '#1c2230', RULE = '#dde3ee', INKB = '#1f4a8c', MARG = '#c0392b', BOX = '#7d8494';
-    const MONO = '"Liberation Mono", Menlo, Consolas, ui-monospace, monospace', UI = 'system-ui, "Segoe UI", Roboto, Arial, sans-serif';
+    // Hoja neutra para entregar: fondo blanco, texto casi negro, filetes finos. Se lee en el celular y al imprimir en blanco y negro:
+    // lo tipeado va en negrita, los títulos de sección en mayúscula con filete, y la marca se dibuja con el mismo trazo que el logo.
+    const COL = { k: '#a8390c', t: '#0a6e78', s: '#2c7339', n: '#8a5200', c: '#5c5e66', f: '#2a5fa3', p: '#7a6420', in: '#0a6e78', er: '#c2261b', dim: '#55565d', ok: '#1c7a3a' };
+    const TXT = '#1c1c1e', SUB = '#4a4a50', HAIR = '#d4d4d9', GUT = '#6c6d74', ACC = '#0a7580', PANEL = '#f7f7f8';
+    const MONO = '"Liberation Mono", Menlo, Consolas, ui-monospace, monospace', UI = '-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, Roboto, Arial, sans-serif';
     const fs = 15, lh = 22, padX = 28, cv = document.createElement('canvas'), ctx = cv.getContext('2d');
     ctx.font = fs + 'px ' + MONO; const cw = ctx.measureText('M').width;
     const codeLines = ta.value.replace(/\n$/, '').split('\n');
@@ -1338,7 +1360,7 @@ self.postMessage({ type: 'ready' });`;
     const outRows = rowsOf(outSegs, cols + 4);
     while (outRows.length > 1 && !outRows[outRows.length - 1].length) outRows.pop();
     const inRows = opts.input !== false && inTxt.value.trim() ? rowsOf([['in', inTxt.value.replace(/\n+$/, '')]], cols + 4) : [];
-    const secH = 34, headH = 84, gap = 10;
+    const secH = 38, headH = 88, gap = 6, footH = 46;
     const procRows = [];
     const procTxt = opts.proc === false ? '' : proc.linea();
     if (procTxt) {
@@ -1347,48 +1369,43 @@ self.postMessage({ type: 'ready' });`;
       procTxt.split(' ').forEach((w) => { const t = ln ? ln + ' ' + w : w; if (ln && ctx.measureText(t).width > W - 2 * padX) { procRows.push(ln); ln = w; } else ln = t; });
       if (ln) procRows.push(ln);
     }
-    const blockH = (n) => n * lh + 16;
-    const H = headH + gap + secH + blockH(codeRows.length) + (inRows.length ? gap + secH + blockH(inRows.length) : 0) + gap + secH + blockH(Math.max(1, outRows.length)) + (procRows.length ? 22 + procRows.length * 19 : 0) + 22;
+    const blockH = (n) => n * lh + 20;
+    const H = headH + gap + secH + blockH(codeRows.length) + (inRows.length ? gap + secH + blockH(inRows.length) : 0) + gap + secH + blockH(Math.max(1, outRows.length)) + (procRows.length ? 14 + procRows.length * 19 : 0) + footH;
     let S = 2; while (W * S * H * S > 14e6 && S > 1) S -= 0.5;
     cv.width = Math.round(W * S); cv.height = Math.round(H * S); ctx.scale(S, S);
     ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, W, H);
-    // cabecera: tira de tinta azul arriba, filete doble abajo
-    ctx.fillStyle = INKB; ctx.fillRect(0, 0, W, 5);
     ctx.textBaseline = 'middle';
+    // cabecera: nombre y datos a la izquierda, programa y fecha a la derecha, un filete fino abajo
     ctx.fillStyle = TXT; ctx.font = '700 21px ' + UI;
-    ctx.fillText(user.name || 'Editor C', padX, 34);
-    ctx.font = '14px ' + UI; ctx.fillStyle = '#3a4150';
-    ctx.fillText([user.curso, user.mat, user.ciclo && (/ciclo/i.test(user.ciclo) ? user.ciclo : 'Ciclo lectivo ' + user.ciclo)].filter(Boolean).join('  ·  ') || 'Captura del programa', padX, 60);
+    ctx.fillText(user.name || 'Editor C', padX, 32);
+    ctx.font = '14px ' + UI; ctx.fillStyle = SUB;
+    ctx.fillText([user.curso, user.mat, user.ciclo && (/ciclo/i.test(user.ciclo) ? user.ciclo : 'Ciclo lectivo ' + user.ciclo)].filter(Boolean).join('  ·  ') || 'Captura del programa', padX, 58);
     const d = new Date(), stamp = pad2(d.getDate()) + '/' + pad2(d.getMonth() + 1) + '/' + d.getFullYear() + ' ' + pad2(d.getHours()) + ':' + pad2(d.getMinutes());
-    ctx.textAlign = 'right'; ctx.font = '700 15px ' + UI; ctx.fillStyle = TXT; ctx.fillText((cur ? cur.name : 'Programa') + '.c', W - padX, 34);
-    ctx.font = '13px ' + UI; ctx.fillStyle = '#3a4150'; ctx.fillText(stamp, W - padX, 60); ctx.textAlign = 'left';
-    ctx.fillStyle = TXT; ctx.fillRect(padX, headH - 6, W - 2 * padX, 1.5); ctx.fillRect(padX, headH - 2, W - 2 * padX, 1);
+    ctx.textAlign = 'right'; ctx.font = '700 15px ' + UI; ctx.fillStyle = TXT; ctx.fillText((cur ? cur.name : 'Programa') + '.c', W - padX, 32);
+    ctx.font = '13px ' + UI; ctx.fillStyle = SUB; ctx.fillText(stamp, W - padX, 58); ctx.textAlign = 'left';
+    ctx.fillStyle = TXT; ctx.fillRect(padX, headH - 12, W - 2 * padX, 1.5);
     let y = headH + gap;
     const section = (title) => {
-      ctx.font = '700 12px ' + UI; ctx.fillStyle = TXT;
-      if ('letterSpacing' in ctx) ctx.letterSpacing = '1.5px';
-      ctx.fillText(title.toUpperCase(), padX, y + secH / 2 + 4);
+      ctx.font = '700 12px ' + UI; ctx.fillStyle = SUB;
+      if ('letterSpacing' in ctx) ctx.letterSpacing = '1.2px';
+      ctx.fillText(title.toUpperCase(), padX, y + secH / 2 + 6);
       if ('letterSpacing' in ctx) ctx.letterSpacing = '0px';
       y += secH;
     };
     const drawRows = (rows, x0, numbers) => {
-      const h = blockH(rows.length), bx = padX - 8, bw = W - 2 * padX + 16;
-      // renglones de cuaderno
-      ctx.fillStyle = RULE;
-      for (let i = 0; i < rows.length; i++) ctx.fillRect(bx + 1, y + 8 + (i + 1) * lh - 1, bw - 2, 1);
-      ctx.strokeStyle = BOX; ctx.lineWidth = 1; ctx.strokeRect(bx + .5, y + .5, bw - 1, h - 1);
-      if (numbers) { ctx.fillStyle = MARG; ctx.fillRect(padX + gutW - 6, y + 1, 1.5, h - 2); }
+      const h = blockH(rows.length), bx = padX - 10, bw = W - 2 * padX + 20, rr = 10;
+      ctx.beginPath(); ctx.roundRect ? ctx.roundRect(bx + .5, y + .5, bw - 1, h - 1, rr) : ctx.rect(bx + .5, y + .5, bw - 1, h - 1);
+      ctx.fillStyle = numbers ? '#ffffff' : PANEL; ctx.fill(); ctx.strokeStyle = HAIR; ctx.lineWidth = 1; ctx.stroke();
+      if (numbers) { ctx.fillStyle = HAIR; ctx.fillRect(padX + gutW - 6, y + 1, 1, h - 2); }
       rows.forEach((row, i) => {
-        const r = numbers ? row.r : row, yy = y + 8 + i * lh + lh / 2;
-        if (numbers) { ctx.font = (fs - 1) + 'px ' + MONO; ctx.fillStyle = '#5a6070'; ctx.textAlign = 'right'; ctx.fillText(String(row.n), padX + gutW - 14, yy); ctx.textAlign = 'left'; }
+        const r = numbers ? row.r : row, yy = y + 10 + i * lh + lh / 2;
+        if (numbers) { ctx.font = (fs - 1) + 'px ' + MONO; ctx.fillStyle = GUT; ctx.textAlign = 'right'; ctx.fillText(String(row.n), padX + gutW - 14, yy); ctx.textAlign = 'left'; }
         let x = x0;
         r.forEach(([cls, text]) => {
           const bold = cls === 'in' || cls === 't' || cls === 'er';
           ctx.font = (bold ? '700 ' : cls === 'c' ? 'italic ' : '') + fs + 'px ' + MONO;
           ctx.fillStyle = (cls && COL[cls]) || TXT; ctx.fillText(text, x, yy);
-          const w = ctx.measureText(text).width;
-          if (cls === 'in') { ctx.save(); ctx.strokeStyle = COL.in; ctx.lineWidth = 1.2; ctx.setLineDash([1.5, 2]); ctx.beginPath(); ctx.moveTo(x, yy + 9.5); ctx.lineTo(x + w, yy + 9.5); ctx.stroke(); ctx.restore(); }
-          x += w;
+          x += ctx.measureText(text).width;
         });
       });
       y += h;
@@ -1399,10 +1416,16 @@ self.postMessage({ type: 'ready' });`;
     y += gap; section('Salida');
     drawRows(outRows.length && (outRows.length > 1 || outRows[0].length) ? outRows : [[['dim', '(sin salida: ejecutá el programa antes de sacar la captura)']]], padX, false);
     if (procRows.length) {
-      ctx.fillStyle = RULE; ctx.fillRect(padX, y + 10, W - 2 * padX, 1);
-      ctx.font = '13px ' + UI; ctx.fillStyle = '#3a4150';
-      procRows.forEach((t, i) => ctx.fillText(t, padX, y + 24 + i * 19));
+      ctx.font = '13px ' + UI; ctx.fillStyle = SUB;
+      procRows.forEach((t, i) => ctx.fillText(t, padX, y + 18 + i * 19));
+      y += 14 + procRows.length * 19;
     }
+    // pie: la marca (mismo trazo que el logo: C de eje 19,5 y cursor) y el nombre, discretos
+    const k = 0.34, mx = padX, my = y + 14;
+    ctx.save(); ctx.translate(mx - 6 * k, my - 9 * k + 4); ctx.scale(k, k); ctx.lineWidth = 7; ctx.lineCap = 'round';
+    ctx.strokeStyle = TXT; ctx.beginPath(); ctx.arc(29, 32, 19.5, -Math.PI / 4, Math.PI / 4, true); ctx.stroke();
+    ctx.strokeStyle = ACC; ctx.beginPath(); ctx.moveTo(54, 18.21); ctx.lineTo(54, 45.79); ctx.stroke(); ctx.restore();
+    ctx.font = '600 13px ' + UI; ctx.fillStyle = SUB; ctx.fillText('Editor C', mx + 56 * k + 8, my + 4);
     return cv;
   }
   // Vista previa antes de descargar: se puede incluir u omitir la entrada
@@ -1477,7 +1500,7 @@ self.postMessage({ type: 'ready' });`;
       const sm = document.createElement('small'); sm.textContent = p.code.split('\n').length + ' líneas · ' + ago(p.t) + (p === cur ? ' · abierto' : '');
       ob.appendChild(nm); ob.appendChild(sm);
       ob.addEventListener('click', () => { if (p !== cur) { flushSave(); showProgram(p); } dProgs.close(); });
-      const rn = document.createElement('button'); rn.type = 'button'; rn.className = 'btn mini ico'; rn.textContent = '✎'; rn.title = 'Cambiar nombre'; rn.setAttribute('aria-label', 'Cambiar nombre de ' + p.name);
+      const rn = document.createElement('button'); rn.type = 'button'; rn.className = 'btn mini ico'; rn.appendChild(ico('editar')); rn.title = 'Cambiar nombre'; rn.setAttribute('aria-label', 'Cambiar nombre de ' + p.name);
       rn.addEventListener('click', () => {
         const inp = document.createElement('input'); inp.value = p.name; inp.maxLength = 40; inp.setAttribute('aria-label', 'Nombre del programa');
         li.replaceChild(inp, ob); rn.hidden = true; inp.focus(); inp.select();
@@ -1491,7 +1514,7 @@ self.postMessage({ type: 'ready' });`;
         inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); commit(true); } else if (e.key === 'Escape') { e.stopPropagation(); e.preventDefault(); commit(false); } });
         inp.addEventListener('blur', () => commit(true));
       });
-      const del = document.createElement('button'); del.type = 'button'; del.className = 'btn mini ico'; del.textContent = '✕'; del.title = 'Borrar'; del.setAttribute('aria-label', 'Borrar ' + p.name);
+      const del = document.createElement('button'); del.type = 'button'; del.className = 'btn mini ico'; del.appendChild(ico('borrar')); del.title = 'Borrar'; del.setAttribute('aria-label', 'Borrar ' + p.name);
       del.addEventListener('click', () => {
         const idx = progs.indexOf(p); if (p === cur) flushSave();
         progs.splice(idx, 1);
@@ -1517,7 +1540,7 @@ self.postMessage({ type: 'ready' });`;
   });
   $('settings').addEventListener('click', () => {
     $('uName').value = user.name; $('uCurso').value = user.curso; $('uMat').value = user.mat; $('uCiclo').value = user.ciclo;
-    $('theme').value = store.get('theme', 'auto'); sincronizarAjustesNuevos(); $('dSet').showModal();
+    segSet($('theme'), store.get('theme', 'auto')); sincronizarAjustesNuevos(); $('dSet').showModal();
   });
   let lastHeader = headerText();
   [['uName', 'name'], ['uCurso', 'curso'], ['uMat', 'mat'], ['uCiclo', 'ciclo']].forEach(([id, key]) => {
@@ -1529,8 +1552,16 @@ self.postMessage({ type: 'ready' });`;
     });
   });
   $('helpBtn').addEventListener('click', () => { $('dSet').close(); $('dlg').showModal(); });
-  function applyTheme(t) { if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t; else delete document.documentElement.dataset.theme; }
-  $('theme').addEventListener('change', () => { store.set('theme', $('theme').value); applyTheme($('theme').value); });
+  // color de la barra del sistema (<meta name="theme-color">): con tema automático siguen las dos metas con media; con uno elegido, ambas toman su color
+  const TEMA_BARRA = { light: '#f2f2f4', dark: '#141517' };
+  function applyTheme(t) {
+    if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t; else delete document.documentElement.dataset.theme;
+    document.querySelectorAll('meta[name="theme-color"]').forEach((m) => {
+      if (m.dataset.auto === undefined) m.dataset.auto = m.getAttribute('content');
+      m.setAttribute('content', TEMA_BARRA[t] || m.dataset.auto);
+    });
+  }
+  segInit($('theme'), (v) => { store.set('theme', v); applyTheme(v); });
   applyTheme(store.get('theme', 'auto'));
   let fs = parseInt(store.get('fs', '15'), 10) || 15;
   function setFs(n) { fs = Math.max(11, Math.min(26, n)); document.documentElement.style.setProperty('--fs', fs + 'px'); $('fsv').textContent = fs + ' px'; store.set('fs', String(fs)); refresh(); }

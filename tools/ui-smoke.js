@@ -315,12 +315,12 @@ async function suite(browser, target, mobile) {
   await H.menu();
   await H.tap('#settings');
   await page.fill('#uName', 'Pérez, Ana'); await page.fill('#uCurso', '5° 2da'); await page.fill('#uMat', 'Lenguajes Electrónicos V'); await page.fill('#uCiclo', '2026');
-  await page.selectOption('#theme', 'light');
+  await page.click('#theme [data-v="light"]');
   await shot('6-ajustes');
   await page.click('#dSet [data-close]');
   ok((await page.getAttribute('html', 'data-theme')) === 'light', 'tema claro');
   await shot('7-claro');
-  await page.selectOption('#theme', 'auto').catch(() => {});
+  await page.click('#theme [data-v="auto"]').catch(() => {});
 
   // ---- 16) códigos de diagnóstico: mostrar y silenciar (si el motor no manda `code`, no pasa nada)
   await page.evaluate(() => { localStorage.removeItem('editorc.muted'); });
@@ -350,7 +350,7 @@ async function suite(browser, target, mobile) {
 }
 
 // ------------------------------------------------------------------ escritorio: divisor
-// ------------------------------------------------------------------ diseño: «hoja de cuaderno» y ayudas de lectura
+// ------------------------------------------------------------------ diseño (estilo iOS) y ayudas de lectura
 async function disenoSuite(browser, target, mobile) {
   console.log('\n== diseño y lectura · ' + target.label + (mobile ? ' (celular)' : ' (escritorio)'));
   const ctx = await newCtx(browser, mobile), page = await ctx.newPage();
@@ -396,10 +396,8 @@ async function disenoSuite(browser, target, mobile) {
   ok(await page.evaluate(() => document.querySelectorAll('#gd b.sp').length) > 5, 'espacios visibles: se dibujan puntos en los espacios');
   await page.uncheck('#wsChk');
   ok(await page.evaluate(() => document.querySelectorAll('#gd b.sp').length) === 0, 'espacios visibles: se apagan');
-  await page.uncheck('#ruleChk');
-  ok(await page.evaluate(() => document.documentElement.classList.contains('sinrenglones') && getComputedStyle(document.getElementById('codeBox')).backgroundImage === 'none'), 'renglones de fondo: se pueden apagar');
-  await page.check('#ruleChk');
-  ok(await page.evaluate(() => getComputedStyle(document.getElementById('codeBox')).backgroundImage !== 'none'), 'renglones de fondo: se vuelven a prender');
+  ok(await page.evaluate(() => !document.getElementById('ruleChk') && getComputedStyle(document.getElementById('codeBox')).backgroundImage === 'none'), 'sin renglones de cuaderno: ni ajuste ni fondo rayado');
+  ok(await page.evaluate(() => getComputedStyle(document.querySelector('.gut')).borderRightColor !== 'rgb(192, 57, 43)'), 'sin margen rojo junto a los números');
   await page.evaluate(() => { document.getElementById('dSet').close(); if (innerWidth < 900) document.getElementById('more').open = false; });
   await H.setCode('int main() {\n');
   await page.evaluate(() => { const t = document.getElementById('code'); t.focus(); t.setSelectionRange(t.value.length, t.value.length); });
@@ -420,7 +418,7 @@ async function disenoSuite(browser, target, mobile) {
   ok(/Esperando datos/.test(await page.textContent('#runBarTxt')) && await page.evaluate(() => document.getElementById('runBar').classList.contains('wait')), 'cartel: pidiendo datos dice "Esperando datos"');
   await H.typeLine('1'); await H.typeLine('2'); await H.done();
   ok(await page.evaluate(() => document.getElementById('runBar').hidden), 'cartel: al terminar no queda a la vista');
-  ok(await page.evaluate(() => { const i = document.querySelector('#out .in'); return !!i && getComputedStyle(i).textDecorationLine.indexOf('underline') >= 0; }), 'consola: lo tipeado se distingue (color y subrayado punteado), no solo por el color');
+  ok(await page.evaluate(() => { const i = document.querySelector('#out .in'); return !!i && +getComputedStyle(i).fontWeight >= 600 && getComputedStyle(i).color !== getComputedStyle(document.getElementById('out')).color; }), 'consola: lo tipeado se distingue (matiz y peso), no solo por el color');
   // 6) modo lectura
   await H.tab('ed'); await H.setCode(PROG);
   await H.tap('#readBtn'); await page.waitForTimeout(150);
@@ -443,8 +441,9 @@ async function disenoSuite(browser, target, mobile) {
   for (const th of ['light', 'dark']) {
     const v = await page.evaluate((t) => { document.documentElement.dataset.theme = t; const cs = getComputedStyle(document.documentElement), o = {}; ['panel', 'panel2', 'bg', 'text', 'muted', 'accent', 'accent-ink', 'danger', 'warn', 'input', 'ok', 'kw', 'ty', 'st', 'nu', 'co', 'fn', 'pp', 'gut', 'lineS'].forEach((k) => { o[k] = cs.getPropertyValue('--' + k).trim(); }); return o; }, th);
     const bad = [];
-    for (const k of ['text', 'muted', 'accent', 'danger', 'warn', 'input', 'ok', 'kw', 'ty', 'st', 'nu', 'co', 'fn', 'pp', 'gut']) for (const bg of ['panel', 'panel2']) if (cr(v[k], v[bg]) < 4.5) bad.push(k + ' sobre ' + bg + ' ' + cr(v[k], v[bg]).toFixed(2));
+    for (const k of ['text', 'muted', 'accent', 'danger', 'warn', 'input', 'ok', 'kw', 'ty', 'st', 'nu', 'co', 'fn', 'pp']) for (const bg of ['panel', 'panel2']) if (cr(v[k], v[bg]) < 4.5) bad.push(k + ' sobre ' + bg + ' ' + cr(v[k], v[bg]).toFixed(2));
     for (const k of ['text', 'muted', 'danger', 'warn', 'input', 'ok']) if (cr(v[k], v.bg) < 4.5) bad.push(k + ' sobre bg ' + cr(v[k], v.bg).toFixed(2));
+    if (cr(v.gut, v.panel) < 4.5) bad.push('números de línea sobre panel ' + cr(v.gut, v.panel).toFixed(2));
     if (cr(v['accent-ink'], v.accent) < 4.5) bad.push('texto de botón primario');
     if (cr(v.lineS, v.panel) < 3) bad.push('borde de campos');
     ok(bad.length === 0, 'contraste WCAG AA (' + th + '): texto >= 4,5:1 y bordes de campos >= 3:1' + (bad.length ? ' -> ' + bad.join('; ') : ''));
@@ -466,12 +465,109 @@ async function disenoSuite(browser, target, mobile) {
   await H.setCode(PROG);
   await H.menu(); await H.tap('#shot'); await page.waitForFunction(() => document.getElementById('shotImg').getAttribute('src'));
   await page.waitForTimeout(300);
-  const px = await page.evaluate(() => new Promise((res) => { const im = new Image(); im.onload = () => { const c = document.createElement('canvas'); c.width = im.width; c.height = im.height; const x = c.getContext('2d', { willReadFrequently: true }); x.drawImage(im, 0, 0); const g = (a, b) => Array.from(x.getImageData(a, b, 1, 1).data); res({ w: im.width, h: im.height, top: g(5, 3), body: g(6, 60), foot: g(6, im.height - 6) }); }; im.src = document.getElementById('shotImg').src; }));
-  ok(px.top[2] > 100 && px.top[0] < 60 && px.body.slice(0, 3).every((v) => v > 250) && px.foot.slice(0, 3).every((v) => v > 250), 'captura: tira de tinta azul arriba y fondo blanco (' + px.w + 'x' + px.h + ')');
+  const px = await page.evaluate(() => new Promise((res) => { const im = new Image(); im.onload = () => {
+    const c = document.createElement('canvas'); c.width = im.width; c.height = im.height; const x = c.getContext('2d', { willReadFrequently: true }); x.drawImage(im, 0, 0);
+    const W = im.width, H = im.height, d = x.getImageData(0, 0, W, H).data;
+    let head = 0, logo = 0, tealN = 0, edge = 0, nonwhite = 0;
+    for (let Y = 0; Y < H; Y++) for (let X = 0; X < W; X++) {
+      const o = (Y * W + X) * 4, r = d[o], g = d[o + 1], b = d[o + 2];
+      if (r > 245 && g > 245 && b > 245) continue;
+      nonwhite++;
+      const dk = r < 90 && g < 90 && b < 90, tl = r < 40 && g > 90 && g < 150 && b > 100 && b < 160;
+      if (Y < H * 0.07 && dk) head++;
+      if (Y > H - 80 && X < W * 0.2) { if (dk) logo++; if (tl) tealN++; }
+      if (X > W - 8 || Y > H - 3 || X < 8 || Y < 3) edge++;
+    }
+    res({ w: W, h: H, frac: nonwhite / (W * H), head, logo, tealN, edge });
+  }; im.src = document.getElementById('shotImg').src; }));
+  ok(px.frac > 0.03 && px.frac < 0.6, 'captura: no es una hoja en blanco ni está saturada (' + (px.frac * 100).toFixed(1) + ' % de píxeles con tinta)');
+  ok(px.head > 300, 'captura: la cabecera tiene texto oscuro (' + px.head + ' px)');
+  ok(px.logo > 20 && px.tealN > 10, 'captura: el logo (C oscura y cursor turquesa) aparece al pie (' + px.logo + ' / ' + px.tealN + ' px)');
+  ok(px.edge === 0, 'captura: nada toca los bordes (el texto cabe) (' + px.edge + ' px)');
   ok(px.w <= 1400, 'captura: ancho razonable para verla en el celular (' + px.w + ' px)');
   await page.evaluate(() => { document.getElementById('dShot').close(); if (innerWidth < 900) document.getElementById('more').open = false; });
   ok(errors.length === 0, 'diseño: sin errores ni avisos en la consola del navegador' + (errors.length ? ' -> ' + errors.slice(0, 2).join(' | ') : ''));
   await ctx.close();
+}
+
+
+// ------------------------------------------------------------------ identidad: temas, contraste, íconos de la app, favicon, sprite
+async function identidadSuite(browser, target) {
+  console.log('\n== identidad · ' + target.label);
+  const lum = (h) => { const c = [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16) / 255).map((v) => v <= .03928 ? v / 12.92 : Math.pow((v + .055) / 1.055, 2.4)); return .2126 * c[0] + .7152 * c[1] + .0722 * c[2]; };
+  const cr = (a, b) => { const x = lum(a), y = lum(b); return (Math.max(x, y) + .05) / (Math.min(x, y) + .05); };
+  const hex = (rgb) => '#' + rgb.map((v) => Math.round(v).toString(16).padStart(2, '0')).join('');
+  const css = fs.readFileSync(path.join(ROOT, 'src', 'app.css'), 'utf8');
+  // 1) la paleta oscura del modo automático es idéntica a la del tema oscuro elegido a mano
+  const bloque = (re) => { const m = css.match(re); return m ? m[1].replace(/\s+/g, ' ').trim() : null; };
+  const auto = bloque(/@media \(prefers-color-scheme: dark\) \{\s*:root:not\(\[data-theme\]\) \{([^}]*)\}/), manual = bloque(/:root\[data-theme="dark"\] \{([^}]*)\}/);
+  ok(auto && auto === manual, 'tema oscuro: el automático y el manual tienen los mismos valores');
+  ok(!/gradient/.test(css) && !/[\u{1F300}-\u{1FAFF}☀-➿]/u.test(fs.readFileSync(path.join(ROOT, 'src', 'template.html'), 'utf8')), 'estilo: sin degradados en el CSS ni emoji en la página');
+  // 2) tres temas, con la preferencia del sistema emulada
+  for (const [scheme, tema, esperado] of [['light', 'auto', 'light'], ['dark', 'auto', 'dark'], ['dark', 'light', 'light'], ['light', 'dark', 'dark']]) {
+    const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 }, colorScheme: scheme });
+    await ctx.addInitScript((t) => { try { localStorage.setItem('editorc.theme', t); } catch (e) {} }, tema);
+    const page = await ctx.newPage(); await page.goto(target.url); await page.waitForSelector('#code');
+    const v = await page.evaluate(() => { const cs = getComputedStyle(document.documentElement), o = {}; ['bg', 'panel', 'panel2', 'text', 'muted', 'accent', 'accent-ink', 'danger', 'warn', 'ok', 'input', 'gut', 'lineS', 'kw', 'ty', 'st', 'nu', 'co', 'fn', 'pp'].forEach((k) => { o[k] = cs.getPropertyValue('--' + k).trim(); }); o.body = getComputedStyle(document.body).backgroundColor; o.fill = cs.getPropertyValue('--fill').trim(); return o; });
+    const oscuro = lum(v.panel) < .2;
+    ok(oscuro === (esperado === 'dark'), 'tema ' + tema + ' con sistema ' + scheme + ': se ve ' + esperado + ' (panel ' + v.panel + ')');
+    const bodyHex = hex(v.body.match(/\d+/g).slice(0, 3).map(Number));
+    ok(bodyHex === v.bg, 'tema ' + tema + '/' + scheme + ': el fondo de la página es --bg (' + bodyHex + ')');
+    // contraste AA de cada par que se usa, y de los textos sobre el relleno gris de los botones
+    const f = v.fill.match(/[\d.]+/g).map(Number), base = v.panel, bb = [1, 3, 5].map((i) => parseInt(base.slice(i, i + 2), 16));
+    const comp = hex([0, 1, 2].map((i) => f[i] * f[3] + bb[i] * (1 - f[3])));
+    const bad = [];
+    for (const k of ['text', 'muted', 'accent', 'danger', 'warn', 'ok', 'input', 'kw', 'ty', 'st', 'nu', 'co', 'fn', 'pp', 'gut']) if (cr(v[k], v.panel) < 4.5) bad.push(k + '/panel ' + cr(v[k], v.panel).toFixed(2));
+    for (const k of ['text', 'muted', 'accent', 'danger', 'warn', 'ok']) { if (cr(v[k], v.bg) < 4.5) bad.push(k + '/bg ' + cr(v[k], v.bg).toFixed(2)); if (cr(v[k], comp) < 4.5) bad.push(k + '/relleno ' + cr(v[k], comp).toFixed(2)); }
+    if (cr(v['accent-ink'], v.accent) < 4.5) bad.push('botón primario ' + cr(v['accent-ink'], v.accent).toFixed(2));
+    if (cr(v.lineS, v.panel) < 3) bad.push('borde de campos ' + cr(v.lineS, v.panel).toFixed(2));
+    ok(bad.length === 0, 'contraste AA (' + tema + '/' + scheme + '): textos >= 4,5:1, bordes >= 3:1' + (bad.length ? ' -> ' + bad.join('; ') : ''));
+    // meta theme-color de claro y de oscuro
+    const metas = await page.evaluate(() => Array.from(document.querySelectorAll('meta[name=theme-color]')).map((m) => m.getAttribute('content')));
+    ok(metas.length === 2, 'theme-color: hay una meta para claro y otra para oscuro (' + metas.join(', ') + ')');
+    await ctx.close();
+  }
+  // 3) íconos del manifest, favicon y pantalla de inicio: existen y tienen el tamaño declarado
+  const png = (f) => { const b = fs.readFileSync(path.join(ROOT, f)); return { ok: b.subarray(0, 8).toString('hex') === '89504e470d0a1a0a', w: b.readUInt32BE(16), h: b.readUInt32BE(20) }; };
+  const mf = JSON.parse(fs.readFileSync(path.join(ROOT, 'manifest.webmanifest'), 'utf8'));
+  ok(mf.theme_color && mf.background_color && /^#[0-9a-f]{6}$/i.test(mf.theme_color), 'manifest: theme_color y background_color definidos (' + mf.theme_color + ', ' + mf.background_color + ')');
+  for (const ic of mf.icons) { const i = png(ic.src); ok(i.ok && i.w + 'x' + i.h === ic.sizes, 'manifest: ' + ic.src + ' (' + ic.purpose + ') existe y mide ' + ic.sizes); }
+  for (const [f, n] of [['assets/apple-touch-icon.png', 180], ['assets/favicon-32.png', 32]]) { const i = png(f); ok(i.ok && i.w === n && i.h === n, f + ' mide ' + n + 'x' + n); }
+  const ico = fs.readFileSync(path.join(ROOT, 'assets', 'favicon.ico'));
+  ok(ico.readUInt16LE(0) === 0 && ico.readUInt16LE(2) === 1 && ico.readUInt16LE(4) === 3 && [16, 32, 48].every((n, i) => ico[6 + 16 * i] === n), 'favicon.ico: contiene 16, 32 y 48 px');
+  const fsvg = fs.readFileSync(path.join(ROOT, 'assets', 'favicon.svg'), 'utf8');
+  ok(/<svg[^>]+viewBox/.test(fsvg) && /prefers-color-scheme:dark/.test(fsvg), 'favicon.svg: válido y con variante para pestañas oscuras');
+  const sp = png('assets/splash-claro.png'); ok(sp.ok && sp.w === 1170 && sp.h === 2532, 'pantalla de inicio: 1170x2532');
+  // 4) el ícono «maskable»: el símbolo cabe en el círculo seguro (radio 40 %) y el fondo llega a las esquinas (por http, para poder leer los píxeles)
+  if (target.origin) {
+    const ctx = await browser.newContext(); const page = await ctx.newPage(); await page.goto(target.url);
+    const r = await page.evaluate(async () => {
+      const im = new Image(); im.src = 'assets/icon-maskable-512.png'; await new Promise((x, y) => { im.onload = x; im.onerror = y; });
+      const c = document.createElement('canvas'); c.width = c.height = 512; const x = c.getContext('2d'); x.drawImage(im, 0, 0);
+      const d = x.getImageData(0, 0, 512, 512).data, bg = [d[0], d[1], d[2]]; let fuera = 0, dentro = 0;
+      for (let Y = 0; Y < 512; Y++) for (let X = 0; X < 512; X++) { const o = (Y * 512 + X) * 4; if (Math.abs(d[o] - bg[0]) + Math.abs(d[o + 1] - bg[1]) + Math.abs(d[o + 2] - bg[2]) > 40) { if (Math.hypot(X - 256, Y - 256) > 0.4 * 512) fuera++; else dentro++; } }
+      const esq = [[0, 0], [511, 0], [0, 511], [511, 511]].every(([X, Y]) => { const o = (Y * 512 + X) * 4; return d[o + 3] === 255 && d[o] === bg[0]; });
+      return { fuera, dentro, esq };
+    }, null);
+    ok(r.fuera === 0 && r.dentro > 2000, 'ícono maskable: todo el símbolo está dentro de la zona segura (' + r.dentro + ' px dentro, ' + r.fuera + ' fuera)');
+    ok(r.esq, 'ícono maskable: el fondo opaco llega a las cuatro esquinas');
+    // el ícono «any» tiene esquinas transparentes y símbolo en el centro
+    const a = await page.evaluate(async () => { const im = new Image(); im.src = 'assets/icon-512.png'; await new Promise((x, y) => { im.onload = x; im.onerror = y; }); const c = document.createElement('canvas'); c.width = c.height = 512; const x = c.getContext('2d'); x.drawImage(im, 0, 0); return { esq: x.getImageData(2, 2, 1, 1).data[3], centro: x.getImageData(256, 256, 1, 1).data[3] }; });
+    ok(a.esq === 0 && a.centro === 255, 'ícono any: esquinas transparentes y centro opaco');
+    await ctx.close();
+  }
+  // 5) el sprite: cada ícono pedido por la página existe, y la marca de la barra coincide con el SVG del símbolo
+  {
+    const ctx = await browser.newContext(); const page = await ctx.newPage(); await page.goto(target.url); await page.waitForSelector('#code');
+    const faltan = await page.evaluate(() => Array.from(document.querySelectorAll('use')).map((u) => u.getAttribute('href')).filter((h, i, a) => a.indexOf(h) === i && !document.querySelector(h)));
+    ok(faltan.length === 0, 'sprite: todos los íconos que usa la página existen' + (faltan.length ? ' -> faltan ' + faltan.join(', ') : ''));
+    const n = await page.evaluate(() => document.querySelectorAll('symbol').length);
+    ok(n >= 25, 'sprite: ' + n + ' íconos propios en la página');
+    const mark = await page.evaluate(() => Array.from(document.querySelectorAll('.mark path')).map((p) => p.getAttribute('d')));
+    const sim = fs.readFileSync(path.join(ROOT, 'docs', 'identidad', 'simbolo.svg'), 'utf8');
+    ok(mark.length === 2 && mark.every((d) => sim.includes(d)), 'marca: el logo de la barra es el mismo trazo que docs/identidad/simbolo.svg');
+    await ctx.close();
+  }
 }
 
 async function dividerSuite(browser, target) {
@@ -653,7 +749,7 @@ async function pwaSuite(browser, mobile) {
   ok(['index.html', 'manifest.webmanifest', 'assets/app.js', 'assets/compiler.js', 'assets/runtime.js', 'assets/styles.css', 'assets/examples.js', 'assets/icon-192.png', 'assets/icon-512.png'].every((f) => cached.includes(f)), 'se precachea todo lo necesario (' + cached.length + ' archivos)');
   // manifest e íconos
   const mf = JSON.parse(await page.evaluate(() => fetch(document.querySelector('link[rel=manifest]').href).then((r) => r.text())));
-  ok(mf.name === 'Editor C' && mf.display === 'standalone' && mf.start_url && mf.theme_color === '#141922' && mf.background_color === '#0e1116', 'manifest: nombre, display y colores de los tokens');
+  ok(mf.name === 'Editor C' && mf.display === 'standalone' && mf.start_url && mf.theme_color === '#141517' && mf.background_color === '#17181b', 'manifest: nombre, display y colores (grafito del tema oscuro y del ícono)');
   const sizes = {};
   for (const ic of mf.icons) {
     const buf = fs.readFileSync(path.join(tmp, ic.src));
@@ -775,12 +871,12 @@ async function entrenadorSuite(browser, target, mobile) {
   // ---- B) nivel 2 y nivel 0 desde Ajustes
   await openSettings();
   ok(!(await page.isChecked('#autoCierre')), 'ajustes: el cierre automático está apagado por defecto');
-  await page.selectOption('#ayudaSel', '2');
+  await page.click('#ayudaSel [data-v=\"2\"]');
   await closeDlg();
   await runShow(SCANF_MAL);
   ok((await items('.e').first().locator('.hexp').count()) === 1 && (await items('.e').first().locator('.pistas li').count()) === 0, 'nivel 2: mensaje + explicación del concepto y pistas a pedido');
   await shot('2-nivel2');
-  await openSettings(); await page.selectOption('#ayudaSel', '0'); await closeDlg();
+  await openSettings(); await page.click('#ayudaSel [data-v=\"0\"]'); await closeDlg();
   await H.tab('co');
   ok((await items('.e').first().locator('.help').count()) === 0 && (await items('.e').first().locator('.orig').count()) === 0 && /a scanf le falta el '&'/.test(await items('.e').first().locator('.msg').textContent()), 'nivel 0: el mensaje del compilador tal cual, con la línea y sin ayuda');
   await page.reload(); await page.waitForSelector('#code');
@@ -791,7 +887,7 @@ async function entrenadorSuite(browser, target, mobile) {
   ok((await page.evaluate(() => window.__editorc.nivelAyuda())) === 1, '?ayuda= además se recuerda para la próxima vez');
   await open('?ayuda=2');
   ok((await page.evaluate(() => window.__editorc.nivelAyuda())) === 2, '?ayuda=2 en el enlace fija el nivel 2');
-  await openSettings(); await page.selectOption('#ayudaSel', '1'); await closeDlg();
+  await openSettings(); await page.click('#ayudaSel [data-v=\"1\"]'); await closeDlg();
 
   // ---- C) sin explicación: se guarda el caso y se ofrece mandarlo
   await H.setCode(CON_CABECERA);
@@ -1081,6 +1177,8 @@ async function finalShots(browser, url) {
   for (const [n, t] of [['index file', T.idx], ['index http', T.idxHttp], ['dist file', T.one]]) await guard('entrenador ' + n + ' celular', () => entrenadorSuite(browser, t, true));
   await guard('proceso index', () => procesoSuite(browser, T.idx));
   await guard('proceso dist', () => procesoSuite(browser, T.one));
+  await guard('identidad index', () => identidadSuite(browser, T.idxHttp));
+  await guard('identidad dist', () => identidadSuite(browser, T.one));
   await guard('divisor', () => dividerSuite(browser, T.idx));
   await guard('divisor dist', () => dividerSuite(browser, T.one));
   await guard('diseño index', () => disenoSuite(browser, T.idx, false));

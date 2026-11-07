@@ -30,6 +30,11 @@ async function ctx(br, mobile, tema) {
       await p.evaluate(() => { const t = document.getElementById('code'); t.focus(); const i = t.value.indexOf('if (PROM') ; const k = t.value.indexOf('{', i) + 1; t.setSelectionRange(k, k); document.dispatchEvent(new Event('selectionchange')); });
       await p.waitForTimeout(150);
       await S(p, M + '-' + T + '-pareja-llaves');
+      // burbuja «¿qué es esto?» sobre scanf (F1 con el cursor sobre la palabra)
+      await p.evaluate(() => { const t = document.getElementById('code'); t.focus(); const k = t.value.indexOf('scanf') + 2; t.setSelectionRange(k, k); document.dispatchEvent(new Event('selectionchange')); });
+      await p.keyboard.press('F1'); await p.waitForTimeout(500);
+      await S(p, M + '-' + T + '-burbuja');
+      await p.keyboard.press('Escape'); await p.waitForTimeout(150);
       if (tema === 'light') { await p.click('#readBtn'); await p.waitForTimeout(200); await S(p, M + '-' + T + '-lectura'); await p.click('#readBtn'); }
       // ejecutar con datos de entrada precargados
       await p.evaluate(() => { document.getElementById('inTxt').value = '6\n9'; document.getElementById('inTxt').dispatchEvent(new Event('input')); });
@@ -75,6 +80,14 @@ async function ctx(br, mobile, tema) {
       }
       await c.close();
     }
+  }
+  // pantalla de identidad
+  for (const tema of ['light', 'dark']) for (const mobile of [false, true]) {
+    const c = await br.newContext(mobile ? { viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, colorScheme: tema } : { viewport: { width: 1280, height: 800 }, deviceScaleFactor: 2, colorScheme: tema });
+    const p = await c.newPage(); await p.goto('file://' + path.join(ROOT, 'docs', 'identidad', 'index.html'));
+    await p.screenshot({ path: path.join(DIR, PRE + '-' + (mobile ? 'celular' : 'escritorio') + '-' + (tema === 'light' ? 'claro' : 'oscuro') + '-identidad.png') });
+    if (!mobile && tema === 'light') await p.screenshot({ path: path.join(DIR, PRE + '-identidad-completa.png'), fullPage: true });
+    await c.close();
   }
   await br.close();
 })().catch((e) => { console.error(e); process.exit(1); });
