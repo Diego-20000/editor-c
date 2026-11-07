@@ -24,6 +24,42 @@ const JS = [
   ['app.js', R('app.js')]
 ];
 const css = R('app.css');
+
+// ---- base de conocimiento (kb/): se lee lo que haya; si falta algo, se sigue sin romper ----
+const KB_DIR = process.env.KB_DIR ? path.resolve(process.env.KB_DIR) : path.join(ROOT, 'kb');
+function leerJSON(f) {
+  try { const d = JSON.parse(fs.readFileSync(f, 'utf8')); return Array.isArray(d) ? d : []; }
+  catch (e) { if (e.code !== 'ENOENT') console.warn('aviso: no se pudo leer ' + path.relative(ROOT, f) + ' (' + e.message + '); se ignora'); return []; }
+}
+const lim = (t) => String(t).replace(/\s*\n\s*/g, ' ').replace(/[ \t]{2,}/g, ' ').trim();   // prosa: comprime espacios y saltos
+const limDeep = (v) => Array.isArray(v) ? v.map(limDeep) : typeof v === 'string' ? lim(v) : v;
+// campos del error que usa la interfaz; el resto (que_dice_gcc, codigo_mal, riesgo_falso_positivo, deteccion…) solo sirve para validar
+const CAMPOS_ERROR = ['id', 'categoria', 'nombre_corto', 'mensaje_editor', 'explicacion', 'como_arreglarlo', 'pistas', 'relacion_con_la_materia', 'nivel', 'mensaje_editor_actual', 'codigo_editor_actual', 'buscar'];
+function kbDatos() {
+  let errores = [];
+  const dirE = path.join(KB_DIR, 'errores');
+  if (fs.existsSync(dirE)) for (const f of fs.readdirSync(dirE).filter((x) => /\.json$/.test(x) && x !== 'NUEVOS.json').sort()) errores = errores.concat(leerJSON(path.join(dirE, f)));
+  errores = errores.filter((e) => e && typeof e.id === 'string' && !/^NUE-/.test(e.id)).map((e) => {
+    const o = {};
+    for (const k of CAMPOS_ERROR) if (e[k] !== undefined && e[k] !== null) o[k] = limDeep(e[k]);
+    if (e.codigo_bien) o.codigo_bien = e.codigo_bien;   // se muestra tal cual (con sus saltos de línea)
+    if (e.entrada) o.entrada = e.entrada;
+    return o;
+  });
+  const ayuda = leerJSON(path.join(KB_DIR, 'ayuda.json')).filter((a) => a && typeof a.elemento === 'string').map((a) => {
+    const o = {};
+    for (const k of Object.keys(a)) o[k] = k === 'como_se_usa' ? a[k] : limDeep(a[k]);
+    return o;
+  });
+  const lecciones = leerJSON(path.join(KB_DIR, 'lecciones.json')).filter((l) => l && typeof l === 'object').map((l) => {
+    const o = {};
+    for (const k of Object.keys(l)) o[k] = (k === 'ejemplo' || k === 'resultado' || k === 'entrada') ? l[k] : limDeep(l[k]);
+    return o;
+  });
+  return { errores, ayuda, lecciones };
+}
+const KBD = kbDatos();
+const KB_JS = [['kb-data.js', 'window.KB_DATA=' + json(KBD) + ';\n'], ['config.js', R('config.js')], ['kb.js', R('kb.js')], ['compartir.js', R('compartir.js')]];
 const tpl = R('template.html');
 
 // ---- íconos (PNG generados sin dependencias: "C" verde del favicon sobre el color de acento) ----
@@ -62,6 +98,7 @@ function icon(size, maskable) {
 // 1) sitio en varios archivos
 W('assets/styles.css', css);
 JS.forEach(([n, s]) => W('assets/' + n, s));
+KB_JS.filter(([n]) => n !== 'config.js').forEach(([n, s]) => W('assets/' + n, s));   // config.js se escribe al final, con la versión
 W('assets/icon-192.png', icon(192, false));
 W('assets/icon-512.png', icon(512, false));
 W('assets/icon-maskable-512.png', icon(512, true));
@@ -87,14 +124,18 @@ const HEAD_ONE = '<meta name="theme-color" content="#141922" media="(prefers-col
 W('index.html', tpl
   .replace('<!--@@HEAD@@-->', () => HEAD_SITE)
   .replace('<!--@@CSS@@-->', () => '<link rel="stylesheet" href="assets/styles.css">')
-  .replace('<!--@@JS@@-->', () => JS.map(([n]) => '<script src="assets/' + n + '"></script>').join('\n')));
+  .replace('<!--@@JS@@-->', () => JS.map(([n]) => '<script src="assets/' + n + '"></script>').concat(KB_JS.map(([n]) => '<script defer src="assets/' + n + '"></script>')).join('\n')));
 
 // 2) service worker: la versión es el hash del contenido de todo lo que precachea
 const PRECACHE = ['./', 'index.html', 'manifest.webmanifest', 'assets/styles.css', 'assets/compiler.js', 'assets/runtime.js', 'assets/examples.js', 'assets/app.js',
-  'assets/icon-192.png', 'assets/icon-512.png', 'assets/icon-maskable-512.png', 'assets/apple-touch-icon.png'];
+  'assets/kb-data.js', 'assets/config.js', 'assets/kb.js', 'assets/compartir.js', 'assets/icon-192.png', 'assets/icon-512.png', 'assets/icon-maskable-512.png', 'assets/apple-touch-icon.png'];
 const hash = crypto.createHash('sha256');
-PRECACHE.filter((f) => f !== './').forEach((f) => { hash.update(f); hash.update(OUT[f]); });
+// config.js lleva la versión adentro: se calcula con su texto sin completar
+PRECACHE.filter((f) => f !== './').forEach((f) => { hash.update(f); hash.update(f === 'assets/config.js' ? R('config.js') : OUT[f]); });
 const VERSION = hash.digest('hex').slice(0, 12);
+const cfg = R('config.js').replace('@@VERSION@@', VERSION);
+KB_JS[1][1] = cfg;
+W('assets/config.js', cfg);
 const swSrc = R('sw.js');
 if (swSrc.split('@@VERSION@@').length !== 2 || swSrc.split('@@FILES@@').length !== 2) throw new Error('src/sw.js: los marcadores @@VERSION@@ y @@FILES@@ deben aparecer una sola vez');
 W('sw.js', swSrc.replace('@@VERSION@@', VERSION).replace('@@FILES@@', () => JSON.stringify(PRECACHE)));
@@ -103,5 +144,5 @@ W('sw.js', swSrc.replace('@@VERSION@@', VERSION).replace('@@FILES@@', () => JSON
 W('dist/editor-c.html', tpl
   .replace('<!--@@HEAD@@-->', () => HEAD_ONE)
   .replace('<!--@@CSS@@-->', () => '<style>\n' + css + '</style>')
-  .replace('<!--@@JS@@-->', () => JS.map(([, s]) => '<script>\n' + safe(s) + '</script>').join('\n')));
+  .replace('<!--@@JS@@-->', () => JS.concat(KB_JS).map(([, s]) => '<script>\n' + safe(s) + '</script>').join('\n')));
 console.log('versión', VERSION);
