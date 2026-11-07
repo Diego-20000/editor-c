@@ -1402,7 +1402,8 @@
       return { js, errors: [], warnings: conCodigo(g.warnings, 'W-') };
     } catch (e) {
       if (e instanceof CErr) return { js: null, errors: conCodigo([{ line: e.cline, msg: e.message }], 'E-'), warnings: [] };
-      throw e;
+      if (e instanceof RangeError && /call stack/i.test(e.message)) return { js: null, errors: [{ line: 1, msg: 'el programa tiene demasiados niveles anidados (paréntesis, llaves o if uno dentro de otro): el editor no puede analizarlo. Simplificá la expresión o dividila en pasos', code: 'E-anidado' }], warnings: [] };
+      return { js: null, errors: [{ line: 1, msg: 'Error inesperado del compilador (no es culpa de tu programa): ' + e.message + '. Avisale al profe', code: 'E-interno' }], warnings: [] };
     }
   }
 

@@ -1,0 +1,2778 @@
+[
+ {
+  "nivel": "aviso",
+  "code": "W-asignacion-en-condicion",
+  "plantilla": "hay una asignación '=' dentro de la condición: ¿querías comparar con '=='?",
+  "ejemploMsg": "hay una asignación '=' dentro de la condición: ¿querías comparar con '=='?",
+  "cuenta": 5,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos3/324_while_condicion_asignacion_char_eof.c",
+  "linea": 2,
+  "id": "M001",
+  "ejemplo": "ejemplos/M001.c",
+  "gcc": [
+   "línea 2:28: warning: suggest parentheses around assignment used as truth value [-Wparentheses]"
+  ]
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-bucle-infinito",
+  "plantilla": "en este while ninguna variable de la condición (i) cambia dentro del bucle: es probable que nunca termine",
+  "ejemploMsg": "en este while ninguna variable de la condición (i) cambia dentro del bucle: es probable que nunca termine",
+  "cuenta": 2,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/156_bucle_infinito_sin_incremento.c",
+  "linea": 4,
+  "id": "M002",
+  "ejemplo": "ejemplos/M002.c",
+  "gcc": []
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-bucle-infinito",
+  "plantilla": "for sin condición de corte y sin 'break' ni 'return' adentro: el bucle no termina nunca",
+  "ejemploMsg": "for sin condición de corte y sin 'break' ni 'return' adentro: el bucle no termina nunca",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/158_bucle_infinito_for_vacio.c",
+  "linea": 4,
+  "id": "M003",
+  "ejemplo": "ejemplos/M003.c",
+  "gcc": []
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-bucle-infinito",
+  "plantilla": "while sin condición de corte y sin 'break' ni 'return' adentro: el bucle no termina nunca",
+  "ejemploMsg": "while sin condición de corte y sin 'break' ni 'return' adentro: el bucle no termina nunca",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/159_bucle_infinito_while_1.c",
+  "linea": 3,
+  "id": "M004",
+  "ejemplo": "ejemplos/M004.c",
+  "gcc": []
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-comparacion",
+  "plantilla": "comparar un decimal con '==' puede fallar por redondeo (por ejemplo N no se guarda exacto): conviene comparar con '<' o '>'",
+  "ejemploMsg": "comparar un decimal con '==' puede fallar por redondeo (por ejemplo 0.1 no se guarda exacto): conviene comparar con '<' o '>'",
+  "cuenta": 19,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/validos/v62_int_comparar_con_0_float_literal.c",
+  "linea": 4,
+  "id": "M005",
+  "ejemplo": "ejemplos/M005.c",
+  "gcc": []
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-comparacion",
+  "plantilla": "comparar un decimal con '!=' puede fallar por redondeo (por ejemplo N no se guarda exacto): conviene comparar con '<' o '>'",
+  "ejemploMsg": "comparar un decimal con '!=' puede fallar por redondeo (por ejemplo 0.1 no se guarda exacto): conviene comparar con '<' o '>'",
+  "cuenta": 5,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/168_comparar_float_distinto.c",
+  "linea": 5,
+  "id": "M006",
+  "ejemplo": "ejemplos/M006.c",
+  "gcc": []
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-comparacion",
+  "plantilla": "en C, '^' no es potencia (es XOR de bits): N ^ N da N. Para potencias usá pow(N, N) de <math.h>",
+  "ejemploMsg": "en C, '^' no es potencia (es XOR de bits): 2 ^ 3 da 1. Para potencias usá pow(2, 3) de <math.h>",
+  "cuenta": 5,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/248_exponente_circunflejo.c",
+  "linea": 3,
+  "id": "M007",
+  "ejemplo": "ejemplos/M007.c",
+  "gcc": [
+   "línea 3:15: warning: result of '2^3' is 1; did you mean '1 << 3' (8)? [-Wxor-used-as-pow]"
+  ]
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-comparacion",
+  "plantilla": "a < b < c no comprueba un rango: C evalúa primero la comparación de la izquierda (da N o N). Escribilo con &&, por ejemplo: N < a && a < N",
+  "ejemploMsg": "a < b < c no comprueba un rango: C evalúa primero la comparación de la izquierda (da 0 o 1). Escribilo con &&, por ejemplo: 0 < a && a < 3",
+  "cuenta": 3,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/178_rango_encadenado.c",
+  "linea": 4,
+  "id": "M008",
+  "ejemplo": "ejemplos/M008.c",
+  "gcc": [
+   "línea 4:15: warning: comparison of constant '3' with boolean expression is always true [-Wbool-compare]",
+   "línea 4:11: warning: comparisons like 'X<=Y<=Z' do not have their mathematical meaning [-Wparentheses]"
+  ]
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-comparacion",
+  "plantilla": "usaste '&' (operación de bits); para \"y\" lógico se escribe '&&'",
+  "ejemploMsg": "usaste '&' (operación de bits); para \"y\" lógico se escribe '&&'",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/177_and_simple_amp.c",
+  "linea": 4,
+  "id": "M009",
+  "ejemplo": "ejemplos/M009.c",
+  "gcc": [
+   "línea 4:11: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]"
+  ]
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-cuerpo-vacio",
+  "plantilla": "el for termina en ';' y su cuerpo queda vacío: ¿sobra ese ';'?",
+  "ejemploMsg": "el for termina en ';' y su cuerpo queda vacío: ¿sobra ese ';'?",
+  "cuenta": 5,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/validos/v45_for_multiples_vars.c",
+  "linea": 4,
+  "id": "M010",
+  "ejemplo": "ejemplos/M010.c",
+  "gcc": []
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-cuerpo-vacio",
+  "plantilla": "el if termina en ';' y su cuerpo queda vacío: lo que sigue se ejecuta siempre. ¿Sobra ese ';'?",
+  "ejemploMsg": "el if termina en ';' y su cuerpo queda vacío: lo que sigue se ejecuta siempre. ¿Sobra ese ';'?",
+  "cuenta": 2,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/005_pyc_sobrante_if.c",
+  "linea": 4,
+  "id": "M011",
+  "ejemplo": "ejemplos/M011.c",
+  "gcc": [
+   "línea 4:15: warning: suggest braces around empty body in an 'if' statement [-Wempty-body]",
+   "línea 4:5: warning: this 'if' clause does not guard... [-Wmisleading-indentation]"
+  ]
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-cuerpo-vacio",
+  "plantilla": "el while termina en ';' y su cuerpo queda vacío: ¿sobra ese ';'?",
+  "ejemploMsg": "el while termina en ';' y su cuerpo queda vacío: ¿sobra ese ';'?",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/007_pyc_sobrante_while.c",
+  "linea": 4,
+  "id": "M012",
+  "ejemplo": "ejemplos/M012.c",
+  "gcc": [
+   "línea 4:5: warning: this 'while' clause does not guard... [-Wmisleading-indentation]"
+  ]
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-cuerpo-vacio",
+  "plantilla": "el else termina en ';' y su cuerpo queda vacío",
+  "ejemploMsg": "el else termina en ';' y su cuerpo queda vacío",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos3/311_else_punto_coma.c",
+  "linea": 2,
+  "id": "M013",
+  "ejemplo": "ejemplos/M013.c",
+  "gcc": [
+   "línea 2:51: warning: suggest braces around empty body in an 'else' statement [-Wempty-body]"
+  ]
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-division-cero",
+  "plantilla": "división por cero: el programa se cierra al llegar acá",
+  "ejemploMsg": "división por cero: el programa se cierra al llegar acá",
+  "cuenta": 2,
+  "archivo": "test/diag/div_cero_literal.c",
+  "linea": 3,
+  "id": "M014",
+  "ejemplo": "ejemplos/M014.c",
+  "gcc": [
+   "línea 3:23: warning: division by zero [-Wdiv-by-zero]",
+   "línea 3:17: warning: unused variable 'a' [-Wunused-variable]"
+  ]
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-division-entera",
+  "plantilla": "la división es entre dos enteros y se trunca (N/N da N, no N): guardarla en float no recupera los decimales; usá N/N o (float)N/N",
+  "ejemploMsg": "la división es entre dos enteros y se trunca (7/2 da 3, no 3.5): guardarla en float no recupera los decimales; usá 7/2.0 o (float)7/2",
+  "cuenta": 12,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/081_div_entera_const_float.c",
+  "linea": 3,
+  "id": "M015",
+  "ejemplo": "ejemplos/M015.c",
+  "gcc": []
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-division-entera",
+  "plantilla": "la división es entre dos enteros y se trunca (N/N da N, no N): guardarla en double no recupera los decimales; usá N/N o (float)N/N",
+  "ejemploMsg": "la división es entre dos enteros y se trunca (7/2 da 3, no 3.5): guardarla en double no recupera los decimales; usá 7/2.0 o (float)7/2",
+  "cuenta": 1,
+  "archivo": "test/cases/st2.c",
+  "linea": 20,
+  "id": "M016",
+  "ejemplo": "ejemplos/M016.c",
+  "gcc": []
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-funcion",
+  "plantilla": "'return' sin valor en una función que devuelve int",
+  "ejemploMsg": "'return' sin valor en una función que devuelve int",
+  "cuenta": 2,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos3/334_return_dentro_de_for_sin_valor_main.c",
+  "linea": 2,
+  "id": "M017",
+  "ejemplo": "ejemplos/M017.c",
+  "gcc": [
+   "línea 2:59: warning: 'return' with no value, in function returning non-void [-Wreturn-type]"
+  ]
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-preprocesador",
+  "plantilla": "usás printf pero falta #include <stdio.h> al principio del programa",
+  "ejemploMsg": "usás printf pero falta #include <stdio.h> al principio del programa",
+  "cuenta": 6,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/131_sin_stdio.c",
+  "linea": 2,
+  "id": "M018",
+  "ejemplo": "ejemplos/M018.c",
+  "gcc": [
+   "línea 2:5: warning: implicit declaration of function 'printf' [-Wimplicit-function-declaration]",
+   "línea 2:5: warning: incompatible implicit declaration of built-in function 'printf' [-Wbuiltin-declaration-mismatch]"
+  ]
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-preprocesador",
+  "plantilla": "el #include está mal escrito: tiene que ser #include <stdio.h> (con < y >) o #include \"archivo.h\"",
+  "ejemploMsg": "el #include está mal escrito: tiene que ser #include <stdio.h> (con < y >) o #include \"archivo.h\"",
+  "cuenta": 4,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/prueba_errores2/repro/H08_include_sin_comillas.c",
+  "linea": 1,
+  "id": "M019",
+  "ejemplo": "ejemplos/M019.c",
+  "gcc": [
+   "línea 1:10: error: #include expects \"FILENAME\" or <FILENAME>",
+   "línea 3:5: warning: implicit declaration of function 'printf' [-Wimplicit-function-declaration]"
+  ]
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-preprocesador",
+  "plantilla": "<conio.h> solo existe en Windows (Code::Blocks): en Programiz y OnlineGDB no compila. Para esperar una tecla usá getchar() o scanf",
+  "ejemploMsg": "<conio.h> solo existe en Windows (Code::Blocks): en Programiz y OnlineGDB no compila. Para esperar una tecla usá getchar() o scanf",
+  "cuenta": 2,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/dif_gcc/fallan/F38_header_inexistente_aceptado.c",
+  "linea": 1,
+  "id": "M020",
+  "ejemplo": "ejemplos/M020.c",
+  "gcc": [
+   "línea 2:10: fatal error: conio.h: No such file or directory"
+  ]
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-preprocesador",
+  "plantilla": "usás abs pero falta #include <stdlib.h> al principio del programa",
+  "ejemploMsg": "usás abs pero falta #include <stdlib.h> al principio del programa",
+  "cuenta": 2,
+  "archivo": "test/cases/divz.c",
+  "linea": 12,
+  "id": "M021",
+  "ejemplo": "ejemplos/M021.c",
+  "gcc": [
+   "línea 12:21: warning: implicit declaration of function 'abs' [-Wimplicit-function-declaration]"
+  ]
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-preprocesador",
+  "plantilla": "usás sqrt pero falta #include <math.h> al principio del programa",
+  "ejemploMsg": "usás sqrt pero falta #include <math.h> al principio del programa",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/132_sin_math.c",
+  "linea": 3,
+  "id": "M022",
+  "ejemplo": "ejemplos/M022.c",
+  "gcc": [
+   "línea 3:20: warning: implicit declaration of function 'sqrt' [-Wimplicit-function-declaration]",
+   "línea 3:20: warning: incompatible implicit declaration of built-in function 'sqrt' [-Wbuiltin-declaration-mismatch]"
+  ]
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-preprocesador",
+  "plantilla": "no se conoce la biblioteca <studio.h>: ¿quisiste escribir <stdio.h>?",
+  "ejemploMsg": "no se conoce la biblioteca <studio.h>: ¿quisiste escribir <stdio.h>?",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/133_include_mal_escrito.c",
+  "linea": 1,
+  "id": "M023",
+  "ejemplo": "ejemplos/M023.c",
+  "gcc": [
+   "línea 1:10: fatal error: studio.h: No such file or directory"
+  ]
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-preprocesador",
+  "plantilla": "'#comentario' no es una directiva de C (los comentarios en C empiezan con // o /* */)",
+  "ejemploMsg": "'#comentario' no es una directiva de C (los comentarios en C empiezan con // o /* */)",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/214_comentario_hash.c",
+  "linea": 3,
+  "id": "M024",
+  "ejemplo": "ejemplos/M024.c",
+  "gcc": [
+   "línea 3:7: error: invalid preprocessing directive #comentario"
+  ]
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-preprocesador",
+  "plantilla": "'#inlcude' no es una directiva de C: ¿quisiste escribir #include?",
+  "ejemploMsg": "'#inlcude' no es una directiva de C: ¿quisiste escribir #include?",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/prueba_errores2/repro/H08_directiva_mal_escrita.c",
+  "linea": 1,
+  "id": "M025",
+  "ejemplo": "ejemplos/M025.c",
+  "gcc": [
+   "línea 1:2: error: invalid preprocessing directive #inlcude; did you mean #include?",
+   "línea 3:5: warning: implicit declaration of function 'printf' [-Wimplicit-function-declaration]"
+  ]
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-preprocesador",
+  "plantilla": "usás M_PI pero falta #include <math.h> al principio del programa",
+  "ejemploMsg": "usás M_PI pero falta #include <math.h> al principio del programa",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/prueba_tp/fallan/E01_macro_sin_header.c",
+  "linea": 4,
+  "id": "M026",
+  "ejemplo": "ejemplos/M026.c",
+  "gcc": [
+   "línea 4:20: error: 'M_PI' undeclared (first use in this function)",
+   "línea 5:20: error: 'RAND_MAX' undeclared (first use in this function)"
+  ]
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-preprocesador",
+  "plantilla": "usás RAND_MAX pero falta #include <stdlib.h> al principio del programa",
+  "ejemploMsg": "usás RAND_MAX pero falta #include <stdlib.h> al principio del programa",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/prueba_tp/fallan/E01_macro_sin_header.c",
+  "linea": 5,
+  "id": "M027",
+  "ejemplo": "ejemplos/M027.c",
+  "gcc": [
+   "línea 4:20: error: 'M_PI' undeclared (first use in this function)",
+   "línea 5:20: error: 'RAND_MAX' undeclared (first use in this function)"
+  ]
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-preprocesador",
+  "plantilla": "usás INT_MAX pero falta #include <limits.h> al principio del programa",
+  "ejemploMsg": "usás INT_MAX pero falta #include <limits.h> al principio del programa",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/prueba_tp/fallan/E01_macro_sin_header.c",
+  "linea": 6,
+  "id": "M028",
+  "ejemplo": "ejemplos/M028.c",
+  "gcc": [
+   "línea 4:20: error: 'M_PI' undeclared (first use in this function)",
+   "línea 5:20: error: 'RAND_MAX' undeclared (first use in this function)"
+  ]
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-preprocesador",
+  "plantilla": "usás getch pero falta #include <conio.h> al principio del programa",
+  "ejemploMsg": "usás getch pero falta #include <conio.h> al principio del programa",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/prueba_tp/fallan/E02_getch_sin_conio.c",
+  "linea": 6,
+  "id": "M029",
+  "ejemplo": "ejemplos/M029.c",
+  "gcc": [
+   "línea 6:9: warning: implicit declaration of function 'getch'; did you mean 'getc'? [-Wimplicit-function-declaration]"
+  ]
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-preprocesador",
+  "plantilla": "el #define de N termina en ';': ese ';' se copia en cada uso y suele causar errores raros. Sacalo",
+  "ejemploMsg": "el #define de N termina en ';': ese ';' se copia en cada uso y suele causar errores raros. Sacalo",
+  "cuenta": 1,
+  "archivo": "test/diag/define_punto_coma.c",
+  "linea": 3,
+  "id": "M030",
+  "ejemplo": "ejemplos/M030.c",
+  "gcc": []
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-printf-formato",
+  "plantilla": "printf recibe más valores (N) de los que usan los % del texto (N)",
+  "ejemploMsg": "printf recibe más valores (1) de los que usan los % del texto (0)",
+  "cuenta": 8,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/053_printf_variable_sin_formato.c",
+  "linea": 4,
+  "id": "M031",
+  "ejemplo": "ejemplos/M031.c",
+  "gcc": [
+   "línea 4:12: warning: too many arguments for format [-Wformat-extra-args]"
+  ]
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-printf-formato",
+  "plantilla": "printf: '%d' espera un entero, pero '‹nombre›' es float: usá '%f' (o '%.2f' para N decimales)",
+  "ejemploMsg": "printf: '%d' espera un entero, pero 'x' es float: usá '%f' (o '%.2f' para 2 decimales)",
+  "cuenta": 5,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/045_printf_d_con_float.c",
+  "linea": 4,
+  "id": "M032",
+  "ejemplo": "ejemplos/M032.c",
+  "gcc": [
+   "línea 4:14: warning: format '%d' expects argument of type 'int', but argument 2 has type 'double' [-Wformat=]"
+  ]
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-printf-formato",
+  "plantilla": "printf: '%f' espera un número decimal, pero '‹nombre›' es entero (int): usá '%d'",
+  "ejemploMsg": "printf: '%f' espera un número decimal, pero 'n' es entero (int): usá '%d'",
+  "cuenta": 4,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/046_printf_f_con_int.c",
+  "linea": 4,
+  "id": "M033",
+  "ejemplo": "ejemplos/M033.c",
+  "gcc": [
+   "línea 4:14: warning: format '%f' expects argument of type 'double', but argument 2 has type 'int' [-Wformat=]"
+  ]
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-printf-formato",
+  "plantilla": "printf pide N valor(es) por los % del texto, pero recibe N",
+  "ejemploMsg": "printf pide 2 valor(es) por los % del texto, pero recibe 1",
+  "cuenta": 4,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/051_printf_falta_argumento.c",
+  "linea": 4,
+  "id": "M034",
+  "ejemplo": "ejemplos/M034.c",
+  "gcc": [
+   "línea 4:17: warning: format '%d' expects a matching 'int' argument [-Wformat=]"
+  ]
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-printf-formato",
+  "plantilla": "printf: '%f' espera un número decimal, pero el argumento N es entero (int): usá '%d'",
+  "ejemploMsg": "printf: '%f' espera un número decimal, pero el argumento 2 es entero (int): usá '%d'",
+  "cuenta": 4,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/prueba_tp/fallan/B02_printf_tipo_cambiado.c",
+  "linea": 5,
+  "id": "M035",
+  "ejemplo": "ejemplos/M035.c",
+  "gcc": [
+   "línea 5:14: warning: format '%d' expects argument of type 'int', but argument 2 has type 'double' [-Wformat=]",
+   "línea 5:17: warning: format '%f' expects argument of type 'double', but argument 3 has type 'int' [-Wformat=]"
+  ]
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-printf-formato",
+  "plantilla": "printf: '%d' espera un entero, pero el argumento N es double: usá '%f' (o '%.2f' para N decimales)",
+  "ejemploMsg": "printf: '%d' espera un entero, pero el argumento 1 es double: usá '%f' (o '%.2f' para 2 decimales)",
+  "cuenta": 4,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/prueba_tp/progs/p217_ternary_types.c",
+  "linea": 9,
+  "id": "M036",
+  "ejemplo": "ejemplos/M036.c",
+  "gcc": [
+   "línea 8:25: warning: operand of '?:' changes signedness from 'int' to 'unsigned int' due to unsignedness of other operand [-Wsign-compare]",
+   "línea 9:14: warning: format '%d' expects argument of type 'int', but argument 2 has type 'double' [-Wformat=]"
+  ]
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-printf-formato",
+  "plantilla": "printf: '%d' espera un entero, pero '‹nombre›' es double: usá '%f' (o '%.2f' para N decimales)",
+  "ejemploMsg": "printf: '%d' espera un entero, pero 'x' es double: usá '%f' (o '%.2f' para 2 decimales)",
+  "cuenta": 2,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/048_printf_d_con_double.c",
+  "linea": 4,
+  "id": "M037",
+  "ejemplo": "ejemplos/M037.c",
+  "gcc": [
+   "línea 4:14: warning: format '%d' expects argument of type 'int', but argument 2 has type 'double' [-Wformat=]"
+  ]
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-printf-formato",
+  "plantilla": "printf: '%s' es para textos y '‹nombre›' es int: los textos (char arrays) todavía no están soportados",
+  "ejemploMsg": "printf: '%s' es para textos y 'a' es int: los textos (char arrays) todavía no están soportados",
+  "cuenta": 2,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/054_printf_s_con_numero.c",
+  "linea": 4,
+  "id": "M038",
+  "ejemplo": "ejemplos/M038.c",
+  "gcc": [
+   "línea 4:14: warning: format '%s' expects argument of type 'char *', but argument 2 has type 'int' [-Wformat=]"
+  ]
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-printf-formato",
+  "plantilla": "printf: '%c' espera un carácter (entre comillas simples '‹nombre›'), no un texto",
+  "ejemploMsg": "printf: '%c' espera un carácter (entre comillas simples 'a'), no un texto",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos3/302_printf_c_con_string.c",
+  "linea": 2,
+  "id": "M039",
+  "ejemplo": "ejemplos/M039.c",
+  "gcc": [
+   "línea 2:23: warning: format '%c' expects argument of type 'int', but argument 2 has type 'char *' [-Wformat=]"
+  ]
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-printf-formato",
+  "plantilla": "printf: para un long usá '%ld'",
+  "ejemploMsg": "printf: para un long usá '%ld'",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/prueba_tp/progs/p213_printf_i_flags.c",
+  "linea": 9,
+  "id": "M040",
+  "ejemplo": "ejemplos/M040.c",
+  "gcc": [
+   "línea 5:12: warning: '0' flag ignored with '-' flag in gnu_printf format [-Wformat=]",
+   "línea 6:12: warning: '0' flag ignored with '-' flag in gnu_printf format [-Wformat=]"
+  ]
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-prototipo",
+  "plantilla": "'‹nombre›' se usa antes de estar definida: falta el prototipo arriba de main (por ejemplo: float prom(int, int);)",
+  "ejemploMsg": "'prom' se usa antes de estar definida: falta el prototipo arriba de main (por ejemplo: float prom(int, int);)",
+  "cuenta": 3,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/prueba_tp/progs/p219_noproto_float.c",
+  "linea": 4,
+  "id": "M041",
+  "ejemplo": "ejemplos/M041.c",
+  "gcc": [
+   "línea 4:15: warning: implicit declaration of function 'prom' [-Wimplicit-function-declaration]",
+   "línea 8:7: error: conflicting types for 'prom'; have 'float(int, int)'"
+  ]
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-prototipo",
+  "plantilla": "'‹nombre›' se usa antes de estar definida: falta el prototipo arriba de main (por ejemplo: int doble(int);)",
+  "ejemploMsg": "'doble' se usa antes de estar definida: falta el prototipo arriba de main (por ejemplo: int doble(int);)",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/101_func_sin_prototipo.c",
+  "linea": 3,
+  "id": "M042",
+  "ejemplo": "ejemplos/M042.c",
+  "gcc": [
+   "línea 3:20: warning: implicit declaration of function 'doble' [-Wimplicit-function-declaration]"
+  ]
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-prototipo",
+  "plantilla": "'‹nombre›' se usa antes de estar definida: falta el prototipo arriba de main (por ejemplo: int cuadrado(int);)",
+  "ejemploMsg": "'cuadrado' se usa antes de estar definida: falta el prototipo arriba de main (por ejemplo: int cuadrado(int);)",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/prueba_tp/progs/p218_noprotos.c",
+  "linea": 4,
+  "id": "M043",
+  "ejemplo": "ejemplos/M043.c",
+  "gcc": [
+   "línea 4:13: warning: implicit declaration of function 'cuadrado' [-Wimplicit-function-declaration]"
+  ]
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-prototipo",
+  "plantilla": "'‹nombre›' se usa antes de estar definida: falta el prototipo arriba de main (por ejemplo: undefined saludar(void);)",
+  "ejemploMsg": "'saludar' se usa antes de estar definida: falta el prototipo arriba de main (por ejemplo: undefined saludar(void);)",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/prueba_tp/progs/p220_noproto_void.c",
+  "linea": 4,
+  "id": "M044",
+  "ejemplo": "ejemplos/M044.c",
+  "gcc": [
+   "línea 4:5: warning: implicit declaration of function 'saludar' [-Wimplicit-function-declaration]",
+   "línea 7:6: warning: conflicting types for 'saludar'; have 'void()'"
+  ]
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-scanf-formato",
+  "plantilla": "scanf: '%d' lee un entero pero '‹nombre›' es float: usá '%f'",
+  "ejemploMsg": "scanf: '%d' lee un entero pero 'x' es float: usá '%f'",
+  "cuenta": 5,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/036_scanf_d_con_float.c",
+  "linea": 4,
+  "id": "M045",
+  "ejemplo": "ejemplos/M045.c",
+  "gcc": [
+   "línea 4:13: warning: format '%d' expects argument of type 'int *', but argument 2 has type 'float *' [-Wformat=]"
+  ]
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-scanf-formato",
+  "plantilla": "scanf: '%f' lee un decimal pero '‹nombre›' es int: usá '%d'",
+  "ejemploMsg": "scanf: '%f' lee un decimal pero 'n' es int: usá '%d'",
+  "cuenta": 3,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/037_scanf_f_con_int.c",
+  "linea": 4,
+  "id": "M046",
+  "ejemplo": "ejemplos/M046.c",
+  "gcc": [
+   "línea 4:13: warning: format '%f' expects argument of type 'float *', but argument 2 has type 'int *' [-Wformat=]"
+  ]
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-scanf-formato",
+  "plantilla": "scanf: '%f' lee un float pero '‹nombre›' es double: usá '%lf'",
+  "ejemploMsg": "scanf: '%f' lee un float pero 'x' es double: usá '%lf'",
+  "cuenta": 3,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/038_scanf_f_con_double.c",
+  "linea": 4,
+  "id": "M047",
+  "ejemplo": "ejemplos/M047.c",
+  "gcc": [
+   "línea 4:13: warning: format '%f' expects argument of type 'float *', but argument 2 has type 'double *' [-Wformat=]"
+  ]
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-scanf-formato",
+  "plantilla": "scanf: '%lf' es para double pero '‹nombre›' es float: usá '%f'",
+  "ejemploMsg": "scanf: '%lf' es para double pero 'x' es float: usá '%f'",
+  "cuenta": 3,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/039_scanf_lf_con_float.c",
+  "linea": 4,
+  "id": "M048",
+  "ejemplo": "ejemplos/M048.c",
+  "gcc": [
+   "línea 4:14: warning: format '%lf' expects argument of type 'double *', but argument 2 has type 'float *' [-Wformat=]"
+  ]
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-scanf-formato",
+  "plantilla": "no pongas '\\n' al final del scanf: hace que el programa espere un Enter de más",
+  "ejemploMsg": "no pongas '\\n' al final del scanf: hace que el programa espere un Enter de más",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/042_scanf_con_n.c",
+  "linea": 4,
+  "id": "M049",
+  "ejemplo": "ejemplos/M049.c",
+  "gcc": []
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-scanf-formato",
+  "plantilla": "el texto del scanf tiene letras que no son de lectura (Ingrese un numero:): scanf solo lleva los % del dato; el mensaje para el usuario va en un printf aparte",
+  "ejemploMsg": "el texto del scanf tiene letras que no son de lectura (Ingrese un numero:): scanf solo lleva los % del dato; el mensaje para el usuario va en un printf aparte",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/043_scanf_texto_en_formato.c",
+  "linea": 4,
+  "id": "M050",
+  "ejemplo": "ejemplos/M050.c",
+  "gcc": []
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-scanf-formato",
+  "plantilla": "scanf: '%d' no corresponde al tipo char de '‹nombre›'",
+  "ejemploMsg": "scanf: '%d' no corresponde al tipo char de 'c'",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos3/301_scanf_d_con_char.c",
+  "linea": 2,
+  "id": "M051",
+  "ejemplo": "ejemplos/M051.c",
+  "gcc": [
+   "línea 2:30: warning: format '%d' expects argument of type 'int *', but argument 2 has type 'char *' [-Wformat=]"
+  ]
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-scanf-formato",
+  "plantilla": "el texto del scanf tiene letras que no son de lectura (Ingrese:): scanf solo lleva los % del dato; el mensaje para el usuario va en un printf aparte",
+  "ejemploMsg": "el texto del scanf tiene letras que no son de lectura (Ingrese:): scanf solo lleva los % del dato; el mensaje para el usuario va en un printf aparte",
+  "cuenta": 1,
+  "archivo": "test/diag/scanf_texto.c",
+  "linea": 3,
+  "id": "M052",
+  "ejemplo": "ejemplos/M052.c",
+  "gcc": []
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-sin-efecto",
+  "plantilla": "esta sentencia compara pero no guarda el resultado: no hace nada. ¿Querías asignar con '='?",
+  "ejemploMsg": "esta sentencia compara pero no guarda el resultado: no hace nada. ¿Querías asignar con '='?",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/030_doble_igual_como_asignacion.c",
+  "linea": 4,
+  "id": "M053",
+  "ejemplo": "ejemplos/M053.c",
+  "gcc": [
+   "línea 4:7: warning: statement with no effect [-Wunused-value]"
+  ]
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-sin-efecto",
+  "plantilla": "esta sentencia no hace nada: el resultado de la cuenta no se guarda en ninguna variable",
+  "ejemploMsg": "esta sentencia no hace nada: el resultado de la cuenta no se guarda en ninguna variable",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/226_expr_sin_efecto.c",
+  "linea": 4,
+  "id": "M054",
+  "ejemplo": "ejemplos/M054.c",
+  "gcc": [
+   "línea 4:7: warning: statement with no effect [-Wunused-value]"
+  ]
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-sin-inicializar",
+  "plantilla": "'‹nombre›' se usa antes de darle un valor (en C su valor inicial es basura): asignale un valor inicial, por ejemplo a = N;",
+  "ejemploMsg": "'a' se usa antes de darle un valor (en C su valor inicial es basura): asignale un valor inicial, por ejemplo a = 0;",
+  "cuenta": 7,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/071_sin_inicializar_print.c",
+  "linea": 4,
+  "id": "M055",
+  "ejemplo": "ejemplos/M055.c",
+  "gcc": []
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-sin-inicializar",
+  "plantilla": "'‹nombre›' se usa antes de darle un valor (en C su valor inicial es basura): asignale un valor inicial, por ejemplo x = N;",
+  "ejemploMsg": "'x' se usa antes de darle un valor (en C su valor inicial es basura): asignale un valor inicial, por ejemplo x = 0;",
+  "cuenta": 6,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/prueba_tp/progs/p088_uninit.c",
+  "linea": 6,
+  "id": "M056",
+  "ejemplo": "ejemplos/M056.c",
+  "gcc": []
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-sin-inicializar",
+  "plantilla": "'‹nombre›' se usa antes de darle un valor (en C su valor inicial es basura): asignale un valor inicial, por ejemplo b = N;",
+  "ejemploMsg": "'b' se usa antes de darle un valor (en C su valor inicial es basura): asignale un valor inicial, por ejemplo b = 0;",
+  "cuenta": 4,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/prueba_tp/progs/p088_uninit.c",
+  "linea": 6,
+  "id": "M057",
+  "ejemplo": "ejemplos/M057.c",
+  "gcc": []
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-sin-inicializar",
+  "plantilla": "'‹nombre›' se usa antes de darle un valor (en C su valor inicial es basura): asignale un valor inicial, por ejemplo suma = N;",
+  "ejemploMsg": "'suma' se usa antes de darle un valor (en C su valor inicial es basura): asignale un valor inicial, por ejemplo suma = 0;",
+  "cuenta": 4,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/prueba_tp/progs/p089_uninit_acum.c",
+  "linea": 5,
+  "id": "M058",
+  "ejemplo": "ejemplos/M058.c",
+  "gcc": []
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-sin-inicializar",
+  "plantilla": "'‹nombre›' se usa antes de darle un valor (en C su valor inicial es basura): asignale un valor inicial, por ejemplo fact = N;",
+  "ejemploMsg": "'fact' se usa antes de darle un valor (en C su valor inicial es basura): asignale un valor inicial, por ejemplo fact = 0;",
+  "cuenta": 2,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/dif_gcc/fallan/F11_uninit_in_loop.c",
+  "linea": 7,
+  "id": "M059",
+  "ejemplo": "ejemplos/M059.c",
+  "gcc": []
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-sin-inicializar",
+  "plantilla": "'‹nombre›' se usa antes de darle un valor (en C su valor inicial es basura): asignale un valor inicial, por ejemplo n = N;",
+  "ejemploMsg": "'n' se usa antes de darle un valor (en C su valor inicial es basura): asignale un valor inicial, por ejemplo n = 0;",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/033_scanf_sin_amp_int.c",
+  "linea": 5,
+  "id": "M060",
+  "ejemplo": "ejemplos/M060.c",
+  "gcc": [
+   "línea 4:13: warning: format '%d' expects argument of type 'int *', but argument 2 has type 'int' [-Wformat=]"
+  ]
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-sin-inicializar",
+  "plantilla": "'‹nombre›' se usa antes de darle un valor (en C su valor inicial es basura): asignale un valor inicial, por ejemplo s = N;",
+  "ejemploMsg": "'s' se usa antes de darle un valor (en C su valor inicial es basura): asignale un valor inicial, por ejemplo s = 0;",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/070_sin_inicializar_suma.c",
+  "linea": 6,
+  "id": "M061",
+  "ejemplo": "ejemplos/M061.c",
+  "gcc": []
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-sin-inicializar",
+  "plantilla": "'‹nombre›' se usa antes de darle un valor (en C su valor inicial es basura): asignale un valor inicial, por ejemplo r = N;",
+  "ejemploMsg": "'r' se usa antes de darle un valor (en C su valor inicial es basura): asignale un valor inicial, por ejemplo r = 0;",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/072_sin_inicializar_condicional.c",
+  "linea": 8,
+  "id": "M062",
+  "ejemplo": "ejemplos/M062.c",
+  "gcc": []
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-sin-inicializar",
+  "plantilla": "'‹nombre›' se usa antes de darle un valor (en C su valor inicial es basura): asignale un valor inicial, por ejemplo cont = N;",
+  "ejemploMsg": "'cont' se usa antes de darle un valor (en C su valor inicial es basura): asignale un valor inicial, por ejemplo cont = 0;",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/073_sin_inicializar_contador.c",
+  "linea": 4,
+  "id": "M063",
+  "ejemplo": "ejemplos/M063.c",
+  "gcc": []
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-sin-inicializar",
+  "plantilla": "'‹nombre›' se usa antes de darle un valor (en C su valor inicial es basura): asignale un valor inicial, por ejemplo i = N;",
+  "ejemploMsg": "'i' se usa antes de darle un valor (en C su valor inicial es basura): asignale un valor inicial, por ejemplo i = 0;",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos3/315_indice_variable_no_init.c",
+  "linea": 2,
+  "id": "M064",
+  "ejemplo": "ejemplos/M064.c",
+  "gcc": []
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-sin-inicializar",
+  "plantilla": "'‹nombre›' se usa antes de darle un valor (en C su valor inicial es basura): asignale un valor inicial, por ejemplo y = N;",
+  "ejemploMsg": "'y' se usa antes de darle un valor (en C su valor inicial es basura): asignale un valor inicial, por ejemplo y = 0;",
+  "cuenta": 1,
+  "archivo": "test/diag/if_sin_else.c",
+  "linea": 3,
+  "id": "M065",
+  "ejemplo": "ejemplos/M065.c",
+  "gcc": []
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-sin-inicializar",
+  "plantilla": "'‹nombre›' se usa antes de darle un valor (en C su valor inicial es basura): asignale un valor inicial, por ejemplo S = N;",
+  "ejemploMsg": "'S' se usa antes de darle un valor (en C su valor inicial es basura): asignale un valor inicial, por ejemplo S = 0;",
+  "cuenta": 1,
+  "archivo": "test/cases/uninit.c",
+  "linea": 4,
+  "id": "M066",
+  "ejemplo": "ejemplos/M066.c",
+  "gcc": []
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-sin-return",
+  "plantilla": "la función '‹nombre›' puede terminar sin ejecutar 'return' en algún caso: en C devuelve un valor basura. Agregá un return al final",
+  "ejemploMsg": "la función 'f' puede terminar sin ejecutar 'return' en algún caso: en C devuelve un valor basura. Agregá un return al final",
+  "cuenta": 4,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/dif_gcc/fallan/F32_missing_return.c",
+  "linea": 2,
+  "id": "M067",
+  "ejemplo": "ejemplos/M067.c",
+  "gcc": [
+   "línea 2:19: warning: unused variable 'y' [-Wunused-variable]"
+  ]
+ },
+ {
+  "nivel": "aviso",
+  "code": "W-switch",
+  "plantilla": "este grupo del switch sigue con el siguiente porque le falta un 'break;' (en C no se corta solo)",
+  "ejemploMsg": "este grupo del switch sigue con el siguiente porque le falta un 'break;' (en C no se corta solo)",
+  "cuenta": 5,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/142_switch_sin_break.c",
+  "linea": 5,
+  "id": "M068",
+  "ejemplo": "ejemplos/M068.c",
+  "gcc": []
+ },
+ {
+  "nivel": "ejecución",
+  "code": "R-runtime",
+  "plantilla": "división entera por cero (en C el programa se cierra con \"Floating point exception\")",
+  "ejemploMsg": "división entera por cero (en C el programa se cierra con \"Floating point exception\")",
+  "cuenta": 8,
+  "archivo": "test/diag/div_cero_literal.c",
+  "linea": 3,
+  "id": "M069",
+  "ejemplo": "ejemplos/M069.c",
+  "gcc": [
+   "línea 3:23: warning: division by zero [-Wdiv-by-zero]",
+   "línea 3:17: warning: unused variable 'a' [-Wunused-variable]"
+  ]
+ },
+ {
+  "nivel": "ejecución",
+  "code": "R-runtime",
+  "plantilla": "índice N fuera del arreglo (tiene N posiciones: N a N)",
+  "ejemploMsg": "índice 3 fuera del arreglo (tiene 3 posiciones: 0 a 2)",
+  "cuenta": 7,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos3/335_array_global_fuera_de_rango.c",
+  "linea": 3,
+  "id": "M070",
+  "ejemplo": "ejemplos/M070.c",
+  "gcc": []
+ },
+ {
+  "nivel": "ejecución",
+  "code": "R-runtime",
+  "plantilla": "desbordamiento de la pila (recursión infinita o muy profunda)",
+  "ejemploMsg": "desbordamiento de la pila (recursión infinita o muy profunda)",
+  "cuenta": 4,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/258_llamada_main_recursiva.c",
+  "linea": 0,
+  "id": "M071",
+  "ejemplo": "ejemplos/M071.c",
+  "gcc": []
+ },
+ {
+  "nivel": "ejecución",
+  "code": "R-runtime",
+  "plantilla": "resto (%) con divisor cero (en C el programa se cierra con \"Floating point exception\")",
+  "ejemploMsg": "resto (%) con divisor cero (en C el programa se cierra con \"Floating point exception\")",
+  "cuenta": 3,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/078_mod_cero.c",
+  "linea": 4,
+  "id": "M072",
+  "ejemplo": "ejemplos/M072.c",
+  "gcc": []
+ },
+ {
+  "nivel": "ejecución",
+  "code": "R-runtime",
+  "plantilla": "índice -N fuera del arreglo (tiene N posiciones: N a N)",
+  "ejemploMsg": "índice -1 fuera del arreglo (tiene 5 posiciones: 0 a 4)",
+  "cuenta": 2,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/087_indice_negativo.c",
+  "linea": 4,
+  "id": "M073",
+  "ejemplo": "ejemplos/M073.c",
+  "gcc": []
+ },
+ {
+  "nivel": "ejecución",
+  "code": "R-runtime",
+  "plantilla": "el arreglo es demasiado grande para este editor (N elementos; el máximo es N millones). En un programa real esto suele cerrarse por falta de memoria de pila",
+  "ejemploMsg": "el arreglo es demasiado grande para este editor (2147483648 elementos; el máximo es 20 millones). En un programa real esto suele cerrarse por falta de memoria de pila",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/prueba_errores2/repro/H09_arreglo_enorme_sin_linea.c",
+  "linea": 2,
+  "id": "M074",
+  "ejemplo": "ejemplos/M074.c",
+  "gcc": []
+ },
+ {
+  "nivel": "ejecución",
+  "code": "R-runtime",
+  "plantilla": "el ancho o la precisión del formato es demasiado grande para este editor (máximo N)",
+  "ejemploMsg": "el ancho o la precisión del formato es demasiado grande para este editor (máximo 100000)",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/prueba_errores2/repro/H09_printf_ancho_sin_linea.c",
+  "linea": 5,
+  "id": "M075",
+  "ejemplo": "ejemplos/M075.c",
+  "gcc": []
+ },
+ {
+  "nivel": "ejecución",
+  "code": "R-runtime",
+  "plantilla": "tamaño de arreglo inválido (N)",
+  "ejemploMsg": "tamaño de arreglo inválido (0)",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/prueba_errores2/repro/H09_vla_sin_linea.c",
+  "linea": 2,
+  "id": "M076",
+  "ejemplo": "ejemplos/M076.c",
+  "gcc": []
+ },
+ {
+  "nivel": "error",
+  "code": "E-anidado",
+  "plantilla": "el programa tiene demasiados niveles anidados (paréntesis, llaves o if uno dentro de otro): el editor no puede analizarlo. Simplificá la expresión o dividila en pasos",
+  "ejemploMsg": "el programa tiene demasiados niveles anidados (paréntesis, llaves o if uno dentro de otro): el editor no puede analizarlo. Simplificá la expresión o dividila en pasos",
+  "cuenta": 4,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/prueba_errores2/repro/H12_llaves2000.c",
+  "linea": 1,
+  "id": "M077",
+  "ejemplo": "ejemplos/M077.c",
+  "gcc": []
+ },
+ {
+  "nivel": "error",
+  "code": "E-arreglo",
+  "plantilla": "'‹nombre›' es un arreglo: usá s[i] para acceder a una posición",
+  "ejemploMsg": "'s' es un arreglo: usá s[i] para acceder a una posición",
+  "cuenta": 18,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/validos2/w19_char_array_literal.c",
+  "linea": 2,
+  "id": "M078",
+  "ejemplo": "ejemplos/M078.c",
+  "gcc": []
+ },
+ {
+  "nivel": "error",
+  "code": "E-arreglo",
+  "plantilla": "'‹nombre›' es un arreglo: usá c[i] para acceder a una posición",
+  "ejemploMsg": "'c' es un arreglo: usá c[i] para acceder a una posición",
+  "cuenta": 10,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/prueba_tp/progs/p103_string_h.c",
+  "linea": 7,
+  "id": "M079",
+  "ejemplo": "ejemplos/M079.c",
+  "gcc": []
+ },
+ {
+  "nivel": "error",
+  "code": "E-arreglo",
+  "plantilla": "'‹nombre›' es un arreglo: usá a[i] para acceder a una posición",
+  "ejemploMsg": "'a' es un arreglo: usá a[i] para acceder a una posición",
+  "cuenta": 10,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/prueba_tp/progs/p103_string_h.c",
+  "linea": 7,
+  "id": "M080",
+  "ejemplo": "ejemplos/M080.c",
+  "gcc": []
+ },
+ {
+  "nivel": "error",
+  "code": "E-arreglo",
+  "plantilla": "'‹nombre›' es un arreglo: usá nombre[i] para acceder a una posición",
+  "ejemploMsg": "'nombre' es un arreglo: usá nombre[i] para acceder a una posición",
+  "cuenta": 9,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/208_char_array_init.c",
+  "linea": 4,
+  "id": "M081",
+  "ejemplo": "ejemplos/M081.c",
+  "gcc": []
+ },
+ {
+  "nivel": "error",
+  "code": "E-arreglo",
+  "plantilla": "'‹nombre›' es un arreglo: usá b[i] para acceder a una posición",
+  "ejemploMsg": "'b' es un arreglo: usá b[i] para acceder a una posición",
+  "cuenta": 8,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/prueba_tp/progs/p103_string_h.c",
+  "linea": 6,
+  "id": "M082",
+  "ejemplo": "ejemplos/M082.c",
+  "gcc": []
+ },
+ {
+  "nivel": "error",
+  "code": "E-arreglo",
+  "plantilla": "'‹nombre›' es un arreglo: usá linea[i] para acceder a una posición",
+  "ejemploMsg": "'linea' es un arreglo: usá linea[i] para acceder a una posición",
+  "cuenta": 8,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/prueba_tp/progs/p105_gets_fgets.c",
+  "linea": 6,
+  "id": "M083",
+  "ejemplo": "ejemplos/M083.c",
+  "gcc": []
+ },
+ {
+  "nivel": "error",
+  "code": "E-arreglo",
+  "plantilla": "al arreglo le falta el tamaño",
+  "ejemploMsg": "al arreglo le falta el tamaño",
+  "cuenta": 4,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/094_arreglo_sin_tamano.c",
+  "linea": 3,
+  "id": "M084",
+  "ejemplo": "ejemplos/M084.c",
+  "gcc": [
+   "línea 3:9: error: array size missing in 'v'",
+   "línea 3:9: warning: unused variable 'v' [-Wunused-variable]"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-arreglo",
+  "plantilla": "'‹nombre›' es un arreglo: usá v[i] para acceder a una posición",
+  "ejemploMsg": "'v' es un arreglo: usá v[i] para acceder a una posición",
+  "cuenta": 4,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/096_arreglo_sin_indice.c",
+  "linea": 4,
+  "id": "M085",
+  "ejemplo": "ejemplos/M085.c",
+  "gcc": [
+   "línea 4:14: warning: format '%d' expects argument of type 'int', but argument 2 has type 'int *' [-Wformat=]"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-arreglo",
+  "plantilla": "un arreglo se inicializa con llaves { ... }",
+  "ejemploMsg": "un arreglo se inicializa con llaves { ... }",
+  "cuenta": 4,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/208_char_array_init.c",
+  "linea": 3,
+  "id": "M086",
+  "ejemplo": "ejemplos/M086.c",
+  "gcc": []
+ },
+ {
+  "nivel": "error",
+  "code": "E-arreglo",
+  "plantilla": "'‹nombre›' es un arreglo: usá p[i] para acceder a una posición",
+  "ejemploMsg": "'p' es un arreglo: usá p[i] para acceder a una posición",
+  "cuenta": 4,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/prueba_tp/progs/p121_palindromo.c",
+  "linea": 8,
+  "id": "M087",
+  "ejemplo": "ejemplos/M087.c",
+  "gcc": []
+ },
+ {
+  "nivel": "error",
+  "code": "E-arreglo",
+  "plantilla": "el tamaño del arreglo tiene que ser mayor que N (usaste N)",
+  "ejemploMsg": "el tamaño del arreglo tiene que ser mayor que 0 (usaste 0)",
+  "cuenta": 2,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/091_tamano_arreglo_cero.c",
+  "linea": 3,
+  "id": "M088",
+  "ejemplo": "ejemplos/M088.c",
+  "gcc": [
+   "línea 3:9: warning: unused variable 'v' [-Wunused-variable]"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-arreglo",
+  "plantilla": "el índice de un arreglo debe ser un entero",
+  "ejemploMsg": "el índice de un arreglo debe ser un entero",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/089_indice_float.c",
+  "linea": 5,
+  "id": "M089",
+  "ejemplo": "ejemplos/M089.c",
+  "gcc": [
+   "línea 5:21: error: array subscript is not an integer",
+   "línea 4:11: warning: variable 'i' set but not used [-Wunused-but-set-variable]"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-arreglo",
+  "plantilla": "el tamaño del arreglo tiene que ser mayor que N (usaste -N)",
+  "ejemploMsg": "el tamaño del arreglo tiene que ser mayor que 0 (usaste -3)",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/090_tamano_arreglo_negativo.c",
+  "linea": 3,
+  "id": "M090",
+  "ejemplo": "ejemplos/M090.c",
+  "gcc": [
+   "línea 3:9: error: size of array 'v' is negative",
+   "línea 3:9: warning: unused variable 'v' [-Wunused-variable]"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-arreglo",
+  "plantilla": "el tamaño de un arreglo debe ser un entero",
+  "ejemploMsg": "el tamaño de un arreglo debe ser un entero",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/093_tamano_arreglo_float.c",
+  "linea": 3,
+  "id": "M091",
+  "ejemplo": "ejemplos/M091.c",
+  "gcc": [
+   "línea 3:9: error: size of array 'v' has non-integer type",
+   "línea 3:9: warning: unused variable 'v' [-Wunused-variable]"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-arreglo",
+  "plantilla": "'‹nombre›' es un arreglo: usá w[i] para acceder a una posición",
+  "ejemploMsg": "'w' es un arreglo: usá w[i] para acceder a una posición",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/097_arreglo_asignacion_directa.c",
+  "linea": 5,
+  "id": "M092",
+  "ejemplo": "ejemplos/M092.c",
+  "gcc": [
+   "línea 5:7: error: assignment to expression with array type"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-break-fuera",
+  "plantilla": "'break' solo se puede usar dentro de un for, while, do-while o switch",
+  "ejemploMsg": "'break' solo se puede usar dentro de un for, while, do-while o switch",
+  "cuenta": 2,
+  "archivo": "test/diag/break_fuera.c",
+  "linea": 3,
+  "id": "M093",
+  "ejemplo": "ejemplos/M093.c",
+  "gcc": [
+   "línea 3:13: error: break statement not within loop or switch"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-break-fuera",
+  "plantilla": "'continue' solo se puede usar dentro de un for, while o do-while",
+  "ejemploMsg": "'continue' solo se puede usar dentro de un for, while o do-while",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/155_continue_fuera_de_bucle.c",
+  "linea": 3,
+  "id": "M094",
+  "ejemplo": "ejemplos/M094.c",
+  "gcc": [
+   "línea 3:5: error: continue statement not within a loop"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-const-modificada",
+  "plantilla": "'‹nombre›' es const (constante): no se le puede asignar otro valor",
+  "ejemploMsg": "'N' es const (constante): no se le puede asignar otro valor",
+  "cuenta": 4,
+  "archivo": "test/diag/const_mod.c",
+  "linea": 3,
+  "id": "M095",
+  "ejemplo": "ejemplos/M095.c",
+  "gcc": [
+   "línea 3:29: error: assignment of read-only variable 'N'",
+   "línea 3:23: warning: variable 'N' set but not used [-Wunused-but-set-variable]"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-falta-punto-coma",
+  "plantilla": "falta un ';' al final de esta línea (antes de '(')",
+  "ejemploMsg": "falta un ';' al final de esta línea (antes de '(')",
+  "cuenta": 4,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos3/332_decl_arreglo_con_parentesis.c",
+  "linea": 2,
+  "id": "M096",
+  "ejemplo": "ejemplos/M096.c",
+  "gcc": [
+   "línea 2:20: error: expected declaration specifiers or '...' before numeric constant"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-falta-punto-coma",
+  "plantilla": "falta un ';' al final de esta línea (antes de '‹nombre›')",
+  "ejemploMsg": "falta un ';' al final de esta línea (antes de 'c')",
+  "cuenta": 4,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/252_multiple_decl_coma_pyc.c",
+  "linea": 3,
+  "id": "M097",
+  "ejemplo": "ejemplos/M097.c",
+  "gcc": [
+   "línea 4:5: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'c'",
+   "línea 3:9: warning: unused variable 'a' [-Wunused-variable]"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-falta-punto-coma",
+  "plantilla": "falta un ';' al final de esta línea (antes de 'printf')",
+  "ejemploMsg": "falta un ';' al final de esta línea (antes de 'printf')",
+  "cuenta": 2,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/001_pyc_falta_en_decl.c",
+  "linea": 3,
+  "id": "M098",
+  "ejemplo": "ejemplos/M098.c",
+  "gcc": [
+   "línea 4:5: error: expected ',' or ';' before 'printf'",
+   "línea 3:9: warning: unused variable 'a' [-Wunused-variable]"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-falta-punto-coma",
+  "plantilla": "falta un ';' al final de esta línea (antes de 'return')",
+  "ejemploMsg": "falta un ';' al final de esta línea (antes de 'return')",
+  "cuenta": 2,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/002_pyc_falta_en_printf.c",
+  "linea": 4,
+  "id": "M099",
+  "ejemplo": "ejemplos/M099.c",
+  "gcc": [
+   "línea 4:22: error: expected ';' before 'return'"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-falta-punto-coma",
+  "plantilla": "falta un ';' al final de esta línea (antes de ')')",
+  "ejemploMsg": "falta un ';' al final de esta línea (antes de ')')",
+  "cuenta": 2,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/010_for_falta_pyc.c",
+  "linea": 4,
+  "id": "M100",
+  "ejemplo": "ejemplos/M100.c",
+  "gcc": [
+   "línea 4:22: error: expected ';' before ')' token"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-falta-punto-coma",
+  "plantilla": "no se esperaba el tipo 'int' acá (¿falta un ';' antes?)",
+  "ejemploMsg": "no se esperaba el tipo 'int' acá (¿falta un ';' antes?)",
+  "cuenta": 2,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/118_func_tipo_en_llamada.c",
+  "linea": 4,
+  "id": "M101",
+  "ejemplo": "ejemplos/M101.c",
+  "gcc": [
+   "línea 4:22: error: expected expression before 'int'"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-falta-punto-coma",
+  "plantilla": "falta un ';' al final de esta línea (antes de 'N')",
+  "ejemploMsg": "falta un ';' al final de esta línea (antes de '2')",
+  "cuenta": 2,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/247_operador_doble.c",
+  "linea": 4,
+  "id": "M102",
+  "ejemplo": "ejemplos/M102.c",
+  "gcc": [
+   "línea 4:7: warning: operation on 'a' may be undefined [-Wsequence-point]",
+   "línea 4:13: error: expected ';' before numeric constant"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-falta-punto-coma",
+  "plantilla": "falta un ';' al final de esta línea (antes de 'else')",
+  "ejemploMsg": "falta un ';' al final de esta línea (antes de 'else')",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/003_pyc_falta_antes_de_llave.c",
+  "linea": 5,
+  "id": "M103",
+  "ejemplo": "ejemplos/M103.c",
+  "gcc": [
+   "línea 5:18: error: expected ';' before 'else'"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-falta-punto-coma",
+  "plantilla": "falta un ';' al final de esta línea (antes de '}')",
+  "ejemploMsg": "falta un ';' al final de esta línea (antes de '}')",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/004_pyc_falta_return.c",
+  "linea": 5,
+  "id": "M104",
+  "ejemplo": "ejemplos/M104.c",
+  "gcc": [
+   "línea 5:13: error: expected ';' before '}' token"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-falta-punto-coma",
+  "plantilla": "falta un ';' al final de esta línea (antes de '==')",
+  "ejemploMsg": "falta un ';' al final de esta línea (antes de '==')",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/031_doble_igual_en_decl.c",
+  "linea": 3,
+  "id": "M105",
+  "ejemplo": "ejemplos/M105.c",
+  "gcc": [
+   "línea 3:11: error: expected '=', ',', ';', 'asm' or '__attribute__' before '==' token",
+   "línea 3:11: error: expected expression before '==' token"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-falta-punto-coma",
+  "plantilla": "falta un ';' al final de esta línea (antes de '{')",
+  "ejemploMsg": "falta un ';' al final de esta línea (antes de '{')",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/175_if_then.c",
+  "linea": 4,
+  "id": "M106",
+  "ejemplo": "ejemplos/M106.c",
+  "gcc": [
+   "línea 4:16: error: 'then' undeclared (first use in this function)",
+   "línea 4:20: error: expected ';' before '{' token"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-falta-punto-coma",
+  "plantilla": "falta un ';' al final de esta línea (antes de '-')",
+  "ejemploMsg": "falta un ';' al final de esta línea (antes de '-')",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/187_nombre_con_guion.c",
+  "linea": 3,
+  "id": "M107",
+  "ejemplo": "ejemplos/M107.c",
+  "gcc": [
+   "línea 3:11: error: expected '=', ',', ';', 'asm' or '__attribute__' before '-' token",
+   "línea 3:12: error: 'var' undeclared (first use in this function)"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-falta-punto-coma",
+  "plantilla": "falta un ';' al final de esta línea (antes de 'int')",
+  "ejemploMsg": "falta un ';' al final de esta línea (antes de 'int')",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/extra/dos_pyc.c",
+  "linea": 3,
+  "id": "M108",
+  "ejemplo": "ejemplos/M108.c",
+  "gcc": [
+   "línea 4:3: error: expected ',' or ';' before 'int'",
+   "línea 3:7: warning: unused variable 'a' [-Wunused-variable]"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-funcion",
+  "plantilla": "no hay función main(): el programa empieza en 'main() { ... }'",
+  "ejemploMsg": "no hay función main(): el programa empieza en 'main() { ... }'",
+  "cuenta": 4,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/extra/vacio.c",
+  "linea": 1,
+  "id": "M109",
+  "ejemplo": "ejemplos/M109.c",
+  "gcc": []
+ },
+ {
+  "nivel": "error",
+  "code": "E-funcion",
+  "plantilla": "no se entiende '}' fuera de una función",
+  "ejemploMsg": "no se entiende '}' fuera de una función",
+  "cuenta": 2,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/extra/llaves_extra.c",
+  "linea": 6,
+  "id": "M110",
+  "ejemplo": "ejemplos/M110.c",
+  "gcc": [
+   "línea 6:1: error: expected identifier or '(' before '}' token",
+   "línea 6:2: error: expected identifier or '(' before '}' token"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-funcion",
+  "plantilla": "printf necesita un texto entre comillas como primer argumento",
+  "ejemploMsg": "printf necesita un texto entre comillas como primer argumento",
+  "cuenta": 2,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos3/305_printf_vacio.c",
+  "linea": 2,
+  "id": "M111",
+  "ejemplo": "ejemplos/M111.c",
+  "gcc": [
+   "línea 2:14: error: too few arguments to function 'printf'"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-funcion",
+  "plantilla": "la función '‹nombre›' recibe N argumento(s) y se la llamó con N",
+  "ejemploMsg": "la función 'doble' recibe 1 argumento(s) y se la llamó con 2",
+  "cuenta": 2,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/103_func_args_de_mas.c",
+  "linea": 6,
+  "id": "M112",
+  "ejemplo": "ejemplos/M112.c",
+  "gcc": [
+   "línea 6:20: error: too many arguments to function 'doble'"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-funcion",
+  "plantilla": "el valor inicial de una variable global tiene que ser una constante (un número), no otra variable ni una llamada a función",
+  "ejemploMsg": "el valor inicial de una variable global tiene que ser una constante (un número), no otra variable ni una llamada a función",
+  "cuenta": 2,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/dif_gcc/fallan/F20d_accept_global_nonconst.c",
+  "linea": 3,
+  "id": "M113",
+  "ejemplo": "ejemplos/M113.c",
+  "gcc": [
+   "línea 3:9: error: initializer element is not constant"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-funcion",
+  "plantilla": "la función '‹nombre›' se declara y se usa pero nunca se define",
+  "ejemploMsg": "la función 'doble' se declara y se usa pero nunca se define",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/102_func_prototipo_sin_definicion.c",
+  "linea": 2,
+  "id": "M114",
+  "ejemplo": "ejemplos/M114.c",
+  "gcc": []
+ },
+ {
+  "nivel": "error",
+  "code": "E-funcion",
+  "plantilla": "esa función no devuelve ningún valor",
+  "ejemploMsg": "esa función no devuelve ningún valor",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/108_func_void_como_valor.c",
+  "linea": 6,
+  "id": "M115",
+  "ejemplo": "ejemplos/M115.c",
+  "gcc": [
+   "línea 6:13: error: void value not ignored as it ought to be"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-funcion",
+  "plantilla": "una función void no puede devolver un valor",
+  "ejemploMsg": "una función void no puede devolver un valor",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/109_func_void_con_return_valor.c",
+  "linea": 3,
+  "id": "M116",
+  "ejemplo": "ejemplos/M116.c",
+  "gcc": [
+   "línea 3:12: warning: 'return' with a value, in function returning void [-Wreturn-type]"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-funcion",
+  "plantilla": "la función '‹nombre›' está definida dos veces",
+  "ejemploMsg": "la función 'f' está definida dos veces",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/113_func_definida_dos_veces.c",
+  "linea": 3,
+  "id": "M117",
+  "ejemplo": "ejemplos/M117.c",
+  "gcc": [
+   "línea 3:5: error: redefinition of 'f'"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-funcion",
+  "plantilla": "'‹nombre›' es una función: faltan los paréntesis para llamarla",
+  "ejemploMsg": "'hola' es una función: faltan los paréntesis para llamarla",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/117_func_llamada_sin_parentesis.c",
+  "linea": 4,
+  "id": "M118",
+  "ejemplo": "ejemplos/M118.c",
+  "gcc": [
+   "línea 4:5: warning: statement with no effect [-Wunused-value]"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-funcion",
+  "plantilla": "la función 'main' está definida dos veces",
+  "ejemploMsg": "la función 'main' está definida dos veces",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/126_main_dos_veces.c",
+  "linea": 6,
+  "id": "M119",
+  "ejemplo": "ejemplos/M119.c",
+  "gcc": [
+   "línea 6:5: error: redefinition of 'main'"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-funcion",
+  "plantilla": "esta instrucción está fuera de una función: va adentro de main() { ... }",
+  "ejemploMsg": "esta instrucción está fuera de una función: va adentro de main() { ... }",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/130_codigo_fuera_de_funcion.c",
+  "linea": 3,
+  "id": "M120",
+  "ejemplo": "ejemplos/M120.c",
+  "gcc": [
+   "línea 3:8: error: expected declaration specifiers or '...' before string constant",
+   "línea 3:16: error: expected declaration specifiers or '...' before 'a'"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-funcion",
+  "plantilla": "no se entiende '‹nombre›' fuera de una función",
+  "ejemploMsg": "no se entiende 'include' fuera de una función",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/134_include_sin_numeral.c",
+  "linea": 1,
+  "id": "M121",
+  "ejemplo": "ejemplos/M121.c",
+  "gcc": [
+   "línea 1:9: error: expected '=', ',', ';', 'asm' or '__attribute__' before '<' token"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-funcion",
+  "plantilla": "'‹nombre›' recibe N argumento(s)",
+  "ejemploMsg": "'pow' recibe 2 argumento(s)",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/139_pow_sin_math_arg_mal.c",
+  "linea": 4,
+  "id": "M122",
+  "ejemplo": "ejemplos/M122.c",
+  "gcc": [
+   "línea 4:20: error: too few arguments to function 'pow'"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-funcion",
+  "plantilla": "no se entiende 'return' fuera de una función",
+  "ejemploMsg": "no se entiende 'return' fuera de una función",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/257_return_fuera_de_func.c",
+  "linea": 2,
+  "id": "M123",
+  "ejemplo": "ejemplos/M123.c",
+  "gcc": [
+   "línea 2:1: error: expected identifier or '(' before 'return'"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-funcion",
+  "plantilla": "no se entiende '{' fuera de una función",
+  "ejemploMsg": "no se entiende '{' fuera de una función",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos3/330_main_con_punto_y_coma.c",
+  "linea": 3,
+  "id": "M124",
+  "ejemplo": "ejemplos/M124.c",
+  "gcc": [
+   "línea 3:1: error: expected identifier or '(' before '{' token"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-llave-sin-cerrar",
+  "plantilla": "falta cerrar la llave '{' abierta en la línea N",
+  "ejemploMsg": "falta cerrar la llave '{' abierta en la línea 2",
+  "cuenta": 2,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/011_llave_sin_cerrar_main.c",
+  "linea": 5,
+  "id": "M125",
+  "ejemplo": "ejemplos/M125.c",
+  "gcc": [
+   "línea 5:5: error: expected declaration or statement at end of input"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-no-declarada",
+  "plantilla": "la función '‹nombre›' no está declarada",
+  "ejemploMsg": "la función 'gets' no está declarada",
+  "cuenta": 31,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/211_gets.c",
+  "linea": 4,
+  "id": "M126",
+  "ejemplo": "ejemplos/M126.c",
+  "gcc": [
+   "línea 4:5: warning: 'gets' is deprecated [-Wdeprecated-declarations]"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-no-declarada",
+  "plantilla": "'‹nombre›' no está declarada (¿falta declararla o está mal escrita?)",
+  "ejemploMsg": "'cout' no está declarada (¿falta declararla o está mal escrita?)",
+  "cuenta": 7,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/205_cout.c",
+  "linea": 3,
+  "id": "M127",
+  "ejemplo": "ejemplos/M127.c",
+  "gcc": [
+   "línea 3:5: error: 'cout' undeclared (first use in this function)"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-no-declarada",
+  "plantilla": "'‹nombre›' no está declarada. ¿Quisiste decir '‹nombre›'? (C distingue mayúsculas y minúsculas)",
+  "ejemploMsg": "'b' no está declarada. ¿Quisiste decir 'a'? (C distingue mayúsculas y minúsculas)",
+  "cuenta": 6,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/060_var_no_declarada.c",
+  "linea": 4,
+  "id": "M128",
+  "ejemplo": "ejemplos/M128.c",
+  "gcc": [
+   "línea 4:20: error: 'b' undeclared (first use in this function)",
+   "línea 3:9: warning: unused variable 'a' [-Wunused-variable]"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-no-declarada",
+  "plantilla": "la función '‹nombre›' no está declarada. ¿Quisiste decir 'printf'? (en C todo va en minúscula y se escribe igual)",
+  "ejemploMsg": "la función 'print' no está declarada. ¿Quisiste decir 'printf'? (en C todo va en minúscula y se escribe igual)",
+  "cuenta": 2,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/206_print_python.c",
+  "linea": 3,
+  "id": "M129",
+  "ejemplo": "ejemplos/M129.c",
+  "gcc": [
+   "línea 3:5: warning: implicit declaration of function 'print'; did you mean 'printf'? [-Wimplicit-function-declaration]"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-no-declarada",
+  "plantilla": "la función '‹nombre›' no está declarada. ¿Quisiste decir 'scanf'? (en C todo va en minúscula y se escribe igual)",
+  "ejemploMsg": "la función 'Scanf' no está declarada. ¿Quisiste decir 'scanf'? (en C todo va en minúscula y se escribe igual)",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/204_scanf_mayuscula.c",
+  "linea": 4,
+  "id": "M130",
+  "ejemplo": "ejemplos/M130.c",
+  "gcc": [
+   "línea 4:5: warning: implicit declaration of function 'Scanf'; did you mean 'scanf'? [-Wimplicit-function-declaration]"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-no-declarada",
+  "plantilla": "la función '‹nombre›' no está declarada. ¿Quisiste decir '‹nombre›'? (en C todo va en minúscula y se escribe igual)",
+  "ejemploMsg": "la función 'a' no está declarada. ¿Quisiste decir 'b'? (en C todo va en minúscula y se escribe igual)",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/251_multiplicacion_implicita_vars.c",
+  "linea": 4,
+  "id": "M131",
+  "ejemplo": "ejemplos/M131.c",
+  "gcc": [
+   "línea 4:13: error: called object 'a' is not a function or function pointer"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-no-soportado",
+  "plantilla": "los punteros todavía no están soportados en este editor",
+  "ejemploMsg": "los punteros todavía no están soportados en este editor",
+  "cuenta": 7,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/prueba_tp/progs/p250_main_args.c",
+  "linea": 2,
+  "id": "M132",
+  "ejemplo": "ejemplos/M132.c",
+  "gcc": [
+   "línea 2:27: warning: unused parameter 'argv' [-Wunused-parameter]"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-no-soportado",
+  "plantilla": "long double todavía no está soportado en este editor: usá double",
+  "ejemploMsg": "long double todavía no está soportado en este editor: usá double",
+  "cuenta": 6,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/validos2/w22_long_double.c",
+  "linea": 2,
+  "id": "M133",
+  "ejemplo": "ejemplos/M133.c",
+  "gcc": []
+ },
+ {
+  "nivel": "error",
+  "code": "E-no-soportado",
+  "plantilla": "'‹nombre›' todavía no está soportado en este editor",
+  "ejemploMsg": "'typedef' todavía no está soportado en este editor",
+  "cuenta": 3,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/validos2/w03_typedef.c",
+  "linea": 2,
+  "id": "M134",
+  "ejemplo": "ejemplos/M134.c",
+  "gcc": []
+ },
+ {
+  "nivel": "error",
+  "code": "E-otro",
+  "plantilla": "a la izquierda del = tiene que haber una variable",
+  "ejemploMsg": "a la izquierda del = tiene que haber una variable",
+  "cuenta": 6,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/195_asignar_a_numero.c",
+  "linea": 3,
+  "id": "M135",
+  "ejemplo": "ejemplos/M135.c",
+  "gcc": [
+   "línea 3:7: error: lvalue required as left operand of assignment"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-otro",
+  "plantilla": "cadena sin cerrar (falta la comilla \")",
+  "ejemploMsg": "cadena sin cerrar (falta la comilla \")",
+  "cuenta": 2,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/259_texto_largo_salto_de_linea_en_string.c",
+  "linea": 3,
+  "id": "M136",
+  "ejemplo": "ejemplos/M136.c",
+  "gcc": [
+   "línea 3:12: warning: missing terminating \" character",
+   "línea 3:12: error: missing terminating \" character"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-otro",
+  "plantilla": "carácter con comillas simples mal escrito (usá '‹nombre›' con un solo carácter)",
+  "ejemploMsg": "carácter con comillas simples mal escrito (usá 'a' con un solo carácter)",
+  "cuenta": 2,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/023_comillas_simples_en_printf.c",
+  "linea": 3,
+  "id": "M137",
+  "ejemplo": "ejemplos/M137.c",
+  "gcc": [
+   "línea 3:12: warning: character constant too long for its type",
+   "línea 3:12: warning: passing argument 1 of 'printf' makes pointer from integer without a cast [-Wint-conversion]"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-otro",
+  "plantilla": "no se puede usar un texto entre comillas como número",
+  "ejemploMsg": "no se puede usar un texto entre comillas como número",
+  "cuenta": 2,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/129_main_return_valor_raro.c",
+  "linea": 4,
+  "id": "M138",
+  "ejemplo": "ejemplos/M138.c",
+  "gcc": [
+   "línea 4:12: warning: returning 'char *' from a function with return type 'int' makes integer from pointer without a cast [-Wint-conversion]"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-otro",
+  "plantilla": "'‹nombre›' tiene N dimensión(es) y se usó con N",
+  "ejemploMsg": "'m' tiene 2 dimensión(es) y se usó con 1",
+  "cuenta": 2,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/099_arreglo_dos_dim_un_indice.c",
+  "linea": 4,
+  "id": "M139",
+  "ejemplo": "ejemplos/M139.c",
+  "gcc": [
+   "línea 4:14: warning: format '%d' expects argument of type 'int', but argument 2 has type 'int *' [-Wformat=]"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-otro",
+  "plantilla": "'else' sin su 'if' (revisá las llaves y los ';')",
+  "ejemploMsg": "'else' sin su 'if' (revisá las llaves y los ';')",
+  "cuenta": 2,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/169_else_sin_if.c",
+  "linea": 4,
+  "id": "M140",
+  "ejemplo": "ejemplos/M140.c",
+  "gcc": [
+   "línea 4:5: error: 'else' without a previous 'if'",
+   "línea 3:9: warning: variable 'a' set but not used [-Wunused-but-set-variable]"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-otro",
+  "plantilla": "no se puede operar con un texto entre comillas",
+  "ejemploMsg": "no se puede operar con un texto entre comillas",
+  "cuenta": 2,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/205_cout.c",
+  "linea": 3,
+  "id": "M141",
+  "ejemplo": "ejemplos/M141.c",
+  "gcc": [
+   "línea 3:5: error: 'cout' undeclared (first use in this function)"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-otro",
+  "plantilla": "las comillas tipográficas “ no sirven en C: usá las comillas rectas \"",
+  "ejemploMsg": "las comillas tipográficas “ no sirven en C: usá las comillas rectas \"",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/024_comillas_tipograficas.c",
+  "linea": 3,
+  "id": "M142",
+  "ejemplo": "ejemplos/M142.c",
+  "gcc": [
+   "línea 3:12: error: stray '\\342' in program",
+   "línea 3:13: error: 'Hola' undeclared (first use in this function)"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-otro",
+  "plantilla": "'%' solo funciona con enteros (para decimales usá fmod)",
+  "ejemploMsg": "'%' solo funciona con enteros (para decimales usá fmod)",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/084_porcentaje_float.c",
+  "linea": 4,
+  "id": "M143",
+  "ejemplo": "ejemplos/M143.c",
+  "gcc": [
+   "línea 4:22: error: invalid operands to binary % (have 'float' and 'int')"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-otro",
+  "plantilla": "a 'main' le faltan los paréntesis: main() { ... }",
+  "ejemploMsg": "a 'main' le faltan los paréntesis: main() { ... }",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/124_main_falta_parentesis.c",
+  "linea": 2,
+  "id": "M144",
+  "ejemplo": "ejemplos/M144.c",
+  "gcc": [
+   "línea 2:10: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-otro",
+  "plantilla": "después de 'else' no va una condición: si querías otra condición escribí 'else if (…)'",
+  "ejemploMsg": "después de 'else' no va una condición: si querías otra condición escribí 'else if (…)'",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/173_else_con_condicion.c",
+  "linea": 6,
+  "id": "M145",
+  "ejemplo": "ejemplos/M145.c",
+  "gcc": [
+   "línea 6:15: warning: statement with no effect [-Wunused-value]",
+   "línea 6:19: error: expected ';' before '{' token"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-otro",
+  "plantilla": "en C \"distinto\" se escribe '!=' (no '<>')",
+  "ejemploMsg": "en C \"distinto\" se escribe '!=' (no '<>')",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/179_not_igual_mal.c",
+  "linea": 4,
+  "id": "M146",
+  "ejemplo": "ejemplos/M146.c",
+  "gcc": [
+   "línea 4:12: error: expected expression before '>' token"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-otro",
+  "plantilla": "\"mayor o igual\" se escribe '>=' (no '=>')",
+  "ejemploMsg": "\"mayor o igual\" se escribe '>=' (no '=>')",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/180_operador_mal_igual_menor.c",
+  "linea": 4,
+  "id": "M147",
+  "ejemplo": "ejemplos/M147.c",
+  "gcc": [
+   "línea 4:12: error: expected expression before '>' token",
+   "línea 3:9: warning: variable 'a' set but not used [-Wunused-but-set-variable]"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-otro",
+  "plantilla": "'for' es una palabra reservada, no puede usarse como nombre",
+  "ejemploMsg": "'for' es una palabra reservada, no puede usarse como nombre",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/182_palabra_reservada_if_nombre.c",
+  "linea": 3,
+  "id": "M148",
+  "ejemplo": "ejemplos/M148.c",
+  "gcc": [
+   "línea 3:9: error: expected identifier or '(' before 'for'",
+   "línea 4:20: error: expected expression before 'for'"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-otro",
+  "plantilla": "'++' solo se puede aplicar a una variable",
+  "ejemploMsg": "'++' solo se puede aplicar a una variable",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/198_incremento_de_literal.c",
+  "linea": 3,
+  "id": "M149",
+  "ejemplo": "ejemplos/M149.c",
+  "gcc": [
+   "línea 3:6: error: lvalue required as increment operand"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-otro",
+  "plantilla": "el operador '&' solo se usa dentro de scanf",
+  "ejemploMsg": "el operador '&' solo se usa dentro de scanf",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/204_scanf_mayuscula.c",
+  "linea": 4,
+  "id": "M150",
+  "ejemplo": "ejemplos/M150.c",
+  "gcc": [
+   "línea 4:5: warning: implicit declaration of function 'Scanf'; did you mean 'scanf'? [-Wimplicit-function-declaration]"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-otro",
+  "plantilla": "puts solo se soporta con un texto entre comillas",
+  "ejemploMsg": "puts solo se soporta con un texto entre comillas",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/211_gets.c",
+  "linea": 5,
+  "id": "M151",
+  "ejemplo": "ejemplos/M151.c",
+  "gcc": [
+   "línea 4:5: warning: 'gets' is deprecated [-Wdeprecated-declarations]"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-otro",
+  "plantilla": "comentario /* sin cerrar",
+  "ejemploMsg": "comentario /* sin cerrar",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/212_comentario_sin_cerrar.c",
+  "linea": 3,
+  "id": "M152",
+  "ejemplo": "ejemplos/M152.c",
+  "gcc": [
+   "línea 3:5: error: unterminated comment",
+   "línea 2:1: error: expected declaration or statement at end of input"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-otro",
+  "plantilla": "en C no existe '**' (potencia): usá pow(base, exponente) de <math.h>",
+  "ejemploMsg": "en C no existe '**' (potencia): usá pow(base, exponente) de <math.h>",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/249_potencia_doble_asterisco.c",
+  "linea": 3,
+  "id": "M153",
+  "ejemplo": "ejemplos/M153.c",
+  "gcc": [
+   "línea 3:16: error: invalid type argument of unary '*' (have 'int')"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-otro",
+  "plantilla": "solo se pueden llamar funciones por su nombre",
+  "ejemploMsg": "solo se pueden llamar funciones por su nombre",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/250_multiplicacion_implicita.c",
+  "linea": 4,
+  "id": "M154",
+  "ejemplo": "ejemplos/M154.c",
+  "gcc": [
+   "línea 4:13: error: called object is not a function or function pointer"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-otro",
+  "plantilla": "'int' es una palabra reservada, no puede usarse como nombre",
+  "ejemploMsg": "'int' es una palabra reservada, no puede usarse como nombre",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/254_decl_con_tipo_repetido.c",
+  "linea": 3,
+  "id": "M155",
+  "ejemplo": "ejemplos/M155.c",
+  "gcc": [
+   "línea 3:12: error: expected identifier or '(' before 'int'",
+   "línea 3:9: warning: unused variable 'a' [-Wunused-variable]"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-otro",
+  "plantilla": "putchar necesita un carácter entre paréntesis, por ejemplo putchar(N)",
+  "ejemploMsg": "putchar necesita un carácter entre paréntesis, por ejemplo putchar(65)",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/revision_motor/repro/r22_putchar_vacio.c",
+  "linea": 1,
+  "id": "M156",
+  "ejemplo": "ejemplos/M156.c",
+  "gcc": [
+   "línea 1:13: warning: implicit declaration of function 'putchar' [-Wimplicit-function-declaration]",
+   "línea 1:13: warning: too few arguments to built-in function 'putchar' expecting 1 [-Wbuiltin-declaration-mismatch]"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-preprocesador",
+  "plantilla": "las macros se expanden demasiado (más de un millón de elementos): ¿una macro se llama a sí misma?",
+  "ejemploMsg": "las macros se expanden demasiado (más de un millón de elementos): ¿una macro se llama a sí misma?",
+  "cuenta": 3,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/prueba_errores2/repro/H13_macro_5s.c",
+  "linea": 3,
+  "id": "M157",
+  "ejemplo": "ejemplos/M157.c",
+  "gcc": []
+ },
+ {
+  "nivel": "error",
+  "code": "E-prototipo",
+  "plantilla": "el prototipo y la definición de '‹nombre›' no coinciden: una tiene N parámetro(s) y la otra N",
+  "ejemploMsg": "el prototipo y la definición de 'f' no coinciden: una tiene 2 parámetro(s) y la otra 1",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/114_func_proto_firma_distinta.c",
+  "linea": 3,
+  "id": "M158",
+  "ejemplo": "ejemplos/M158.c",
+  "gcc": [
+   "línea 3:5: error: conflicting types for 'f'; have 'int(int)'"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-prototipo",
+  "plantilla": "el prototipo y la definición de '‹nombre›' no coinciden: devuelve float en una y int en la otra",
+  "ejemploMsg": "el prototipo y la definición de 'f' no coinciden: devuelve float en una y int en la otra",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos3/337_funcion_llamada_antes_con_prototipo_distinto_ret.c",
+  "linea": 3,
+  "id": "M159",
+  "ejemplo": "ejemplos/M159.c",
+  "gcc": [
+   "línea 3:5: error: conflicting types for 'f'; have 'int(int)'"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-redeclarada",
+  "plantilla": "'‹nombre›' ya fue declarada antes en este bloque",
+  "ejemploMsg": "'x' ya fue declarada antes en este bloque",
+  "cuenta": 4,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/prueba_tp/fallan/D05_tentativa_doble_global.c",
+  "linea": 3,
+  "id": "M160",
+  "ejemplo": "ejemplos/M160.c",
+  "gcc": []
+ },
+ {
+  "nivel": "error",
+  "code": "E-scanf-faltan-variables",
+  "plantilla": "scanf pide leer N valor(es) (hay N '%') pero solo tiene N variable(s): falta una variable con '&' (por ejemplo scanf(\"%d %d\", &a, &b);)",
+  "ejemploMsg": "scanf pide leer 1 valor(es) (hay 1 '%') pero solo tiene 0 variable(s): falta una variable con '&' (por ejemplo scanf(\"%d %d\", &a, &b);)",
+  "cuenta": 3,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos3/304_scanf_sin_args.c",
+  "linea": 2,
+  "id": "M161",
+  "ejemplo": "ejemplos/M161.c",
+  "gcc": [
+   "línea 2:22: warning: format '%d' expects a matching 'int *' argument [-Wformat=]"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-scanf-sin-amp",
+  "plantilla": "a scanf le falta el '&' delante de '‹nombre›' (scanf necesita &n)",
+  "ejemploMsg": "a scanf le falta el '&' delante de 'n' (scanf necesita &n)",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/033_scanf_sin_amp_int.c",
+  "linea": 4,
+  "id": "M162",
+  "ejemplo": "ejemplos/M162.c",
+  "gcc": [
+   "línea 4:13: warning: format '%d' expects argument of type 'int *', but argument 2 has type 'int' [-Wformat=]"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-scanf-sin-amp",
+  "plantilla": "a scanf le falta el '&' delante de '‹nombre›' (scanf necesita &x)",
+  "ejemploMsg": "a scanf le falta el '&' delante de 'x' (scanf necesita &x)",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/034_scanf_sin_amp_float.c",
+  "linea": 4,
+  "id": "M163",
+  "ejemplo": "ejemplos/M163.c",
+  "gcc": [
+   "línea 4:13: warning: format '%f' expects argument of type 'float *', but argument 2 has type 'double' [-Wformat=]"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-scanf-sin-amp",
+  "plantilla": "a scanf le falta el '&' delante de '‹nombre›' (scanf necesita &b)",
+  "ejemploMsg": "a scanf le falta el '&' delante de 'b' (scanf necesita &b)",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/035_scanf_sin_amp_segunda.c",
+  "linea": 4,
+  "id": "M164",
+  "ejemplo": "ejemplos/M164.c",
+  "gcc": [
+   "línea 4:16: warning: format '%d' expects argument of type 'int *', but argument 3 has type 'int' [-Wformat=]"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-scanf-sin-amp",
+  "plantilla": "a scanf le falta el '&' delante de '‹nombre›' (scanf necesita &c)",
+  "ejemploMsg": "a scanf le falta el '&' delante de 'c' (scanf necesita &c)",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos3/322_scanf_char_espacio_raro.c",
+  "linea": 2,
+  "id": "M165",
+  "ejemplo": "ejemplos/M165.c",
+  "gcc": [
+   "línea 2:30: warning: format '%c' expects argument of type 'char *', but argument 2 has type 'int' [-Wformat=]"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-sintaxis",
+  "plantilla": "falta una expresión antes de ')'",
+  "ejemploMsg": "falta una expresión antes de ')'",
+  "cuenta": 3,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos3/308_coma_final_printf.c",
+  "linea": 2,
+  "id": "M166",
+  "ejemplo": "ejemplos/M166.c",
+  "gcc": [
+   "línea 2:43: error: expected expression before ')' token"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-sintaxis",
+  "plantilla": "se esperaba ')' pero se encontró '‹nombre›'",
+  "ejemploMsg": "se esperaba ')' pero se encontró 'a'",
+  "cuenta": 3,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/055_printf_coma_olvidada.c",
+  "linea": 4,
+  "id": "M167",
+  "ejemplo": "ejemplos/M167.c",
+  "gcc": [
+   "línea 4:25: error: expected ')' before 'a'",
+   "línea 4:21: warning: format '%d' expects a matching 'int' argument [-Wformat=]"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-sintaxis",
+  "plantilla": "se esperaba ')' pero se encontró ';'",
+  "ejemploMsg": "se esperaba ')' pero se encontró ';'",
+  "cuenta": 2,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/015_parentesis_sin_cerrar_printf.c",
+  "linea": 4,
+  "id": "M168",
+  "ejemplo": "ejemplos/M168.c",
+  "gcc": [
+   "línea 4:21: error: expected ')' before ';' token",
+   "línea 5:14: error: expected ';' before '}' token"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-sintaxis",
+  "plantilla": "carácter no válido 'ñ'",
+  "ejemploMsg": "carácter no válido 'ñ'",
+  "cuenta": 2,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/dif_gcc/fallan/F28_unicode_ident.c",
+  "linea": 3,
+  "id": "M169",
+  "ejemplo": "ejemplos/M169.c",
+  "gcc": []
+ },
+ {
+  "nivel": "error",
+  "code": "E-sintaxis",
+  "plantilla": "'‹nombre›' no existe en C: se escribe 'else if (condición)'",
+  "ejemploMsg": "'elif' no existe en C: se escribe 'else if (condición)'",
+  "cuenta": 2,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/172_elif_python.c",
+  "linea": 6,
+  "id": "M170",
+  "ejemplo": "ejemplos/M170.c",
+  "gcc": [
+   "línea 6:7: warning: implicit declaration of function 'elif' [-Wimplicit-function-declaration]",
+   "línea 6:19: error: expected ';' before '{' token"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-sintaxis",
+  "plantilla": "se esperaba un nombre pero se encontró '='",
+  "ejemploMsg": "se esperaba un nombre pero se encontró '='",
+  "cuenta": 2,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/183_palabra_reservada_return.c",
+  "linea": 3,
+  "id": "M171",
+  "ejemplo": "ejemplos/M171.c",
+  "gcc": [
+   "línea 3:9: error: two or more data types in declaration specifiers",
+   "línea 3:15: error: expected identifier or '(' before '=' token"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-sintaxis",
+  "plantilla": "se esperaba un nombre pero se encontró 'N'",
+  "ejemploMsg": "se esperaba un nombre pero se encontró '1'",
+  "cuenta": 2,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/185_nombre_empieza_con_numero.c",
+  "linea": 3,
+  "id": "M172",
+  "ejemplo": "ejemplos/M172.c",
+  "gcc": [
+   "línea 3:9: error: invalid suffix \"a\" on integer constant",
+   "línea 3:9: error: expected identifier or '(' before numeric constant"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-sintaxis",
+  "plantilla": "falta una expresión antes de '='",
+  "ejemploMsg": "falta una expresión antes de '='",
+  "cuenta": 2,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos3/307_igual_separado.c",
+  "linea": 2,
+  "id": "M173",
+  "ejemplo": "ejemplos/M173.c",
+  "gcc": [
+   "línea 2:33: error: expected expression before '=' token",
+   "línea 2:18: warning: variable 'x' set but not used [-Wunused-but-set-variable]"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-sintaxis",
+  "plantilla": "'‹nombre›' no es un tipo de C: ¿quisiste escribir 'int'? (C distingue mayúsculas y minúsculas)",
+  "ejemploMsg": "'Int' no es un tipo de C: ¿quisiste escribir 'int'? (C distingue mayúsculas y minúsculas)",
+  "cuenta": 2,
+  "archivo": "test/diag/tipo_mal.c",
+  "linea": 3,
+  "id": "M174",
+  "ejemplo": "ejemplos/M174.c",
+  "gcc": [
+   "línea 3:13: error: unknown type name 'Int'; did you mean 'int'?",
+   "línea 3:17: warning: unused variable 'a' [-Wunused-variable]"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-sintaxis",
+  "plantilla": "el número '5f' no es válido: un entero no lleva letras (para un decimal escribí N.0f o N)",
+  "ejemploMsg": "el número '5f' no es válido: un entero no lleva letras (para un decimal escribí 5.0f o 5.0)",
+  "cuenta": 2,
+  "archivo": "test/diag/literal_5f.c",
+  "linea": 3,
+  "id": "M175",
+  "ejemplo": "ejemplos/M175.c",
+  "gcc": [
+   "línea 3:23: error: invalid suffix \"f\" on integer constant",
+   "línea 3:19: warning: unused variable 'x' [-Wunused-variable]"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-sintaxis",
+  "plantilla": "se esperaba ')' pero se encontró '{'",
+  "ejemploMsg": "se esperaba ')' pero se encontró '{'",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/016_parentesis_sin_cerrar_if.c",
+  "linea": 4,
+  "id": "M176",
+  "ejemplo": "ejemplos/M176.c",
+  "gcc": [
+   "línea 4:14: error: expected ')' before '{' token",
+   "línea 8:1: error: expected expression before '}' token"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-sintaxis",
+  "plantilla": "carácter no válido '\\': si querías escribir un texto, ponelo entre comillas, por ejemplo printf(\"Hola\\n\");",
+  "ejemploMsg": "carácter no válido '\\': si querías escribir un texto, ponelo entre comillas, por ejemplo printf(\"Hola\\n\");",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/020_comillas_faltan_en_texto.c",
+  "linea": 3,
+  "id": "M177",
+  "ejemplo": "ejemplos/M177.c",
+  "gcc": [
+   "línea 3:12: error: 'Hola' undeclared (first use in this function)",
+   "línea 3:16: error: expected ')' before 'mundo'"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-sintaxis",
+  "plantilla": "carácter no válido ';'",
+  "ejemploMsg": "carácter no válido ';'",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/027_caracter_raro_punto_coma_griego.c",
+  "linea": 3,
+  "id": "M178",
+  "ejemplo": "ejemplos/M178.c",
+  "gcc": [
+   "línea 3:13: warning: `5;' is not in NFC [-Wnormalized=]",
+   "línea 3:13: error: invalid suffix \";\" on integer constant"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-sintaxis",
+  "plantilla": "parámetro mal escrito: se esperaba un tipo (int, float, ...)",
+  "ejemploMsg": "parámetro mal escrito: se esperaba un tipo (int, float, ...)",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/116_func_param_sin_tipo.c",
+  "linea": 2,
+  "id": "M179",
+  "ejemplo": "ejemplos/M179.c",
+  "gcc": [
+   "línea 2:5: warning: type of 'x' defaults to 'int' [-Wimplicit-int]"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-sintaxis",
+  "plantilla": "se esperaba ':' pero se encontró 'N'",
+  "ejemploMsg": "se esperaba ':' pero se encontró '0.3'",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/147_switch_case_rango.c",
+  "linea": 5,
+  "id": "M180",
+  "ejemplo": "ejemplos/M180.c",
+  "gcc": [
+   "línea 5:14: error: too many decimal points in number"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-sintaxis",
+  "plantilla": "se esperaba ':' pero se encontró 'printf'",
+  "ejemploMsg": "se esperaba ':' pero se encontró 'printf'",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/150_switch_case_sin_dos_puntos.c",
+  "linea": 5,
+  "id": "M181",
+  "ejemplo": "ejemplos/M181.c",
+  "gcc": [
+   "línea 5:16: error: expected ':' or '...' before 'printf'"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-sintaxis",
+  "plantilla": "se esperaba ':' pero se encontró ';'",
+  "ejemploMsg": "se esperaba ':' pero se encontró ';'",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/151_switch_case_punto_y_coma.c",
+  "linea": 5,
+  "id": "M182",
+  "ejemplo": "ejemplos/M182.c",
+  "gcc": [
+   "línea 5:15: error: expected ':' or '...' before ';' token"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-sintaxis",
+  "plantilla": "se esperaba '(' pero se encontró '‹nombre›'",
+  "ejemploMsg": "se esperaba '(' pero se encontró 'a'",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/174_if_sin_parentesis.c",
+  "linea": 4,
+  "id": "M183",
+  "ejemplo": "ejemplos/M183.c",
+  "gcc": [
+   "línea 4:8: error: expected '(' before 'a'",
+   "línea 4:8: warning: statement with no effect [-Wunused-value]"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-sintaxis",
+  "plantilla": "en C la \"y\" lógica es '&&', la \"o\" es '||' y el \"no\" es '!' (no se escribe '‹nombre›')",
+  "ejemploMsg": "en C la \"y\" lógica es '&&', la \"o\" es '||' y el \"no\" es '!' (no se escribe 'and')",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/176_and_or_python.c",
+  "linea": 4,
+  "id": "M184",
+  "ejemplo": "ejemplos/M184.c",
+  "gcc": [
+   "línea 4:14: error: expected ')' before 'and'",
+   "línea 3:16: warning: unused variable 'b' [-Wunused-variable]"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-sintaxis",
+  "plantilla": "'‹nombre›' no es un tipo de C: ¿quisiste escribir 'float'? (C distingue mayúsculas y minúsculas)",
+  "ejemploMsg": "'flaot' no es un tipo de C: ¿quisiste escribir 'float'? (C distingue mayúsculas y minúsculas)",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/202_tipo_mal_float_flaot.c",
+  "linea": 3,
+  "id": "M185",
+  "ejemplo": "ejemplos/M185.c",
+  "gcc": [
+   "línea 3:5: error: unknown type name 'flaot'; did you mean 'float'?",
+   "línea 4:14: warning: format '%f' expects argument of type 'double', but argument 2 has type 'int' [-Wformat=]"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-sintaxis",
+  "plantilla": "falta una expresión antes de '/'",
+  "ejemploMsg": "falta una expresión antes de '/'",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/213_comentario_barra_simple.c",
+  "linea": 3,
+  "id": "M186",
+  "ejemplo": "ejemplos/M186.c",
+  "gcc": [
+   "línea 3:5: error: expected expression before '/' token"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-sintaxis",
+  "plantilla": "falta una expresión antes de '}'",
+  "ejemploMsg": "falta una expresión antes de '}'",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/245_if_sin_cuerpo_final.c",
+  "linea": 5,
+  "id": "M187",
+  "ejemplo": "ejemplos/M187.c",
+  "gcc": [
+   "línea 5:1: error: expected expression before '}' token"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-sintaxis",
+  "plantilla": "falta una expresión antes de ';'",
+  "ejemploMsg": "falta una expresión antes de ';'",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/246_expresion_incompleta.c",
+  "linea": 4,
+  "id": "M188",
+  "ejemplo": "ejemplos/M188.c",
+  "gcc": [
+   "línea 4:13: error: expected expression before ';' token"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-sintaxis",
+  "plantilla": "se esperaba un nombre pero se encontró ';'",
+  "ejemploMsg": "se esperaba un nombre pero se encontró ';'",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/253_decl_con_coma_final.c",
+  "linea": 3,
+  "id": "M189",
+  "ejemplo": "ejemplos/M189.c",
+  "gcc": [
+   "línea 3:14: error: expected identifier or '(' before ';' token",
+   "línea 3:12: warning: unused variable 'b' [-Wunused-variable]"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-sintaxis",
+  "plantilla": "se esperaba ']' pero se encontró ';'",
+  "ejemploMsg": "se esperaba ']' pero se encontró ';'",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/prueba_errores2/repro/H07_define_punto_coma.c",
+  "linea": 4,
+  "id": "M190",
+  "ejemplo": "ejemplos/M190.c",
+  "gcc": [
+   "línea 2:12: error: expected ']' before ';' token",
+   "línea 5:5: error: 'a' undeclared (first use in this function)"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-sintaxis",
+  "plantilla": "hay un carácter invisible (espacio no separable) en esta línea, seguramente por copiar y pegar: borrá el espacio y volvé a escribirlo",
+  "ejemploMsg": "hay un carácter invisible (espacio no separable) en esta línea, seguramente por copiar y pegar: borrá el espacio y volvé a escribirlo",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/prueba_errores2/repro/H10_nbsp.c",
+  "linea": 3,
+  "id": "M191",
+  "ejemplo": "ejemplos/M191.c",
+  "gcc": [
+   "línea 3:8: error: stray '\\302' in program"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-sintaxis",
+  "plantilla": "el número 'N' no es válido: los números que empiezan con N son octales (solo dígitos del N al N)",
+  "ejemploMsg": "el número '089' no es válido: los números que empiezan con 0 son octales (solo dígitos del 0 al 7)",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/dif_gcc/fallan/F39_declaraciones_invalidas_aceptadas.c",
+  "linea": 4,
+  "id": "M192",
+  "ejemplo": "ejemplos/M192.c",
+  "gcc": [
+   "línea 3:13: error: 'long long long' is too long for GCC",
+   "línea 4:11: error: invalid digit \"9\" in octal constant"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-switch",
+  "plantilla": "después de 'case' tiene que ir un número o un carácter fijo (por ejemplo case N: o case '‹nombre›':), no una variable ni una cuenta",
+  "ejemploMsg": "después de 'case' tiene que ir un número o un carácter fijo (por ejemplo case 3: o case 'a':), no una variable ni una cuenta",
+  "cuenta": 3,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/148_switch_case_condicion.c",
+  "linea": 5,
+  "id": "M193",
+  "ejemplo": "ejemplos/M193.c",
+  "gcc": [
+   "línea 5:9: error: case label does not reduce to an integer constant"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-switch",
+  "plantilla": "el valor 'case N' está repetido en este switch",
+  "ejemploMsg": "el valor 'case 1' está repetido en este switch",
+  "cuenta": 2,
+  "archivo": "test/diag/case_repetido.c",
+  "linea": 3,
+  "id": "M194",
+  "ejemplo": "ejemplos/M194.c",
+  "gcc": [
+   "línea 3:39: error: duplicate case value"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-switch",
+  "plantilla": "el switch necesita un valor entero",
+  "ejemploMsg": "el switch necesita un valor entero",
+  "cuenta": 2,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos3/318_switch_sin_default_char_string.c",
+  "linea": 2,
+  "id": "M195",
+  "ejemplo": "ejemplos/M195.c",
+  "gcc": [
+   "línea 2:22: error: switch quantity not an integer"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-switch",
+  "plantilla": "dentro de un switch las instrucciones tienen que ir después de un 'case' o 'default'",
+  "ejemploMsg": "dentro de un switch las instrucciones tienen que ir después de un 'case' o 'default'",
+  "cuenta": 2,
+  "archivo": "test/diag/switch_sin_case.c",
+  "linea": 3,
+  "id": "M196",
+  "ejemplo": "ejemplos/M196.c",
+  "gcc": []
+ },
+ {
+  "nivel": "error",
+  "code": "E-switch",
+  "plantilla": "'case' necesita un valor entero: un decimal o un texto no sirve",
+  "ejemploMsg": "'case' necesita un valor entero: un decimal o un texto no sirve",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/145_switch_case_float.c",
+  "linea": 5,
+  "id": "M197",
+  "ejemplo": "ejemplos/M197.c",
+  "gcc": [
+   "línea 5:9: error: case label does not reduce to an integer constant"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-switch",
+  "plantilla": "ya hay un 'default' en este switch (solo puede haber uno)",
+  "ejemploMsg": "ya hay un 'default' en este switch (solo puede haber uno)",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/149_switch_default_repetido.c",
+  "linea": 6,
+  "id": "M198",
+  "ejemplo": "ejemplos/M198.c",
+  "gcc": [
+   "línea 6:9: error: multiple default labels in one switch"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-switch",
+  "plantilla": "'case' fuera de un switch",
+  "ejemploMsg": "'case' fuera de un switch",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/153_case_fuera_de_switch.c",
+  "linea": 4,
+  "id": "M199",
+  "ejemplo": "ejemplos/M199.c",
+  "gcc": [
+   "línea 4:5: error: case label not within a switch statement",
+   "línea 3:9: warning: unused variable 'd' [-Wunused-variable]"
+  ]
+ },
+ {
+  "nivel": "error",
+  "code": "E-texto-no-soportado",
+  "plantilla": "los textos (%s / char arrays) todavía no están soportados en este editor",
+  "ejemploMsg": "los textos (%s / char arrays) todavía no están soportados en este editor",
+  "cuenta": 14,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/prueba_errores2/repro/H06_scanf_s_mensaje.c",
+  "linea": 4,
+  "id": "M200",
+  "ejemplo": "ejemplos/M200.c",
+  "gcc": []
+ },
+ {
+  "nivel": "error",
+  "code": "E-texto-no-soportado",
+  "plantilla": "en C no existe '‹nombre›': para un carácter usá char (los textos completos todavía no están soportados en este editor)",
+  "ejemploMsg": "en C no existe 'string': para un carácter usá char (los textos completos todavía no están soportados en este editor)",
+  "cuenta": 1,
+  "archivo": "/tmp/claude-0/-home-user/d4735eb7-96f1-55ff-9c93-57cdba3202ef/scratchpad/auditoria_errores/casos/200_tipo_string.c",
+  "linea": 3,
+  "id": "M201",
+  "ejemplo": "ejemplos/M201.c",
+  "gcc": [
+   "línea 3:5: error: unknown type name 'string'; did you mean 'stdin'?",
+   "línea 3:21: warning: initialization of 'int' from 'char *' makes integer from pointer without a cast [-Wint-conversion]"
+  ]
+ }
+]
