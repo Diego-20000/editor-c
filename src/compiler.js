@@ -417,7 +417,7 @@
         }
       }
       this.expect(')', { k: 'params' });
-      if (!this.isOp(';') && !this.isOp('{') && this.peek().t !== 'eof' && this.peek().line > this.prevLine() && (this.isTypeStart() || this.peek().t === 'id')) throw new CErr("falta un ';' al final del prototipo de la línea anterior", this.prevLine(), 'FUN-032');
+      if (!this.isOp(';') && !this.isOp('{') && this.peek().t !== 'eof' && this.peek().line > this.prevLine() && (this.isTypeStart() || this.peek().t === 'id')) throw new CErr("falta un ';' al final de este prototipo (la declaración de la función)", this.prevLine(), 'FUN-032');
       const sinParams = params.length === 0 && !vacioVoid;
       if (this.accept(';')) return { k: 'proto', name: nameTok.v, ret, params, line, unspec: sinParams };
       const sinNombre = params.find((p) => p.name === null);
@@ -1605,7 +1605,7 @@
         else if (v && v.scalar) { kb = 'OPE-041'; msg = "'" + name + "' es una variable, no una función: si querías multiplicar, la multiplicación siempre lleva el operador *"; }
         else if (sg && sg.toLowerCase() === name.toLowerCase() && this.funcs.has(sg)) { kb = 'FUN-045'; msg = "la función '" + name + "' no está declarada: C distingue mayúsculas de minúsculas, la función se llama '" + sg + "'"; }
         this.err(msg || "la función '" + name + "' no está declarada" + (sg ? ". ¿Quisiste decir '" + sg + "'? (en C todo va en minúscula y se escribe igual)" : ''), n.line, kb);
-        args.forEach((a) => { if (a.k !== 'str') this.expr(a); }); return { c: '0', t: 'int' };
+        if (!own(FUNC_KB, name)) args.forEach((a) => { if (a.k !== 'str') this.expr(a); }); return { c: '0', t: 'int' };
       }
       if (f.node && !f.hasProto && f.node.line > n.line) this.warn("'" + name + "' se usa antes de estar definida: falta el prototipo arriba de main (por ejemplo: " + TNAME[f.ret] + ' ' + name + '(' + (f.params.map((p) => TNAME[p.type]).join(', ') || 'void') + ');)', n.line, 'FUN-001');
       if (args.length !== f.params.length && !(f.unspec && !f.node)) {
@@ -1765,6 +1765,17 @@
     'OPE-017': 'doble-modificacion', 'OPE-024': 'division-decimal-cero', 'OPE-025': 'coma-decimal', 'OPE-026': 'coma-en-condicion', 'OPE-027': 'asignacion-encadenada',
     'OPE-037': 'resto-con-division', 'OPE-042': 'comparacion-guardada', 'OPE-043': 'precedencia-and-or', 'OPE-046': 'decremento-en-condicion', 'OPE-047': 'condicion-a-medias', 'OPE-048': 'incremento-sin-efecto'
   };
+  // código (etiqueta del panel) de los casos que el compilador ya reconocía: el mensaje de gcc no alcanza para elegirlo
+  const grupo = (cod, ids) => { for (const k of ids.split(' ')) KB_CODIGO[k] = cod; };
+  grupo('sintaxis', 'DEC-015 DEC-017 CTL-013 CTL-014 CTL-038 CTL-039 CTL-041 CTL-042 SIN-006 SIN-007 SIN-010 SIN-011 SIN-012 SIN-013 SIN-014 SIN-015 SIN-026 SIN-028 SIN-029 SIN-030 SIN-031 SIN-034 SIN-037 SIN-042 SIN-049 SIN-050 SIN-054 SIN-057 SIN-058 SIN-060 ARR-012 ARR-020 ARR-046 ARR-059 PRF-019 PRF-020 PRF-021 PRF-034 SCN-025 SCN-037 FUN-034 FUN-035 FUN-033 OPE-012 OPE-040 PRE-025 DEC-016 DEC-019 DEC-027 FUN-020');
+  grupo('falta-punto-coma', 'CTL-019 CTL-020 CTL-023 SIN-001 SIN-002 SIN-003 SIN-032 PRF-022 FUN-032 NOS-017');
+  grupo('no-soportado', 'NOS-001 NOS-002 NOS-003 NOS-004 NOS-005 NOS-006 NOS-007 NOS-008 NOS-009 NOS-010 NOS-011 NOS-012 NOS-013 NOS-014 NOS-015 NOS-016 NOS-017 NOS-019 NOS-020');
+  grupo('no-declarada', 'DEC-011 DEC-032 FUN-018 FUN-019 FUN-045 OPE-041 PRE-047 PRE-048 POR-004 POR-017 POR-019 POR-023 SIN-020 SIN-021 PRF-023 SCN-027');
+  grupo('preprocesador', 'PRE-015 PRE-019 PRE-020 PRE-021 PRE-026 PRE-028 PRE-029 PRE-031 PRE-032 PRE-033');
+  grupo('comillas-dobles', 'ARR-045 ARR-047 ARR-056 ARR-058 FUN-028 CTL-049 TIP-015 TIP-031');
+  grupo('arreglo', 'ARR-017 ARR-055 ARR-035 FUN-029');
+  grupo('asignacion-en-condicion', 'CTL-040');
+  grupo('palabra-reservada', 'DEC-018 DEC-038');
   // casos de la base que son el mismo error con otro nombre (otra categoría u otro enunciado): comparten el aviso
   const KB_GEMELOS = { 'LOG-002': ['OPE-013'], 'LOG-018': ['OPE-034', 'CTL-033'], 'LOG-010': ['CTL-006'], 'OPE-043': ['CTL-036'], 'OPE-011': ['CTL-037'], 'LOG-024': ['CTL-044', 'DEC-020'], 'LOG-053': ['CTL-046'],
     'TIP-021': ['EJE-020'], 'TIP-012': ['PRF-005'], 'LOG-005': ['PRF-026'], 'LOG-006': ['SCN-028'], 'TIP-005': ['LOG-052'] };
