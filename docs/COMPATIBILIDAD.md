@@ -8,7 +8,7 @@
 - `printf`/`scanf`, `rand`/`srand` y `ctype.h` imitan a glibc (valores de retorno incluidos).
 
 ## Subconjunto soportado
-Ver la sección «Qué soporta» del README. Todavía no: punteros, `char[]`/`%s`/`string.h`, `struct`, `union`, `enum`, `typedef`, archivos, `malloc`.
+Ver la sección «Qué soporta» del README. Textos: `char[]`, `char *` inicializado con un texto o con otro arreglo, arreglos de textos (`char n[3][20]`, `char *n[]`), `%s` y `%[...]` en `printf`/`scanf`, `fgets`/`gets`, `sprintf`/`snprintf`, `strlen`, `strcpy`, `strncpy`, `strcat`, `strncat`, `strcmp`, `strncmp`, `atoi`, `atol`, `atof`; los textos son bytes UTF-8 como en gcc. Todavía no: punteros en general (aritmética de punteros, `&x`, `malloc`), `strchr`/`strstr`/`strtok` y otras funciones que devuelven punteros, funciones que devuelven `char *`, `sscanf`, `struct`, `union`, `enum`, `typedef`, archivos.
 
 ## Comportamiento indefinido
 Estos casos no tienen resultado garantizado en C, así que el editor no promete coincidir con gcc:

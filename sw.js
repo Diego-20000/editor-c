@@ -2,7 +2,7 @@
 // Primera visita: precachea todo. Después sirve desde la caché (sin conexión). Una versión nueva queda
 // "en espera" hasta que la persona acepta recargar (la página manda SKIP_WAITING).
 'use strict';
-const VERSION = '23a55e3615f6';
+const VERSION = '75d3a2895a06';
 const CACHE = 'editor-c-' + VERSION;
 const FILES = ["./","index.html","manifest.webmanifest","assets/styles.css","assets/compiler.js","assets/runtime.js","assets/examples.js","assets/app.js","assets/icon-192.png","assets/icon-512.png","assets/icon-maskable-512.png","assets/apple-touch-icon.png"];
 
