@@ -1,5 +1,6 @@
 // uso: node test/diag.js   -> verifica los diagnósticos esperados de test/diag/*.c
 // cada archivo empieza con "// espera: CODIGO" (por ejemplo E-scanf-sin-amp, W-sin-inicializar) o "// espera: limpio"
+// una segunda línea opcional "// kb: LOG-002" exige además que algún diagnóstico traiga ese id de la base de conocimiento (kb o kbAlt)
 const fs = require('fs'), path = require('path');
 const { compile } = require('../src/compiler.js');
 const dir = path.join(__dirname, 'diag');
@@ -10,7 +11,9 @@ for (const f of fs.readdirSync(dir).filter((x) => x.endsWith('.c')).sort()) {
   let r; const t0 = Date.now();
   try { r = compile(src); } catch (e) { console.log('FALLA ' + f + ': excepción ' + e.message); fallas++; n++; continue; }
   const codes = r.errors.concat(r.warnings).map((d) => d.code);
-  const ok = esp === 'limpio' ? codes.length === 0 : codes.indexOf(esp) >= 0;
+  let ok = esp === 'limpio' ? codes.length === 0 : codes.indexOf(esp) >= 0;
+  const kb = (/^\/\/ espera: \S+\n\/\/ kb: (\S+)/.exec(src) || [])[1];
+  if (ok && kb && !r.errors.concat(r.warnings).some((d) => d.kb === kb || (d.kbAlt || []).indexOf(kb) >= 0)) ok = false;
   n++;
   if (!ok || Date.now() - t0 > 5000) { fallas++; console.log('FALLA ' + f + ': se esperaba ' + esp + ' y salió [' + codes.join(', ') + ']'); }
 }

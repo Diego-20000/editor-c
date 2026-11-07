@@ -1,6 +1,7 @@
 // Valida (y opcionalmente completa) los archivos de la base de conocimiento contra gcc y contra el editor.
 // uso: node tools/kb-validar.js ARCHIVO.json [--arreglar] [--silencio]
 //   kb/errores/XXX.json   -> esquema, gcc 13 sobre codigo_mal y codigo_bien, el editor sobre los dos
+//                            (los diagnósticos del editor traen `kb` = id del caso; ese es el que se registra en mensaje_editor_actual)
 //   kb/lecciones.json     -> compila y ejecuta `ejemplo` con gcc y con el editor y compara con `resultado`
 //   kb/ayuda.json         -> esquema y que errores_ids existan
 // Con --arreglar escribe en el archivo los campos que se obtienen ejecutando de verdad
@@ -106,7 +107,12 @@ if (esAyuda) {
     if (g.ok) gr = correr(g.exe, e.entrada);
     const dgcc = g.diag.length ? g.diag[0] : 'nada';
     const ed = editor(e.codigo_mal, e.entrada);
-    const primero = ed.primero;
+    // si algún diagnóstico del editor trae el id de este caso (campo kb o kbAlt) es ese el que cuenta; si no, el primero
+    const todos = ed.errores.concat(ed.avisos);
+    const coincide = (d) => d.kb === e.id || (d.kbAlt || []).indexOf(e.id) >= 0;
+    const primero = todos.find(coincide) || ed.primero;
+    const otrosKb = todos.filter((d) => d.kb && !coincide(d)).map((d) => d.kb);
+    if (otrosKb.length && !todos.some(coincide) && !silencio) console.log('  nota ' + id + ': el editor avisa con otro caso de la base (' + otrosKb.join(', ') + ')');
     const actual = primero ? primero.msg : (ed.runtime ? ed.runtime : null);
     const codigoActual = primero ? (primero.code || null) : (ed.runtime ? 'R-runtime' : null);
     // programa corregido
