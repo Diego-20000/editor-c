@@ -47,6 +47,7 @@ El **id** de un error es `PREFIJO-NNN` (tres dígitos, desde 001 en cada categor
 - `verificado_gcc13`: **true solo si de verdad se compiló con gcc 13** y salió lo que dice `que_dice_gcc` (o «nada»). Si no se pudo, `false`. Nunca inventar la salida de gcc.
 - `detectado_editor` / `mensaje_editor_actual` / `codigo_editor_actual`: se obtienen **ejecutando el editor de verdad** (`node -e` con `require('./src/compiler.js').compile(...)`, o `node test/run1.js archivo.c --warn`). Para errores de ejecución, el mensaje es el `RUNTIME ERR`.
 - `verificado_editor_corrige`: el `codigo_bien` compila en el editor sin errores ni avisos y da la misma salida que gcc.
+- `solucion_ejercicio` (opcional, true): el `codigo_bien` es la solución de un ejercicio de la materia; el build NO lo manda al navegador.
 - Un `aviso` es una sospecha: nunca impide ejecutar. Solo es `error` lo que gcc también rechaza o lo que el editor no puede ejecutar.
 
 ## Una ayuda (`kb/ayuda.json`)

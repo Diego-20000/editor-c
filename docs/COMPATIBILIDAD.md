@@ -15,7 +15,7 @@ Estos casos no tienen resultado garantizado en C, así que el editor no promete 
 - desbordamiento de `int` con signo (el editor lo hace dar la vuelta, como gcc sin optimizar);
 - conversión de un decimal fuera de rango a entero (gcc da distinto según optimice o no);
 - leer una variable local sin inicializar (el editor la inicia en 0 y avisa);
-- orden de evaluación de los argumentos de una llamada (gcc evalúa de derecha a izquierda; el editor, de izquierda a derecha);
+- orden de evaluación de los argumentos de una llamada (gcc evalúa de derecha a izquierda; el editor lo imita cuando hay efectos, pero no está garantizado por el estándar);
 - índices fuera de un arreglo (el editor se detiene con un error y el número de línea).
 
 ## Límites propios del editor

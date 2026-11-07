@@ -42,7 +42,7 @@ function kbDatos() {
   errores = errores.filter((e) => e && typeof e.id === 'string' && !/^NUE-/.test(e.id)).map((e) => {
     const o = {};
     for (const k of CAMPOS_ERROR) if (e[k] !== undefined && e[k] !== null) o[k] = limDeep(e[k]);
-    if (e.codigo_bien) o.codigo_bien = e.codigo_bien;   // se muestra tal cual (con sus saltos de línea)
+    if (e.codigo_bien && !e.solucion_ejercicio) o.codigo_bien = e.codigo_bien;   // si el programa corregido es la solución de un ejercicio de la materia, no viaja al navegador   // se muestra tal cual (con sus saltos de línea)
     if (e.entrada) o.entrada = e.entrada;
     return o;
   });

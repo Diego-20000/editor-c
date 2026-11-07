@@ -334,7 +334,8 @@
   "mensaje_editor_actual": null,
   "codigo_editor_actual": null,
   "verificado_editor_corrige": true,
-  "notas": "El codigo_bien muestra la regla del ejercicio de bisiestos de la materia: la guía y las pistas no la escriben."
+  "notas": "El codigo_bien muestra la regla del ejercicio de bisiestos de la materia: la guía y las pistas no la escriben.",
+  "solucion_ejercicio": true
  },
  {
   "id": "LOG-013",
@@ -362,7 +363,8 @@
   "detectado_editor": false,
   "mensaje_editor_actual": null,
   "codigo_editor_actual": null,
-  "verificado_editor_corrige": true
+  "verificado_editor_corrige": true,
+  "solucion_ejercicio": true
  },
  {
   "id": "LOG-014",
@@ -1345,7 +1347,8 @@
   "mensaje_editor_actual": null,
   "codigo_editor_actual": null,
   "verificado_editor_corrige": true,
-  "notas": "Es el ejercicio de multiplicación de la materia: las pistas describen el problema sin escribir la solución."
+  "notas": "Es el ejercicio de multiplicación de la materia: las pistas describen el problema sin escribir la solución.",
+  "solucion_ejercicio": true
  },
  {
   "id": "LOG-049",
