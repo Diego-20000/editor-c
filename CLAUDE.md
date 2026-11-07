@@ -15,7 +15,10 @@ Un editor de C que corre en el navegador, para alumnos de 5.º año de la E.E.S.
 
 ## Cómo piensa Diego la enseñanza
 - La idea no es facilitar la escritura ni decirle al alumno exactamente dónde está el error, sino que **piense y tipee**.
-- Referencia buscada: algo simple, como Programiz (confirmar con Diego; el nombre que dijo, «potomash», no se pudo identificar).
+- **Referencia buscada: Photomath** (la app de Google). Lo que Diego quiere imitar: **sacar una foto** de lo que el alumno escribió en papel (la carpeta) y ver un **paso a paso**. Adaptación pendiente de definir, siempre sin servidor ni IA:
+  - A. Foto de la hoja → texto, con reconocimiento en el dispositivo (la letra manuscrita sobre cuadrícula es difícil: probar con fotos reales de la carpeta antes de comprometerse).
+  - B. Paso a paso = **mesa de verificación real** (la tabla de valores del método de Brizuela generada al ejecutar: una fila por vuelta, solo variables reales). No resuelve nada; muestra lo que el programa hizo para que el alumno lo compare con su verificación a mano. Es lo recomendado primero.
+  - C. Captura de entrega con los nombres que pide el contrato (`EjNN-Prueba-1.jpg`).
 - Pendiente de definir: niveles de ayuda (nivel 0 = como gcc, solo «error cerca de la línea N»), si se apaga el cierre automático de llaves y el autocompletado, y una medida local de cuánto código se tipeó y cuánto se pegó (evidencia de proceso, nunca un «detector de IA»: no existe una marca confiable en el código pegado).
 
 ## Lo que enseña la materia (alcance del lenguaje)
@@ -44,7 +47,7 @@ ANSI C básico: `char`, `int`, `float`, `double`, operadores, `printf`/`scanf` (
 - Antes de fusionar: tests de motor, diagnósticos e interfaz en verde, y un control final con agentes de prueba (programas estilo TP contra gcc, errores de alumnos, revisión del motor y prueba de punta a punta del sitio).
 
 ## Preguntas abiertas
-1. ¿Qué es «potomash»? (¿Programiz?) ¿Qué parte se quiere imitar?
+1. Orden de las piezas A, B y C de la referencia Photomath (recomendado: B, C y A como experimento) y permiso para probar un paquete de reconocimiento de texto en una carpeta aislada.
 2. Nivel de ayuda por defecto en los errores.
 3. Cierre automático y autocompletado: ¿apagados?
 4. Dirección de diseño para pulir la interfaz.
