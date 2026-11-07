@@ -51,7 +51,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "'PORM' no está declarada (¿falta declararla o está mal escrita?)",
+  "mensaje_editor_actual": "'PORM' no está declarada. ¿Quisiste decir 'PROM'? (C distingue mayúsculas y minúsculas)",
   "codigo_editor_actual": "E-no-declarada",
   "verificado_editor_corrige": true
  },
@@ -191,7 +191,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "'DOBLE' no está declarada (¿falta declararla o está mal escrita?)",
+  "mensaje_editor_actual": "'DOBLE' no está declarada en este lugar: se declaró entre llaves { } (línea 5) y solo existe ahí",
   "codigo_editor_actual": "E-no-declarada",
   "verificado_editor_corrige": true
  },
@@ -219,7 +219,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "'I' no está declarada (¿falta declararla o está mal escrita?)",
+  "mensaje_editor_actual": "'I' no está declarada en este lugar: se declaró dentro del for (línea 4) y solo existe ahí",
   "codigo_editor_actual": "E-no-declarada",
   "verificado_editor_corrige": true
  },
@@ -303,7 +303,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "'A' no está declarada (¿falta declararla o está mal escrita?)",
+  "mensaje_editor_actual": "'A' se usa antes de declararla: la declaración tiene que estar antes de la primera línea que la usa",
   "codigo_editor_actual": "E-no-declarada",
   "verificado_editor_corrige": true
  },
@@ -415,7 +415,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "se esperaba un nombre pero se encontró '5'",
+  "mensaje_editor_actual": "los decimales se escriben con punto (12.5), no con coma: la coma separa variables",
   "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
@@ -443,8 +443,8 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "falta un ';' al final de esta línea (antes de 'FINAL')",
-  "codigo_editor_actual": "E-falta-punto-coma",
+  "mensaje_editor_actual": "el nombre de una variable no puede tener espacios: 'NOTA FINAL' son dos palabras",
+  "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
  {
@@ -471,7 +471,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "se esperaba un nombre pero se encontró '1'",
+  "mensaje_editor_actual": "un nombre de variable no puede empezar con un número: tiene que empezar con una letra o con _",
   "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
@@ -500,7 +500,7 @@
   "verificado_gcc13": true,
   "detectado_editor": true,
   "mensaje_editor_actual": "'case' es una palabra reservada, no puede usarse como nombre",
-  "codigo_editor_actual": "E-switch",
+  "codigo_editor_actual": "E-palabra-reservada",
   "verificado_editor_corrige": true
  },
  {
@@ -527,8 +527,8 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "falta un ';' al final de esta línea (antes de '-')",
-  "codigo_editor_actual": "E-falta-punto-coma",
+  "mensaje_editor_actual": "el guion '-' es el operador resta: no puede ir en el nombre de una variable",
+  "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
  {
@@ -554,9 +554,9 @@
   "riesgo_falso_positivo": "Un total parcial que sí tiene que reiniciarse en cada grupo (bucle anidado).",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "SUMA = 0 dentro del lazo borra el total en cada vuelta, y al final solo queda el último dato. La inicialización va antes del lazo.",
+  "codigo_editor_actual": "W-acumulador-reiniciado",
   "verificado_editor_corrige": true
  },
  {
@@ -611,7 +611,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "'A' ya fue declarada antes en este bloque",
+  "mensaje_editor_actual": "'A' ya fue declarada antes en este bloque con otro tipo (int)",
   "codigo_editor_actual": "E-redeclarada",
   "verificado_editor_corrige": true
  },
@@ -639,7 +639,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "'B' no está declarada (¿falta declararla o está mal escrita?)",
+  "mensaje_editor_actual": "'B' no está declarada: en una declaración el '=' solo inicializa la variable que se declara",
   "codigo_editor_actual": "E-no-declarada",
   "verificado_editor_corrige": true
  },
@@ -695,7 +695,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "'A' no está declarada (¿falta declararla o está mal escrita?)",
+  "mensaje_editor_actual": "'A' no existe en main: es una variable local de leer",
   "codigo_editor_actual": "E-no-declarada",
   "verificado_editor_corrige": true
  },
@@ -751,8 +751,8 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "falta un ';' al final de esta línea (antes de '==')",
-  "codigo_editor_actual": "E-falta-punto-coma",
+  "mensaje_editor_actual": "para darle un valor inicial a 'A' se usa un solo '=': el '==' es para comparar",
+  "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
  {
@@ -779,7 +779,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "'B' no está declarada. ¿Quisiste decir 'A'? (C distingue mayúsculas y minúsculas)",
+  "mensaje_editor_actual": "'B' no está declarada (¿falta declararla o está mal escrita?)",
   "codigo_editor_actual": "E-no-declarada",
   "verificado_editor_corrige": true
  },
@@ -807,7 +807,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "'I' no está declarada (¿falta declararla o está mal escrita?)",
+  "mensaje_editor_actual": "'I' no está declarada: el contador del for también hay que declararlo",
   "codigo_editor_actual": "E-no-declarada",
   "verificado_editor_corrige": true
  },
@@ -835,7 +835,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "'SUMA' no está declarada (¿falta declararla o está mal escrita?)",
+  "mensaje_editor_actual": "'SUMA' no está declarada en este lugar: se declaró dentro del lazo (línea 5) y solo existe ahí",
   "codigo_editor_actual": "E-no-declarada",
   "verificado_editor_corrige": true
  },
@@ -863,7 +863,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "'N' ya fue declarada antes en este bloque",
+  "mensaje_editor_actual": "'N' ya fue declarada antes en este bloque (es un parámetro de la función)",
   "codigo_editor_actual": "E-redeclarada",
   "verificado_editor_corrige": true
  },
@@ -891,7 +891,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "'A' no está declarada (¿falta declararla o está mal escrita?)",
+  "mensaje_editor_actual": "'A' se usa antes de estar declarada: declarala antes en la lista",
   "codigo_editor_actual": "E-no-declarada",
   "verificado_editor_corrige": true
  },
@@ -975,7 +975,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "una variable no puede ser de tipo void",
+  "mensaje_editor_actual": "una variable no puede ser de tipo void: void es la ausencia de valor",
   "codigo_editor_actual": "E-otro",
   "verificado_editor_corrige": true
  },
@@ -1060,7 +1060,7 @@
   "verificado_gcc13": true,
   "detectado_editor": true,
   "mensaje_editor_actual": "'int' es una palabra reservada, no puede usarse como nombre",
-  "codigo_editor_actual": "E-otro",
+  "codigo_editor_actual": "E-palabra-reservada",
   "verificado_editor_corrige": true
  }
 ]

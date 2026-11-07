@@ -110,7 +110,8 @@ if (esAyuda) {
     // si algún diagnóstico del editor trae el id de este caso (campo kb o kbAlt) es ese el que cuenta; si no, el primero
     const todos = ed.errores.concat(ed.avisos);
     const coincide = (d) => d.kb === e.id || (d.kbAlt || []).indexOf(e.id) >= 0;
-    const primero = todos.find(coincide) || ed.primero;
+    // solo cuenta como «detectado» si el editor reconoce ESTE caso (su diagnóstico trae el id en kb o kbAlt) o si lo frena al ejecutarlo; un aviso de otro caso no explica este error
+    const primero = todos.find(coincide) || null;
     const otrosKb = todos.filter((d) => d.kb && !coincide(d)).map((d) => d.kb);
     if (otrosKb.length && !todos.some(coincide) && !silencio) console.log('  nota ' + id + ': el editor avisa con otro caso de la base (' + otrosKb.join(', ') + ')');
     const actual = primero ? primero.msg : (ed.runtime ? ed.runtime : null);

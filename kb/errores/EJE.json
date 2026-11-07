@@ -557,8 +557,8 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "índice 4294967295 fuera del arreglo (tiene 3 posiciones: 0 a 2)",
-  "codigo_editor_actual": "R-runtime",
+  "mensaje_editor_actual": "i es unsigned y nunca es negativo, así que i >= 0 siempre es verdadero. Si es la condición de un bucle, no termina nunca: usá un int.",
+  "codigo_editor_actual": "W-unsigned-siempre-verdadero",
   "verificado_editor_corrige": true
  }
 ]

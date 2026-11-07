@@ -135,8 +135,8 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "la función 'RESTA' recibe 2 argumento(s) y se la llamó con 1",
-  "codigo_editor_actual": "E-funcion",
+  "mensaje_editor_actual": "el prototipo y la definición de 'RESTA' no coinciden: una tiene 1 parámetro(s) y la otra 2",
+  "codigo_editor_actual": "E-prototipo",
   "verificado_editor_corrige": true
  },
  {
@@ -499,7 +499,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "'R' no está declarada (¿falta declararla o está mal escrita?)",
+  "mensaje_editor_actual": "'R' no existe en main: es una variable local de CALCULAR",
   "codigo_editor_actual": "E-no-declarada",
   "verificado_editor_corrige": true
  },
@@ -527,7 +527,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "'N' no está declarada (¿falta declararla o está mal escrita?)",
+  "mensaje_editor_actual": "'N' no existe en DOBLE: es una variable local de main. Pasala como parámetro",
   "codigo_editor_actual": "E-no-declarada",
   "verificado_editor_corrige": true
  },
@@ -555,8 +555,8 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "falta un ';' al final de esta línea (antes de '(')",
-  "codigo_editor_actual": "E-falta-punto-coma",
+  "mensaje_editor_actual": "las funciones no se escriben dentro de otras: definí 'DOBLE' fuera de main",
+  "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
  {
@@ -638,9 +638,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "main tiene que devolver int: con 'void main' funciona en algunos compiladores (Code::Blocks), pero gcc avisa",
+  "codigo_editor_actual": "W-portabilidad",
   "verificado_editor_corrige": true
  },
  {
@@ -694,9 +694,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "main recibe cero parámetros o dos (argc y argv), no uno solo",
+  "codigo_editor_actual": "W-portabilidad",
   "verificado_editor_corrige": true
  },
  {
@@ -750,9 +750,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "error",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "'SUMA' es una variable en este lugar y tapa a la función del mismo nombre: no se la puede llamar. Cambiá el nombre de la variable",
+  "codigo_editor_actual": "E-funcion",
   "verificado_editor_corrige": true
  },
  {
@@ -779,8 +779,8 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "no se puede usar un texto entre comillas como número",
-  "codigo_editor_actual": "E-otro",
+  "mensaje_editor_actual": "'5' es un texto, no un número: sin comillas se escribe el valor (DOBLE necesita un int)",
+  "codigo_editor_actual": "E-comillas-dobles",
   "verificado_editor_corrige": true
  },
  {
@@ -891,8 +891,8 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "se esperaba '{' pero se encontró 'int'",
-  "codigo_editor_actual": "E-sintaxis",
+  "mensaje_editor_actual": "falta un ';' al final de este prototipo (la declaración de la función)",
+  "codigo_editor_actual": "E-falta-punto-coma",
   "verificado_editor_corrige": true
  },
  {
@@ -919,8 +919,8 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "no se entiende '{' fuera de una función",
-  "codigo_editor_actual": "E-funcion",
+  "mensaje_editor_actual": "el ';' después del paréntesis cierra la declaración y la llave queda suelta",
+  "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
  {
@@ -947,7 +947,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "se esperaba ')' pero se encontró ';'",
+  "mensaje_editor_actual": "los parámetros de una función se separan con coma, no con punto y coma",
   "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
@@ -1003,8 +1003,8 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "no se esperaba el tipo 'int' acá (¿falta un ';' antes?)",
-  "codigo_editor_actual": "E-falta-punto-coma",
+  "mensaje_editor_actual": "en la llamada se escribe solo el valor, sin el tipo ('int' sobra)",
+  "codigo_editor_actual": "E-otro",
   "verificado_editor_corrige": true
  },
  {
@@ -1031,8 +1031,8 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "'SALUDAR' es una función: faltan los paréntesis para llamarla",
-  "codigo_editor_actual": "E-funcion",
+  "mensaje_editor_actual": "'SALUDAR' es una función: sin paréntesis no se llama y la sentencia no hace nada. ¿Faltan los '()'?",
+  "codigo_editor_actual": "W-funcion",
   "verificado_editor_corrige": true
  },
  {
@@ -1114,9 +1114,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "'return A, B' devuelve solo B: la coma descarta el primer valor (una función devuelve un único valor)",
+  "codigo_editor_actual": "W-funcion",
   "verificado_editor_corrige": true
  },
  {
@@ -1143,7 +1143,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "'X' ya fue declarada antes en este bloque",
+  "mensaje_editor_actual": "'X' ya fue declarada antes en este bloque (es un parámetro de la función)",
   "codigo_editor_actual": "E-redeclarada",
   "verificado_editor_corrige": true
  },
@@ -1255,7 +1255,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "la función 'doble' no está declarada. ¿Quisiste decir 'DOBLE'? (en C todo va en minúscula y se escribe igual)",
+  "mensaje_editor_actual": "la función 'doble' no está declarada: C distingue mayúsculas de minúsculas, la función se llama 'DOBLE'",
   "codigo_editor_actual": "E-no-declarada",
   "verificado_editor_corrige": true
  }

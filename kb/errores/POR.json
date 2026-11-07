@@ -22,9 +22,9 @@
   "riesgo_falso_positivo": "system(\"ls\") o comandos de Linux a propósito no se usan en la materia; ninguno en la práctica.",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "system(\"pause\") es un comando de Windows: en Linux, Programiz y OnlineGDB no existe y muestra un error. Para esperar una tecla se usa getchar()",
+  "codigo_editor_actual": "W-portabilidad",
   "verificado_editor_corrige": true
  },
  {
@@ -50,9 +50,9 @@
   "riesgo_falso_positivo": "Ninguno.",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "system(\"cls\") es un comando de Windows: en Linux, Programiz y OnlineGDB no existe",
+  "codigo_editor_actual": "W-portabilidad",
   "verificado_editor_corrige": true
  },
  {
@@ -107,7 +107,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "la función 'clrscr' no está declarada",
+  "mensaje_editor_actual": "clrscr() es de Windows (conio.h) y no existe en Programiz ni en OnlineGDB",
   "codigo_editor_actual": "E-no-declarada",
   "verificado_editor_corrige": true
  },
@@ -134,9 +134,9 @@
   "riesgo_falso_positivo": "Ninguno.",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "main tiene que devolver int: con 'void main' funciona en algunos compiladores (Code::Blocks), pero gcc avisa",
+  "codigo_editor_actual": "W-portabilidad",
   "verificado_editor_corrige": true
  },
  {
@@ -191,9 +191,9 @@
   "riesgo_falso_positivo": "Ninguno.",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "fflush(stdin) no está definido en C estándar: en Linux (gcc, Programiz, OnlineGDB) no limpia el teclado",
+  "codigo_editor_actual": "W-portabilidad",
   "verificado_editor_corrige": true
  },
  {
@@ -445,9 +445,9 @@
   "riesgo_falso_positivo": "Ninguno.",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "gets fue eliminada de C11 porque no controla el tamaño y puede escribir fuera del arreglo. Se usa fgets(texto, tamaño, stdin)",
+  "codigo_editor_actual": "W-portabilidad",
   "verificado_editor_corrige": true
  },
  {
@@ -474,7 +474,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "la función 'Sleep' no está declarada",
+  "mensaje_editor_actual": "Sleep() es de Windows (windows.h) y no existe en Programiz ni en OnlineGDB",
   "codigo_editor_actual": "E-no-declarada",
   "verificado_editor_corrige": true
  },
@@ -502,7 +502,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "la función 'itoa' no está declarada",
+  "mensaje_editor_actual": "itoa no es del estándar de C y no existe en gcc",
   "codigo_editor_actual": "E-no-declarada",
   "verificado_editor_corrige": true
  },
@@ -530,7 +530,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "la función 'delay' no está declarada",
+  "mensaje_editor_actual": "delay() es de Turbo C / DOS (dos.h) y no existe en Programiz ni en OnlineGDB",
   "codigo_editor_actual": "E-no-declarada",
   "verificado_editor_corrige": true
  },
@@ -642,7 +642,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "la función 'scanf_s' no está declarada. ¿Quisiste decir 'scanf'? (en C todo va en minúscula y se escribe igual)",
+  "mensaje_editor_actual": "scanf_s es una función de Visual Studio y no existe en gcc (ni en Programiz ni en OnlineGDB). Usá scanf",
   "codigo_editor_actual": "E-no-declarada",
   "verificado_editor_corrige": true
  },
