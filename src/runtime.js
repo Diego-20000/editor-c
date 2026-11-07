@@ -175,6 +175,34 @@
     });
   }
 
+  /* ---------- textos de C: arreglos de char con terminador 0 ---------- */
+  const sb = (b) => (b > 127 ? b - 256 : b); // byte -> char con signo
+  function aBytes(x) { // JS string (literal) o arreglo de char -> bytes hasta el 0
+    if (typeof x === 'string') return ENC ? Array.from(ENC.encode(x)) : Array.from(x).map((c) => c.charCodeAt(0) & 255);
+    const out = [];
+    for (let i = 0; i < x.length; i++) { const b = x[i] & 255; if (b === 0) break; out.push(b); }
+    return out;
+  }
+  function tostr(x) {
+    if (typeof x === 'string') return x;
+    const b = aBytes(x);
+    for (let i = 0; i < b.length; i++) if (b[i] > 127) return DEC ? DEC.decode(Uint8Array.from(b)) : String.fromCharCode.apply(null, b);
+    return String.fromCharCode.apply(null, b);
+  }
+  function cstr(s, size) { // literal -> arreglo de char (con terminador y relleno)
+    const b = aBytes(s);
+    const n = size === undefined ? b.length + 1 : size;
+    const a = new Array(n).fill(0);
+    for (let i = 0; i < n && i < b.length; i++) a[i] = sb(b[i]);
+    return a;
+  }
+  function escribir(dst, bytes, conCero, que, line) { // copia bytes (y un 0) a dst, controlando que entren
+    const need = bytes.length + (conCero ? 1 : 0);
+    if (need > dst.length) throw new CRuntimeError(que + ' necesita ' + need + ' posiciones pero el arreglo tiene ' + dst.length + ' (en C esto pisa la memoria de otras variables)', line);
+    for (let i = 0; i < bytes.length; i++) dst[i] = sb(bytes[i]);
+    if (conCero) dst[bytes.length] = 0;
+  }
+
   /* ---------- entrada estándar ---------- */
 
   function createRuntime(io) {
@@ -250,6 +278,29 @@
           let len = '';
           while ('hlLzjt'.indexOf(fmt[i]) >= 0 && fmt[i] !== undefined) len += fmt[i++];
           const sp = fmt[i++];
+          if (sp === 's' || sp === '[') {
+            let neg = false, set = null;
+            if (sp === '[') {
+              if (fmt[i] === '^') { neg = true; i++; }
+              let s0 = '';
+              if (fmt[i] === ']') { s0 += ']'; i++; }
+              while (i < n && fmt[i] !== ']') s0 += fmt[i++];
+              i++;
+              set = s0.replace(/(.)-(.)/g, (m, a, b) => { let o = ''; for (let c = a.charCodeAt(0); c <= b.charCodeAt(0); c++) o += String.fromCharCode(c); return o; });
+            }
+            let c0 = sp === 's' ? await skipWs() : await peek();
+            if (c0 < 0) return count === 0 ? -1 : count;
+            let txt = '';
+            for (;;) {
+              const c = await peek();
+              if (c < 0 || txt.length >= maxw) break;
+              if (sp === 's' ? isWs(c) : (set.indexOf(String.fromCharCode(c)) >= 0) === neg) break;
+              txt += String.fromCharCode(c); pos++;
+            }
+            if (sp === '[' && txt.length === 0) return count;
+            if (!suppress) { const dst = refs[ri][0](); ri++; escribir(dst, aBytes(txt), true, 'scanf("%s") guarda el texto y su terminador y', line); count++; }
+            first = false; continue;
+          }
           if (sp === 'c') {
             const c = await peek();
             if (c < 0) return count === 0 ? -1 : count;
@@ -327,7 +378,46 @@
 
     return {
       printf(fmt, args, line) { let s; try { s = cformat(fmt, args); } catch (e) { if (e instanceof CRuntimeError && e.cline == null) e.cline = line; throw e; } io.write(s); return ulen(s); },
-      puts(s) { io.write(s + '\n'); return 1; },
+      puts(s) { io.write(tostr(s) + '\n'); return 1; },
+      cstr, tostr,
+      strlen(a) { return BigInt(aBytes(a).length); },
+      strcpy(dst, src, line) { escribir(dst, aBytes(src), true, 'strcpy', line); return 1; },
+      strncpy(dst, src, n, line) {
+        n = Number(n); const b = aBytes(src).slice(0, n);
+        if (n > dst.length) throw new CRuntimeError('strncpy copia ' + n + ' caracteres pero el arreglo tiene ' + dst.length + ' posiciones', line);
+        for (let i = 0; i < n; i++) dst[i] = i < b.length ? sb(b[i]) : 0;
+        return 1;
+      },
+      strcat(dst, src, line) { const d = aBytes(dst), s = aBytes(src); escribir(dst, d.concat(s), true, 'strcat', line); return 1; },
+      strncat(dst, src, n, line) { const d = aBytes(dst), s = aBytes(src).slice(0, Number(n)); escribir(dst, d.concat(s), true, 'strncat', line); return 1; },
+      strcmp(a, b) { const x = aBytes(a), y = aBytes(b); for (let i = 0; ; i++) { const p = i < x.length ? x[i] : 0, q = i < y.length ? y[i] : 0; if (p !== q || p === 0) return p - q; } },
+      strncmp(a, b, n) { const x = aBytes(a), y = aBytes(b); n = Number(n); for (let i = 0; i < n; i++) { const p = i < x.length ? x[i] : 0, q = i < y.length ? y[i] : 0; if (p !== q) return p - q; if (p === 0) return 0; } return 0; },
+      atoi(a) { const m = /^\s*[+-]?\d+/.exec(tostr(a)); return m ? Number(BigInt.asIntN(32, BigInt(m[0].trim()))) : 0; },
+      atol(a) { const m = /^\s*[+-]?\d+/.exec(tostr(a)); return m ? BigInt.asIntN(64, BigInt(m[0].trim())) : 0n; },
+      atof(a) { const m = /^\s*[+-]?(\d+\.?\d*([eE][+-]?\d+)?|\.\d+([eE][+-]?\d+)?)/.exec(tostr(a)); return m ? parseFloat(m[0]) : 0; },
+      sprintf(dst, fmt, args, line) { const s = cformat(fmt, args); const b = aBytes(s); escribir(dst, b, true, 'sprintf', line); return b.length; },
+      snprintf(dst, n, fmt, args, line) {
+        n = Number(n); const s = cformat(fmt, args); const b = aBytes(s);
+        if (n > dst.length) throw new CRuntimeError('snprintf dice que el arreglo tiene ' + n + ' posiciones pero tiene ' + dst.length, line);
+        if (n > 0) { const cut = b.slice(0, n - 1); for (let i = 0; i < cut.length; i++) dst[i] = sb(cut[i]); dst[cut.length] = 0; }
+        return b.length;
+      },
+      async fgets(dst, n, line) { // lee una línea (con el \n) como fgets; devuelve 1 si leyó algo y 0 si no
+        n = Number(n); const bytes = [];
+        while (bytes.length < n - 1) {
+          const c = await peek(); if (c < 0) break; pos++;
+          const bs = aBytes(String.fromCharCode(c)); for (const x of bs) bytes.push(x);
+          if (c === 10) break;
+        }
+        if (!bytes.length) return 0;
+        escribir(dst, bytes, true, 'fgets', line); return 1;
+      },
+      async gets(dst, line) {
+        const bytes = []; let leyo = false;
+        for (;;) { const c = await peek(); if (c < 0) break; pos++; leyo = true; if (c === 10) break; for (const x of aBytes(String.fromCharCode(c))) bytes.push(x); }
+        if (!leyo) return 0;
+        escribir(dst, bytes, true, 'gets', line); return 1;
+      },
       putchar(c) { io.write(String.fromCharCode(c & 255)); return c; },
       scanf, getchar,
       idiv(a, b, line) { if (b === 0) throw new CRuntimeError('división entera por cero (en C el programa se cierra con "Floating point exception")', line); return Math.trunc(a / b); },

@@ -277,11 +277,15 @@
           }
         }
         const cn = this.sawConst;
-        if (this.isOp('*')) throw new CErr('los punteros todavía no están soportados en este editor', this.peek().line);
+        let ptrTok = false;
+        if (this.isOp('*')) {
+          if (type === 'char' || type === 'uchar') { this.next(); ptrTok = true; }
+          else throw new CErr('los punteros todavía no están soportados en este editor (solo char * para textos)', this.peek().line);
+        }
         const nameTok = this.ident();
         if (this.isOp('{')) throw new CErr("a '" + nameTok.v + "' le faltan los paréntesis: " + nameTok.v + '() { ... }', nameTok.line);
-        if (this.isOp('(')) items.push(this.funcRest(type, nameTok, line));
-        else { this.p--; const d = this.declRest(type, line); d.const = cn; items.push(d); }
+        if (this.isOp('(')) { if (ptrTok) throw new CErr('las funciones que devuelven char * (un puntero) todavía no están soportadas en este editor', nameTok.line); items.push(this.funcRest(type, nameTok, line)); }
+        else { this.p--; if (ptrTok) this.p--; const d = this.declRest(type, line); d.const = cn; items.push(d); }
       }
       return items;
     }
@@ -293,9 +297,12 @@
         for (;;) {
           const pt = this.typeSpec();
           if (!pt || pt === 'void') throw new CErr('parámetro mal escrito: se esperaba un tipo (int, float, ...)', this.peek().line);
-          if (this.isOp('*')) throw new CErr('los punteros todavía no están soportados en este editor', this.peek().line);
-          const pn = (this.isOp(',') || this.isOp(')') || this.isOp('[')) ? { v: null, line: this.peek().line } : this.ident();
           let pdims = 0;
+          if (this.isOp('*')) {
+            if (pt === 'char' || pt === 'uchar') { this.next(); pdims = 1; if (this.isOp('*')) { this.next(); pdims = 2; if (this.isOp('*')) throw new CErr('tres niveles de punteros no están soportados en este editor', this.peek().line); } }
+            else throw new CErr('los punteros todavía no están soportados en este editor (solo char * para textos)', this.peek().line);
+          }
+          const pn = (this.isOp(',') || this.isOp(')') || this.isOp('[')) ? { v: null, line: this.peek().line } : this.ident();
           while (this.accept('[')) { if (!this.isOp(']')) this.assign(); this.expect(']'); pdims++; }
           params.push({ name: pn.v, type: pt, line: pn.line, array: pdims > 0, dims: pdims });
           if (!this.accept(',')) break;
@@ -313,7 +320,11 @@
       if (type === 'void') throw new CErr('una variable no puede ser de tipo void', line);
       const vars = [];
       for (;;) {
-        if (this.isOp('*')) throw new CErr('los punteros todavía no están soportados en este editor', this.peek().line);
+        let ptr = false;
+        if (this.isOp('*')) {
+          if (type === 'char' || type === 'uchar') { this.next(); ptr = true; if (this.isOp('*')) throw new CErr('los punteros a punteros todavía no están soportados en este editor', this.peek().line); }
+          else throw new CErr('los punteros todavía no están soportados en este editor (solo char * con un texto entre comillas)', this.peek().line);
+        }
         const nt = this.ident();
         const dims = [];
         while (this.accept('[')) {
@@ -322,7 +333,7 @@
         }
         let init = null;
         if (this.accept('=')) init = this.isOp('{') ? this.initList() : this.assign();
-        vars.push({ name: nt.v, dims, init, line: nt.line });
+        vars.push({ name: nt.v, dims, init, ptr, line: nt.line });
         if (!this.accept(',')) break;
       }
       this.expect(';');
@@ -572,7 +583,7 @@
       const cand = new Set();
       for (const sc of this.scopes) for (const k of sc.keys()) cand.add(k);
       for (const k of this.funcs.keys()) cand.add(k);
-      for (const k of ['printf', 'scanf', 'sqrt', 'pow', 'fabs', 'floor', 'ceil', 'abs', 'rand', 'srand', 'getchar', 'putchar', 'puts', 'toupper', 'tolower']) cand.add(k);
+      for (const k of ['printf', 'scanf', 'sqrt', 'pow', 'fabs', 'floor', 'ceil', 'abs', 'rand', 'srand', 'getchar', 'putchar', 'puts', 'toupper', 'tolower', 'strlen', 'strcpy', 'strcmp', 'strcat', 'sprintf', 'fgets']) cand.add(k);
       const lev = (a, b) => { const d = []; for (let i = 0; i <= a.length; i++) { d[i] = [i]; } for (let j = 1; j <= b.length; j++) d[0][j] = j; for (let i = 1; i <= a.length; i++) for (let j = 1; j <= b.length; j++) d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)); return d[a.length][b.length]; };
       let best = null, bd = 99;
       let nc = 0;
@@ -623,7 +634,7 @@
       while (ch) { ch = false; for (const f of this.funcs.values()) if (!f.async) for (const c of f.calls) { const g = this.funcs.get(c); if (g && g.async) { f.async = true; ch = true; break; } } }
       if (this.opts.yieldLoops) for (const f of this.funcs.values()) f.async = true;
       // 3) código
-      const out = ['const $={printf:$rt.printf,puts:$rt.puts,putchar:$rt.putchar,scanf:$rt.scanf,getchar:$rt.getchar,idiv:$rt.idiv,imod:$rt.imod,ix:$rt.ix,d2i:$rt.d2i,mk:$rt.mk,pad:$rt.pad,init:$rt.init,rand:$rt.rand,srand:$rt.srand,time:$rt.time,exit:$rt.exit,round:$rt.round,rint:$rt.rint,fmod:$rt.fmod,lop:$rt.lop,ldiv:$rt.ldiv,lmod:$rt.lmod,f2l:$rt.f2l,f2ul:$rt.f2ul,clock:$rt.clock,yield:$rt.yield};', 'let $t;let $y=0;'];
+      const out = ['const $={printf:$rt.printf,puts:$rt.puts,putchar:$rt.putchar,scanf:$rt.scanf,getchar:$rt.getchar,idiv:$rt.idiv,imod:$rt.imod,ix:$rt.ix,d2i:$rt.d2i,mk:$rt.mk,pad:$rt.pad,init:$rt.init,rand:$rt.rand,srand:$rt.srand,time:$rt.time,exit:$rt.exit,round:$rt.round,rint:$rt.rint,fmod:$rt.fmod,lop:$rt.lop,ldiv:$rt.ldiv,lmod:$rt.lmod,f2l:$rt.f2l,f2ul:$rt.f2ul,clock:$rt.clock,yield:$rt.yield,cstr:$rt.cstr,tostr:$rt.tostr,strlen:$rt.strlen,strcpy:$rt.strcpy,strncpy:$rt.strncpy,strcat:$rt.strcat,strncat:$rt.strncat,strcmp:$rt.strcmp,strncmp:$rt.strncmp,atoi:$rt.atoi,atol:$rt.atol,atof:$rt.atof,sprintf:$rt.sprintf,snprintf:$rt.snprintf,fgets:$rt.fgets,gets:$rt.gets};', 'let $t;let $y=0;'];
       for (const it of this.items) if (it.k === 'decl') out.push(this.declCode(it, true));
       const fcs = [];
       for (const it of this.items) if (it.k === 'func') fcs.push(this.funcCode(it));
@@ -637,7 +648,7 @@
       if (!node || typeof node !== 'object') return;
       if (Array.isArray(node)) { for (const n of node) this.scan(n, f); return; }
       if (node.k === 'call') {
-        if (node.name === 'scanf' || node.name === 'getchar' || node.name === 'getch' || node.name === 'getche') f.async = true;
+        if (node.name === 'scanf' || node.name === 'getchar' || node.name === 'getch' || node.name === 'getche' || node.name === 'fgets' || node.name === 'gets') f.async = true;
         f.calls.add(node.name);
       }
       for (const key in node) if (key !== 'line' && typeof node[key] === 'object') this.scan(node[key], f);
@@ -654,6 +665,7 @@
       if (info.ret !== 'void' && f.name !== 'main' && !this.alwaysReturns(f.body)) this.warn("la función '" + f.name + "' puede terminar sin ejecutar 'return' en algún caso: en C devuelve un valor basura. Agregá un return al final", f.body.end || f.line);
       this.cur = null;
       const tail = f.name === 'main' ? '\nreturn 0;' : '';
+      if (f.name === 'main') ps.forEach((q, i) => { ps[i] = i === 0 ? q + '=1' : i === 1 ? q + '=[$.cstr("./a.out")]' : q; });
       let temps = ''; for (let i = 1; i <= this.ntemp; i++) temps += 'let $a' + i + ',$i' + i + ';';
       return (info.async ? 'async ' : '') + 'function f_' + f.name + '(' + ps.join(',') + '){let $t;' + temps + this.fnHoist.join('') + '\n' + body + tail + '\n}';
     }
@@ -862,12 +874,33 @@
       const hoist = d.static && !global && !inFor;
       for (const v of d.vars) {
         const js = hoist ? 'v_' + v.name + '$s' + (++this.sid) : ((!global && this.lookup(v.name)) ? 'v_' + v.name + '$o' + (++this.sid) : 'v_' + v.name);
+        if (v.ptr && !v.dims.length) {
+          const alias = v.init && v.init.k === 'id' ? this.lookup(v.init.name) : null;
+          let cod = null;
+          if (v.init && v.init.k === 'str') cod = '$.cstr(' + JSON.stringify(v.init.v) + ')';
+          else if (alias && alias.array && alias.type === 'char' && alias.ndims === 1) cod = alias.js;
+          if (cod === null) { this.err('los punteros todavía no están soportados: char * solo se puede usar con un texto entre comillas (char *nombre = "texto";) o con un arreglo de char', v.line); this.declare(v.name, { type: 'char', js, array: true, ndims: 1, assigned: true }, v.line); parts.push('let ' + js + '=[0];'); continue; }
+          this.declare(v.name, { type: 'char', js, array: true, ndims: 1, assigned: true, ptrStr: true }, v.line);
+          parts.push('let ' + js + '=' + cod + ';');
+          continue;
+        }
+        if (v.ptr && v.dims.length === 1) {
+          const it = v.init && v.init.k === 'list' ? v.init.items : null;
+          if (!it || !it.every((x) => x.k === 'str')) { this.err('un arreglo de char * se inicializa con textos entre comillas: char *nombres[] = {"ana", "luis"};', v.line); this.declare(v.name, { type: 'char', js, array: true, ndims: 2, assigned: true, rowsVar: true }, v.line); parts.push('let ' + js + '=[[0]];'); continue; }
+          let n0 = it.length;
+          if (v.dims[0]) { const r0 = this.expr(v.dims[0]); try { n0 = Function('return ' + this.val(r0))(); } catch (x) { n0 = it.length; } }
+          const filas = it.map((x) => '$.cstr(' + JSON.stringify(x.v) + ')'); for (let q = it.length; q < n0; q++) filas.push('[0]');
+          this.declare(v.name, { type: 'char', js, array: true, ndims: 2, assigned: true, rowsVar: true, ptrStr: true }, v.line);
+          parts.push('let ' + js + '=[' + filas.join(',') + '];');
+          continue;
+        }
         if (v.dims.length) {
           const dimsCode = [];
           let ok = true;
           if (v.init && v.init.k === 'list' && v.dims[0] === null) {
             dimsCode.push(String(v.init.items.length));
           }
+          if (v.init && v.init.k === 'str' && v.dims.length === 1 && v.dims[0] === null && (d.type === 'char' || d.type === 'uchar')) dimsCode.push(String(new TextEncoder().encode(v.init.v).length + 1));
           for (let i = 0; i < v.dims.length; i++) {
             if (v.dims[i] === null) { if (!(i === 0 && dimsCode.length)) { this.err('al arreglo le falta el tamaño', v.line); ok = false; } continue; }
             const r = this.expr(v.dims[i]);
@@ -879,8 +912,9 @@
           if (!ok) { parts.push('let ' + js + '=[];'); continue; }
           let init;
           if (v.init) {
-            if (v.init.k !== 'list') { this.err('un arreglo se inicializa con llaves { ... }', v.line); init = '$.mk([1],0)'; }
-            else init = '$.init(' + this.listCode(v.init, d.type, v.dims.length) + ',[' + dimsCode.join(',') + '],' + (BIG.has(d.type) ? '0n' : '0') + ',' + v.line + ')';
+            if (v.init.k === 'str' && v.dims.length === 1 && (d.type === 'char' || d.type === 'uchar')) init = '$.cstr(' + JSON.stringify(v.init.v) + ',' + dimsCode[0] + ')';
+            else if (v.init.k !== 'list') { this.err('un arreglo se inicializa con llaves { ... }', v.line); init = '$.mk([1],0)'; }
+            else init = '$.init(' + this.listCode(v.init, d.type, v.dims.length, dimsCode[dimsCode.length - 1]) + ',[' + dimsCode.join(',') + '],' + (BIG.has(d.type) ? '0n' : '0') + ',' + v.line + ')';
           } else init = '$.mk([' + dimsCode.join(',') + '],' + (BIG.has(d.type) ? '0n' : '0') + ',' + v.line + ')';
           parts.push('let ' + js + '=' + init + ';');
           continue;
@@ -905,9 +939,10 @@
       if (hoist) { this.hoisted.push(parts.join('\n')); return ''; }
       return parts.join('\n');
     }
-    listCode(l, type, depth) {
+    listCode(l, type, depth, rowLen) {
       return '[' + l.items.map((it) => {
-        if (it.k === 'list') return this.listCode(it, type, depth - 1);
+        if (it.k === 'str' && (type === 'char' || type === 'uchar') && rowLen !== undefined) return '$.cstr(' + JSON.stringify(it.v) + ',' + rowLen + ')';
+        if (it.k === 'list') return this.listCode(it, type, depth - 1, rowLen);
         const r = this.expr(it); return this.conv(r, type);
       }).join(',') + ']';
     }
@@ -998,7 +1033,7 @@
         case 'sizeof': {
           const sz = { int: 4, uint: 4, long: 8, char: 1, uchar: 1, bool: 1, short: 2, ushort: 2, ulong: 8, float: 4, double: 8, void: 1 };
           if (n.type) return { c: String(sz[n.type]), t: 'int' };
-          if (n.e.k === 'id') { const info = this.lookup(n.e.name); if (info && info.scalar) return { c: String(sz[info.type]), t: 'int' }; if (info && info.array) { if (info.param) return { c: '8', t: 'int' }; let mul = info.js + '.length'; if (info.ndims === 2) mul += '*' + info.js + '[0].length'; return { c: '(' + mul + '*' + sz[info.type] + ')', t: 'uint' }; } }
+          if (n.e.k === 'id') { const info = this.lookup(n.e.name); if (info && info.scalar) return { c: String(sz[info.type]), t: 'int' }; if (info && info.array) { if (info.param || info.ptrStr) return { c: '8', t: 'int' }; let mul = info.js + '.length'; if (info.ndims === 2) mul += '*' + info.js + '[0].length'; return { c: '(' + mul + '*' + sz[info.type] + ')', t: 'uint' }; } }
           if (n.e.k === 'idx') { let b = n.e, k = 0; while (b.k === 'idx') { k++; b = b.base; } const info = b.k === 'id' ? this.lookup(b.name) : null; if (info && info.array && k <= info.ndims) { if (k === info.ndims) return { c: String(sz[info.type]), t: 'uint' }; return { c: '(' + info.js + '[0].length*' + sz[info.type] + ')', t: 'uint' }; } }
           this.err('sizeof solo se soporta con un tipo (sizeof(int)) o una variable simple', n.line);
           return { c: '0', t: 'int' };
@@ -1033,6 +1068,25 @@
       }
       return { pre: pre.length ? pre.join(',') + ',' : '', codes: out };
     }
+    // arreglo de char (o fila de un arreglo de textos) usado como texto: devuelve el código JS del arreglo
+    charArr(a) {
+      if (!a) return null;
+      if (a.k === 'id') { const inf = this.lookup(a.name); return inf && inf.array && (inf.type === 'char' || inf.type === 'uchar') && inf.ndims === 1 ? { c: inf.js } : null; }
+      if (a.k !== 'idx') return null;
+      const idxs = []; let b = a;
+      while (b.k === 'idx') { idxs.unshift(b.i); b = b.base; }
+      if (b.k !== 'id') return null;
+      const inf = this.lookup(b.name);
+      if (!inf || !inf.array || (inf.type !== 'char' && inf.type !== 'uchar') || idxs.length !== inf.ndims - 1) return null;
+      let code = inf.js, lenBase = inf.js;
+      idxs.forEach((ix, k) => {
+        const r = this.expr(ix);
+        if (!INTLIKE.has(r.t)) this.err('el índice de un arreglo debe ser un entero', ix.line || a.line);
+        code += '[$.ix(' + this.val(r) + ',' + (inf.rowsVar && k > 0 ? code : lenBase) + '.length,' + a.line + ')]';
+        lenBase += '[0]';
+      });
+      return { c: code };
+    }
     hasSideEffect(n) { let r = false; this.walk(n, (x) => { if (x.k === 'call' || x.k === 'assign' || x.k === 'incdec') r = true; }); return r; }
     lvalue(n, forWrite, useTemps) {
       if (n.k === 'id') {
@@ -1064,7 +1118,7 @@
         idxs.forEach((ix, k) => {
           const r = this.expr(ix);
           if (!INTLIKE.has(r.t)) this.err('el índice de un arreglo debe ser un entero', ix.line || n.line);
-          code += '[$.ix(' + this.val(r) + ',' + lenBase + '.length,' + n.line + ')]';
+          code += '[$.ix(' + this.val(r) + ',' + (info.rowsVar && k > 0 ? code : lenBase) + '.length,' + n.line + ')]';
           lenBase += '[0]';
         });
         return { c: code, t: info.type, info, arrayElem: true };
@@ -1148,6 +1202,7 @@
       throw new Error('bin ' + op);
     }
     assignOp(n) {
+      if (n.op === '=' && n.l.k === 'id') { const inf = this.lookup(n.l.name); if (inf && inf.array) { this.err(inf.type === 'char' ? "a un arreglo de char no se le asigna un texto con '=': para copiar usá strcpy(" + n.l.name + ', "texto");' : "a un arreglo no se le asigna con '=': hay que asignar posición por posición, " + n.l.name + '[i] = valor;', n.line); this.expr(n.r); return { c: '0', t: 'int' }; } }
       const lv = this.lvalue(n.l, true, true);
       this.checkConst(lv, this.rootName(n.l), n.line);
       let valueCode;
@@ -1183,7 +1238,7 @@
 
     /* ----- llamadas ----- */
     needInclude(name, line) {
-      const H = { 'stdio.h': ['printf', 'scanf', 'getchar', 'putchar', 'puts', 'fprintf', 'fputs', 'putc', 'fputc'], 'math.h': ['sqrt', 'pow', 'fabs', 'floor', 'ceil', 'round', 'trunc', 'sin', 'cos', 'tan', 'asin', 'acos', 'atan', 'atan2', 'exp', 'log', 'log10', 'log2', 'cbrt', 'sinh', 'cosh', 'tanh', 'asinh', 'acosh', 'atanh', 'exp2', 'expm1', 'log1p', 'isnan', 'isinf', 'isfinite', 'signbit', 'rint', 'nearbyint', 'lround', 'llround', 'copysign', 'fdim', 'fmod', 'fmax', 'fmin', 'hypot'], 'stdlib.h': ['rand', 'srand', 'abs', 'labs', 'exit', 'system'], 'ctype.h': ['isdigit', 'isalpha', 'isalnum', 'isspace', 'isupper', 'islower', 'ispunct', 'isprint', 'isgraph', 'iscntrl', 'isxdigit', 'isblank', 'toupper', 'tolower'], 'time.h': ['time', 'clock'], 'conio.h': ['getch', 'getche'] };
+      const H = { 'stdio.h': ['printf', 'scanf', 'getchar', 'putchar', 'puts', 'fprintf', 'fputs', 'putc', 'fputc', 'sprintf', 'snprintf', 'fgets', 'gets'], 'string.h': ['strlen', 'strcpy', 'strncpy', 'strcat', 'strncat', 'strcmp', 'strncmp'], 'math.h': ['sqrt', 'pow', 'fabs', 'floor', 'ceil', 'round', 'trunc', 'sin', 'cos', 'tan', 'asin', 'acos', 'atan', 'atan2', 'exp', 'log', 'log10', 'log2', 'cbrt', 'sinh', 'cosh', 'tanh', 'asinh', 'acosh', 'atanh', 'exp2', 'expm1', 'log1p', 'isnan', 'isinf', 'isfinite', 'signbit', 'rint', 'nearbyint', 'lround', 'llround', 'copysign', 'fdim', 'fmod', 'fmax', 'fmin', 'hypot'], 'stdlib.h': ['rand', 'srand', 'abs', 'labs', 'exit', 'system', 'atoi', 'atol', 'atof'], 'ctype.h': ['isdigit', 'isalpha', 'isalnum', 'isspace', 'isupper', 'islower', 'ispunct', 'isprint', 'isgraph', 'iscntrl', 'isxdigit', 'isblank', 'toupper', 'tolower'], 'time.h': ['time', 'clock'], 'conio.h': ['getch', 'getche'] };
       for (const h in H) if (H[h].indexOf(name) >= 0 && !this.incl.has(h)) {
         const k = 'inc|' + h; if (this.undeclared.has(k)) return; this.undeclared.add(k);
         this.warn('usás ' + name + ' pero falta #include <' + h + '> al principio del programa', line);
@@ -1208,7 +1263,7 @@
         const dest = name === 'fprintf' || name === 'fputs' ? (name === 'fprintf' ? args[0] : args[1]) : args[1];
         if (!dest || dest.k !== 'id' || (dest.name !== 'stdout' && dest.name !== 'stderr')) { this.err('los archivos todavía no están soportados: solo se puede escribir en stdout o stderr (la pantalla)', n.line); return { c: '0', t: 'int' }; }
         if (name === 'fprintf') return this.printfCall({ k: 'call', name: 'printf', args: args.slice(1), line: n.line });
-        if (name === 'fputs') { const r = this.expr(args[0]); if (r.t !== 'str') { this.err('fputs solo se soporta con un texto entre comillas', n.line); return { c: '0', t: 'int' }; } return { c: '$.printf("%s",[' + (r.dyn ? r.c : JSON.stringify(args[0].v)) + '],' + n.line + ')', t: 'int' }; }
+        if (name === 'fputs') { const caf = args[0] ? this.charArr(args[0]) : null; if (caf) return { c: '$.printf("%s",[$.tostr(' + caf.c + ')],' + n.line + ')', t: 'int' }; const r = this.expr(args[0]); if (r.t !== 'str') { this.err('fputs solo se soporta con un texto entre comillas', n.line); return { c: '0', t: 'int' }; } return { c: '$.printf("%s",[' + (r.dyn ? r.c : JSON.stringify(args[0].v)) + '],' + n.line + ')', t: 'int' }; }
         const r = this.expr(args[0]); return { c: '$.putchar(' + this.conv(r, 'int') + ')', t: 'int' };
       }
       if (name === 'rint' || name === 'nearbyint') { const r = this.expr(args[0]); return { c: '$.rint(' + this.conv(r, 'double') + ')', t: 'double' }; }
@@ -1242,9 +1297,42 @@
       if (name === 'getchar' || name === 'getch' || name === 'getche') { return { c: '(await $.getchar())', t: 'int' }; }
       if (name === 'putchar' && !args[0]) { this.err('putchar necesita un carácter entre paréntesis, por ejemplo putchar(65)', n.line); return { c: '0', t: 'int' }; }
       if (name === 'putchar') { const r = this.expr(args[0]); return { c: '$.putchar(' + this.conv(r, 'int') + ')', t: 'int' }; }
+      const TEXTO = { strlen: 1, strcpy: 2, strncpy: 3, strcat: 2, strncat: 3, strcmp: 2, strncmp: 3, atoi: 1, atol: 1, atof: 1 };
+      if (own(TEXTO, name)) {
+        if (args.length !== TEXTO[name]) { this.err("'" + name + "' recibe " + TEXTO[name] + ' argumento(s)', n.line); return { c: '0', t: 'int' }; }
+        const SA = (a) => { if (a.k === 'str') return JSON.stringify(a.v); const ca = this.charArr(a); if (ca) return ca.c; this.err("el argumento de '" + name + "' tiene que ser un texto: un arreglo de char o un texto entre comillas", n.line); return '""'; };
+        const DA = (a) => { const ca = this.charArr(a); if (ca) return ca.c; this.err("el primer argumento de '" + name + "' tiene que ser un arreglo de char, por ejemplo char texto[50];", n.line); return '[]'; };
+        const num3 = args[2] ? this.val(this.expr(args[2])) : '0';
+        switch (name) {
+          case 'strlen': return { c: '$.strlen(' + SA(args[0]) + ')', t: 'ulong' };
+          case 'strcpy': case 'strcat': return { c: '$.' + name + '(' + DA(args[0]) + ',' + SA(args[1]) + ',' + n.line + ')', t: 'void' };
+          case 'strncpy': case 'strncat': return { c: '$.' + name + '(' + DA(args[0]) + ',' + SA(args[1]) + ',' + num3 + ',' + n.line + ')', t: 'void' };
+          case 'strcmp': return { c: '$.strcmp(' + SA(args[0]) + ',' + SA(args[1]) + ')', t: 'int' };
+          case 'strncmp': return { c: '$.strncmp(' + SA(args[0]) + ',' + SA(args[1]) + ',' + num3 + ')', t: 'int' };
+          case 'atoi': return { c: '$.atoi(' + SA(args[0]) + ')', t: 'int' };
+          case 'atol': return { c: '$.atol(' + SA(args[0]) + ')', t: 'long' };
+          default: return { c: '$.atof(' + SA(args[0]) + ')', t: 'double' };
+        }
+      }
+      if (name === 'sprintf' || name === 'snprintf') {
+        const ds = this.charArr(args[0]);
+        if (!ds) { this.err("el primer argumento de '" + name + "' tiene que ser un arreglo de char", n.line); return { c: '0', t: 'int' }; }
+        if (name === 'snprintf') { const sz = this.val(this.expr(args[1])); return this.printfCall({ k: 'call', name: 'printf', args: args.slice(2), line: n.line, prefix: '$.snprintf(' + ds.c + ',' + sz + ',' }); }
+        return this.printfCall({ k: 'call', name: 'printf', args: args.slice(1), line: n.line, prefix: '$.sprintf(' + ds.c + ',' });
+      }
+      if (name === 'gets' || name === 'fgets') {
+        const ds = this.charArr(args[0]);
+        if (!ds) { this.err("el primer argumento de '" + name + "' tiene que ser un arreglo de char", n.line); return { c: '0', t: 'int' }; }
+        if (name === 'gets') return { c: '(await $.gets(' + ds.c + ',' + n.line + '))', t: 'int' };
+        const sz = args[1] ? this.val(this.expr(args[1])) : '0';
+        return { c: '(await $.fgets(' + ds.c + ',' + sz + ',' + n.line + '))', t: 'int' };
+      }
+      if (['strchr', 'strrchr', 'strstr', 'strtok', 'strdup', 'memcpy', 'memset', 'memmove', 'strpbrk', 'strspn', 'strcspn'].indexOf(name) >= 0) { this.err("'" + name + "' todavía no está soportada en este editor (trabaja con punteros)", n.line); return { c: '0', t: 'int' }; }
       if (name === 'puts') {
+        const ca = args[0] ? this.charArr(args[0]) : null;
+        if (ca) return { c: '$.puts(' + ca.c + ')', t: 'int' };
         const pr = args[0] ? this.expr(args[0]) : null;
-        if (!pr || pr.t !== 'str') { this.err('puts solo se soporta con un texto entre comillas', n.line); return { c: '0', t: 'int' }; }
+        if (!pr || pr.t !== 'str') { this.err('puts necesita un texto entre comillas o un arreglo de char', n.line); return { c: '0', t: 'int' }; }
         return { c: '$.puts(' + (pr.dyn ? pr.c : JSON.stringify(args[0].v)) + ')', t: 'int' };
       }
       if (name === 'system' || name === 'fflush' || name === 'setbuf' || name === 'setvbuf') { args.forEach((a) => { if (a.k !== 'str') this.expr(a); }); return { c: '0', t: 'int' }; }
@@ -1265,6 +1353,11 @@
       }
       const a = args.map((x, i) => {
         const p = f.params[i];
+        if (p.array && (p.type === 'char' || p.type === 'uchar') && p.dims === 1) {
+          if (x.k === 'str') return '$.cstr(' + JSON.stringify(x.v) + ')';
+          const cx = this.charArr(x);
+          if (cx) return cx.c;
+        }
         if (p.array) {
           const inf = x.k === 'id' ? this.lookup(x.name) : null;
           if (!inf || !inf.array) { this.err("el argumento " + (i + 1) + " de '" + name + "' tiene que ser un arreglo (la función lo pide con [ ])", n.line); return '[]'; }
@@ -1281,7 +1374,7 @@
 
     parseFmt(fmt) {
       const specs = [];
-      const re = /%([-+ #0]*)(\*|\d+)?(?:\.(\*|\d*))?(hh|h|ll|l|L|z|j|t)?([diouxXfFeEgGcsp%])/g;
+      const re = /%([-+ #0]*)(\*|\d+)?(?:\.(\*|\d*))?(hh|h|ll|l|L|z|j|t)?([diouxXfFeEgGcsp%]|\[\^?\]?[^\]]*\])/g;
       let m;
       while ((m = re.exec(fmt))) if (m[5] !== '%') specs.push({ w: m[2], p: m[3], len: m[4] || '', conv: m[5] });
       return specs;
@@ -1307,6 +1400,8 @@
       const slots = [];
       for (const sp of specs) { if (sp.w === '*') slots.push({ conv: 'w' }); if (sp.p === '*') slots.push({ conv: 'w' }); slots.push(sp); }
       rest.forEach((a, k) => {
+        const cat = this.charArr(a);
+        if (cat) { vals.push('$.tostr(' + cat.c + ')'); return; }
         const r = this.expr(a);
         if (r.t === 'void') { this.err('esa función no devuelve ningún valor', n.line); vals.push('0'); return; }
         const target = slots[k] || null;
@@ -1315,7 +1410,7 @@
           const isInt = INTLIKE.has(t), isFl = FLOATLIKE.has(t);
           if ('diuxXoc'.indexOf(c) >= 0 && isFl) this.warn("printf: '%" + target.len + c + "' espera un entero, pero " + d + ' es ' + t + ": usá '%f' (o '%.2f' para 2 decimales)", n.line);
           else if ('fFeEgG'.indexOf(c) >= 0 && (isInt || t === 'str')) this.warn("printf: '%" + c + "' espera un número decimal, pero " + d + ' es ' + (t === 'str' ? 'un texto' : t === 'char' ? 'char' : 'entero (' + t + ')') + ": usá '%d'", n.line);
-          else if (c === 's' && t !== 'str') this.warn("printf: '%s' es para textos y " + d + ' es ' + t + ': los textos (char arrays) todavía no están soportados', n.line);
+          else if (c === 's' && t !== 'str') this.warn("printf: '%s' es para textos (un arreglo de char) y " + d + ' es un número (' + t + "): usá '%d' o '%f'", n.line);
           else if (c === 'c' && isFl) this.warn("printf: '%c' espera un carácter, pero " + d + ' es ' + t, n.line);
           else if ((c === 'd' || c === 'i') && t === 'long' && target.len !== 'l' && target.len !== 'll') this.warn("printf: para un long usá '%ld'", n.line);
           else if (c === 'd' && t === 'str') this.warn("printf: '%d' espera un entero pero recibe un texto", n.line);
@@ -1324,7 +1419,7 @@
         vals.push(r.t === 'str' ? (r.dyn ? r.c : JSON.stringify(a.v)) : this.val(r));
       });
       const hp = this.hoistArgs(rest, vals);
-      const pc = '$.printf(' + JSON.stringify(fmt) + ',[' + hp.codes.join(',') + '],' + n.line + ')';
+      const pc = (n.prefix || '$.printf(') + JSON.stringify(fmt) + ',[' + hp.codes.join(',') + '],' + n.line + ')';
       return { c: hp.pre ? '(' + hp.pre + pc + ')' : pc, t: 'int' };
     }
     scanfCall(n) {
@@ -1334,13 +1429,17 @@
       const specs = this.parseFmt(fmt).filter((s) => !/\*/.test(s.w || ''));
       const refs = [], types = [], pres = [];
       const rest = args.slice(1);
-      const sobra = fmt.replace(/%[-+ #0]*(\*|\d+)?(\.\d+)?(hh|h|ll|l|L|z|j|t)?[diouxXfFeEgGcsp%]/g, '');
+      const sobra = fmt.replace(/%[-+ #0]*(\*|\d+)?(\.\d+)?(hh|h|ll|l|L|z|j|t)?([diouxXfFeEgGcsp%]|\[\^?\]?[^\]]*\])/g, '');
       if (/[A-Za-z]/.test(sobra)) this.warn('el texto del scanf tiene letras que no son de lectura (' + JSON.stringify(sobra.trim()).slice(1, -1) + '): scanf solo lleva los % del dato; el mensaje para el usuario va en un printf aparte', n.line);
       else if (/\n\s*$/.test(fmt)) this.warn("no pongas '\\n' al final del scanf: hace que el programa espere un Enter de más", n.line);
       if (rest.length < specs.length) this.err('scanf pide leer ' + specs.length + ' valor(es) (hay ' + specs.length + " '%') pero solo tiene " + rest.length + " variable(s): falta una variable con '&' (por ejemplo scanf(\"%d %d\", &a, &b);)", n.line);
       else if (rest.length !== specs.length) this.warn('scanf lee ' + specs.length + ' valor(es) por los % del texto, pero recibe ' + rest.length + ' variable(s)', n.line);
       rest.forEach((a, k) => {
-        if (specs[k] && specs[k].conv === 's') { this.err('los textos (%s / char arrays) todavía no están soportados en este editor', n.line); return; }
+        if (specs[k] && (specs[k].conv === 's' || specs[k].conv[0] === '[')) {
+          const ca = this.charArr(a.k === 'addr' ? a.e : a);
+          if (!ca) { this.err("a '%" + (specs[k].conv === 's' ? 's' : specs[k].conv) + "' le corresponde un arreglo de char (por ejemplo char nombre[30]; scanf(\"%s\", nombre);)", n.line); return; }
+          refs.push('[()=>' + ca.c + ']'); types.push('"str"'); return;
+        }
         if (a.k !== 'addr') {
           if (a.k === 'id' && this.lookup(a.name) && this.lookup(a.name).scalar) this.err("a scanf le falta el '&' delante de '" + a.name + "' (scanf necesita &" + a.name + ')', n.line);
           else this.err("scanf necesita '&' delante de cada variable", n.line);
@@ -1364,7 +1463,6 @@
             else if (sp.len === 'l' && t === 'float') this.warn("scanf: '%l" + c + "' es para double pero " + nm + " es float: usá '%f'", n.line);
             else if (INTLIKE.has(t)) this.warn("scanf: '%" + c + "' lee un decimal pero " + nm + ' es ' + t + ": usá '%d'", n.line);
           } else if (c === 'c' && !(t === 'char' || t === 'int')) this.warn("scanf: '%c' no corresponde al tipo " + t + ' de ' + nm, n.line);
-          else if (c === 's') this.err('los textos (%s / char arrays) todavía no están soportados en este editor', n.line);
         }
         refs.push('[()=>' + lv.c + ',(v)=>{' + lv.c + '=v}]');
         types.push(JSON.stringify(lv.t));

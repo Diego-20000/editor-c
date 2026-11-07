@@ -29,7 +29,9 @@ Tipos `int`, `float`, `double`, `char`, `short`, `long` y `long long` (64 bits e
 
 Avisos y errores en español con el número de línea, entre ellos: variable sin valor, `=` dentro de un `if`, `scanf` sin `&` o con menos variables, división entera guardada en `float`, `#include` faltante, función sin `return`, `switch` sin `break`, bucles que no terminan, `const` modificado y nombres mal escritos (con sugerencia).
 
-**Todavía no:** punteros, textos (`char[]` con `%s`), `struct` y archivos.
+**Textos:** `char[]`, `%s`, `fgets`, `sprintf` y las funciones básicas de `string.h`.
+
+**Todavía no:** punteros en general, `struct` y archivos.
 
 ## Importante
 
