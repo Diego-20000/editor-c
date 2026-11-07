@@ -249,6 +249,88 @@ dialog.wide { width: min(760px, calc(100vw - 32px)); }
 .shotbox { max-height: 55dvh; overflow: auto; border: 1px solid var(--line); border-radius: 10px; background: #fff; }
 .shotbox img { display: block; width: 100%; height: auto; }
 #impList li { margin-bottom: 2px; }
+
+/* ---------- ayuda por niveles en el panel de problemas ---------- */
+.diag .it { flex-wrap: wrap; }
+.diag .it.stale { opacity: .55; }
+.diag .it.stale .help { display: none; }
+.diag .orig { font: 12px var(--mono); color: var(--muted); }
+.help { flex: 1 0 100%; display: grid; gap: 6px; padding: 0 10px 8px; font-size: 13px; line-height: 1.45; }
+.help p { margin: 0; color: var(--text); font-size: 13px; }
+.help .hexp { color: var(--muted); }
+.help .pistas { margin: 0; padding-left: 20px; display: grid; gap: 2px; }
+.help .pistas li { margin: 0; }
+.help .pistas .sol { font-family: var(--mono); }
+.help .hact { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.help .conf { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; padding: 6px 8px; border: 1px dashed var(--line); border-radius: 8px; }
+.help .sinexp { color: var(--muted); }
+.btn.link { background: transparent; border-color: transparent; color: var(--accent); text-decoration: underline; padding: 0 8px; }
+.btn.link:hover:not(:disabled) { border-color: transparent; }
+
+/* ---------- panel de ayuda ---------- */
+dialog.ayuda { width: min(720px, calc(100vw - 32px)); padding: 16px 18px 18px; }
+.ahead { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+.ahead h2 { margin: 0; }
+#aForm { margin: 0; }
+#aQ { width: 100%; height: 42px; padding: 0 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--text); font: 16px var(--ui); }
+#aQ:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.alive { margin: 4px 0 6px; min-height: 1.2em; }
+.sugs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.sugs .btn { font-weight: 500; }
+.alist { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; max-height: 52dvh; overflow: auto; }
+.alist button { width: 100%; display: grid; gap: 2px; text-align: left; padding: 8px 10px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel2); color: var(--text); font: 14px var(--ui); cursor: pointer; }
+.alist button:hover { border-color: var(--muted); }
+.alist button:focus-visible, .adet button:focus-visible, .clist label:focus-within, .bubble button:focus-visible, #cPrev:focus-visible, #cWa:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.alist b { font-weight: 700; }
+.alist .sub { color: var(--muted); font-size: 13px; }
+.tipo { display: inline-block; font: 700 11px var(--mono); padding: 1px 6px; border-radius: 5px; margin-right: 6px; background: var(--panel); border: 1px solid var(--line); color: var(--muted); vertical-align: 1px; }
+.tipo.error { color: var(--danger); } .tipo.ayuda { color: var(--input); } .tipo.leccion { color: var(--accent); }
+.adet { max-height: 62dvh; overflow: auto; display: grid; gap: 8px; align-content: start; }
+.adet h3 { margin: 10px 0 2px; font-size: 14px; }
+.adet h2.dt { font-size: 18px; margin: 4px 0 0; }
+.adet h2.dt:focus { outline: none; }
+.adet p, .adet li { color: var(--text); font-size: 14px; line-height: 1.5; margin: 0; }
+.adet ul { margin: 0; }
+.adet .muted { color: var(--muted); }
+.adet pre.ej { margin: 0; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); font: 13px/1.45 var(--mono); overflow: auto; white-space: pre; color: var(--text); }
+.adet .lbl { font: 700 11px var(--ui); letter-spacing: .04em; text-transform: uppercase; color: var(--muted); margin-top: 4px; }
+.adet .row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.adet .rel { display: flex; flex-wrap: wrap; gap: 6px; }
+
+/* ---------- casos para enviar ---------- */
+.clist { list-style: none; padding: 0; margin: 0 0 10px; display: grid; gap: 6px; max-height: 26dvh; overflow: auto; }
+.clist li { display: flex; align-items: center; gap: 6px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel2); padding-right: 6px; }
+.clist label { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; padding: 8px 10px; cursor: pointer; border-radius: 10px; font-size: 14px; }
+.clist label input { width: 20px; height: 20px; flex: none; accent-color: var(--accent); }
+.clist .cm { display: grid; gap: 1px; min-width: 0; }
+.clist .cm b { font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.clist .cm small { color: var(--muted); font-size: 12px; }
+pre.prev { margin: 0 0 6px; max-height: 24dvh; overflow: auto; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); font: 12px/1.45 var(--mono); white-space: pre-wrap; overflow-wrap: anywhere; user-select: all; -webkit-user-select: all; color: var(--text); }
+#cAcc .drow { margin-top: 8px; }
+a.btn { text-decoration: none; }
+#cWa[aria-disabled="true"] { opacity: .5; pointer-events: none; }
+
+/* ---------- ¿Qué es esto? sobre el código ---------- */
+.whatlay { position: absolute; inset: 0; z-index: 3; cursor: help; touch-action: none; background: color-mix(in srgb, var(--accent) 5%, transparent); outline: 2px dashed color-mix(in srgb, var(--accent) 55%, transparent); outline-offset: -2px; }
+.bubble { position: fixed; z-index: 30; width: min(380px, calc(100vw - 16px)); max-height: min(60dvh, 420px); overflow: auto; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--accent); background: var(--panel); color: var(--text); box-shadow: 0 14px 34px rgba(0, 0, 0, .4); font-size: 13px; line-height: 1.45; display: grid; gap: 6px; }
+.bubble h4 { margin: 0; font-size: 15px; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.bubble h4 code { font: 700 15px var(--mono); }
+.bubble p { margin: 0; font-size: 13px; color: var(--text); }
+.bubble pre { margin: 0; padding: 8px 10px; border-radius: 8px; background: var(--bg); border: 1px solid var(--line); font: 12px/1.4 var(--mono); white-space: pre-wrap; }
+.bubble .row { display: flex; flex-wrap: wrap; gap: 6px; }
+.bubble .muted { color: var(--muted); }
+#whatBtn { font-weight: 800; }
+@media (max-width: 699px), (pointer: coarse) {
+  .bubble { left: 8px !important; right: 8px; top: auto !important; bottom: max(8px, env(safe-area-inset-bottom)); width: auto; max-height: 55dvh; }
+}
+
+/* ---------- modo práctica, ajustes ---------- */
+.practica { padding: 6px 16px; background: color-mix(in srgb, var(--warn) 22%, var(--panel)); color: var(--text); border-bottom: 1px solid var(--line); font: 600 13px var(--ui); text-align: center; }
+.wsel { width: 100%; max-width: none; }
+dialog fieldset .fine { margin: 0; }
+@media (max-width: 560px) { #ayudaBtn span { display: none; } #ayudaBtn { padding: 0; min-width: 44px; justify-content: center; } }
+@media (pointer: coarse) { .alist button { min-height: 44px; } #aQ { height: 48px; } .clist label input { width: 24px; height: 24px; } .clist label { min-height: 44px; } }
+.adet > .btn, .adet > .row { justify-self: start; }
 </style>
 </head>
 <body>
@@ -257,6 +339,7 @@ dialog.wide { width: min(760px, calc(100vw - 32px)); }
   <div class="actions">
     <button id="run" class="btn primary" title="Ejecutar (Ctrl+Enter o F5)"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M7 4.5v15l12-7.5z" fill="currentColor"/></svg><span>Ejecutar</span></button>
     <button id="stop" class="btn danger" title="Detener la ejecución" aria-label="Detener" disabled><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="1.5" fill="currentColor"/></svg><span>Detener</span></button>
+    <button id="ayudaBtn" class="btn" title="Ayuda: buscá una duda de C o de un error" aria-label="Ayuda" aria-haspopup="dialog"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9.6 9.4a2.5 2.5 0 1 1 3.5 2.3c-.8.4-1.1.9-1.1 1.8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="16.8" r="1.2" fill="currentColor"/></svg><span>Ayuda</span></button>
     <details class="more" id="more"><summary class="btn" aria-label="Más opciones"><span>Más</span><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></summary>
     <div class="menu">
       <button id="progs" class="btn" title="Mis programas guardados en este dispositivo"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><span>Programas</span></button>
@@ -267,6 +350,7 @@ dialog.wide { width: min(760px, calc(100vw - 32px)); }
     </div></details>
   </div>
 </header>
+<div class="practica" id="practica" role="status" hidden>Modo práctica: en este enlace no se puede pegar. Escribí el código vos.</div>
 <div class="tabs" id="tabs" role="tablist" aria-label="Vista">
   <button type="button" id="tabEd" class="tab" role="tab" aria-selected="true" aria-controls="paneEd">Editor</button>
   <button type="button" id="tabCo" class="tab" role="tab" aria-selected="false" aria-controls="paneCo" tabindex="-1">Consola<i id="tabDot" class="dot" hidden></i></button>
@@ -277,6 +361,7 @@ dialog.wide { width: min(760px, calc(100vw - 32px)); }
       <button id="pname" class="pname" title="Cambiar de programa o ponerle nombre" aria-label="Programa actual: Programa 1. Abrir lista de programas"><span id="pnameTxt">Programa 1</span><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
       <span class="hint" id="pos" aria-hidden="true">Lín 1, Col 1</span>
       <button id="findBtn" class="btn mini ico" title="Buscar y reemplazar (Ctrl+F)" aria-label="Buscar y reemplazar"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M15 15l5 5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button>
+      <button id="whatBtn" class="btn mini ico" aria-pressed="false" title="¿Qué es esto? Tocá una palabra, un operador o un %d del código para ver qué significa (en escritorio también Alt+clic)" aria-label="¿Qué es esto? Explicar una palabra del código">?</button>
     </div>
     <div class="find" id="find" hidden>
       <div class="frow"><input id="fq" type="text" placeholder="Buscar" aria-label="Buscar" autocomplete="off" spellcheck="false" autocapitalize="off"><span id="fcount" class="fcount" aria-live="polite"></span>
@@ -291,6 +376,7 @@ dialog.wide { width: min(760px, calc(100vw - 32px)); }
         <pre class="lay ul" id="ul" aria-hidden="true"></pre>
         <pre class="lay fm" id="fm" aria-hidden="true"></pre>
         <pre class="lay hl" id="hl" aria-hidden="true"></pre>
+        <div class="whatlay" id="whatLay" hidden></div>
         <textarea id="code" wrap="off" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" aria-label="Código en C"></textarea>
       </div>
     </div>
@@ -335,13 +421,32 @@ dialog.wide { width: min(760px, calc(100vw - 32px)); }
   <div class="srow"><label for="theme">Tema</label>
     <select id="theme" class="btn sel"><option value="auto">Automático (según el dispositivo)</option><option value="light">Claro</option><option value="dark">Oscuro</option></select></div>
   <div class="srow"><span id="fsLbl">Tamaño de letra</span><span class="grp" role="group" aria-labelledby="fsLbl"><button id="fsm" class="btn icon" type="button" title="Letra más chica" aria-label="Letra más chica">A−</button><output id="fsv" class="fsv"></output><button id="fsp" class="btn icon" type="button" title="Letra más grande" aria-label="Letra más grande">A+</button></span></div>
+  <fieldset><legend>Ayuda cuando algo no compila</legend>
+    <label for="ayudaSel">Cuánta ayuda querés</label>
+    <select id="ayudaSel" class="btn sel wsel"><option value="0">0 · Solo el mensaje del compilador</option><option value="1">1 · Mensaje corto y pistas (recomendado)</option><option value="2">2 · Mensaje, explicación y pistas</option></select>
+    <p class="fine" id="ayudaDesc"></p>
+  </fieldset>
+  <fieldset><legend>Escritura</legend>
+    <label class="chk"><input type="checkbox" id="autoCierre"> Cerrar solo llaves, paréntesis y comillas</label>
+    <p class="fine">Apagado: practicás tipeando todo. La sangría automática no cambia.</p>
+  </fieldset>
+  <fieldset><legend>Cómo se escribió el programa</legend>
+    <p class="fine">El editor mide, solo en este dispositivo, cuántos caracteres tipeaste, cuántos pegaste o abriste desde un archivo, cuánto tiempo trabajaste y cuántas veces ejecutaste. No guarda lo que escribís aparte del programa y no se envía a ningún lado. Si querés, aparece como una línea al pie de la captura que entregás. Es un dato del proceso, no una prueba.</p>
+    <label class="chk"><input type="checkbox" id="procCap"> Mostrar esa línea en las capturas</label>
+    <p class="fine" id="procAhora"></p>
+  </fieldset>
+  <fieldset><legend>Casos para enviar</legend>
+    <p class="fine">Cuando el editor no sabe explicar algo, guarda el caso solo en este dispositivo. Nada se envía solo: vos mirás qué se manda y elegís si se lo mandás a Diego.</p>
+    <button id="casosBtn" class="btn" type="button">Casos para enviar</button>
+  </fieldset>
   <div class="srow" id="mutedRow" hidden><span id="mutedTxt"></span><button id="mutedReset" class="btn" type="button">Mostrar de nuevo</button></div>
-  <div class="drow"><button id="helpBtn" class="btn" type="button">Ayuda y atajos</button><button class="btn primary" type="button" data-close>Listo</button></div>
+  <div class="drow"><button id="helpBtn" class="btn" type="button">Atajos y alcance</button><button class="btn primary" type="button" data-close>Listo</button></div>
 </dialog>
 
 <dialog id="dShot" aria-labelledby="tShot" class="wide">
   <h2 id="tShot">Vista previa de la captura</h2>
   <label class="chk" id="shotInRow"><input type="checkbox" id="shotIn" checked> Incluir los datos de entrada</label>
+  <label class="chk" id="shotProcRow"><input type="checkbox" id="shotProc" checked> Incluir cómo se escribió (tipeado, pegado, tiempo)</label>
   <div class="shotbox"><img id="shotImg" alt="Vista previa de la captura: cabecera, código, entrada y salida"></div>
   <div class="drow"><button id="shotDl" class="btn primary" type="button">Descargar PNG</button><button id="shotShare" class="btn" type="button" hidden>Compartir</button><button class="btn" type="button" data-close>Cancelar</button></div>
 </dialog>
@@ -355,7 +460,7 @@ dialog.wide { width: min(760px, calc(100vw - 32px)); }
 </dialog>
 
 <dialog id="dlg" aria-labelledby="tHelp">
-  <h2 id="tHelp">Ayuda</h2>
+  <h2 id="tHelp">Atajos y alcance</h2>
   <p>Interpreta el C que se usa en la materia. No es gcc: si algo se comporta distinto, avisá.</p>
   <ul>
     <li><b>Tipos:</b> int, float, double, char, long, unsigned.</li>
@@ -364,7 +469,7 @@ dialog.wide { width: min(760px, calc(100vw - 32px)); }
     <li><b>Entrada y salida:</b> printf, scanf, getchar, putchar, puts (con todos los formatos: %d %f %.2f %c %e %g %x …).</li>
     <li><b>Biblioteca:</b> math.h (sqrt, pow, abs…), rand, ctype.h básico, #define de constantes.</li>
     <li><b>Avisos útiles:</b> te marca %d con float, scanf sin &amp;, variables sin valor inicial, = dentro de if…</li>
-    <li><b>Todavía no:</b> punteros, textos (char[] con %s), struct, archivos.</li>
+    <li><b>Todavía no:</b> punteros en general, struct, enum, typedef, archivos.</li>
   </ul>
   <h3>Atajos</h3>
   <dl class="keys">
@@ -373,11 +478,43 @@ dialog.wide { width: min(760px, calc(100vw - 32px)); }
     <dt><kbd>Ctrl</kbd>+<kbd>/</kbd></dt><dd>Comentar / descomentar</dd>
     <dt><kbd>Tab</kbd> / <kbd>Shift</kbd>+<kbd>Tab</kbd></dt><dd>Sangrar / quitar sangría</dd>
     <dt><kbd>Ctrl</kbd>+<kbd>F</kbd> / <kbd>Ctrl</kbd>+<kbd>H</kbd></dt><dd>Buscar / reemplazar</dd>
+    <dt><kbd>F1</kbd> / <kbd>Alt</kbd>+clic</dt><dd>¿Qué es esto? de lo que está bajo el cursor o el clic</dd>
     <dt><kbd>Ctrl</kbd>+<kbd>D</kbd></dt><dd>Fin de entrada (cuando el programa espera datos)</dd>
   </dl>
   <p class="fine">Tu código no sale de tu navegador. Se guarda solo en este dispositivo.</p>
   <div class="drow"><button class="btn primary" type="button" data-close>Entendido</button></div>
 </dialog>
+<dialog id="dAyuda" class="wide ayuda" aria-labelledby="tAyuda">
+  <div class="ahead"><h2 id="tAyuda">Ayuda</h2><button type="button" class="btn mini ico" data-close aria-label="Cerrar la ayuda" title="Cerrar (Esc)">✕</button></div>
+  <form id="aForm" role="search" autocomplete="off"><input id="aQ" type="search" placeholder="Buscá una duda: scanf, %d, ¿por qué 7/2 da 3?" aria-label="Buscar en la ayuda" spellcheck="false" autocapitalize="off" enterkeyhint="search"></form>
+  <p class="fine alive" id="aLive" role="status" aria-live="polite"></p>
+  <div id="aRes">
+    <div id="aSug" class="sugs"></div>
+    <ul id="aList" class="alist"></ul>
+  </div>
+  <div id="aDet" class="adet" hidden></div>
+</dialog>
+
+<dialog id="dCasos" aria-labelledby="tCasos" class="wide">
+  <h2 id="tCasos">Casos para enviar</h2>
+  <p>Son los casos en los que el editor no supo explicar un mensaje. Están guardados solo en este dispositivo. <b>Nada se envía solo</b>: elegí cuáles mandar, mirá la vista previa y apretá el botón que quieras.</p>
+  <p class="fine">Se manda únicamente el código del programa (sin la cabecera con tu nombre), los datos de entrada y el mensaje del compilador. Sin nombre ni datos personales.</p>
+  <ul class="clist" id="cList"></ul>
+  <p class="fine" id="cVacio" hidden>No hay casos guardados. Cuando el editor no sepa explicar algo, lo vas a poder mandar desde acá.</p>
+  <div id="cAcc">
+    <h3>Vista previa de lo que se enviaría</h3>
+    <pre class="prev" id="cPrev" tabindex="0" aria-label="Vista previa del texto que se enviaría"></pre>
+    <p class="fine" id="cNota" role="status"></p>
+    <div class="drow">
+      <a id="cWa" class="btn primary" href="https://wa.me/" target="_blank" rel="noopener noreferrer">Enviar por WhatsApp</a>
+      <button id="cCopy" class="btn" type="button">Copiar</button>
+      <button id="cDl" class="btn" type="button">Descargar archivo .json</button>
+    </div>
+  </div>
+  <div class="drow"><button id="cDelAll" class="btn danger" type="button">Borrar todos</button><button class="btn primary" type="button" data-close>Cerrar</button></div>
+</dialog>
+
+<div class="bubble" id="bubble" role="dialog" aria-label="¿Qué es esto?" hidden></div>
 <input type="file" id="file" accept=".c,.h,.txt,text/plain" hidden>
 <input type="file" id="fileJson" accept=".json,application/json" hidden>
 <script>
@@ -2698,6 +2835,526 @@ int main() {
 ];
 </script>
 <script>
+/* Proceso: evidencia de cómo se escribió el código dentro del editor.
+   Guarda, para cada carácter del texto, su PROCEDENCIA (no el contenido):
+     t = tipeado, p = pegado, a = automático (lo puso el propio editor),
+     c = cargado (archivo, ejemplo, programa guardado), u = desconocido.
+   Los segmentos son de longitud variable (run-length). Los índices son de UTF-16,
+   los mismos que usa el textarea (una tilde cuenta 1, un emoji cuenta 2).
+   Núcleo puro (sin DOM) + adaptador de navegador (conectar). Todo queda en el dispositivo.
+   No es un detector de nada: solo cuenta cómo entró el texto. */
+(function (root) {
+  'use strict';
+
+  const TIPOS = 'tpacu';
+  const TOPE_INACTIVIDAD = 60000;   // un intervalo mayor a 60 s entre eventos no suma tiempo activo
+  const MAX_PEGADOS = 100;          // lista de pegados que se conserva (los más recientes)
+
+  /* ---------- utilidades ---------- */
+  const esAlta = (c) => c >= 0xd800 && c <= 0xdbff;
+  const esBaja = (c) => c >= 0xdc00 && c <= 0xdfff;
+
+  function hash(s) { // FNV-1a de 32 bits sobre unidades UTF-16, en base 36
+    let h = 0x811c9dc5;
+    for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; }
+    return h.toString(36);
+  }
+
+  // diff mínimo por prefijo y sufijo común; no corta pares sustitutos
+  function difMinimo(a, b) {
+    const m = Math.min(a.length, b.length);
+    let pre = 0;
+    while (pre < m && a.charCodeAt(pre) === b.charCodeAt(pre)) pre++;
+    if (pre > 0 && pre < m + 1 && esAlta(a.charCodeAt(pre - 1))) pre--;
+    let suf = 0;
+    while (suf < m - pre && a.charCodeAt(a.length - 1 - suf) === b.charCodeAt(b.length - 1 - suf)) suf++;
+    if (suf > 0 && esBaja(a.charCodeAt(a.length - suf))) suf--;
+    return { pre, suf, d: pre, h: a.length - suf, mid: b.slice(pre, b.length - suf) };
+  }
+
+  function lineasDe(s) { return s === '' ? 0 : s.replace(/\n$/, '').split('\n').length; }
+
+  function tipoValido(t, porDefecto) { return typeof t === 'string' && t.length === 1 && TIPOS.indexOf(t) >= 0 ? t : porDefecto; }
+
+  /* ---------- núcleo ---------- */
+  class Proceso {
+    constructor(texto, tipo, opc) {
+      texto = typeof texto === 'string' ? texto : '';
+      opc = opc || {};
+      this.ahora = typeof opc.ahora === 'function' ? opc.ahora : Date.now;
+      this.texto = texto;                      // último texto conocido (solo en memoria, nunca se guarda)
+      this.segs = texto.length ? [[tipoValido(tipo, 'c'), texto.length]] : [];
+      this.inicio = this.ahora();
+      this.ultimo = null;                      // momento del último evento
+      this.ms = 0;                             // tiempo activo
+      this.teclas = 0; this.borrados = 0; this.correcciones = 0; this.ejecuciones = 0; this.bloqueados = 0;
+      this.pegados = [];                       // {lineas, caracteres, momento}
+      this.pegadoMayor = { lineas: 0, caracteres: 0 };
+      this.previo = null;                      // 't' | 'c' | null: qué fue lo último (para detectar correcciones)
+      this.reconciliadoAlRestaurar = false;
+    }
+
+    /* tiempo */
+    _tick() {
+      const t = this.ahora();
+      if (this.ultimo !== null) { const d = t - this.ultimo; if (d >= 0 && d <= TOPE_INACTIVIDAD) this.ms += d; }
+      this.ultimo = t;
+      return t;
+    }
+    actividad() { this._tick(); }             // una tecla de navegación, un clic, etc.
+    ejecutar() { this._tick(); this.ejecuciones++; }
+    bloquearPegado() { this._tick(); this.bloqueados++; }
+    tiempoActivo() { return this.ms; }
+
+    /* segmentos */
+    _norm() {
+      const out = [];
+      for (const s of this.segs) {
+        if (s[1] <= 0) continue;
+        const u = out[out.length - 1];
+        if (u && u[0] === s[0]) u[1] += s[1]; else out.push([s[0], s[1]]);
+      }
+      this.segs = out;
+    }
+    _largo() { let n = 0; for (const s of this.segs) n += s[1]; return n; }
+    _quitar(d, h) {
+      if (h <= d) return;
+      let off = 0;
+      for (const s of this.segs) {
+        const a = off, b = off + s[1]; off = b;
+        const sol = Math.max(0, Math.min(b, h) - Math.max(a, d));
+        s[1] -= sol;
+      }
+      this._norm();
+    }
+    _poner(pos, n, tipo) {
+      if (n <= 0) return;
+      const out = []; let off = 0, hecho = false;
+      for (const s of this.segs) {
+        const a = off, b = off + s[1]; off = b;
+        if (!hecho && pos >= a && pos < b) {
+          if (pos > a) out.push([s[0], pos - a]);
+          out.push([tipo, n]);
+          out.push([s[0], b - pos]);
+          hecho = true;
+        } else out.push(s);
+      }
+      if (!hecho) out.push([tipo, n]);
+      this.segs = out; this._norm();
+    }
+    // reemplazo de segmentos (sin tocar texto ni métricas)
+    _editar(d, h, largoNuevo, tipo) { this._quitar(d, h); this._poner(d, largoNuevo, tipo); }
+    // si la suma de segmentos no coincide con el texto, se rehace todo como desconocido
+    _cuadrar() { if (this._largo() !== this.texto.length) this.segs = this.texto.length ? [['u', this.texto.length]] : []; }
+    _rango(d, h) { // cuenta de tipos dentro de [d,h)
+      const r = { t: 0, p: 0, a: 0, c: 0, u: 0 }; let off = 0;
+      for (const s of this.segs) {
+        const a = off, b = off + s[1]; off = b;
+        r[s[0]] += Math.max(0, Math.min(b, h) - Math.max(a, d));
+      }
+      return r;
+    }
+    tipoEn(i) { let off = 0; for (const s of this.segs) { off += s[1]; if (i < off) return s[0]; } return null; }
+
+    _limites(d, h) {
+      const n = this.texto.length;
+      d = Math.max(0, Math.min(n, d | 0)); h = Math.max(d, Math.min(n, h | 0));
+      return [d, h];
+    }
+    _registrarPegado(t, texto) {
+      const r = { lineas: lineasDe(texto), caracteres: texto.length, momento: t };
+      this.pegados.push(r);
+      if (this.pegados.length > MAX_PEGADOS) this.pegados.shift();
+      if (r.caracteres > this.pegadoMayor.caracteres) this.pegadoMayor = { lineas: r.lineas, caracteres: r.caracteres };
+    }
+    _metricaInsercion(tipo, texto, t) {
+      if (tipo === 't') { this.teclas++; this.previo = 't'; }
+      else { this.previo = null; if (tipo === 'p') this._registrarPegado(t, texto); }
+    }
+
+    /* operaciones públicas */
+    insertar(pos, texto, tipo) {
+      texto = String(texto == null ? '' : texto);
+      if (!texto.length) return this;
+      tipo = tipoValido(tipo, 't');
+      this._cuadrar();
+      const t = this._tick();
+      const d = this._limites(pos, pos)[0];
+      this._editar(d, d, texto.length, tipo);
+      this.texto = this.texto.slice(0, d) + texto + this.texto.slice(d);
+      this._metricaInsercion(tipo, texto, t);
+      return this;
+    }
+
+    borrar(desde, hasta, opc) {
+      this._cuadrar();
+      const [d, h] = this._limites(desde, hasta);
+      if (h <= d) return this;
+      this._tick();
+      const r = this._rango(d, h);
+      this._editar(d, h, 0, 't');
+      this.texto = this.texto.slice(0, d) + this.texto.slice(h);
+      if (!(opc && opc.auto)) {
+        this.borrados++;
+        const soloTipeado = r.t === h - d;
+        if (soloTipeado && (this.previo === 't' || this.previo === 'c')) { this.correcciones++; this.previo = 'c'; }
+        else this.previo = null;
+      }
+      return this;
+    }
+
+    reemplazar(desde, hasta, texto, tipo) {
+      texto = String(texto == null ? '' : texto);
+      tipo = tipoValido(tipo, 't');
+      this._cuadrar();
+      const [d, h] = this._limites(desde, hasta);
+      if (h <= d) return this.insertar(d, texto, tipo);
+      if (!texto.length) return this.borrar(d, h, tipo === 't' ? null : { auto: true });
+      if (tipo === 'a') return this._reemplazarAuto(d, h, texto);
+      const t = this._tick();
+      this._editar(d, h, texto.length, tipo);
+      this.texto = this.texto.slice(0, d) + texto + this.texto.slice(h);
+      this._metricaInsercion(tipo, texto, t);
+      return this;
+    }
+
+    // un cambio automático (comentar, sangrar) conserva el origen de lo que no cambió:
+    // se compara línea por línea si el número de líneas es el mismo, y si no, por prefijo y sufijo
+    _reemplazarAuto(d, h, texto) {
+      this._tick();
+      const viejo = this.texto.slice(d, h);
+      const ediciones = [];
+      const lv = viejo.split('\n'), ln = texto.split('\n');
+      if (lv.length === ln.length && lv.length > 1) {
+        let off = d;
+        for (let i = 0; i < lv.length; i++) {
+          if (lv[i] !== ln[i]) { const x = difMinimo(lv[i], ln[i]); ediciones.push([off + x.d, off + x.h, x.mid.length]); }
+          off += lv[i].length + 1;
+        }
+      } else if (viejo !== texto) {
+        const x = difMinimo(viejo, texto); ediciones.push([d + x.d, d + x.h, x.mid.length]);
+      }
+      for (let i = ediciones.length - 1; i >= 0; i--) this._editar(ediciones[i][0], ediciones[i][1], ediciones[i][2], 'a');
+      this.texto = this.texto.slice(0, d) + texto + this.texto.slice(h);
+      this.previo = null;
+      return this;
+    }
+
+    // el texto cambió sin que el módulo se enterara (deshacer, rehacer, autocorrector)
+    reconciliar(textoNuevo, tipo) {
+      textoNuevo = String(textoNuevo == null ? '' : textoNuevo);
+      tipo = tipoValido(tipo, 'u');
+      this._cuadrar();
+      if (textoNuevo === this.texto) return this;
+      this._tick();
+      const x = difMinimo(this.texto, textoNuevo);
+      this._editar(x.d, x.h, x.mid.length, tipo);
+      this.texto = textoNuevo;
+      this.previo = null;
+      return this;
+    }
+
+    // todo el texto pasa a ser de un solo origen (abrir un archivo, elegir un ejemplo)
+    cargar(texto, tipo) {
+      texto = String(texto == null ? '' : texto);
+      this.texto = texto;
+      this.segs = texto.length ? [[tipoValido(tipo, 'c'), texto.length]] : [];
+      this.previo = null;
+      return this;
+    }
+
+    contar() {
+      const r = { total: 0, t: 0, p: 0, a: 0, c: 0, u: 0 };
+      for (const s of this.segs) { r[s[0]] += s[1]; r.total += s[1]; }
+      return r;
+    }
+
+    metricas() {
+      return {
+        teclas: this.teclas, borrados: this.borrados, correcciones: this.correcciones, ejecuciones: this.ejecuciones,
+        bloqueados: this.bloqueados,
+        pegados: this.pegados.map((x) => ({ lineas: x.lineas, caracteres: x.caracteres, momento: x.momento })),
+        pegadoMayor: { lineas: this.pegadoMayor.lineas, caracteres: this.pegadoMayor.caracteres },
+        tiempoActivoMs: this.ms, inicio: this.inicio
+      };
+    }
+
+    // formato compacto para guardar con cada programa: segmentos, contadores y huellas de líneas. Sin texto.
+    serializar() {
+      const lineas = this.texto.split('\n').map((l) => l.length + '.' + hash(l)).join(',');
+      return {
+        v: 1,
+        s: this.segs.map((x) => x[0] + x[1]).join(''),
+        l: this.texto.length,
+        h: hash(this.texto),
+        ln: lineas,
+        m: [this.teclas, this.borrados, this.correcciones, this.ejecuciones, this.bloqueados],
+        pg: this.pegados.map((x) => [x.lineas, x.caracteres, x.momento]),
+        pm: [this.pegadoMayor.lineas, this.pegadoMayor.caracteres],
+        ms: this.ms, i: this.inicio
+      };
+    }
+  }
+
+  function nuevo(textoInicial, tipoInicial, opc) { return new Proceso(textoInicial, tipoInicial, opc); }
+
+  const esNum = (x) => typeof x === 'number' && isFinite(x) && x >= 0;
+
+  function leerSegmentos(s) {
+    if (typeof s !== 'string') return null;
+    const segs = []; const re = /([tpacu])(\d+)/g; let m, usado = 0;
+    while ((m = re.exec(s))) { usado += m[0].length; segs.push([m[1], parseInt(m[2], 10)]); }
+    return usado === s.length ? segs : null;
+  }
+  function leerLineas(ln) {
+    if (typeof ln !== 'string') return null;
+    const out = [];
+    for (const it of ln.split(',')) {
+      const m = /^(\d+)\.([0-9a-z]+)$/.exec(it);
+      if (!m) return null;
+      out.push([parseInt(m[1], 10), m[2]]);
+    }
+    return out;
+  }
+
+  // Reconstruye un Proceso desde lo guardado. Si el texto actual no es el que se guardó, reconcilia
+  // con las huellas de líneas: lo que cambió pasa a 'u'; lo que sigue igual conserva su origen.
+  function restaurar(obj, textoActual, opc) {
+    textoActual = String(textoActual == null ? '' : textoActual);
+    const segs = obj && obj.v === 1 ? leerSegmentos(obj.s) : null;
+    const p = new Proceso('', 'c', opc);
+    const sano = segs && esNum(obj.l) && segs.reduce((a, x) => a + x[1], 0) === obj.l &&
+      Array.isArray(obj.m) && obj.m.length >= 4 && obj.m.every(esNum) && Array.isArray(obj.pg) && esNum(obj.ms) && esNum(obj.i);
+    if (!sano) { // objeto ausente o dañado: no hay historia confiable
+      p.cargar(textoActual, 'u'); p.reconciliadoAlRestaurar = true; return p;
+    }
+    p.segs = segs; p._norm();
+    p.teclas = obj.m[0]; p.borrados = obj.m[1]; p.correcciones = obj.m[2]; p.ejecuciones = obj.m[3]; p.bloqueados = obj.m[4] || 0;
+    p.pegados = obj.pg.filter((x) => Array.isArray(x) && x.length === 3 && x.every(esNum)).slice(-MAX_PEGADOS)
+      .map((x) => ({ lineas: x[0], caracteres: x[1], momento: x[2] }));
+    if (Array.isArray(obj.pm) && esNum(obj.pm[0]) && esNum(obj.pm[1])) p.pegadoMayor = { lineas: obj.pm[0], caracteres: obj.pm[1] };
+    p.ms = obj.ms; p.inicio = obj.i; p.ultimo = null;
+    if (obj.l === textoActual.length && obj.h === hash(textoActual)) { p.texto = textoActual; return p; }
+
+    p.reconciliadoAlRestaurar = true;
+    const viejas = leerLineas(obj.ln);
+    const nl = textoActual.split('\n');
+    if (!viejas || viejas.reduce((a, x) => a + x[0] + 1, -1) !== obj.l) {
+      p.cargar(textoActual, 'u'); // sin huellas no se sabe qué quedó igual: todo 'u'
+      p.texto = textoActual;
+      return p;
+    }
+    const nuevas = nl.map((l) => [l.length, hash(l)]);
+    const cap = Math.min(viejas.length, nuevas.length);
+    let pre = 0;
+    while (pre < cap && viejas[pre][0] === nuevas[pre][0] && viejas[pre][1] === nuevas[pre][1]) pre++;
+    pre = Math.min(pre, cap - 1); if (pre < 0) pre = 0;
+    let suf = 0;
+    while (suf < cap - pre && viejas[viejas.length - 1 - suf][0] === nuevas[nuevas.length - 1 - suf][0] &&
+           viejas[viejas.length - 1 - suf][1] === nuevas[nuevas.length - 1 - suf][1]) suf++;
+    const inicios = (ls) => { const r = [0]; for (const x of ls) r.push(r[r.length - 1] + x[0] + 1); return r; };
+    const iv = inicios(viejas), inn = inicios(nuevas);
+    const dV = iv[pre], hV = suf > 0 ? iv[viejas.length - suf] : obj.l;
+    const dN = inn[pre], hN = suf > 0 ? inn[nuevas.length - suf] : textoActual.length;
+    p._editar(dV, hV, hN - dN, 'u');
+    p.texto = textoActual;
+    p._cuadrar();
+    return p;
+  }
+
+  /* ---------- resumen y frase para la captura ---------- */
+  function resumen(p) {
+    const c = p.contar(), m = p.metricas();
+    const claves = ['t', 'p', 'a', 'c', 'u'];
+    const pct = { t: 0, p: 0, a: 0, c: 0, u: 0 };
+    if (c.total > 0) { // redondeo por mayor resto: los cinco suman siempre 100
+      const exact = claves.map((k) => c[k] * 100 / c.total);
+      claves.forEach((k, i) => { pct[k] = Math.floor(exact[i]); });
+      let falta = 100 - claves.reduce((a, k) => a + pct[k], 0);
+      claves.map((k, i) => [k, exact[i] - Math.floor(exact[i])]).sort((x, y) => y[1] - x[1])
+        .forEach(([k]) => { if (falta > 0 && c[k] > 0) { pct[k]++; falta--; } });
+    }
+    return {
+      total: c.total,
+      tipeado: pct.t, pegado: pct.p, automatico: pct.a, cargado: pct.c, desconocido: pct.u,
+      caracteres: { t: c.t, p: c.p, a: c.a, c: c.c, u: c.u },
+      minutos: Math.round(m.tiempoActivoMs / 60000), segundos: Math.round(m.tiempoActivoMs / 1000),
+      ejecuciones: m.ejecuciones, correcciones: m.correcciones,
+      pegados: m.pegados.length,
+      pegadoMayor: m.pegadoMayor
+    };
+  }
+
+  // Una frase corta, con hechos. Sin juicios y sin acusar.
+  function linea(r) {
+    if (!r || !r.total) return 'Escrito en el editor: sin datos de proceso para este código';
+    const partes = [];
+    partes.push(r.tipeado + ' % tipeado');
+    if (r.pegado > 0) partes.push(r.pegado + ' % pegado');
+    else if (r.caracteres && r.caracteres.p > 0) partes.push('menos de 1 % pegado');
+    if (r.automatico >= 5) partes.push(r.automatico + ' % automático (sangría y llaves)');
+    if (r.cargado > 0) partes.push(r.cargado + ' % abierto desde un archivo');
+    if (r.desconocido >= 5) partes.push(r.desconocido + ' % de origen no determinado');
+    partes.push(r.minutos < 1 ? 'menos de 1 min de trabajo' : r.minutos + ' min de trabajo');
+    partes.push(r.ejecuciones + (r.ejecuciones === 1 ? ' ejecución' : ' ejecuciones'));
+    let s = 'Escrito en el editor: ' + partes.join(' · ');
+    if (r.cargado >= 90) s += ' · el código se abrió desde un archivo';
+    else if (r.cargado >= 20) s += ' · parte del código se abrió desde un archivo';
+    return s;
+  }
+
+  /* ---------- política de pegado (modo práctica) ---------- */
+  let politica = { permitir: true, aviso: null };
+  function politicaPegado(o) {
+    if (o && typeof o === 'object') {
+      if ('permitir' in o) politica.permitir = o.permitir !== false;
+      if ('aviso' in o) politica.aviso = typeof o.aviso === 'function' ? o.aviso : null;
+    }
+    return { permitir: politica.permitir, aviso: politica.aviso };
+  }
+  // ?practica=1 en el enlace apaga el pegado; devuelve true si el modo práctica quedó activo
+  function politicaDesdeEnlace(search, aviso) {
+    const m = /[?&]practica=([^&#]*)/.exec(String(search || ''));
+    const activo = !!m && (m[1] === '1' || m[1] === 'si' || m[1] === 'true');
+    politicaPegado({ permitir: !activo, aviso: aviso || politica.aviso });
+    return activo;
+  }
+
+  /* ---------- adaptador de navegador ---------- */
+  const INSERTA = {
+    insertText: 't', insertCompositionText: 't', insertFromComposition: 't', insertLineBreak: 't', insertParagraph: 't',
+    insertFromPaste: 'p', insertFromPasteAsQuotation: 'p', insertFromDrop: 'p', insertFromYank: 'p',
+    insertReplacementText: 'u', insertTranspose: 'u'
+  };
+  const ES_PEGADO = { insertFromPaste: 1, insertFromPasteAsQuotation: 1, insertFromDrop: 1, insertFromYank: 1 };
+
+  function medir(texto) { return { lineas: lineasDe(texto), caracteres: texto.length }; }
+
+  // Engancha un textarea. Nunca guarda lo que se tipea ni lo que se pega: solo largos, líneas y tipos.
+  function conectar(ta, opc) {
+    opc = opc || {};
+    let p = opc.proceso || nuevo(ta.value, opc.tipoInicial || 'c', { ahora: opc.ahora });
+    let auto = 0, autoTecla = false, pend = null;
+
+    function avisar(tipo, texto) {
+      p.bloquearPegado();
+      const cb = opc.aviso || politica.aviso;
+      if (cb) { const m = medir(texto || ''); try { cb({ tipo, lineas: m.lineas, caracteres: m.caracteres }); } catch (e) { /* el aviso no puede romper el editor */ } }
+    }
+    function textoDe(dt) { try { return dt ? (dt.getData('text/plain') || dt.getData('text') || '') : ''; } catch (e) { return ''; } }
+    function bloqueado() { return politica.permitir === false && auto === 0; }
+
+    function sincronizar(tipo) { // el texto cambió por fuera: se alinea
+      if (ta.value !== p.texto) p.reconciliar(ta.value, tipo);
+    }
+
+    function enPaste(e) {
+      if (!bloqueado()) return;
+      e.preventDefault();
+      avisar('pegado', textoDe(e.clipboardData));
+    }
+    function enDrop(e) {
+      if (!bloqueado()) return;
+      const dt = e.dataTransfer, tipos = dt && dt.types ? Array.prototype.slice.call(dt.types) : [];
+      if (tipos.length && !tipos.some((t) => t === 'text/plain' || t === 'text' || t === 'Text')) return; // archivos y otros: no es texto
+      e.preventDefault();
+      avisar('arrastre', textoDe(dt));
+    }
+    function enDragOver(e) { if (bloqueado() && e.preventDefault) e.preventDefault(); }
+
+    function antes(e) {
+      pend = null;
+      if (e.defaultPrevented) return;
+      const it = e.inputType || '';
+      if (ES_PEGADO[it] && bloqueado()) { // respaldo si el navegador no mandó paste/drop antes
+        e.preventDefault();
+        avisar(it === 'insertFromDrop' ? 'arrastre' : 'pegado', typeof e.data === 'string' ? e.data : textoDe(e.dataTransfer));
+        return;
+      }
+      sincronizar(auto > 0 ? 'a' : 'u');
+      pend = { it, s: ta.selectionStart, e: ta.selectionEnd, v: ta.value };
+    }
+
+    function region(viejo, nuevoT, pe, inserta) {
+      if (pe && pe.v === viejo) {
+        const s = pe.s, en = pe.e;
+        if (inserta) {
+          const L = nuevoT.length - viejo.length + (en - s);
+          if (L >= 0 && nuevoT.slice(0, s) === viejo.slice(0, s) && nuevoT.slice(s + L) === viejo.slice(en)) return { d: s, h: en, mid: nuevoT.slice(s, s + L) };
+        } else {
+          const L = viejo.length - nuevoT.length;
+          const cand = s !== en ? [[s, en]] : [[s - L, s], [s, s + L]];
+          for (const [a, b] of cand) if (a >= 0 && b <= viejo.length && viejo.slice(0, a) + viejo.slice(b) === nuevoT) return { d: a, h: b, mid: '' };
+        }
+      }
+      const x = difMinimo(viejo, nuevoT);
+      return { d: x.d, h: x.h, mid: x.mid };
+    }
+
+    function despues(e) {
+      const pe = pend; pend = null;
+      const v = ta.value;
+      if (v === p.texto) return;
+      const it = (pe && pe.it) || (e && e.inputType) || '';
+      const esAuto = auto > 0;
+      if (!it) { p.reconciliar(v, esAuto ? 'a' : 'u'); return; }                 // input sin tipo (p. ej. dispatchEvent)
+      if (it === 'historyUndo' || it === 'historyRedo') { p.reconciliar(v, 'u'); return; }
+      if (it.indexOf('insert') === 0) {
+        const tipo = esAuto ? 'a' : INSERTA[it];
+        if (!tipo) { p.reconciliar(v, esAuto ? 'a' : 'u'); return; }              // tipo desconocido
+        const r = region(p.texto, v, pe, true);
+        if (esAuto && autoTecla && r.mid.charAt(0) === '\n') { // Enter con sangría: el salto lo tipeó el alumno, la sangría la puso el editor
+          p.reemplazar(r.d, r.h, '\n', 't');
+          if (r.mid.length > 1) p.insertar(r.d + 1, r.mid.slice(1), 'a');
+        } else if (r.h > r.d || r.mid) p.reemplazar(r.d, r.h, r.mid, tipo);
+        if (p.texto !== v) p.reconciliar(v, 'u');
+        return;
+      }
+      if (it.indexOf('delete') === 0) {
+        const r = region(p.texto, v, pe, false);
+        if (r.mid === '') p.borrar(r.d, r.h, { auto: esAuto });
+        else p.reconciliar(v, esAuto ? 'a' : 'u');
+        if (p.texto !== v) p.reconciliar(v, 'u');
+        return;
+      }
+      p.reconciliar(v, esAuto ? 'a' : 'u');
+    }
+
+    function tecla() { p.actividad(); }
+
+    const lista = [['paste', enPaste], ['drop', enDrop], ['dragover', enDragOver], ['beforeinput', antes], ['input', despues], ['keydown', tecla]];
+    lista.forEach(([n, f]) => ta.addEventListener(n, f));
+
+    return {
+      get proceso() { return p; },
+      // envuelve inserciones programáticas del propio editor (sangría, llaves, comentar, Tab)
+      marcarAuto(fn, o) {
+        auto++; const prev = autoTecla; autoTecla = !!(o && o.primerCaracterTipeado);
+        try { return fn(); }
+        finally { auto--; autoTecla = prev; if (ta.value !== p.texto) p.reconciliar(ta.value, 'a'); pend = null; }
+      },
+      // abrir un .c, elegir un ejemplo, recuperar un programa guardado sin datos de proceso: arranca un proceso nuevo
+      marcarCargado(texto, tipo) {
+        const t = typeof texto === 'string' ? texto : ta.value;
+        p = nuevo(t, tipo || 'c', { ahora: opc.ahora }); pend = null;
+        return p;
+      },
+      restaurar(obj, texto) { p = restaurar(obj, typeof texto === 'string' ? texto : ta.value, { ahora: opc.ahora }); pend = null; return p; },
+      serializar() { sincronizar('u'); return p.serializar(); },
+      contar() { sincronizar('u'); return p.contar(); },
+      resumen() { sincronizar('u'); return resumen(p); },
+      linea() { sincronizar('u'); return linea(resumen(p)); },
+      ejecutar() { p.ejecutar(); },
+      desconectar() { lista.forEach(([n, f]) => ta.removeEventListener(n, f)); }
+    };
+  }
+
+  const api = { nuevo, restaurar, resumen, linea, conectar, politicaPegado, politicaDesdeEnlace, TOPE_INACTIVIDAD, _hash: hash, _dif: difMinimo };
+  if (typeof module !== 'undefined' && module.exports) module.exports = api;
+  else root.Proceso = api;
+})(typeof self !== 'undefined' ? self : this);
+</script>
+<script>
 (function () {
   'use strict';
   const $ = (id) => document.getElementById(id);
@@ -2770,16 +3427,20 @@ int main() {
     clearTimeout(saveTimer); saveTimer = null;
     if (!cur) return;
     cur.code = ta.value; cur.input = inTxt.value; cur.t = Date.now();
+    try { cur.proc = proc.serializar() || undefined; } catch (e) { /* sin evidencia de proceso: el programa se guarda igual */ }
     persist();
   }
   window.addEventListener('pagehide', flushSave);
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flushSave(); });
   window.addEventListener('beforeunload', flushSave);
 
-  function showProgram(p) {
+  // origen: de dónde viene el texto si el programa no trae datos de proceso ('c' archivo o ejemplo, 'a' plantilla, 'u' programa de antes)
+  function showProgram(p, origen) {
     cur = p;
     stopRun(true);
     ta.value = p.code; inTxt.value = p.input || '';
+    try { if (p.proc) proc.restaurar(p.proc, p.code); else proc.marcarCargado(p.code, origen || 'u'); } catch (e) { proc.marcarCargado(p.code, 'u'); }
+    cerrarBurbuja();
     ta.scrollTop = 0; ta.scrollLeft = 0;
     clearProblems(); clearConsole(); setStatus('Listo');
     $('pnameTxt').textContent = p.name; $('pname').setAttribute('aria-label', 'Programa actual: ' + p.name + '. Abrir lista de programas');
@@ -2790,7 +3451,7 @@ int main() {
   function newProgram(name, code, input) {
     if (cur) flushSave();
     const p = { id: uid(), name: nextName(name), code: code === undefined ? template() : code, input: input || '', t: Date.now() };
-    progs.push(p); showProgram(p);
+    progs.push(p); showProgram(p, code === undefined ? 'a' : 'c');
     return p;
   }
   function isPristine(code) { return !code.trim() || EXAMPLES.some((x) => x.c === code) || code === template(); }
@@ -2844,6 +3505,20 @@ int main() {
     syncScroll();
   }
   function syncScroll() { layers.forEach((l) => { l.scrollTop = ta.scrollTop; l.scrollLeft = ta.scrollLeft; }); gut.scrollTop = ta.scrollTop; }
+  /* evidencia de proceso: mide de dónde viene cada carácter (tipeado, pegado, automático, cargado). Todo queda en este dispositivo. */
+  const PROC_NULO = { marcarAuto(fn) { return fn(); }, marcarCargado() {}, restaurar() {}, serializar() { return null; }, resumen() { return null; }, linea() { return ''; }, ejecutar() {} };
+  let proc = PROC_NULO, practica = false;
+  try {
+    if (window.Proceso) {
+      practica = Proceso.politicaDesdeEnlace(location.search, () => toast('Modo práctica: en este enlace no se puede pegar. Escribilo vos.'));
+      proc = Proceso.conectar(ta, { tipoInicial: 'u' });
+    }
+  } catch (e) { proc = PROC_NULO; practica = false; }
+  $('practica').hidden = !practica;
+  const auto = (fn, o) => proc.marcarAuto(fn, o);
+  /* cierre automático de llaves, paréntesis y comillas: apagado por defecto (que el alumno tipee todo) */
+  let autoCierre = store.get('autocierre', '') === '1';
+
   ta.addEventListener('scroll', syncScroll);
   ta.addEventListener('input', () => {
     if (problems.length && ta.value.split('\n').length !== problemLines) clearProblems();
@@ -2866,7 +3541,7 @@ int main() {
   function editRange(s, e, text) {
     const prev = document.activeElement;
     guard = true;
-    try { ta.focus({ preventScroll: true }); ta.setSelectionRange(s, e); insert(text); } finally { guard = false; }
+    try { auto(() => { ta.focus({ preventScroll: true }); ta.setSelectionRange(s, e); insert(text); }); } finally { guard = false; }
     if (prev && prev !== ta && prev.focus) prev.focus({ preventScroll: true });
   }
   function lineStart(v, pos) { return v.lastIndexOf('\n', pos - 1) + 1; }
@@ -2887,13 +3562,13 @@ int main() {
       nl = lines.map((l) => (l.trim() ? l.slice(0, ind) + '// ' + l.slice(ind) : l));
     }
     const text = nl.join('\n');
-    guard = true; try { ta.setSelectionRange(a, bb); insert(text); ta.setSelectionRange(a, a + text.length); } finally { guard = false; }
+    guard = true; try { auto(() => { ta.setSelectionRange(a, bb); insert(text); ta.setSelectionRange(a, a + text.length); }); } finally { guard = false; }
   }
 
   let guard = false;
   // si el alumno tipea la '}' final y ya hay una '}' automática en la línea de abajo (programa balanceado), la pisa en vez de agregar otra
   function pisarLlave(v, s, en) {
-    if (s !== en) return false;
+    if (!autoCierre || s !== en) return false;
     const ls = lineStart(v, s);
     if (!/^[ \t]*$/.test(v.slice(ls, s))) return false;
     const m = /^[ \t]*\n([ \t]*)\}/.exec(v.slice(en));
@@ -2901,13 +3576,13 @@ int main() {
     const ab = (v.match(/\{/g) || []).length, ce = (v.match(/\}/g) || []).length;
     if (ab !== ce) return false;
     const fin = en + m[0].length;
-    guard = true; try { ta.setSelectionRange(ls, fin); insert(m[1] + '}'); const pos = ls + m[1].length + 1; ta.setSelectionRange(pos, pos); } finally { guard = false; }
+    guard = true; try { auto(() => { ta.setSelectionRange(ls, fin); insert(m[1] + '}'); const pos = ls + m[1].length + 1; ta.setSelectionRange(pos, pos); }); } finally { guard = false; }
     return true;
   }
   const OPEN = { '(': ')', '[': ']', '{': '}', '"': '"', "'": "'" };
   const CLOSE = new Set([')', ']', '}', '"', "'"]);
   ta.addEventListener('beforeinput', (e) => {
-    if (guard || e.isComposing) return;
+    if (guard || e.isComposing || !autoCierre) return;
     const v = ta.value, s = ta.selectionStart, en = ta.selectionEnd;
     if (e.inputType === 'insertText' && e.data && e.data.length === 1) {
       const ch = e.data, nx = v[en], pv = v[s - 1];
@@ -2915,14 +3590,14 @@ int main() {
       if (CLOSE.has(ch) && s === en && nx === ch) { e.preventDefault(); ta.setSelectionRange(s + 1, s + 1); return; }
       const close = OPEN[ch];
       if (!close) return;
-      if (s !== en) { e.preventDefault(); guard = true; try { insert(ch + v.slice(s, en) + close); ta.setSelectionRange(s + 1, en + 1); } finally { guard = false; } return; }
+      if (s !== en) { e.preventDefault(); guard = true; try { auto(() => { insert(ch + v.slice(s, en) + close); ta.setSelectionRange(s + 1, en + 1); }); } finally { guard = false; } return; }
       if (v.slice(lineStart(v, s), s).indexOf('//') >= 0) return;
       const quote = ch === '"' || ch === "'";
       if (quote && (/\w/.test(pv || '') || /\w/.test(nx || ''))) return;
       if (!quote && nx && !/[\s)\]};,]/.test(nx)) return;
-      e.preventDefault(); guard = true; try { insert(ch + close); ta.setSelectionRange(s + 1, s + 1); } finally { guard = false; }
+      e.preventDefault(); guard = true; try { auto(() => { insert(ch + close); ta.setSelectionRange(s + 1, s + 1); }, { primerCaracterTipeado: true }); } finally { guard = false; }
     } else if (e.inputType === 'deleteContentBackward' && s === en && s > 0 && OPEN[v[s - 1]] === v[s]) {
-      e.preventDefault(); guard = true; try { ta.setSelectionRange(s - 1, s + 1); document.execCommand('delete'); } finally { guard = false; }
+      e.preventDefault(); guard = true; try { auto(() => { ta.setSelectionRange(s - 1, s + 1); document.execCommand('delete'); }); } finally { guard = false; }
     }
   });
 
@@ -2934,12 +3609,12 @@ int main() {
     const v = ta.value, s = ta.selectionStart, en = ta.selectionEnd;
     if (e.key === 'Tab') {
       e.preventDefault();
-      if (s === en && !e.shiftKey) { insert('    '); return; }
+      if (s === en && !e.shiftKey) { auto(() => insert('    ')); return; }
       const a = lineStart(v, s);
       const b = en > s && v[en - 1] === '\n' ? en - 1 : en;
       const block = v.slice(a, b).split('\n');
       const nb = block.map((l) => e.shiftKey ? l.replace(/^( {1,4}|\t)/, '') : '    ' + l).join('\n');
-      guard = true; try { ta.setSelectionRange(a, b); insert(nb); ta.setSelectionRange(a, a + nb.length); } finally { guard = false; }
+      guard = true; try { auto(() => { ta.setSelectionRange(a, b); insert(nb); ta.setSelectionRange(a, a + nb.length); }); } finally { guard = false; }
       return;
     }
     if (e.key === 'Enter' && !e.shiftKey && !mod && !e.altKey) {
@@ -2949,15 +3624,17 @@ int main() {
       const before = v[s - 1], after = v[en];
       guard = true;
       try {
-        if (before === '{' && after === '}') { insert('\n' + ind + '    \n' + ind); const p = s + 1 + ind.length + 4; ta.setSelectionRange(p, p); }
-        else insert('\n' + ind + (before === '{' ? '    ' : ''));
+        auto(() => {
+          if (before === '{' && after === '}') { insert('\n' + ind + '    \n' + ind); const p = s + 1 + ind.length + 4; ta.setSelectionRange(p, p); }
+          else insert('\n' + ind + (before === '{' ? '    ' : ''));
+        }, { primerCaracterTipeado: true });
       } finally { guard = false; }
       return;
     }
     if (e.key === '}' && !mod) {
       if (pisarLlave(v, s, en)) { e.preventDefault(); return; }
       const ls = lineStart(v, s);
-      if (s === en && /^ +$/.test(v.slice(ls, s)) && s - ls >= 4) { e.preventDefault(); guard = true; try { ta.setSelectionRange(s - 4, s); insert('}'); } finally { guard = false; } }
+      if (s === en && /^ +$/.test(v.slice(ls, s)) && s - ls >= 4) { e.preventDefault(); guard = true; try { auto(() => { ta.setSelectionRange(s - 4, s); insert('}'); }, { primerCaracterTipeado: true }); } finally { guard = false; } }
     }
   });
 
@@ -3062,7 +3739,7 @@ int main() {
   function clearProblems() {
     problems = [];
     if (marks.size) { marks = new Map(); renderGutter(true); }
-    diag.hidden = true; diagList.innerHTML = '';
+    diag.hidden = true; diagList.innerHTML = ''; pistasEstado.clear();
     paintProblems();
   }
   function paintProblems() {
@@ -3098,12 +3775,12 @@ int main() {
     const lines = ta.value.split('\n');
     const items = [];
     let hidden = 0;
-    (res.errors || []).forEach((e) => items.push({ k: 'e', line: e.line, msg: e.msg, code: typeof e.code === 'string' ? e.code : '' }));
+    (res.errors || []).forEach((e) => items.push({ k: 'e', line: e.line, msg: e.msg, code: typeof e.code === 'string' ? e.code : '', kb: typeof e.kb === 'string' ? e.kb : '' }));
     if (rtErr) items.push({ k: 'e', line: rtErr.line, msg: rtErr.msg, rt: true });
     (res.warnings || []).forEach((w) => {
       const code = typeof w.code === 'string' ? w.code : '';
       if (code && muted.indexOf(code) >= 0) { hidden++; return; }
-      items.push({ k: 'w', line: w.line, msg: w.msg, code });
+      items.push({ k: 'w', line: w.line, msg: w.msg, code, kb: typeof w.kb === 'string' ? w.kb : '' });
     });
     problems = items; problemLines = lines.length;
     marks = new Map();
@@ -3112,11 +3789,14 @@ int main() {
     diagList.innerHTML = '';
     items.forEach((it) => {
       const wrap = document.createElement('div'); wrap.className = 'it ' + it.k;
+      if (it.line) { wrap.dataset.line = String(it.line); wrap.dataset.txt = lines[it.line - 1] || ''; }
+      const ay = ayudaItem(it);
       const b = document.createElement('button'); b.type = 'button';
       const tag = document.createElement('span'); tag.className = 'tag';
       tag.textContent = (it.k === 'e' ? (it.rt ? 'Error al ejecutar' : 'Error') : 'Aviso') + (it.line ? ' · línea ' + it.line : '');
       const body = document.createElement('span'); body.className = 'body';
-      const t = document.createElement('span'); t.textContent = it.msg; body.appendChild(t);
+      const t = document.createElement('span'); t.className = 'msg'; t.textContent = ay.texto || it.msg; body.appendChild(t);
+      if (ay.texto) { const o = document.createElement('span'); o.className = 'orig'; o.textContent = 'Compilador: ' + it.msg; body.appendChild(o); }
       if (it.line && lines[it.line - 1] !== undefined && lines[it.line - 1].trim()) { const c = document.createElement('code'); c.textContent = lines[it.line - 1].trim(); body.appendChild(c); }
       if (it.code) { const c = document.createElement('span'); c.className = 'cd'; c.textContent = it.code; body.appendChild(c); }
       b.appendChild(tag); b.appendChild(body);
@@ -3128,6 +3808,7 @@ int main() {
         m.addEventListener('click', () => { if (muted.indexOf(it.code) < 0) muted.push(it.code); saveMuted(); renderDiag(res, rtErr, true); toast('Aviso silenciado: ' + it.code + '.', 'Deshacer', () => { muted = muted.filter((x) => x !== it.code); saveMuted(); renderDiag(res, rtErr, true); }); });
         wrap.appendChild(m);
       }
+      if (ay.bloque) wrap.appendChild(ay.bloque);
       diagList.appendChild(wrap);
     });
     if (hidden && items.length) {
@@ -3145,6 +3826,445 @@ int main() {
     if (first && !noScroll) scrollToPos(lineOffset(first.line), false);
   }
   function lineOffset(n) { const l = ta.value.split('\n'); let p = 0; for (let i = 0; i < n - 1 && i < l.length; i++) p += l[i].length + 1; return p; }
+
+  /* ---------- ayuda por niveles, panel «Ayuda», «¿Qué es esto?» y casos sin respuesta ----------
+     Todo sale de la base fija (window.KB, datos en assets/kb-data.js): sin red y sin IA. Los scripts de la base
+     se cargan después de este (defer), así que siempre se piden de forma perezosa. */
+  const el = (tag, cls, txt) => { const n = document.createElement(tag); if (cls) n.className = cls; if (txt !== undefined && txt !== null) n.textContent = txt; return n; };
+  const btnEl = (txt, cls, fn, aria) => { const b = el('button', 'btn ' + (cls || ''), txt); b.type = 'button'; if (aria) b.setAttribute('aria-label', aria); if (fn) b.addEventListener('click', fn); return b; };
+  const KBx = () => (window.KB && window.KB.cargado ? window.KB : null);
+  const kbDatos = () => (window.KB_DATA && typeof window.KB_DATA === 'object' ? window.KB_DATA : { errores: [], ayuda: [], lecciones: [] });
+  const asLista = (v) => (Array.isArray(v) ? v.filter((x) => typeof x === 'string') : typeof v === 'string' && v ? [v] : []);
+  const NIVELES_TXT = ['Solo se muestra el mensaje del compilador, con el número de línea.', 'Se muestra un mensaje corto y vos pedís las pistas de a una. Nunca aparece la solución sola.', 'Se muestra el mensaje y una explicación del concepto; las pistas las pedís vos, de a una.'];
+  // nivel de ayuda: ?ayuda=0|1|2 en el enlace (se recuerda en el dispositivo) > lo guardado > 1
+  let nivelAyuda = (function () {
+    let q = null; try { q = new URLSearchParams(location.search).get('ayuda'); } catch (e) { q = null; }
+    if (q !== null && /^\s*[012]\s*$/.test(q)) { store.set('ayuda', q.trim()); return +q.trim(); }
+    const g = store.get('ayuda', ''); return /^[012]$/.test(g) ? +g : 1;
+  })();
+  const almacen = { getItem(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, setItem(k, v) { localStorage.setItem(k, v); } };
+
+  /* --- de un diagnóstico a una explicación --- */
+  let ambCache = null;
+  // Si muchos casos de la base comparten el mismo mensaje del editor no se sabe cuál es el del alumno: no se afirma nada
+  function esAmbiguo(ex) {
+    if (!ex || ex.via === 'kb') return false;
+    if (!ambCache) { ambCache = {}; (kbDatos().errores || []).forEach((e) => { const k = (e.codigo_editor_actual || '') + '|' + (e.mensaje_editor_actual || ''); ambCache[k] = (ambCache[k] || 0) + 1; }); }
+    const e = ex.entrada || {};
+    return ambCache[(e.codigo_editor_actual || '') + '|' + (e.mensaje_editor_actual || '')] > 1;
+  }
+  function explicarDiag(d) {
+    const K = KBx(); if (!K) return { estado: 'sinkb' };
+    let ex = null;
+    try { ex = K.explicar({ line: d.line, msg: d.msg, code: d.code, kb: d.kb }, nivelAyuda); } catch (e) { ex = null; }
+    if (!ex || !ex.entrada) return { estado: 'sinexp' };
+    if (esAmbiguo(ex)) return { estado: 'ambiguo' };
+    return { estado: 'ok', entrada: ex.entrada };
+  }
+  // los textos de la base nombran las variables y la línea de un programa de ejemplo: se llevan a las del alumno
+  function adaptador(d, e) {
+    const mapa = {};
+    const a = ((e && e.mensaje_editor_actual) || '').match(/'[^']*'/g) || [], b = ((d && d.msg) || '').match(/'[^']*'/g) || [];
+    a.forEach((x, i) => {
+      const u = (b[i] || '').slice(1, -1), v = x.slice(1, -1);
+      if (u && v && u !== v && /^[A-Za-z_]\w*$/.test(u) && /^[A-Za-z_]\w*$/.test(v)) mapa[v] = u;
+    });
+    const claves = Object.keys(mapa);
+    const re = claves.length ? new RegExp('(?<![\\p{L}\\d_])(' + claves.map((k) => k.replace(/[^\w]/g, '\\$&')).join('|') + ')(?![\\p{L}\\d_])', 'gu') : null;
+    return (t) => {
+      if (typeof t !== 'string') return '';
+      t = t.replace(/^L[ií]nea \d+:\s*/, '');
+      if (re) t = t.replace(re, (m, g, off, all) => {
+        // una "A" de frase («A scanf le falta…») es la preposición, no la variable
+        if (m.length === 1 && (off === 0 || /[.:]\s$/.test(all.slice(Math.max(0, off - 2), off))) && /^\s[a-záéíóú]/.test(all.slice(off + 1, off + 3))) return m;
+        return mapa[g];
+      });
+      return t;
+    };
+  }
+
+  /* --- pistas de a una --- */
+  const pistasEstado = new Map();
+  function pistasWidget(entrada, clave, adapt, extra) {
+    const K = KBx(), box = el('div', 'pistasbox'), ol = el('ol', 'pistas'), act = el('div', 'hact');
+    box.appendChild(ol); box.appendChild(act);
+    const total = asLista(entrada.pistas).length;
+    function pintar(confirmando) {
+      const v = pistasEstado.get(clave) || 0;
+      ol.innerHTML = ''; act.innerHTML = '';
+      ol.hidden = !v;
+      for (let n = 1; n <= v; n++) {
+        const r = K && K.pista(entrada, n, { vistas: n - 1, confirmar: n === 3 });
+        if (!r || r.bloqueada) continue;
+        const li = el('li', r.esSolucion ? 'sol' : '', adapt(r.texto));
+        if (r.esSolucion) li.insertBefore(el('b', '', 'Casi la solución: '), li.firstChild);
+        ol.appendChild(li);
+      }
+      if (extra) act.appendChild(extra);
+      if (v >= total) return;
+      if (confirmando) {
+        const c = el('div', 'conf');
+        c.appendChild(el('span', '', 'Esta pista es casi la solución. ¿Probaste con las anteriores? ¿La querés ver igual?'));
+        c.appendChild(btnEl('Sí, mostrarla', 'mini', () => { pistasEstado.set(clave, v + 1); pintar(false); }));
+        const no = btnEl('Todavía no', 'mini', () => { pintar(false); act.querySelector('button').focus(); });
+        c.appendChild(no); act.appendChild(c); no.focus();
+        return;
+      }
+      const sol = v === 2 && total >= 3;
+      const b = btnEl(sol ? 'Mostrar la solución' : v === 0 ? 'Pista' : 'Otra pista', 'mini', () => {
+        if (sol) { pintar(true); return; }
+        pistasEstado.set(clave, v + 1); pintar(false);
+        const items = ol.querySelectorAll('li'); if (items.length) items[items.length - 1].scrollIntoView({ block: 'nearest' });
+        const nb = act.querySelector('button'); if (nb) nb.focus();
+      });
+      b.setAttribute('aria-label', sol ? 'Mostrar la solución (pide confirmación)' : v === 0 ? 'Pedir una pista' : 'Pedir otra pista');
+      act.insertBefore(b, act.firstChild);
+    }
+    pintar(false);
+    return box;
+  }
+
+  /* --- casos sin respuesta: se guardan en el dispositivo; mandarlos es decisión del alumno --- */
+  function guardarCaso(it) {
+    if (!window.Compartir) return null;
+    try {
+      const caso = Compartir.nuevoCaso({ codigo: ta.value, entrada: inTxt.value, diag: { nivel: it.k === 'w' ? 'aviso' : 'error', code: it.code, msg: it.msg, line: it.line }, nivelAyuda, version: (window.CONFIG && CONFIG.VERSION) || '' });
+      Compartir.guardar(caso, almacen);
+      return Compartir.clave(caso);
+    } catch (e) { return null; }
+  }
+
+  /* --- ayuda de un diagnóstico: { texto, orig, bloque } --- */
+  function relacionDe(e) {
+    const D = kbDatos(), id = e.id;
+    const lec = (D.lecciones || []).find((l) => asLista(l.errores_ids).indexOf(id) >= 0);
+    if (lec) return { tipo: 'leccion', entrada: lec };
+    const ay = (D.ayuda || []).find((a) => asLista(a.errores_ids).indexOf(id) >= 0);
+    if (ay) return { tipo: 'ayuda', entrada: ay };
+    return { tipo: 'error', entrada: e };
+  }
+  function ayudaItem(it) {
+    const r = explicarDiag(it);
+    let clave = null;
+    if (r.estado === 'sinexp') clave = guardarCaso(it);
+    if (nivelAyuda === 0 || r.estado === 'sinkb') return { texto: null, bloque: null };
+    const bloque = el('div', 'help');
+    if (r.estado === 'sinexp') {
+      bloque.appendChild(el('p', 'sinexp', 'Todavía no tengo una explicación para esto. Mirá el mensaje del compilador y la línea marcada.'));
+      const act = el('div', 'hact');
+      act.appendChild(btnEl('Mandárselo a Diego', 'mini', () => abrirCasos(clave ? [clave] : null)));
+      act.appendChild(btnEl('Buscar en la ayuda', 'mini link', () => abrirAyuda({ q: (it.msg || '').replace(/['"‹›]/g, ' ').slice(0, 80) })));
+      bloque.appendChild(act);
+      return { texto: null, bloque };
+    }
+    if (r.estado === 'ambiguo') {
+      bloque.appendChild(el('p', 'sinexp', 'Fijate bien en la línea marcada. Si querés más ayuda, buscá en el panel.'));
+      const act = el('div', 'hact');
+      act.appendChild(btnEl('Buscar en la ayuda', 'mini', () => abrirAyuda({ q: (it.msg || '').replace(/['"‹›]/g, ' ').slice(0, 80) })));
+      bloque.appendChild(act);
+      return { texto: null, bloque };
+    }
+    const e = r.entrada, ad = adaptador(it, e);
+    if (nivelAyuda >= 2 && e.explicacion) bloque.appendChild(el('p', 'hexp', ad(e.explicacion)));
+    const que = btnEl('¿Qué es esto?', 'mini link', () => abrirAyuda({ ver: relacionDe(e) }));
+    if (asLista(e.pistas).length) bloque.appendChild(pistasWidget(e, e.id + '|' + it.line + '|' + it.k, ad, que));
+    else { const act = el('div', 'hact'); act.appendChild(que); bloque.appendChild(act); }
+    return { texto: ad(e.mensaje_editor || e.nombre_corto || ''), bloque };
+  }
+  // al editar la línea marcada, la ayuda de ese problema se esconde sola (se vuelve a calcular al ejecutar)
+  function revisarViejos() {
+    if (!problems.length) return;
+    const lines = ta.value.split('\n');
+    diagList.querySelectorAll('.it').forEach((w) => {
+      const ln = +w.dataset.line;
+      if (!ln) return;
+      w.classList.toggle('stale', (lines[ln - 1] || '') !== w.dataset.txt);
+    });
+  }
+  ta.addEventListener('input', revisarViejos);
+
+  /* ---------- panel «Ayuda»: buscador y detalle ---------- */
+  const dA = $('dAyuda'), aQ = $('aQ'), aList = $('aList'), aDet = $('aDet'), aRes = $('aRes'), aLive = $('aLive'), aSug = $('aSug');
+  const TIPO_TXT = { error: 'Error', ayuda: 'Ayuda', leccion: 'Lección' };
+  const SUGERENCIAS = ['¿por qué 7/2 da 3?', 'scanf', '&', '%d', 'for', 'while', 'if y else', 'prototipo'];
+  let aHist = [];
+  function filaResultado(r) {
+    const li = el('li'), b = el('button'); b.type = 'button';
+    const t = el('span'); t.appendChild(el('span', 'tipo ' + r.tipo, TIPO_TXT[r.tipo] || r.tipo)); t.appendChild(document.createTextNode(' ')); t.appendChild(el('b', '', r.titulo));
+    b.appendChild(t);
+    if (r.resumen) b.appendChild(el('span', 'sub', r.resumen));
+    b.addEventListener('click', () => mostrarDetalle({ tipo: r.tipo, entrada: r.entrada }));
+    li.appendChild(b); return li;
+  }
+  function mostrarResultados(q) {
+    aHist = []; aQ.value = q; aDet.hidden = true; aRes.hidden = false; aList.innerHTML = '';
+    const K = KBx();
+    if (!K) { aSug.hidden = true; aLive.textContent = 'La ayuda no está disponible en este momento.'; return; }
+    if (!q.trim()) {
+      aSug.hidden = false; aSug.innerHTML = '';
+      SUGERENCIAS.forEach((s) => aSug.appendChild(btnEl(s, 'mini', () => { mostrarResultados(s); aQ.focus(); })));
+      (kbDatos().lecciones || []).forEach((l) => aList.appendChild(filaResultado({ tipo: 'leccion', titulo: l.titulo, resumen: '', entrada: l })));
+      aLive.textContent = 'Escribí una palabra o una pregunta, o elegí una lección.';
+      return;
+    }
+    aSug.hidden = true;
+    let res = []; try { res = K.buscar(q, { max: 12 }); } catch (e) { res = []; }
+    res.forEach((r) => aList.appendChild(filaResultado(r)));
+    aLive.textContent = res.length ? res.length + (res.length === 1 ? ' resultado' : ' resultados') : 'No encontré nada para «' + q.trim().slice(0, 40) + '». Probá con otra palabra.';
+  }
+  function abrirEnEditor(codigo, entrada, nombre, tostada) {
+    cerrarBurbuja();
+    newProgram(nombre, String(codigo).replace(/\r\n?/g, '\n'), entrada || '');
+    if (dA.open) dA.close();
+    if (tabMode()) setTab('ed', true);
+    toast(tostada || 'Se abrió como programa nuevo; el anterior sigue en «Programas».');
+  }
+  function bloqueCodigo(titulo, codigo, acciones) {
+    const w = el('div');
+    w.appendChild(el('div', 'lbl', titulo));
+    w.appendChild(el('pre', 'ej', codigo));
+    if (acciones) { const r = el('div', 'row'); acciones.forEach((a) => r.appendChild(a)); w.appendChild(r); }
+    return w;
+  }
+  function relacionados(v) {
+    const K = KBx(), D = kbDatos(), out2 = [], e = v.entrada;
+    const ids = v.tipo === 'error' ? [e.id] : asLista(e.errores_ids);
+    if (v.tipo === 'error') {
+      (D.lecciones || []).filter((l) => asLista(l.errores_ids).indexOf(e.id) >= 0).forEach((l) => out2.push({ tipo: 'leccion', entrada: l }));
+      (D.ayuda || []).filter((a) => asLista(a.errores_ids).indexOf(e.id) >= 0).forEach((a) => out2.push({ tipo: 'ayuda', entrada: a }));
+    } else {
+      ids.forEach((id) => { const x = K && K.entrada(id); if (x) out2.push({ tipo: 'error', entrada: x }); });
+      (D.lecciones || []).filter((l) => l !== e && asLista(l.errores_ids).some((id) => ids.indexOf(id) >= 0)).forEach((l) => out2.push({ tipo: 'leccion', entrada: l }));
+      if (v.tipo === 'leccion') (D.ayuda || []).filter((a) => asLista(a.errores_ids).some((id) => ids.indexOf(id) >= 0)).forEach((a) => out2.push({ tipo: 'ayuda', entrada: a }));
+    }
+    return out2.filter((x, i) => out2.findIndex((y) => y.entrada === x.entrada) === i && x.entrada !== e).slice(0, 8);
+  }
+  function tituloDe(v) { const e = v.entrada; return v.tipo === 'error' ? e.nombre_corto : v.tipo === 'ayuda' ? e.elemento : e.titulo; }
+  function mostrarDetalle(v) {
+    aHist.push(v);
+    aRes.hidden = true; aDet.hidden = false; aDet.innerHTML = ''; aDet.scrollTop = 0;
+    const e = v.entrada, K = KBx();
+    const top = el('div', 'row');
+    top.appendChild(btnEl('← Volver', 'mini', () => { aHist.pop(); const prev = aHist.pop(); if (prev) mostrarDetalle(prev); else { mostrarResultados(aQ.value); aQ.focus(); } }));
+    aDet.appendChild(top);
+    const h = el('h2', 'dt'); h.tabIndex = -1;
+    h.appendChild(el('span', 'tipo ' + v.tipo, TIPO_TXT[v.tipo]));
+    h.appendChild(document.createTextNode(' ' + (tituloDe(v) || '')));
+    aDet.appendChild(h);
+    const sec = (t, txt) => { if (!txt) return; aDet.appendChild(el('div', 'lbl', t)); asLista(txt).forEach((p) => aDet.appendChild(el('p', '', p))); };
+    if (v.tipo === 'error') {
+      sec('Lo que dice el editor', e.mensaje_editor);
+      sec('Qué pasa', e.explicacion);
+      sec('Cómo arreglarlo', e.como_arreglarlo);
+      if (asLista(e.pistas).length) { aDet.appendChild(el('div', 'lbl', 'Pistas (de a una)')); aDet.appendChild(pistasWidget(e, 'panel|' + e.id, (t) => t.replace(/^L[ií]nea \d+:\s*/, ''))); }
+      if (e.codigo_mal) aDet.appendChild(bloqueCodigo('Así falla', e.codigo_mal, [btnEl('Abrir en el editor', 'mini', () => abrirEnEditor(e.codigo_mal, e.entrada, 'Ejemplo: ' + e.nombre_corto.slice(0, 30)))]));
+      if (e.codigo_bien) aDet.appendChild(bloqueCodigo('Así queda bien', e.codigo_bien, [btnEl('Abrir en el editor', 'mini', () => abrirEnEditor(e.codigo_bien, e.entrada, 'Ejemplo: ' + e.nombre_corto.slice(0, 30)))]));
+    } else if (v.tipo === 'ayuda') {
+      sec('Qué es', e.que_es);
+      if (e.como_se_usa) aDet.appendChild(bloqueCodigo('Cómo se usa', e.como_se_usa));
+      sec('Error típico', e.error_tipico);
+      if (e.en_la_materia) sec('En la materia', e.en_la_materia);
+      aDet.appendChild(btnEl('Buscar más sobre «' + e.elemento.slice(0, 20) + '»', 'mini', () => { mostrarResultados(e.elemento); aQ.focus(); }));
+    } else {
+      sec('Explicación', e.explicacion);
+      if (e.ejemplo) aDet.appendChild(bloqueCodigo('Ejemplo', e.ejemplo, [btnEl('Probar', 'mini primary', () => abrirEnEditor(e.ejemplo, e.entrada, 'Lección ' + (e.titulo || '').replace(/^\d+\.\s*/, '').slice(0, 28), 'Cargado como programa nuevo. Apretá Ejecutar para probarlo.'))]));
+      if (e.resultado) aDet.appendChild(bloqueCodigo('Resultado', e.resultado));
+    }
+    const rel = relacionados(v);
+    if (rel.length) {
+      aDet.appendChild(el('div', 'lbl', 'Relacionados'));
+      const r = el('div', 'rel');
+      rel.forEach((x) => r.appendChild(btnEl((TIPO_TXT[x.tipo] || '') + ': ' + (tituloDe(x) || '').slice(0, 40), 'mini', () => mostrarDetalle(x))));
+      aDet.appendChild(r);
+    }
+    aLive.textContent = '';
+    h.focus({ preventScroll: true });
+  }
+  function abrirAyuda(o) {
+    o = o || {};
+    cerrarBurbuja();
+    if (!dA.open) dA.showModal();
+    if (o.ver) { aHist = []; mostrarResultados(aQ.value); mostrarDetalle(o.ver); }
+    else { mostrarResultados(o.q !== undefined ? String(o.q) : ''); aQ.focus(); aQ.select(); }
+  }
+  aQ.addEventListener('input', () => mostrarResultados(aQ.value));
+  $('aForm').addEventListener('submit', (e) => e.preventDefault());
+  aQ.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown') { const b = aList.querySelector('button'); if (b && !aRes.hidden) { e.preventDefault(); b.focus(); } }
+    else if (e.key === 'Enter') { const b = aList.querySelector('button'); if (b && !aRes.hidden && aQ.value.trim()) { e.preventDefault(); b.click(); } }
+  });
+  aList.addEventListener('keydown', (e) => {
+    const bs = Array.prototype.slice.call(aList.querySelectorAll('button')), i = bs.indexOf(document.activeElement);
+    if (i < 0) return;
+    if (e.key === 'ArrowDown') { e.preventDefault(); if (bs[i + 1]) bs[i + 1].focus(); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); if (i === 0) aQ.focus(); else bs[i - 1].focus(); }
+    else if (e.key === 'Home') { e.preventDefault(); bs[0].focus(); }
+    else if (e.key === 'End') { e.preventDefault(); bs[bs.length - 1].focus(); }
+  });
+  $('ayudaBtn').addEventListener('click', () => abrirAyuda());
+
+  /* ---------- «¿Qué es esto?» sobre el código: no mueve el cursor ni toca el texto ---------- */
+  const bubble = $('bubble'), whatLay = $('whatLay'), whatBtn = $('whatBtn');
+  let whatOn = false;
+  function cerrarBurbuja() {
+    if (!bubble.hidden) { bubble.hidden = true; bubble.innerHTML = ''; if (coarse && whatOn) setWhat(false); }
+  }
+  function setWhat(on) {
+    whatOn = !!on; whatBtn.setAttribute('aria-pressed', String(whatOn)); whatLay.hidden = !whatOn;
+    if (!whatOn && !bubble.hidden) { bubble.hidden = true; bubble.innerHTML = ''; }
+    if (whatOn) toast('Tocá una palabra, un operador o un %d del código. Esc para salir.');
+  }
+  whatBtn.addEventListener('click', () => setWhat(!whatOn));
+  // carácter del textarea bajo un punto de la pantalla (fuente monoespaciada, tabulador de 4); null si cae fuera del texto
+  let cwCache = { f: '', w: 0 };
+  function offsetEn(cx, cy) {
+    const r = ta.getBoundingClientRect(), cs = getComputedStyle(ta);
+    const f = cs.fontSize + ' ' + cs.fontFamily;
+    if (cwCache.f !== f) { const c = document.createElement('canvas').getContext('2d'); c.font = f; cwCache = { f, w: c.measureText('M').width }; }
+    const lh = parseFloat(cs.lineHeight) || parseFloat(cs.fontSize) * 1.5, cw = cwCache.w || 8;
+    const x = cx - r.left - (parseFloat(cs.paddingLeft) || 0) + ta.scrollLeft, y = cy - r.top - (parseFloat(cs.paddingTop) || 0) + ta.scrollTop;
+    if (x < 0 || y < 0) return null;
+    const ln = Math.floor(y / lh), lines = ta.value.split('\n');
+    if (ln >= lines.length) return null;
+    const colV = Math.floor(x / cw), txt = lines[ln];
+    let v = 0, idx = 0;
+    for (; idx < txt.length; idx++) { const w = txt[idx] === '\t' ? 4 - (v % 4) : 1; if (colV < v + w) break; v += w; }
+    if (idx >= txt.length) return null;
+    let off = 0; for (let i = 0; i < ln; i++) off += lines[i].length + 1;
+    return off + idx;
+  }
+  function mostrarBurbuja(off, cx, cy) {
+    const K = KBx();
+    bubble.innerHTML = '';
+    let clave = null, a = null;
+    if (K && off !== null) { try { clave = K.elementoEnPosicion(ta.value, off); a = clave ? K.ayudaDe(clave) : null; } catch (e) { a = null; } }
+    const cierre = btnEl('✕', 'mini ico', () => cerrarBurbuja(), 'Cerrar la explicación');
+    if (a) {
+      const h = el('h4'); h.appendChild(el('code', '', a.elemento)); h.appendChild(cierre); bubble.appendChild(h);
+      if (a.tipo) bubble.appendChild(el('div', 'muted', a.tipo));
+      bubble.appendChild(el('p', '', a.que_es || ''));
+      if (a.como_se_usa) bubble.appendChild(el('pre', '', a.como_se_usa));
+      if (a.error_tipico) bubble.appendChild(el('p', 'muted', 'Error típico: ' + a.error_tipico));
+      const r = el('div', 'row'); r.appendChild(btnEl('Más ayuda', 'mini', () => abrirAyuda({ ver: { tipo: 'ayuda', entrada: a } }))); bubble.appendChild(r);
+    } else {
+      const h = el('h4'); h.appendChild(el('span', '', '¿Qué es esto?')); h.appendChild(cierre); bubble.appendChild(h);
+      bubble.appendChild(el('p', 'muted', K ? 'No tengo una explicación para eso: puede ser un nombre tuyo, un número o un comentario. Probá tocando una palabra de C, un operador o un %d.' : 'La ayuda no está disponible en este momento.'));
+    }
+    bubble.hidden = false;
+    if (!coarse && window.innerWidth >= 700) {
+      const bw = Math.min(380, window.innerWidth - 16);
+      bubble.style.left = Math.max(8, Math.min(window.innerWidth - bw - 8, cx + 8)) + 'px';
+      const bh = bubble.offsetHeight;
+      bubble.style.top = Math.max(8, cy + 16 + bh > window.innerHeight - 8 ? cy - bh - 12 : cy + 16) + 'px';
+    }
+  }
+  function consultar(cx, cy) { mostrarBurbuja(offsetEn(cx, cy), cx, cy); }
+  whatLay.addEventListener('click', (e) => consultar(e.clientX, e.clientY));
+  // la capa tapa el texto: la rueda y el arrastre con el dedo siguen moviendo el editor
+  whatLay.addEventListener('wheel', (e) => { e.preventDefault(); ta.scrollTop += e.deltaY; ta.scrollLeft += e.deltaX; syncScroll(); }, { passive: false });
+  let wtx = 0, wty = 0;
+  whatLay.addEventListener('touchstart', (e) => { const t = e.touches[0]; wtx = t.clientX; wty = t.clientY; }, { passive: true });
+  whatLay.addEventListener('touchmove', (e) => { const t = e.touches[0]; ta.scrollTop -= t.clientY - wty; ta.scrollLeft -= t.clientX - wtx; wtx = t.clientX; wty = t.clientY; syncScroll(); }, { passive: true });
+  ta.addEventListener('mousedown', (e) => { if (e.altKey && e.button === 0) { e.preventDefault(); consultar(e.clientX, e.clientY); } }, true);
+  ta.addEventListener('keydown', (e) => {
+    if (e.key === 'F1') { e.preventDefault(); const r = ta.getBoundingClientRect(); mostrarBurbuja(Math.min(ta.selectionStart, Math.max(0, ta.value.length - 1)), r.left + 48, r.top + 40); }
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    if (!bubble.hidden) { e.preventDefault(); bubble.hidden = true; bubble.innerHTML = ''; if (coarse && whatOn) setWhat(false); }
+    else if (whatOn && !document.querySelector('dialog[open]')) { e.preventDefault(); setWhat(false); }
+  });
+
+  /* ---------- casos para enviar ---------- */
+  const dCasos = $('dCasos');
+  let casosSel = new Set();
+  const casosLista = () => { try { return window.Compartir ? Compartir.listar(almacen) : []; } catch (e) { return []; } };
+  function abrirCasos(claves) {
+    const lista = casosLista();
+    casosSel = new Set(claves && claves.length ? claves : lista.map((c) => Compartir.clave(c)));
+    if ($('dSet').open) $('dSet').close();
+    pintarCasos();
+    if (!dCasos.open) dCasos.showModal();
+  }
+  function pintarCasos() {
+    const lista = casosLista(), ul2 = $('cList');
+    ul2.innerHTML = '';
+    lista.forEach((c) => {
+      const k = Compartir.clave(c), li = el('li'), lb = el('label'), cb = el('input');
+      cb.type = 'checkbox'; cb.checked = casosSel.has(k); cb.setAttribute('aria-label', 'Incluir este caso en el envío');
+      cb.addEventListener('change', () => { if (cb.checked) casosSel.add(k); else casosSel.delete(k); pintarVistaCasos(); });
+      const cm = el('span', 'cm'); const d = c.diag || {};
+      cm.appendChild(el('b', '', (d.line ? 'Línea ' + d.line + ': ' : '') + (d.msg || '')));
+      cm.appendChild(el('small', '', (d.nivel === 'aviso' ? 'Aviso' : 'Error') + (c.fecha ? ' · ' + c.fecha : '') + ' · ' + (c.codigo || '').split('\n').length + ' líneas de código'));
+      lb.appendChild(cb); lb.appendChild(cm); li.appendChild(lb);
+      const del = btnEl('✕', 'mini ico', () => {
+        Compartir.borrar(k, almacen); casosSel.delete(k); pintarCasos();
+        toast('Caso borrado.', 'Deshacer', () => { Compartir.guardar(c, almacen); casosSel.add(k); pintarCasos(); });
+      }, 'Borrar este caso'); del.title = 'Borrar este caso';
+      li.appendChild(del); ul2.appendChild(li);
+    });
+    $('cVacio').hidden = lista.length > 0; $('cAcc').hidden = !lista.length; $('cDelAll').hidden = !lista.length;
+    pintarVistaCasos();
+  }
+  let casosTexto = '', casosSelLista = [];
+  function pintarVistaCasos() {
+    const sel = casosLista().filter((c) => casosSel.has(Compartir.clave(c)));
+    casosSelLista = sel;
+    const wa = $('cWa'), cfgNum = (window.CONFIG && CONFIG.WHATSAPP_NUMERO) || '';
+    if (!sel.length) {
+      casosTexto = ''; $('cPrev').textContent = '(elegí al menos un caso)'; $('cNota').textContent = '';
+      wa.setAttribute('aria-disabled', 'true'); wa.removeAttribute('href'); $('cCopy').disabled = true; $('cDl').disabled = true;
+      return;
+    }
+    const texto = Compartir.mensajeWhatsApp(sel), url = Compartir.urlWhatsApp(texto, cfgNum);
+    casosTexto = Compartir.textoCompleto || texto;
+    let enviado = texto;
+    if (Compartir.recortado) { try { enviado = decodeURIComponent(url.slice(url.indexOf('?text=') + 6)); } catch (e) { enviado = texto; } }
+    $('cPrev').textContent = enviado;
+    wa.setAttribute('href', url); wa.removeAttribute('aria-disabled'); $('cCopy').disabled = false; $('cDl').disabled = false;
+    const notas = [];
+    if (!cfgNum) notas.push('Todavía no está configurado el número de Diego: WhatsApp se abre sin destinatario y elegís vos a quién mandarlo.');
+    if (Compartir.recortado) notas.push('El texto es largo y por WhatsApp va recortado (es lo que ves arriba). Usá «Copiar» para tener el texto completo.');
+    $('cNota').textContent = notas.join(' ');
+  }
+  $('casosBtn').addEventListener('click', () => abrirCasos());
+  $('cCopy').addEventListener('click', () => {
+    copyText(casosTexto, dCasos).then((ok) => {
+      if (ok) { toast('Texto copiado. Pegalo en el chat que quieras.'); return; }
+      $('cNota').textContent = 'El navegador no dejó copiar. Tocá el texto de la vista previa, copialo a mano y pegalo en el chat.';
+      const r = document.createRange(); r.selectNodeContents($('cPrev')); const s = window.getSelection(); s.removeAllRanges(); s.addRange(r); $('cPrev').focus();
+    });
+  });
+  $('cDl').addEventListener('click', () => {
+    if (!casosSelLista.length) return;
+    const d = new Date(), stamp = d.getFullYear() + pad2(d.getMonth() + 1) + pad2(d.getDate());
+    download(new Blob([Compartir.exportarJSON(casosSelLista)], { type: 'application/json' }), 'casos-editor-c-' + stamp + '.json');
+    toast('Archivo descargado. Mandalo vos si querés.');
+  });
+  $('cDelAll').addEventListener('click', () => {
+    const todos = casosLista();
+    todos.forEach(() => Compartir.borrar(0, almacen));
+    casosSel = new Set(); pintarCasos();
+    toast('Se borraron ' + todos.length + (todos.length === 1 ? ' caso.' : ' casos.'), 'Deshacer', () => { todos.forEach((c) => Compartir.guardar(c, almacen)); casosSel = new Set(todos.map((c) => Compartir.clave(c))); pintarCasos(); });
+  });
+  // un enlace de WhatsApp sin casos elegidos no debe abrirse
+  $('cWa').addEventListener('click', (e) => { if ($('cWa').getAttribute('aria-disabled') === 'true') e.preventDefault(); });
+
+  /* ---------- ajustes: ayuda, escritura, evidencia de proceso ---------- */
+  function sincronizarAjustesNuevos() {
+    $('ayudaSel').value = String(nivelAyuda); $('ayudaDesc').textContent = NIVELES_TXT[nivelAyuda];
+    $('autoCierre').checked = autoCierre;
+    $('procCap').checked = store.get('proccap', '1') !== '0';
+    const l = proc.linea(); $('procAhora').textContent = l ? 'Este programa, ahora: ' + l.replace(/^Escrito en el editor: /, '') + '.' : '';
+    const n = casosLista().length;
+    $('casosBtn').textContent = 'Casos para enviar' + (n ? ' (' + n + ')' : '');
+  }
+  $('ayudaSel').addEventListener('change', () => {
+    nivelAyuda = +$('ayudaSel').value; store.set('ayuda', String(nivelAyuda)); $('ayudaDesc').textContent = NIVELES_TXT[nivelAyuda];
+    if (lastRes && problems.length) renderDiag(lastRes, lastRt, true);
+  });
+  $('autoCierre').addEventListener('change', () => { autoCierre = $('autoCierre').checked; store.set('autocierre', autoCierre ? '1' : '0'); });
+  $('procCap').addEventListener('change', () => store.set('proccap', $('procCap').checked ? '1' : '0'));
 
   /* ---------- consola ---------- */
   let total = 0; const CAP = 400000;
@@ -3177,9 +4297,9 @@ int main() {
   function setStatus(txt, cls) { statusEl.textContent = txt; statusEl.className = 'chip' + (cls ? ' ' + cls : ''); }
   function clearConsole() { clearTimeout(outTimer); outTimer = null; outBuf = ''; out.textContent = ''; total = 0; }
   $('clear').addEventListener('click', () => { removeInput(); clearConsole(); if ((worker || main) && waiting) showInput(); });
-  function copyText(s) {
+  function copyText(s, host) {
     const fallback = () => {
-      const t = document.createElement('textarea'); t.value = s; t.style.position = 'fixed'; t.style.opacity = '0'; document.body.appendChild(t); t.select();
+      const t = document.createElement('textarea'); t.value = s; t.style.position = 'fixed'; t.style.opacity = '0'; (host || document.body).appendChild(t); t.select();
       let ok = false; try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
       t.remove(); return ok;
     };
@@ -3381,6 +4501,7 @@ self.postMessage({ type: 'ready' });`;
     resetRun();
     removeInput(); clearConsole(); clearProblems();
     flushSave();
+    proc.ejecutar();
     const src = ta.value;
     if (tabMode()) setTab('co');
     preparePreset();
@@ -3479,7 +4600,16 @@ self.postMessage({ type: 'ready' });`;
     while (outRows.length > 1 && !outRows[outRows.length - 1].length) outRows.pop();
     const inRows = opts.input !== false && inTxt.value.trim() ? rowsOf([['in', inTxt.value.replace(/\n+$/, '')]], cols + 4) : [];
     const secH = 30, headH = 64, gap = 14;
-    const H = headH + gap + secH + codeRows.length * lh + 16 + (inRows.length ? gap + secH + inRows.length * lh + 16 : 0) + gap + secH + Math.max(1, outRows.length) * lh + 16 + 14;
+    // línea de evidencia de proceso (opcional): se parte en renglones para que entre en el ancho
+    const procRows = [];
+    const procTxt = opts.proc === false ? '' : proc.linea();
+    if (procTxt) {
+      ctx.font = '12px ' + UI;
+      let ln = '';
+      procTxt.split(' ').forEach((w) => { const t = ln ? ln + ' ' + w : w; if (ln && ctx.measureText(t).width > W - 2 * padX) { procRows.push(ln); ln = w; } else ln = t; });
+      if (ln) procRows.push(ln);
+    }
+    const H = headH + gap + secH + codeRows.length * lh + 16 + (inRows.length ? gap + secH + inRows.length * lh + 16 : 0) + gap + secH + Math.max(1, outRows.length) * lh + 16 + 14 + procRows.length * 17;
     let S = 2; while (W * S * H * S > 14e6 && S > 1) S -= 0.5;
     cv.width = Math.round(W * S); cv.height = Math.round(H * S); ctx.scale(S, S);
     ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, W, H);
@@ -3517,6 +4647,10 @@ self.postMessage({ type: 'ready' });`;
     if (inRows.length) { y += gap; section('Datos de entrada'); drawRows(inRows, padX, '#f6f9ff', false); }
     y += gap; section('Salida');
     drawRows(outRows.length && (outRows.length > 1 || outRows[0].length) ? outRows : [[['dim', '(sin salida: ejecutá el programa antes de sacar la captura)']]], padX, '#fbfcfe', false);
+    if (procRows.length) {
+      ctx.font = '12px ' + UI; ctx.fillStyle = '#566174';
+      procRows.forEach((t, i) => ctx.fillText(t, padX, y + 12 + i * 17));
+    }
     return cv;
   }
   // Vista previa antes de descargar: se puede incluir u omitir la entrada
@@ -3525,7 +4659,7 @@ self.postMessage({ type: 'ready' });`;
   function shotRender() {
     const seq = ++shotSeq;
     let cv;
-    try { cv = makePng({ input: $('shotIn').checked }); } catch (e) { toast('No se pudo armar la imagen: ' + e.message); dShot.close(); return; }
+    try { cv = makePng({ input: $('shotIn').checked, proc: $('shotProc').checked }); } catch (e) { toast('No se pudo armar la imagen: ' + e.message); dShot.close(); return; }
     cv.toBlob((blob) => {
       if (seq !== shotSeq) return;
       if (!blob) { toast('No se pudo generar la imagen.'); dShot.close(); return; }
@@ -3538,12 +4672,14 @@ self.postMessage({ type: 'ready' });`;
   $('shot').addEventListener('click', () => {
     const hasIn = !!inTxt.value.trim();
     $('shotInRow').hidden = !hasIn; $('shotIn').checked = hasIn;
+    const hayProc = !!proc.linea(); $('shotProcRow').hidden = !hayProc; $('shotProc').checked = hayProc && store.get('proccap', '1') !== '0';
     const canShare = !!(coarse && typeof File === 'function' && navigator.canShare && navigator.canShare({ files: [new File([new Blob(['x'])], 'a.png', { type: 'image/png' })] }));
     $('shotShare').hidden = !canShare;
     shotBlob = null; $('shotImg').removeAttribute('src');
     dShot.showModal(); shotRender();
   });
   $('shotIn').addEventListener('change', shotRender);
+  $('shotProc').addEventListener('change', shotRender);
   dShot.addEventListener('close', () => { shotSeq++; shotBlob = null; if (shotUrl) { URL.revokeObjectURL(shotUrl); shotUrl = ''; } $('shotImg').removeAttribute('src'); });
   $('shotDl').addEventListener('click', () => {
     if (!shotBlob) { toast('La imagen todavía se está preparando.'); return; }
@@ -3567,7 +4703,7 @@ self.postMessage({ type: 'ready' });`;
     const i = exSel.value; exSel.value = '';
     if (i === '') return;
     const ex = EXAMPLES[+i];
-    if (isPristine(ta.value)) { cur.name = nextName(ex.t); cur.code = ex.c; cur.input = ''; showProgram(cur); }
+    if (isPristine(ta.value)) { cur.name = nextName(ex.t); cur.code = ex.c; cur.input = ''; cur.proc = undefined; showProgram(cur, 'c'); }
     else { newProgram(ex.t, ex.c); toast('Ejemplo abierto como programa nuevo; el anterior sigue en "Programas".'); }
     $('more').open = matchMedia('(min-width: 900px)').matches;
   });
@@ -3629,14 +4765,14 @@ self.postMessage({ type: 'ready' });`;
   });
   $('settings').addEventListener('click', () => {
     $('uName').value = user.name; $('uCurso').value = user.curso; $('uMat').value = user.mat; $('uCiclo').value = user.ciclo;
-    $('theme').value = store.get('theme', 'auto'); $('dSet').showModal();
+    $('theme').value = store.get('theme', 'auto'); sincronizarAjustesNuevos(); $('dSet').showModal();
   });
   let lastHeader = headerText();
   [['uName', 'name'], ['uCurso', 'curso'], ['uMat', 'mat'], ['uCiclo', 'ciclo']].forEach(([id, key]) => {
     $(id).addEventListener('input', () => {
       user[key] = $(id).value.trim(); store.set('user', JSON.stringify(user));
       const nh = headerText();
-      if (nh !== lastHeader && ta.value.startsWith(lastHeader)) { const p = ta.selectionStart; ta.value = nh + ta.value.slice(lastHeader.length); ta.setSelectionRange(Math.max(p + nh.length - lastHeader.length, 0), Math.max(p + nh.length - lastHeader.length, 0)); refresh(); scheduleSave(); }
+      if (nh !== lastHeader && ta.value.startsWith(lastHeader)) { const p = ta.selectionStart; auto(() => { ta.value = nh + ta.value.slice(lastHeader.length); }); ta.setSelectionRange(Math.max(p + nh.length - lastHeader.length, 0), Math.max(p + nh.length - lastHeader.length, 0)); refresh(); scheduleSave(); }
       lastHeader = nh;
     });
   });
@@ -3707,7 +4843,10 @@ self.postMessage({ type: 'ready' });`;
       let name = p.name;
       if (sim.some((x) => x.name === name)) { name = nm(p.name + ' (importado)'); res.renamed++; } else res.add++;
       sim.push({ name, code: p.code });
-      if (commit) progs.push({ id: uid(), name, code: p.code, input: p.input, t: p.t });
+      if (commit) {
+        let pr; try { pr = window.Proceso ? Proceso.nuevo(p.code, 'c').serializar() : undefined; } catch (e) { pr = undefined; }
+        progs.push({ id: uid(), name, code: p.code, input: p.input, t: p.t, proc: pr });
+      }
     });
     return res;
   }
@@ -3872,11 +5011,11 @@ self.postMessage({ type: 'ready' });`;
       const old = store.get('code', '');           // versión anterior: un solo programa
       p = { id: uid(), name: 'Programa 1', code: old && old.trim() ? old : template(), input: '', t: Date.now() };
       progs.push(p);
-    }
-    showProgram(p);
+      showProgram(p, old && old.trim() ? 'u' : 'a');
+    } else showProgram(p);
     if (!store.get('seen', '')) { store.set('seen', '1'); }
   })();
-  window.__editorc = { run, cfg, setCode: (s) => { ta.value = s; refresh(); scheduleSave(); }, compile: (s) => CCompiler.compile(s), showDiag: (r) => { lastRes = r; showDiag(r); } };
+  window.__editorc = { run, cfg, proceso: () => proc.resumen(), procLinea: () => proc.linea(), nivelAyuda: () => nivelAyuda, setCode: (s) => { ta.value = s; proc.marcarCargado(s, 'c'); refresh(); scheduleSave(); }, compile: (s) => CCompiler.compile(s), showDiag: (r) => { lastRes = r; showDiag(r); } };
 })();
 </script>
 <script>
@@ -3887,7 +5026,7 @@ window.KB_DATA={"errores":[{"id":"ARR-001","categoria":"arreglos y textos","nomb
    (por ejemplo '5491112345678'). Vacío = el botón abre WhatsApp sin destinatario. */
 (function (root) {
   'use strict';
-  var CONFIG = { WHATSAPP_NUMERO: '', VERSION: '6f37af06ab36' };
+  var CONFIG = { WHATSAPP_NUMERO: '', VERSION: 'a62337db1983' };
   if (typeof module !== 'undefined' && module.exports) module.exports = CONFIG;
   else root.CONFIG = CONFIG;
 })(typeof self !== 'undefined' ? self : this);

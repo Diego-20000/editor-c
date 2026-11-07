@@ -21,6 +21,7 @@ const JS = [
   ['compiler.js', compiler + '\nvar CC_SRC = ' + json(compiler) + ';\n'],
   ['runtime.js', runtime + '\nvar RT_SRC = ' + json(runtime) + ';\n'],
   ['examples.js', R('examples.js')],
+  ['proceso.js', R('proceso.js')],   // evidencia de proceso: antes de app.js, que lo conecta al editor
   ['app.js', R('app.js')]
 ];
 const css = R('app.css');
@@ -127,7 +128,7 @@ W('index.html', tpl
   .replace('<!--@@JS@@-->', () => JS.map(([n]) => '<script src="assets/' + n + '"></script>').concat(KB_JS.map(([n]) => '<script defer src="assets/' + n + '"></script>')).join('\n')));
 
 // 2) service worker: la versión es el hash del contenido de todo lo que precachea
-const PRECACHE = ['./', 'index.html', 'manifest.webmanifest', 'assets/styles.css', 'assets/compiler.js', 'assets/runtime.js', 'assets/examples.js', 'assets/app.js',
+const PRECACHE = ['./', 'index.html', 'manifest.webmanifest', 'assets/styles.css', 'assets/compiler.js', 'assets/runtime.js', 'assets/examples.js', 'assets/proceso.js', 'assets/app.js',
   'assets/kb-data.js', 'assets/config.js', 'assets/kb.js', 'assets/compartir.js', 'assets/icon-192.png', 'assets/icon-512.png', 'assets/icon-maskable-512.png', 'assets/apple-touch-icon.png'];
 const hash = crypto.createHash('sha256');
 // config.js lleva la versión adentro: se calcula con su texto sin completar

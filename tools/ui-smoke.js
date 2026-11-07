@@ -207,11 +207,16 @@ async function suite(browser, target, mobile) {
   ok((await page.inputValue('#code')) === 'int X;\nX = 1;\nX = X + 1;\n', 'reemplazar todos');
   await page.keyboard.press('Escape');
 
-  // ---- 11) cierre automático, comentar, sangría (solo escritorio: teclado físico)
+  // ---- 11) cierre automático (apagado por defecto), comentar, sangría (solo escritorio: teclado físico)
   if (!mobile) {
     await setCode(''); await page.click('#code');
     await page.keyboard.type('if (x');
-    ok((await page.inputValue('#code')) === 'if (x)', 'autocierra paréntesis');
+    ok((await page.inputValue('#code')) === 'if (x', 'por defecto no autocierra paréntesis (que el alumno tipee todo)');
+    await page.keyboard.press('Control+A'); await page.keyboard.press('Backspace');
+    await H.menu(); await H.tap('#settings'); await page.waitForSelector('#dSet[open]'); await page.check('#autoCierre'); await page.keyboard.press('Escape');
+    await page.click('#code');
+    await page.keyboard.type('if (x');
+    ok((await page.inputValue('#code')) === 'if (x)', 'encendido en Ajustes: autocierra paréntesis');
     await page.keyboard.type(')');
     ok((await page.inputValue('#code')) === 'if (x)', 'sobrescribe el cierre');
     await page.keyboard.press('End'); await page.keyboard.type(' {'); await page.keyboard.press('Enter');
@@ -222,6 +227,7 @@ async function suite(browser, target, mobile) {
     ok((await page.inputValue('#code')).includes('    // puts("hola")'), 'Ctrl+/ comenta');
     await page.keyboard.press('Control+/');
     ok(!(await page.inputValue('#code')).includes('//'), 'Ctrl+/ descomenta');
+    await H.menu(); await H.tap('#settings'); await page.waitForSelector('#dSet[open]'); await page.uncheck('#autoCierre'); await page.keyboard.press('Escape');
   }
 
   // ---- 12) varios programas y recuperación al recargar
@@ -571,6 +577,339 @@ async function pwaSuite(browser, mobile) {
   fs.rmSync(tmp, { recursive: true, force: true });
 }
 
+// ------------------------------------------------------------------ el entrenador: ayuda por niveles, panel Ayuda, «¿Qué es esto?», casos sin respuesta, proceso, cierre automático
+const SCANF_MAL = '#include <stdio.h>\nint main() {\n    int A;\n    scanf("%d", A);\n    printf("%d\\n", A);\n    return 0;\n}\n';
+const CON_CABECERA = '// Pérez, Ana\n// 5° 2da\n// Lenguajes Electrónicos V\n// Ciclo lectivo 2026\n\n#include <stdio.h>\nint main() {\n    int A;\n    A = 1;\n    printf("%d\\n", A);\n    return 0;\n}\n';
+const DESCONOCIDO = { errors: [{ line: 9, msg: 'zzz error inventado que la base no conoce (prueba)', code: 'E-prueba-sin-kb' }], warnings: [] };
+
+async function entrenadorSuite(browser, target, mobile) {
+  const label = target.label;
+  console.log('\n== entrenador · ' + label + (mobile ? ' (celular)' : ' (escritorio)'));
+  const ctx = await newCtx(browser, mobile);
+  const page = await ctx.newPage();
+  const errors = [], net = [], extra = [];
+  page.on('console', (m) => { if (m.type() === 'error' || m.type() === 'warning') errors.push(m.text()); });
+  page.on('pageerror', (e) => errors.push('pageerror: ' + e.message));
+  ctx.on('page', (p) => extra.push(p.url()));
+  ctx.on('request', (r) => { const u = r.url(); if (/^(file|data|blob|about):/.test(u)) return; if (target.origin && u.startsWith(target.origin)) return; net.push(u); });
+  const H = helpers(page, mobile), tg = (mobile ? 'm' : 'd') + '-ent-' + label.replace(/\W+/g, '');
+  const shot = (n) => page.screenshot({ path: path.join(STEP, tg + '-' + n + '.png') });
+  const open = async (q) => { await page.goto(target.url + (q || '')); await page.waitForSelector('#code'); };
+  const openSettings = async () => { await H.menu(); await H.tap('#settings'); await page.waitForSelector('#dSet[open]'); };
+  const closeDlg = async () => { await page.keyboard.press('Escape'); await page.waitForFunction(() => !document.querySelector('dialog[open]')); };
+  const runShow = async (code) => { await H.setCode(code); await H.run(); await page.waitForSelector('#diag:not([hidden])'); await H.tab('co'); };
+  const items = (cls) => page.locator('#diagList .it' + (cls || ''));
+  const vis = (sel) => page.evaluate((s) => { const e = document.querySelector(s); if (!e) return false; const r = e.getBoundingClientRect(); return r.width > 0 && r.height > 0 && getComputedStyle(e).visibility !== 'hidden' && !e.closest('[hidden]'); }, sel);
+  // punto de pantalla (centro) del carácter `idx`-ésimo del texto, para tocar el editor sin mover el cursor
+  const pointOf = (needle, delta) => page.evaluate(([n, d]) => {
+    const t = document.getElementById('code'), v = t.value, i = v.indexOf(n) + (d || 0), lines = v.slice(0, i).split('\n');
+    const cs = getComputedStyle(t), r = t.getBoundingClientRect(), c = document.createElement('canvas').getContext('2d'); c.font = cs.fontSize + ' ' + cs.fontFamily;
+    const cw = c.measureText('M').width, lh = parseFloat(cs.lineHeight);
+    return { x: r.left + parseFloat(cs.paddingLeft) + (lines[lines.length - 1].length + 0.5) * cw - t.scrollLeft, y: r.top + parseFloat(cs.paddingTop) + (lines.length - 0.5) * lh - t.scrollTop };
+  }, [needle, delta]);
+  const tapAt = (pt) => (mobile ? page.touchscreen.tap(pt.x, pt.y) : page.mouse.click(pt.x, pt.y));
+  await open();
+  await H.tab('ed');
+
+  // ---- A) nivel 1 por defecto: mensaje corto, pistas de a una, sin solución sola
+  ok((await page.evaluate(() => window.__editorc.nivelAyuda())) === 1, 'ayuda: el nivel por defecto es 1');
+  await runShow(SCANF_MAL);
+  const msg = await items('.e').first().locator('.msg').textContent();
+  ok(/falta el &/.test(msg) && /línea|Línea/.test(await items('.e').first().locator('.tag').textContent()), 'nivel 1: mensaje corto de la base con la línea (' + msg.slice(0, 50) + ')');
+  ok(/Compilador: .*scanf/.test(await items('.e').first().locator('.orig').textContent()), 'nivel 1: el mensaje del compilador sigue visible, en chico');
+  ok((await items('.e').first().locator('.pistas li').count()) === 0 && (await items('.e').first().locator('.hexp').count()) === 0, 'nivel 1: no se despliega ninguna pista ni explicación sola');
+  const pbtn = items('.e').first().locator('.help .hact button', { hasText: /^Pista$/ });
+  ok((await pbtn.count()) === 1, 'nivel 1: botón «Pista»');
+  await shot('1-nivel1');
+  await H.tap('#diagList .it.e .help .hact button:has-text("Pista")');
+  ok((await items('.e').first().locator('.pistas li').count()) === 1, 'pista 1: se muestra de a una');
+  await H.tap('#diagList .it.e .help .hact button:has-text("Otra pista")');
+  ok((await items('.e').first().locator('.pistas li').count()) === 2, 'pista 2: se muestra de a una');
+  ok((await items('.e').first().locator('.pistas li.sol').count()) === 0 && (await items('.e').first().locator('.help .hact button', { hasText: 'Mostrar la solución' }).count()) === 1, 'la tercera se llama «Mostrar la solución»');
+  await H.tap('#diagList .it.e .help .hact button:has-text("Mostrar la solución")');
+  ok((await items('.e').first().locator('.pistas li').count()) === 2 && /casi la solución/i.test(await items('.e').first().locator('.conf').textContent()), 'la solución pide confirmación y todavía no se muestra');
+  await H.tap('#diagList .it.e .conf button:has-text("Todavía no")');
+  ok((await items('.e').first().locator('.pistas li').count()) === 2 && (await items('.e').first().locator('.conf').count()) === 0, '«Todavía no» no muestra nada');
+  await H.tap('#diagList .it.e .help .hact button:has-text("Mostrar la solución")');
+  await H.tap('#diagList .it.e .conf button:has-text("Sí, mostrarla")');
+  ok((await items('.e').first().locator('.pistas li.sol').count()) === 1 && (await items('.e').first().locator('.help .hact button', { hasText: /Pista|solución/ }).count()) === 0, 'con la confirmación aparece la tercera pista y ya no quedan botones de pista');
+  // «¿Qué es esto?» abre la lección o ayuda relacionada
+  await H.tap('#diagList .it.e .help button:has-text("¿Qué es esto?")');
+  await page.waitForSelector('#dAyuda[open]');
+  ok(await vis('#aDet h2.dt') && /scanf|&/i.test(await page.textContent('#aDet h2.dt')), '«¿Qué es esto?» abre la ayuda relacionada (' + (await page.textContent('#aDet h2.dt')).trim() + ')');
+  await closeDlg();
+  // al corregir la línea, la ayuda de ese problema desaparece sin ruido
+  await H.tab('ed');
+  await page.evaluate(() => { const t = document.getElementById('code'), i = t.value.indexOf('A);') ; t.focus(); t.setSelectionRange(i, i); });
+  await page.keyboard.type('&');
+  ok((await page.inputValue('#code')).includes('&A);'), 'se corrige tipeando el &');
+  await H.tab('co');
+  ok((await items('.e.stale').count()) === 1 && !(await vis('#diagList .it.e .help')), 'al corregir la línea, la ayuda del error se esconde sola');
+  await H.run(); await H.typeLine('4'); await H.done();
+  ok(!(await vis('#diag')), 'al ejecutar corregido no queda ningún problema');
+
+  // ---- B) nivel 2 y nivel 0 desde Ajustes
+  await openSettings();
+  ok(!(await page.isChecked('#autoCierre')), 'ajustes: el cierre automático está apagado por defecto');
+  await page.selectOption('#ayudaSel', '2');
+  await closeDlg();
+  await runShow(SCANF_MAL);
+  ok((await items('.e').first().locator('.hexp').count()) === 1 && (await items('.e').first().locator('.pistas li').count()) === 0, 'nivel 2: mensaje + explicación del concepto y pistas a pedido');
+  await shot('2-nivel2');
+  await openSettings(); await page.selectOption('#ayudaSel', '0'); await closeDlg();
+  await H.tab('co');
+  ok((await items('.e').first().locator('.help').count()) === 0 && (await items('.e').first().locator('.orig').count()) === 0 && /a scanf le falta el '&'/.test(await items('.e').first().locator('.msg').textContent()), 'nivel 0: el mensaje del compilador tal cual, con la línea y sin ayuda');
+  await page.reload(); await page.waitForSelector('#code');
+  ok((await page.evaluate(() => window.__editorc.nivelAyuda())) === 0, 'el nivel elegido se recuerda en el dispositivo');
+  await open('?ayuda=1');
+  ok((await page.evaluate(() => window.__editorc.nivelAyuda())) === 1, '?ayuda=1 en el enlace fija el nivel');
+  await page.goto(target.url); await page.waitForSelector('#code');
+  ok((await page.evaluate(() => window.__editorc.nivelAyuda())) === 1, '?ayuda= además se recuerda para la próxima vez');
+  await open('?ayuda=2');
+  ok((await page.evaluate(() => window.__editorc.nivelAyuda())) === 2, '?ayuda=2 en el enlace fija el nivel 2');
+  await openSettings(); await page.selectOption('#ayudaSel', '1'); await closeDlg();
+
+  // ---- C) sin explicación: se guarda el caso y se ofrece mandarlo
+  await H.setCode(CON_CABECERA);
+  await page.evaluate((r) => window.__editorc.showDiag(r), DESCONOCIDO);
+  await H.tab('co');
+  ok(/Todavía no tengo una explicación para esto/.test(await items('.e').first().textContent()) && (await items('.e').first().locator('.msg').textContent()).includes('zzz error inventado'), 'sin explicación: mensaje original + «Todavía no tengo una explicación para esto»');
+  await shot('3-sin-respuesta');
+  await H.tap('#diagList .it.e button:has-text("Mandárselo a Diego")');
+  await page.waitForSelector('#dCasos[open]');
+  const prev = await page.textContent('#cPrev');
+  ok(prev.includes('zzz error inventado') && prev.includes('printf("%d\\n", A);') && /```c/.test(prev), 'casos: la vista previa muestra el mensaje y el código que se enviaría');
+  ok(!/Pérez|Ana|5° 2da|Lenguajes Electrónicos/.test(prev), 'casos: sin nombre ni datos personales (se quitó la cabecera)');
+  ok(/Nada se envía solo/.test(await page.textContent('#dCasos')) && /sin nombre ni datos personales/i.test(await page.textContent('#dCasos')), 'casos: aviso de privacidad visible');
+  const href0 = await page.getAttribute('#cWa', 'href');
+  ok(/^https:\/\/wa\.me\/\?text=/.test(href0) && decodeURIComponent(href0).includes('zzz error inventado'), 'WhatsApp sin número: abre wa.me sin destinatario con el texto armado');
+  ok(/sin destinatario/.test(await page.textContent('#cNota')), 'WhatsApp sin número: lo dice');
+  ok((await page.getAttribute('#cWa', 'target')) === '_blank' && /noopener/.test(await page.getAttribute('#cWa', 'rel')), 'WhatsApp: pestaña nueva con rel=noopener');
+  await page.evaluate(() => { window.CONFIG.WHATSAPP_NUMERO = '5491112345678'; });
+  await H.tap('#cList input[type=checkbox]'); await H.tap('#cList input[type=checkbox]');
+  const href1 = await page.getAttribute('#cWa', 'href');
+  ok(/^https:\/\/wa\.me\/5491112345678\?text=/.test(href1) && !/sin destinatario/.test(await page.textContent('#cNota')), 'WhatsApp con número configurado: enlace wa.me/<número>?text=…');
+  await page.evaluate(() => { window.CONFIG.WHATSAPP_NUMERO = ''; });
+  await shot('4-casos');
+  // copiar: éxito y portapapeles bloqueado
+  await page.evaluate(() => { window.__copiado = null; navigator.clipboard.writeText = (t) => { window.__copiado = t; return Promise.resolve(); }; });
+  await H.tap('#cCopy');
+  await page.waitForFunction(() => window.__copiado !== null);
+  ok(/#DATOS/.test(await page.evaluate(() => window.__copiado)), 'Copiar: copia el texto completo');
+  await page.evaluate(() => { navigator.clipboard.writeText = () => Promise.reject(new Error('bloqueado')); document.execCommand = () => false; });
+  await H.tap('#cCopy');
+  await page.waitForFunction(() => /no dejó copiar/.test(document.getElementById('cNota').textContent));
+  ok(true, 'Copiar con el portapapeles bloqueado: estado claro y texto seleccionado para copiar a mano');
+  // descargar
+  const dl = page.waitForEvent('download');
+  await H.tap('#cDl');
+  const d = await dl;
+  const dj = JSON.parse(fs.readFileSync(await d.path(), 'utf8'));
+  ok(/^casos-editor-c-\d{8}\.json$/.test(d.suggestedFilename()) && dj.formato === 'casos-sin-respuesta-v1' && dj.casos.length === 1 && !/Pérez/.test(JSON.stringify(dj)), 'Descargar .json: archivo exportado sin datos personales (' + d.suggestedFilename() + ')');
+  // borrar uno (con deshacer) y todos
+  await H.tap('#cList button[aria-label="Borrar este caso"]');
+  ok((await page.locator('#cList li').count()) === 0 && (await vis('#cVacio')), 'borrar un caso: queda el estado vacío');
+  await H.tap('#toast button:has-text("Deshacer")');
+  ok((await page.locator('#cList li').count()) === 1, 'Deshacer devuelve el caso');
+  await H.tap('#cDelAll');
+  ok((await page.locator('#cList li').count()) === 0 && !(await vis('#cWa')), 'Borrar todos');
+  await closeDlg();
+  // desde Ajustes
+  await page.evaluate((r) => window.__editorc.showDiag(r), DESCONOCIDO);
+  await openSettings();
+  ok(/Casos para enviar \(1\)/.test(await page.textContent('#casosBtn')), 'Ajustes: «Casos para enviar» con el contador');
+  await H.tap('#casosBtn'); await page.waitForSelector('#dCasos[open]');
+  ok((await page.locator('#cList li').count()) === 1, 'Ajustes → Casos para enviar: la lista');
+  await H.tap('#cDelAll'); await closeDlg();
+  ok(extra.length === 0, 'casos: no se abrió ninguna pestaña sola');
+
+  // ---- D) panel Ayuda
+  await H.tap('#ayudaBtn'); await page.waitForSelector('#dAyuda[open]');
+  ok((await page.evaluate(() => document.activeElement.id)) === 'aQ', 'Ayuda: el foco queda en la búsqueda');
+  await page.keyboard.type('por qué 7/2 da 3');
+  await page.waitForFunction(() => document.querySelectorAll('#aList button').length > 0);
+  ok(/Lección/.test(await page.textContent('#aList')), 'Ayuda: «por qué 7/2 da 3» encuentra una lección');
+  await shot('5-ayuda');
+  if (!mobile) {
+    await page.keyboard.press('ArrowDown');
+    ok(await page.evaluate(() => !!document.activeElement.closest('#aList')), 'Ayuda: la flecha abajo pasa a los resultados');
+    await page.keyboard.press('ArrowDown'); await page.keyboard.press('ArrowUp'); await page.keyboard.press('ArrowUp');
+    ok((await page.evaluate(() => document.activeElement.id)) === 'aQ', 'Ayuda: la flecha arriba vuelve a la búsqueda');
+  }
+  await page.fill('#aQ', 'scanf');
+  const tipos = await page.$$eval('#aList .tipo', (l) => Array.from(new Set(l.map((x) => x.textContent))));
+  ok(tipos.length >= 2, 'Ayuda: resultados mezclados con su tipo (' + tipos.join(', ') + ')');
+  await page.fill('#aQ', 'scanf sin &');
+  await H.tap('#aList .tipo.error >> xpath=ancestor::button');
+  ok((await page.locator('#aDet .tipo.error').count()) === 1 && (await page.locator('#aDet button:has-text("Abrir en el editor")').count()) >= 1 && (await page.locator('#aDet button:has-text("Pista")').count()) === 1, 'Ayuda: detalle de un error con ejemplo y pistas por demanda');
+  ok(/Qué pasa|Cómo arreglarlo/i.test(await page.textContent('#aDet')), 'Ayuda: detalle de un error con explicación y cómo arreglarlo');
+  await H.tap('#aDet button:has-text("Pista")');
+  ok((await page.locator('#aDet .pistas li').count()) === 1, 'Ayuda: las pistas del detalle se piden de a una');
+  const nprog = await H.progCount();
+  await H.tap('#aDet button:has-text("Abrir en el editor") >> nth=-1');
+  await page.waitForFunction(() => !document.querySelector('dialog[open]'));
+  ok((await H.progCount()) === nprog + 1 && /scanf/.test(await page.inputValue('#code')), 'Ayuda: «Abrir en el editor» abre el ejemplo como programa nuevo');
+  // lección con «Probar»
+  await H.tap('#ayudaBtn'); await page.waitForSelector('#dAyuda[open]');
+  await page.fill('#aQ', 'por qué 7/2 da 3');
+  await H.tap('#aList .tipo.leccion >> xpath=ancestor::button >> nth=0');
+  ok((await page.locator('#aDet button:has-text("Probar")').count()) === 1, 'Ayuda: la lección trae un ejemplo con «Probar»');
+  // navegación a un relacionado y volver
+  const rel = page.locator('#aDet .rel button');
+  if (await rel.count()) { const t0 = await page.textContent('#aDet h2.dt'); await H.tap('#aDet .rel button >> nth=0'); ok((await page.textContent('#aDet h2.dt')) !== t0, 'Ayuda: navegar a un relacionado'); await H.tap('#aDet button:has-text("Volver")'); ok((await page.textContent('#aDet h2.dt')) === t0, 'Ayuda: «Volver» regresa al anterior'); }
+  else ok(true, 'Ayuda: (esta lección no trae relacionados)');
+  await H.tap('#aDet button:has-text("Probar")');
+  await page.waitForFunction(() => !document.querySelector('dialog[open]'));
+  ok((await H.progCount()) === nprog + 2 && (await page.inputValue('#code')).length > 20, 'Ayuda: «Probar» carga el ejemplo en un programa nuevo');
+  await H.tap('#ayudaBtn'); await page.waitForSelector('#dAyuda[open]');
+  await page.keyboard.press('Escape');
+  ok(!(await page.evaluate(() => document.getElementById('dAyuda').open)), 'Ayuda: Esc cierra el panel');
+
+  // ---- E) «¿Qué es esto?» sobre el código
+  await H.tab('ed');
+  await H.setCode(SCANF_MAL.replace('int A;', 'int A;\n    float PROM;'));
+  await page.evaluate(() => { const t = document.getElementById('code'); t.focus(); t.setSelectionRange(7, 7); });
+  const code0 = await page.inputValue('#code'), sel0 = await page.evaluate(() => document.getElementById('code').selectionStart);
+  await H.tap('#whatBtn');
+  ok((await page.getAttribute('#whatBtn', 'aria-pressed')) === 'true' && (await vis('#whatLay')), '¿Qué es esto?: el modo se activa con el botón');
+  await tapAt(await pointOf('%d', 1));
+  await page.waitForSelector('#bubble:not([hidden])');
+  ok(/%d/.test(await page.textContent('#bubble')) && /formato|int/i.test(await page.textContent('#bubble')), '¿Qué es esto?: tocar un %d abre la burbuja con su ayuda');
+  await shot('6-burbuja');
+  ok((await page.inputValue('#code')) === code0 && (await page.evaluate(() => document.getElementById('code').selectionStart)) === sel0, '¿Qué es esto?: no cambia el código ni mueve el cursor');
+  await H.tap('#bubble button[aria-label^="Cerrar"]');
+  if (mobile) ok((await page.getAttribute('#whatBtn', 'aria-pressed')) === 'false' && !(await vis('#whatLay')), 'celular: el modo se desactiva al cerrar la burbuja');
+  else { ok(await vis('#whatLay'), 'escritorio: el modo sigue activo hasta apagarlo'); await H.tap('#whatBtn'); }
+  if ((await page.getAttribute('#whatBtn', 'aria-pressed')) !== 'true') await H.tap('#whatBtn');
+  await tapAt(await pointOf('printf', 2));
+  await page.waitForSelector('#bubble:not([hidden])');
+  ok(/printf/.test(await page.textContent('#bubble')), '¿Qué es esto?: tocar una palabra (printf)');
+  await page.keyboard.press('Escape');
+  ok(!(await vis('#bubble')), '¿Qué es esto?: Esc cierra la burbuja');
+  if ((await page.getAttribute('#whatBtn', 'aria-pressed')) === 'true') { if (mobile) await H.tap('#whatBtn'); else await page.keyboard.press('Escape'); }
+  ok((await page.getAttribute('#whatBtn', 'aria-pressed')) === 'false', '¿Qué es esto?: se apaga');
+  // fuera del modo, tocar edita normalmente y no abre nada
+  const v0 = await page.inputValue('#code');
+  await tapAt(await pointOf('return', 0));
+  await page.keyboard.type('Z');
+  const v1 = await page.inputValue('#code');
+  ok(!(await vis('#bubble')) && v1.length === v0.length + 1 && v1.replace('Z', '') === v0, '¿Qué es esto?: fuera del modo se puede editar con normalidad');
+  if (!mobile) {
+    await page.keyboard.press('Control+Z');
+    const p2 = await pointOf('scanf', 1);
+    await page.keyboard.down('Alt'); await page.mouse.click(p2.x, p2.y); await page.keyboard.up('Alt');
+    await page.waitForSelector('#bubble:not([hidden])');
+    ok(/scanf/.test(await page.textContent('#bubble')), 'escritorio: Alt+clic abre la burbuja sin activar el modo');
+    await page.keyboard.press('Escape');
+  }
+
+  // ---- F) cierre automático: apagado por defecto, con interruptor
+  if (!mobile) {
+    await H.setCode(''); await page.click('#code');
+    await page.keyboard.type('if (x');
+    ok((await page.inputValue('#code')) === 'if (x', 'cierre automático apagado: tipear "(" no agrega ")"');
+    await page.keyboard.type(') {'); await page.keyboard.press('Enter');
+    ok((await page.inputValue('#code')) === 'if (x) {\n    ', 'cierre automático apagado: la sangría automática sigue funcionando');
+    await page.keyboard.type('puts("hola');
+    ok(!(await page.inputValue('#code')).includes('")') && !(await page.inputValue('#code')).includes('"hola")'), 'cierre automático apagado: tampoco cierra comillas');
+    await openSettings(); await page.check('#autoCierre'); await closeDlg();
+    await H.setCode(''); await page.click('#code');
+    await page.keyboard.type('if (x');
+    ok((await page.inputValue('#code')) === 'if (x)', 'cierre automático encendido desde Ajustes: cierra paréntesis');
+    await page.reload(); await page.waitForSelector('#code');
+    await H.setCode(''); await page.click('#code'); await page.keyboard.type('(');
+    ok((await page.inputValue('#code')) === '()', 'el interruptor se recuerda al recargar');
+    await openSettings(); await page.uncheck('#autoCierre'); await closeDlg();
+  }
+  ok(!/sugerencia|autocompletar/i.test(await page.evaluate(() => document.body.innerText)), 'no hay autocompletado ni sugerencias en el editor');
+
+  ok(errors.length === 0, 'entrenador: consola limpia' + (errors.length ? ': ' + errors.join(' | ') : ''));
+  ok(net.length === 0, 'entrenador: cero pedidos de red externos' + (net.length ? ': ' + net.join(' ') : ''));
+  await ctx.close();
+}
+
+// proceso (tipeado vs pegado) y modo práctica: teclado y portapapeles reales, solo escritorio
+async function procesoSuite(browser, target) {
+  console.log('\n== proceso y modo práctica · ' + target.label);
+  const ctx = await newCtx(browser, false), page = await ctx.newPage();
+  const errors = [], net = [];
+  page.on('console', (m) => { if (m.type() === 'error' || m.type() === 'warning') errors.push(m.text()); });
+  page.on('pageerror', (e) => errors.push('pageerror: ' + e.message));
+  ctx.on('request', (r) => { const u = r.url(); if (/^(file|data|blob|about):/.test(u)) return; if (target.origin && u.startsWith(target.origin)) return; net.push(u); });
+  const H = helpers(page, false);
+  // copia texto con teclado real: textarea temporal, Ctrl+A, Ctrl+C
+  const copiar = async (texto) => {
+    await page.evaluate((t) => { const x = document.createElement('textarea'); x.id = 'tmpclip'; x.value = t; document.body.appendChild(x); x.focus(); x.select(); }, texto);
+    await page.keyboard.press('Control+C');
+    await page.evaluate(() => document.getElementById('tmpclip').remove());
+  };
+  await page.goto(target.url); await page.waitForSelector('#code');
+  await page.click('#code'); await page.keyboard.press('Control+A'); await page.keyboard.press('Backspace');
+  await page.evaluate(() => window.__editorc.setCode(''));
+  await page.click('#code');
+  const tipeado = '#include <stdio.h>\nint main() {\nprintf("hola");\nreturn 0;\n}';
+  await page.keyboard.type(tipeado);
+  let r = await page.evaluate(() => window.__editorc.proceso());
+  ok(r.tipeado >= 70 && r.pegado === 0, 'proceso: lo tipeado cuenta como tipeado (' + r.tipeado + ' % tipeado, ' + r.pegado + ' % pegado, ' + r.automatico + ' % automático)');
+  const pegar = '\nint FUNCION_PEGADA(int X) {\n    return X * 2 + 1;\n}\n';
+  await copiar(pegar);
+  await page.click('#code'); await page.keyboard.press('Control+End'); await page.keyboard.press('Control+V');
+  ok((await page.inputValue('#code')).includes('FUNCION_PEGADA'), 'se pudo pegar con el teclado real (Ctrl+V)');
+  r = await page.evaluate(() => window.__editorc.proceso());
+  const esperado = Math.round(pegar.length * 100 / (tipeado.length + pegar.length));
+  ok(r.pegado >= esperado - 8 && r.pegado <= esperado + 8 && r.tipeado >= 40 && r.pegados >= 1, 'proceso: lo pegado cuenta como pegado (' + r.tipeado + ' % tipeado, ' + r.pegado + ' % pegado; esperado ~' + esperado + ' %)');
+  const linea = await page.evaluate(() => window.__editorc.procLinea());
+  ok(/% tipeado/.test(linea) && /% pegado/.test(linea) && /ejecuci/.test(linea) && !/\bIA\b/.test(linea), 'proceso: la línea de la captura (' + linea + ')');
+  // ejecutar cuenta ejecuciones y todo se guarda con el programa
+  await page.evaluate(() => window.__editorc.setCode('')); await page.click('#code'); await page.keyboard.type('int A;');
+  await page.keyboard.press('F5'); await page.waitForTimeout(700);
+  const antes = await page.evaluate(() => window.__editorc.proceso());
+  ok(antes.ejecuciones >= 1, 'proceso: cuenta las ejecuciones (' + antes.ejecuciones + ')');
+  await page.waitForTimeout(500);
+  await page.reload(); await page.waitForSelector('#code');
+  const desp = await page.evaluate(() => window.__editorc.proceso());
+  ok(desp.caracteres.t === antes.caracteres.t && desp.ejecuciones === antes.ejecuciones, 'proceso: se guarda y se restaura con el programa (' + desp.caracteres.t + ' caracteres tipeados)');
+  // captura: línea opcional
+  await page.keyboard.press('Control+End');
+  await H.tap('#shot');
+  await page.waitForFunction(() => { const i = document.getElementById('shotImg'); return i.complete && i.naturalWidth > 0; });
+  ok(await page.isChecked('#shotProc') && await page.isVisible('#shotProcRow'), 'captura: opción para incluir la línea de proceso, marcada por defecto');
+  const h1 = await page.evaluate(() => +document.getElementById('shotImg').dataset.h);
+  await page.uncheck('#shotProc');
+  await page.waitForFunction((h) => +document.getElementById('shotImg').dataset.h !== h, h1);
+  const h2 = await page.evaluate(() => +document.getElementById('shotImg').dataset.h);
+  ok(h1 > h2, 'captura: con la línea la imagen es más alta que sin ella (' + h1 + ' > ' + h2 + ')');
+  await page.screenshot({ path: path.join(STEP, 'd-proceso-captura-' + target.label.replace(/\W+/g, '') + '.png') });
+  await page.keyboard.press('Escape');
+  // transparencia: el texto de Ajustes, sin la palabra IA en ningún lado
+  await H.menu(); await H.tap('#settings'); await page.waitForSelector('#dSet[open]');
+  ok(/tipeaste/.test(await page.textContent('#dSet')) && /este dispositivo/.test(await page.textContent('#dSet')), 'Ajustes explica qué se mide y que queda en el dispositivo');
+  await page.keyboard.press('Escape');
+  const visible = await page.evaluate(() => Array.from(document.body.children).filter((e) => e.tagName !== 'SCRIPT').map((e) => e.textContent).join(' '));
+  ok(!/\bIA\b|inteligencia artificial/i.test(visible), 'la palabra «IA» no aparece en la interfaz');
+  // modo práctica
+  const pg2 = await ctx.newPage();
+  const e2 = []; pg2.on('console', (m) => { if (m.type() === 'error' || m.type() === 'warning') e2.push(m.text()); }); pg2.on('pageerror', (e) => e2.push(e.message));
+  await pg2.goto(target.url + '?practica=1'); await pg2.waitForSelector('#code');
+  ok(await pg2.isVisible('#practica') && /Modo práctica/.test(await pg2.textContent('#practica')), 'modo práctica: cartel visible mientras esté activo');
+  await pg2.evaluate(() => window.__editorc.setCode('')); await pg2.click('#code');
+  await pg2.evaluate((t) => { const x = document.createElement('textarea'); x.id = 'tmpclip'; x.value = t; document.body.appendChild(x); x.focus(); x.select(); }, 'PEGADO_PROHIBIDO();');
+  await pg2.keyboard.press('Control+C'); await pg2.evaluate(() => document.getElementById('tmpclip').remove());
+  await pg2.click('#code'); await pg2.keyboard.press('Control+V');
+  ok((await pg2.inputValue('#code')) === '', 'modo práctica: pegar con Ctrl+V no escribe nada');
+  ok(/no se puede pegar/i.test(await pg2.textContent('#toast')), 'modo práctica: avisa por qué no pegó');
+  await pg2.keyboard.type('int A;');
+  ok((await pg2.inputValue('#code')) === 'int A;', 'modo práctica: tipear sigue funcionando');
+  await pg2.evaluate(() => { const t = document.getElementById('code'); const dt = new DataTransfer(); dt.setData('text/plain', 'SOLTADO();'); t.dispatchEvent(new DragEvent('drop', { dataTransfer: dt, bubbles: true, cancelable: true })); });
+  ok(!(await pg2.inputValue('#code')).includes('SOLTADO'), 'modo práctica: soltar texto tampoco');
+  await pg2.screenshot({ path: path.join(STEP, 'd-practica-' + target.label.replace(/\W+/g, '') + '.png') });
+  const pg3 = await ctx.newPage(); await pg3.goto(target.url); await pg3.waitForSelector('#code');
+  ok(!(await pg3.isVisible('#practica')), 'sin ?practica=1 no hay cartel ni bloqueo');
+  ok(errors.length === 0 && e2.length === 0, 'proceso: consola limpia' + (errors.concat(e2).length ? ': ' + errors.concat(e2).join(' | ') : ''));
+  ok(net.length === 0, 'proceso: cero pedidos de red externos' + (net.length ? ': ' + net.join(' ') : ''));
+  await ctx.close();
+}
+
 // ------------------------------------------------------------------ capturas finales (SHOTS_FINAL=1)
 async function finalShots(browser, url) {
   console.log('\n== capturas finales');
@@ -614,6 +953,10 @@ async function finalShots(browser, url) {
     await guard('dist file', () => suite(browser, T.one, m));
   }
   await guard('dist http', () => suite(browser, T.oneHttp, false));
+  for (const [n, t] of [['index file', T.idx], ['index http', T.idxHttp], ['dist file', T.one], ['dist http', T.oneHttp]]) await guard('entrenador ' + n, () => entrenadorSuite(browser, t, false));
+  for (const [n, t] of [['index file', T.idx], ['index http', T.idxHttp], ['dist file', T.one]]) await guard('entrenador ' + n + ' celular', () => entrenadorSuite(browser, t, true));
+  await guard('proceso index', () => procesoSuite(browser, T.idx));
+  await guard('proceso dist', () => procesoSuite(browser, T.one));
   await guard('divisor', () => dividerSuite(browser, T.idx));
   await guard('divisor dist', () => dividerSuite(browser, T.one));
   await guard('celular index', () => phoneSuite(browser, T.idx));

@@ -19,6 +19,7 @@
   <div class="actions">
     <button id="run" class="btn primary" title="Ejecutar (Ctrl+Enter o F5)"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M7 4.5v15l12-7.5z" fill="currentColor"/></svg><span>Ejecutar</span></button>
     <button id="stop" class="btn danger" title="Detener la ejecución" aria-label="Detener" disabled><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="1.5" fill="currentColor"/></svg><span>Detener</span></button>
+    <button id="ayudaBtn" class="btn" title="Ayuda: buscá una duda de C o de un error" aria-label="Ayuda" aria-haspopup="dialog"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9.6 9.4a2.5 2.5 0 1 1 3.5 2.3c-.8.4-1.1.9-1.1 1.8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="16.8" r="1.2" fill="currentColor"/></svg><span>Ayuda</span></button>
     <details class="more" id="more"><summary class="btn" aria-label="Más opciones"><span>Más</span><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></summary>
     <div class="menu">
       <button id="progs" class="btn" title="Mis programas guardados en este dispositivo"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><span>Programas</span></button>
@@ -29,6 +30,7 @@
     </div></details>
   </div>
 </header>
+<div class="practica" id="practica" role="status" hidden>Modo práctica: en este enlace no se puede pegar. Escribí el código vos.</div>
 <div class="tabs" id="tabs" role="tablist" aria-label="Vista">
   <button type="button" id="tabEd" class="tab" role="tab" aria-selected="true" aria-controls="paneEd">Editor</button>
   <button type="button" id="tabCo" class="tab" role="tab" aria-selected="false" aria-controls="paneCo" tabindex="-1">Consola<i id="tabDot" class="dot" hidden></i></button>
@@ -39,6 +41,7 @@
       <button id="pname" class="pname" title="Cambiar de programa o ponerle nombre" aria-label="Programa actual: Programa 1. Abrir lista de programas"><span id="pnameTxt">Programa 1</span><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
       <span class="hint" id="pos" aria-hidden="true">Lín 1, Col 1</span>
       <button id="findBtn" class="btn mini ico" title="Buscar y reemplazar (Ctrl+F)" aria-label="Buscar y reemplazar"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M15 15l5 5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button>
+      <button id="whatBtn" class="btn mini ico" aria-pressed="false" title="¿Qué es esto? Tocá una palabra, un operador o un %d del código para ver qué significa (en escritorio también Alt+clic)" aria-label="¿Qué es esto? Explicar una palabra del código">?</button>
     </div>
     <div class="find" id="find" hidden>
       <div class="frow"><input id="fq" type="text" placeholder="Buscar" aria-label="Buscar" autocomplete="off" spellcheck="false" autocapitalize="off"><span id="fcount" class="fcount" aria-live="polite"></span>
@@ -53,6 +56,7 @@
         <pre class="lay ul" id="ul" aria-hidden="true"></pre>
         <pre class="lay fm" id="fm" aria-hidden="true"></pre>
         <pre class="lay hl" id="hl" aria-hidden="true"></pre>
+        <div class="whatlay" id="whatLay" hidden></div>
         <textarea id="code" wrap="off" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" aria-label="Código en C"></textarea>
       </div>
     </div>
@@ -97,13 +101,32 @@
   <div class="srow"><label for="theme">Tema</label>
     <select id="theme" class="btn sel"><option value="auto">Automático (según el dispositivo)</option><option value="light">Claro</option><option value="dark">Oscuro</option></select></div>
   <div class="srow"><span id="fsLbl">Tamaño de letra</span><span class="grp" role="group" aria-labelledby="fsLbl"><button id="fsm" class="btn icon" type="button" title="Letra más chica" aria-label="Letra más chica">A−</button><output id="fsv" class="fsv"></output><button id="fsp" class="btn icon" type="button" title="Letra más grande" aria-label="Letra más grande">A+</button></span></div>
+  <fieldset><legend>Ayuda cuando algo no compila</legend>
+    <label for="ayudaSel">Cuánta ayuda querés</label>
+    <select id="ayudaSel" class="btn sel wsel"><option value="0">0 · Solo el mensaje del compilador</option><option value="1">1 · Mensaje corto y pistas (recomendado)</option><option value="2">2 · Mensaje, explicación y pistas</option></select>
+    <p class="fine" id="ayudaDesc"></p>
+  </fieldset>
+  <fieldset><legend>Escritura</legend>
+    <label class="chk"><input type="checkbox" id="autoCierre"> Cerrar solo llaves, paréntesis y comillas</label>
+    <p class="fine">Apagado: practicás tipeando todo. La sangría automática no cambia.</p>
+  </fieldset>
+  <fieldset><legend>Cómo se escribió el programa</legend>
+    <p class="fine">El editor mide, solo en este dispositivo, cuántos caracteres tipeaste, cuántos pegaste o abriste desde un archivo, cuánto tiempo trabajaste y cuántas veces ejecutaste. No guarda lo que escribís aparte del programa y no se envía a ningún lado. Si querés, aparece como una línea al pie de la captura que entregás. Es un dato del proceso, no una prueba.</p>
+    <label class="chk"><input type="checkbox" id="procCap"> Mostrar esa línea en las capturas</label>
+    <p class="fine" id="procAhora"></p>
+  </fieldset>
+  <fieldset><legend>Casos para enviar</legend>
+    <p class="fine">Cuando el editor no sabe explicar algo, guarda el caso solo en este dispositivo. Nada se envía solo: vos mirás qué se manda y elegís si se lo mandás a Diego.</p>
+    <button id="casosBtn" class="btn" type="button">Casos para enviar</button>
+  </fieldset>
   <div class="srow" id="mutedRow" hidden><span id="mutedTxt"></span><button id="mutedReset" class="btn" type="button">Mostrar de nuevo</button></div>
-  <div class="drow"><button id="helpBtn" class="btn" type="button">Ayuda y atajos</button><button class="btn primary" type="button" data-close>Listo</button></div>
+  <div class="drow"><button id="helpBtn" class="btn" type="button">Atajos y alcance</button><button class="btn primary" type="button" data-close>Listo</button></div>
 </dialog>
 
 <dialog id="dShot" aria-labelledby="tShot" class="wide">
   <h2 id="tShot">Vista previa de la captura</h2>
   <label class="chk" id="shotInRow"><input type="checkbox" id="shotIn" checked> Incluir los datos de entrada</label>
+  <label class="chk" id="shotProcRow"><input type="checkbox" id="shotProc" checked> Incluir cómo se escribió (tipeado, pegado, tiempo)</label>
   <div class="shotbox"><img id="shotImg" alt="Vista previa de la captura: cabecera, código, entrada y salida"></div>
   <div class="drow"><button id="shotDl" class="btn primary" type="button">Descargar PNG</button><button id="shotShare" class="btn" type="button" hidden>Compartir</button><button class="btn" type="button" data-close>Cancelar</button></div>
 </dialog>
@@ -117,7 +140,7 @@
 </dialog>
 
 <dialog id="dlg" aria-labelledby="tHelp">
-  <h2 id="tHelp">Ayuda</h2>
+  <h2 id="tHelp">Atajos y alcance</h2>
   <p>Interpreta el C que se usa en la materia. No es gcc: si algo se comporta distinto, avisá.</p>
   <ul>
     <li><b>Tipos:</b> int, float, double, char, long, unsigned.</li>
@@ -126,7 +149,7 @@
     <li><b>Entrada y salida:</b> printf, scanf, getchar, putchar, puts (con todos los formatos: %d %f %.2f %c %e %g %x …).</li>
     <li><b>Biblioteca:</b> math.h (sqrt, pow, abs…), rand, ctype.h básico, #define de constantes.</li>
     <li><b>Avisos útiles:</b> te marca %d con float, scanf sin &amp;, variables sin valor inicial, = dentro de if…</li>
-    <li><b>Todavía no:</b> punteros, textos (char[] con %s), struct, archivos.</li>
+    <li><b>Todavía no:</b> punteros en general, struct, enum, typedef, archivos.</li>
   </ul>
   <h3>Atajos</h3>
   <dl class="keys">
@@ -135,16 +158,49 @@
     <dt><kbd>Ctrl</kbd>+<kbd>/</kbd></dt><dd>Comentar / descomentar</dd>
     <dt><kbd>Tab</kbd> / <kbd>Shift</kbd>+<kbd>Tab</kbd></dt><dd>Sangrar / quitar sangría</dd>
     <dt><kbd>Ctrl</kbd>+<kbd>F</kbd> / <kbd>Ctrl</kbd>+<kbd>H</kbd></dt><dd>Buscar / reemplazar</dd>
+    <dt><kbd>F1</kbd> / <kbd>Alt</kbd>+clic</dt><dd>¿Qué es esto? de lo que está bajo el cursor o el clic</dd>
     <dt><kbd>Ctrl</kbd>+<kbd>D</kbd></dt><dd>Fin de entrada (cuando el programa espera datos)</dd>
   </dl>
   <p class="fine">Tu código no sale de tu navegador. Se guarda solo en este dispositivo.</p>
   <div class="drow"><button class="btn primary" type="button" data-close>Entendido</button></div>
 </dialog>
+<dialog id="dAyuda" class="wide ayuda" aria-labelledby="tAyuda">
+  <div class="ahead"><h2 id="tAyuda">Ayuda</h2><button type="button" class="btn mini ico" data-close aria-label="Cerrar la ayuda" title="Cerrar (Esc)">✕</button></div>
+  <form id="aForm" role="search" autocomplete="off"><input id="aQ" type="search" placeholder="Buscá una duda: scanf, %d, ¿por qué 7/2 da 3?" aria-label="Buscar en la ayuda" spellcheck="false" autocapitalize="off" enterkeyhint="search"></form>
+  <p class="fine alive" id="aLive" role="status" aria-live="polite"></p>
+  <div id="aRes">
+    <div id="aSug" class="sugs"></div>
+    <ul id="aList" class="alist"></ul>
+  </div>
+  <div id="aDet" class="adet" hidden></div>
+</dialog>
+
+<dialog id="dCasos" aria-labelledby="tCasos" class="wide">
+  <h2 id="tCasos">Casos para enviar</h2>
+  <p>Son los casos en los que el editor no supo explicar un mensaje. Están guardados solo en este dispositivo. <b>Nada se envía solo</b>: elegí cuáles mandar, mirá la vista previa y apretá el botón que quieras.</p>
+  <p class="fine">Se manda únicamente el código del programa (sin la cabecera con tu nombre), los datos de entrada y el mensaje del compilador. Sin nombre ni datos personales.</p>
+  <ul class="clist" id="cList"></ul>
+  <p class="fine" id="cVacio" hidden>No hay casos guardados. Cuando el editor no sepa explicar algo, lo vas a poder mandar desde acá.</p>
+  <div id="cAcc">
+    <h3>Vista previa de lo que se enviaría</h3>
+    <pre class="prev" id="cPrev" tabindex="0" aria-label="Vista previa del texto que se enviaría"></pre>
+    <p class="fine" id="cNota" role="status"></p>
+    <div class="drow">
+      <a id="cWa" class="btn primary" href="https://wa.me/" target="_blank" rel="noopener noreferrer">Enviar por WhatsApp</a>
+      <button id="cCopy" class="btn" type="button">Copiar</button>
+      <button id="cDl" class="btn" type="button">Descargar archivo .json</button>
+    </div>
+  </div>
+  <div class="drow"><button id="cDelAll" class="btn danger" type="button">Borrar todos</button><button class="btn primary" type="button" data-close>Cerrar</button></div>
+</dialog>
+
+<div class="bubble" id="bubble" role="dialog" aria-label="¿Qué es esto?" hidden></div>
 <input type="file" id="file" accept=".c,.h,.txt,text/plain" hidden>
 <input type="file" id="fileJson" accept=".json,application/json" hidden>
 <script src="assets/compiler.js"></script>
 <script src="assets/runtime.js"></script>
 <script src="assets/examples.js"></script>
+<script src="assets/proceso.js"></script>
 <script src="assets/app.js"></script>
 <script defer src="assets/kb-data.js"></script>
 <script defer src="assets/config.js"></script>
