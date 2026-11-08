@@ -76,3 +76,6 @@ Después de tocar algo en `src/`, corré `node build.js` y subí también los ar
 ## Licencia
 
 MIT © 2026 ArtPrograms Studio
+
+## Licencia
+Editor C es de Diego Segurotti (ArtPrograms Studio). Uso libre y gratuito **dentro de este sitio**, para estudiar y con fines no comerciales. No se puede copiar, modificar, redistribuir ni vender sin permiso. Texto completo: [PolyForm Strict License 1.0.0](LICENSE).
