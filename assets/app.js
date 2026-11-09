@@ -1341,10 +1341,14 @@ self.postMessage({ type: 'ready' });`;
       if (n.nodeType === 3) outSegs.push([null, n.textContent]);
       else if (!(n.classList.contains('stdin') || n.classList.contains('eofbtn'))) outSegs.push([n.className, n.textContent]);
     });
-    const colsR = opts.lado ? 46 : cols + 4;
+    const colsR = opts.lado ? 46 : cols + 3;
     const outRows = rowsOf(outSegs, colsR);
     while (outRows.length > 1 && !outRows[outRows.length - 1].length) outRows.pop();
-    const inRows = opts.input !== false && inTxt.value.trim() ? rowsOf([['in', inTxt.value.replace(/\n+$/, '')]], colsR) : [];
+    // si la entrada son muchas líneas cortas (números), se muestra en pocas filas y no una por renglón; si es muy larga se recorta
+    let inTxtImg = inTxt.value.replace(/\n+$/, '');
+    { const ls = inTxtImg.split('\n'); if (ls.length > 4 && ls.every((l) => l.length <= 14)) inTxtImg = ls.join('   '); }
+    let inRows = opts.input !== false && inTxt.value.trim() ? rowsOf([['in', inTxtImg]], colsR) : [];
+    if (inRows.length > 8) { const mas = inRows.length - 7; inRows = inRows.slice(0, 7); inRows.push([['dim', '… (' + mas + ' filas más de entrada)']]); }
     const secH = 38, headH = 88, gap = 6, footH = 46;
     const procRows = [];
     const procTxt = opts.proc === false ? '' : proc.linea();
@@ -1382,7 +1386,7 @@ self.postMessage({ type: 'ready' });`;
       y += secH;
     };
     const drawRows = (rows, x0, numbers) => {
-      const h = blockH(rows.length), bx = xb - 10, bw = wb + 20, rr = 10;
+      const h = blockH(rows.length), bx = xb, bw = wb, rr = 10;
       ctx.beginPath(); ctx.roundRect ? ctx.roundRect(bx + .5, y + .5, bw - 1, h - 1, rr) : ctx.rect(bx + .5, y + .5, bw - 1, h - 1);
       ctx.fillStyle = numbers ? '#ffffff' : PANEL; ctx.fill(); ctx.strokeStyle = HAIR; ctx.lineWidth = 1; ctx.stroke();
       if (numbers) { ctx.fillStyle = HAIR; ctx.fillRect(xb + gutW - 6, y + 1, 1, h - 2); }
@@ -1403,9 +1407,9 @@ self.postMessage({ type: 'ready' });`;
     section('Código');
     drawRows(codeRows, xb + gutW, true);
     if (opts.lado) { y = y0; xb = padX + leftW + gapX; wb = rightW; } else y += gap;
-    if (inRows.length) { section('Datos de entrada (lo que se tipeó)'); drawRows(inRows, xb, false); y += gap; }
+    if (inRows.length) { section('Datos de entrada'); drawRows(inRows, xb + 12, false); y += gap; }
     section('Salida');
-    drawRows(outRows.length && (outRows.length > 1 || outRows[0].length) ? outRows : [[['dim', '(sin salida: ejecutá el programa antes de sacar la captura)']]], xb, false);
+    drawRows(outRows.length && (outRows.length > 1 || outRows[0].length) ? outRows : [[['dim', '(sin salida: ejecutá el programa antes de sacar la captura)']]], xb + 12, false);
     if (opts.lado) { y = y0 + bodyH; xb = padX; wb = leftW; }
     if (procRows.length) {
       // barra de cómo se escribió: sólido = tipeado, rayado = pegado, gris = automático (se distingue también en blanco y negro)
@@ -1433,7 +1437,7 @@ self.postMessage({ type: 'ready' });`;
     ctx.save(); ctx.translate(mx - 6 * k, my - 9 * k + 4); ctx.scale(k, k); ctx.lineWidth = 7; ctx.lineCap = 'round';
     ctx.strokeStyle = TXT; ctx.beginPath(); ctx.arc(29, 32, 19.5, -Math.PI / 4, Math.PI / 4, true); ctx.stroke();
     ctx.strokeStyle = ACC; ctx.beginPath(); ctx.moveTo(54, 18.21); ctx.lineTo(54, 45.79); ctx.stroke(); ctx.restore();
-    ctx.font = '600 13px ' + UI; ctx.fillStyle = SUB; ctx.fillText('Editor C', mx + 56 * k + 8, my + 4);
+    ctx.font = '600 13px ' + UI; ctx.fillStyle = SUB; ctx.fillText('Editor C', mx + 56 * k + 8, my + 12);
     return cv;
   }
   // Vista previa antes de descargar: se puede incluir u omitir la entrada
