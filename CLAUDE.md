@@ -15,11 +15,12 @@ Un editor de C que corre en el navegador, para alumnos de 5.º año de la E.E.S.
 
 ## Cómo piensa Diego la enseñanza
 - La idea no es facilitar la escritura ni decirle al alumno exactamente dónde está el error, sino que **piense y tipee**.
-- **Referencia buscada: Photomath** (la app de Google). Lo que Diego quiere imitar: **sacar una foto** de lo que el alumno escribió en papel (la carpeta) y ver un **paso a paso**. Adaptación pendiente de definir, siempre sin servidor ni IA:
-  - A. Foto de la hoja → texto, con reconocimiento en el dispositivo (la letra manuscrita sobre cuadrícula es difícil: probar con fotos reales de la carpeta antes de comprometerse).
-  - B. Paso a paso = **mesa de verificación real** (la tabla de valores del método de Brizuela generada al ejecutar: una fila por vuelta, solo variables reales). No resuelve nada; muestra lo que el programa hizo para que el alumno lo compare con su verificación a mano. Es lo recomendado primero.
-  - C. Captura de entrega con los nombres que pide el contrato (`EjNN-Prueba-1.jpg`).
-- Pendiente de definir: niveles de ayuda (nivel 0 = como gcc, solo «error cerca de la línea N»), si se apaga el cierre automático de llaves y el autocompletado, y una medida local de cuánto código se tipeó y cuánto se pegó (evidencia de proceso, nunca un «detector de IA»: no existe una marca confiable en el código pegado).
+- **Referencia: Photomath como «entrenador».** Lo que Diego quiere imitar es cómo «sabe» responder a todo sin ser IA: un **motor de reglas + una base de conocimiento** hecha a mano. Acá: el editor reconoce el caso con reglas fijas (`scanf` sin `&`, contador sin inicializar, `PROM = A / N` con enteros…) y responde con textos ya escritos (qué pasó, por qué, pistas de menos a más, mini-lección). La base está en `kb/` (ver `kb/SCHEMA.md`), se arma afuera (ChatGPT, Claude, casos reales de los alumnos), se **valida contra gcc 13 y contra el editor** y se guarda como datos fijos. No hay foto ni OCR (Diego lo descartó).
+- Además hay un **buscador interno** («¿por qué 7/2 da 3?», «¿qué es un prototipo?») que busca palabras en la base, sin modelo, y ayuda al tocar cualquier palabra de C.
+- **Casos sin respuesta:** si el editor no sabe explicar algo, lo dice con honestidad (mensaje de gcc + «todavía no tengo una explicación») y guarda el caso en el dispositivo. El alumno **elige** mandárselo a Diego por **WhatsApp** (enlace `wa.me` con el texto armado; Diego lo agrega a la base) o exportarlo como archivo. Es la única salida de datos: **siempre por decisión del alumno, con vista previa, sin nombre ni datos personales, nunca automática.** El número de WhatsApp se configura en `src/config.js` (`WHATSAPP_NUMERO`).
+- Valores por defecto decididos (el profesor los puede cambiar con `?ayuda=1|2` en el enlace o en Ajustes; todo se guarda en el dispositivo, no hay servidor): **ayuda nivel 1 = apagada (por defecto)**, como el profe, que no dice dónde está el error. **Nivel 2 = encendida: indica la línea y nada más** (sin sugerencias tipo «¿quisiste decir…?», sin señalar el elemento puntual). Solo hay esos dos niveles. Cierre automático de llaves y comillas **apagado** (que tipee todo).
+- Decisión de Diego (08/11/2026): el alumno tiene que **encontrar** el error mirando el código; el editor no se lo entrega por defecto. Falta implementar este esquema en la interfaz (junto con el diseño nuevo).
+- Medida local de cuánto código se tipeó y cuánto se pegó («evidencia de proceso»): se muestra en la captura de entrega, nunca como «detector de IA» (no existe una marca confiable en el código pegado). Todo se queda en el dispositivo.
 
 ## Lo que enseña la materia (alcance del lenguaje)
 ANSI C básico: `char`, `int`, `float`, `double`, operadores, `printf`/`scanf` (`%d %f %5.2f %10d`), `if`/`else`, `for`, `while`, `switch`, funciones con prototipos, arreglos, `math.h`. Variables en MAYÚSCULAS. El método: algoritmo en papel → diagrama Nassi-Shneiderman → verificación → código C → pruebas en computadora. El apunte y las reglas están en `Diego-20000/brizuela` (`CLAUDE.md`, `REFERENCIA_CLAUDE_BRIZUELA.md`, PDFs).
@@ -47,8 +48,5 @@ ANSI C básico: `char`, `int`, `float`, `double`, operadores, `printf`/`scanf` (
 - Antes de fusionar: tests de motor, diagnósticos e interfaz en verde, y un control final con agentes de prueba (programas estilo TP contra gcc, errores de alumnos, revisión del motor y prueba de punta a punta del sitio).
 
 ## Preguntas abiertas
-1. Orden de las piezas A, B y C de la referencia Photomath (recomendado: B, C y A como experimento) y permiso para probar un paquete de reconocimiento de texto en una carpeta aislada.
-2. Nivel de ayuda por defecto en los errores.
-3. Cierre automático y autocompletado: ¿apagados?
-4. Dirección de diseño para pulir la interfaz.
-5. Qué hacer con lo que produjo ChatGPT (catálogo de errores, ayuda contextual, lecciones): validarlo contra gcc, implementar lo detectable y guardar los textos como datos fijos.
+1. Número de WhatsApp de Diego para `src/config.js` (`WHATSAPP_NUMERO`); mientras falte, el botón abre WhatsApp sin destinatario.
+2. Dirección de diseño para pulir la interfaz (Diego quiere «más lindo», sin estilo genérico de IA, pensando en funciones útiles y que el alumno piense y tipee).

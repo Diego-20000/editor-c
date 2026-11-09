@@ -74,7 +74,7 @@ async function suite(browser, target, mobile) {
   const page = await ctx.newPage();
   const errors = [], net = [];
   page.on('console', (m) => { if (m.type() === 'error' || m.type() === 'warning') errors.push(m.text()); });
-  page.on('pageerror', (e) => errors.push('pageerror: ' + e.message));
+  page.on('pageerror', (e) => { errors.push('pageerror: ' + e.message); if (process.env.DBG) console.log('PAGEERROR', e.message); });
   const allowed = target.origin;
   ctx.on('request', (r) => { const u = r.url(); if (/^(file|data|blob|about):/.test(u)) return; if (allowed && u.startsWith(allowed)) return; net.push(u); });
   await page.goto(target.url);
@@ -97,8 +97,17 @@ async function suite(browser, target, mobile) {
   await setCode(ERR); await clickRun();
   await page.waitForSelector('#diag:not([hidden])');
   ok(await page.isVisible('#diagList .it.e'), 'panel de problemas con error');
-  ok((await page.locator('.gut .e').count()) >= 1, 'marca en el margen');
-  ok((await page.locator('#ul .e').count()) >= 1, 'subrayado en la línea');
+  // ayuda 1 (apagada, predeterminada): ni línea, ni mensaje, ni marca en el margen, ni subrayado; solo el tipo general
+  const pan = await page.textContent('#diagList'), cons = await page.textContent('#out');
+  ok((await page.locator('.gut .e').count()) === 0 && (await page.locator('#ul .e').count()) === 0, 'ayuda apagada: no se marca la línea del error');
+  ok(/Error de sintaxis/.test(pan) && !/l[ií]nea|falta|;/i.test(pan), 'ayuda apagada: el panel dice solo "Error de sintaxis" (' + pan.trim().slice(0, 60) + ')');
+  ok(/no compiló/.test(cons) && !/l[ií]nea \d|falta un/.test(cons), 'ayuda apagada: la consola dice que no compiló, sin línea ni mensaje');
+  await page.evaluate(() => window.__editorc.setNivel(2)); await setCode(ERR); await clickRun();
+  await page.waitForSelector('#diag:not([hidden])');
+  ok((await page.locator('.gut .e').count()) >= 1, 'ayuda con línea: marca en el margen');
+  ok((await page.locator('#ul .e').count()) >= 1, 'ayuda con línea: subrayado en la línea');
+  ok(/línea 3/.test(await page.textContent('#diagList')) && !/falta|;/.test(await page.textContent('#diagList')), 'ayuda con línea: el panel indica la línea y nada más');
+  ok(/en la línea 3/.test(await page.textContent('#out')) && !/falta un/.test(await page.textContent('#out')), 'ayuda con línea: la consola indica la línea, sin el mensaje');
   ok(await page.isEnabled('#run') && !(await page.isEnabled('#stop')), 'tras un error de compilación se puede volver a ejecutar');
   await shot('2-error');
   await page.click('#diagList .it.e button');
@@ -109,8 +118,9 @@ async function suite(browser, target, mobile) {
   await setCode(WARN); await clickRun();
   await page.waitForSelector('#diag:not([hidden])');
   ok((await page.locator('#diagList .it.w').count()) >= 1, 'avisos listados');
-  ok((await page.locator('.gut .w').count()) >= 1, 'marca de aviso en el margen');
+  ok((await page.locator('.gut .w').count()) >= 1, 'ayuda con línea: marca de aviso en el margen');
   await shot('3-aviso');
+  await page.evaluate(() => window.__editorc.setNivel(1));
 
   // ---- 4) bucle infinito sin salida: Detener durante la ejecución
   await setCode(LOOP); await clickRun();
@@ -161,7 +171,7 @@ async function suite(browser, target, mobile) {
   // ---- 7) arreglo gigante
   await setCode(BIGARR); await clickRun(); await H.done();
   t = await outText();
-  ok(/demasiado grande|memoria/.test(t) && (await H.alive()) < 500, 'arreglo gigante: mensaje claro y la página sigue viva');
+  ok(/Error al ejecutar/.test(t) && !/demasiado grande|memoria/.test(t) && (await H.alive()) < 500, 'arreglo gigante: dice que falló al ejecutar (sin detalle) y la página sigue viva');
 
   // ---- 8) fuente enorme (50 000 líneas): compila y ejecuta en el Worker; Detener durante la compilación
   await setCode(BIGSRC);
@@ -207,11 +217,16 @@ async function suite(browser, target, mobile) {
   ok((await page.inputValue('#code')) === 'int X;\nX = 1;\nX = X + 1;\n', 'reemplazar todos');
   await page.keyboard.press('Escape');
 
-  // ---- 11) cierre automático, comentar, sangría (solo escritorio: teclado físico)
+  // ---- 11) cierre automático (apagado por defecto), comentar, sangría (solo escritorio: teclado físico)
   if (!mobile) {
     await setCode(''); await page.click('#code');
     await page.keyboard.type('if (x');
-    ok((await page.inputValue('#code')) === 'if (x)', 'autocierra paréntesis');
+    ok((await page.inputValue('#code')) === 'if (x', 'por defecto no autocierra paréntesis (que el alumno tipee todo)');
+    await page.keyboard.press('Control+A'); await page.keyboard.press('Backspace');
+    await H.menu(); await H.tap('#settings'); await page.waitForSelector('#dSet[open]'); await page.check('#autoCierre'); await page.keyboard.press('Escape');
+    await page.click('#code');
+    await page.keyboard.type('if (x');
+    ok((await page.inputValue('#code')) === 'if (x)', 'encendido en Ajustes: autocierra paréntesis');
     await page.keyboard.type(')');
     ok((await page.inputValue('#code')) === 'if (x)', 'sobrescribe el cierre');
     await page.keyboard.press('End'); await page.keyboard.type(' {'); await page.keyboard.press('Enter');
@@ -222,6 +237,7 @@ async function suite(browser, target, mobile) {
     ok((await page.inputValue('#code')).includes('    // puts("hola")'), 'Ctrl+/ comenta');
     await page.keyboard.press('Control+/');
     ok(!(await page.inputValue('#code')).includes('//'), 'Ctrl+/ descomenta');
+    await H.menu(); await H.tap('#settings'); await page.waitForSelector('#dSet[open]'); await page.uncheck('#autoCierre'); await page.keyboard.press('Escape');
   }
 
   // ---- 12) varios programas y recuperación al recargar
@@ -309,34 +325,25 @@ async function suite(browser, target, mobile) {
   await H.menu();
   await H.tap('#settings');
   await page.fill('#uName', 'Pérez, Ana'); await page.fill('#uCurso', '5° 2da'); await page.fill('#uMat', 'Lenguajes Electrónicos V'); await page.fill('#uCiclo', '2026');
-  await page.selectOption('#theme', 'light');
+  await page.click('#theme [data-v="light"]');
   await shot('6-ajustes');
   await page.click('#dSet [data-close]');
   ok((await page.getAttribute('html', 'data-theme')) === 'light', 'tema claro');
   await shot('7-claro');
-  await page.selectOption('#theme', 'auto').catch(() => {});
+  await page.click('#theme [data-v="auto"]').catch(() => {});
 
-  // ---- 16) códigos de diagnóstico: mostrar y silenciar (si el motor no manda `code`, no pasa nada)
-  await page.evaluate(() => { localStorage.removeItem('editorc.muted'); });
+  // ---- 16) el panel nunca muestra mensajes ni códigos del compilador (ni con la ayuda con línea)
   await page.reload();
   const fake = { errors: [], warnings: [{ line: 2, msg: 'aviso A', code: 'scanf-sin-amp' }, { line: 3, msg: 'aviso B', code: 'printf-tipo' }, { line: 4, msg: 'aviso sin código' }] };
   await H.tab('co');
   await page.evaluate((r) => window.__editorc.showDiag(r), fake);
-  ok((await page.locator('#diagList .cd').count()) === 2 && /scanf-sin-amp/.test(await page.textContent('#diagList')), 'código estable visible en el panel de problemas');
-  ok((await page.locator('#diagList .mute').count()) === 2, 'solo los avisos con código se pueden silenciar');
-  await H.tap('#diagList .it.w .mute');
-  ok((await page.locator('#diagList .it.w').count()) === 2 && !/scanf-sin-amp/.test(await page.textContent('#diagList .it.w')), 'silenciar oculta ese aviso');
-  ok(/scanf-sin-amp/.test(await page.evaluate(() => localStorage.getItem('editorc.muted'))), 'el silencio se guarda en el dispositivo');
-  await page.reload(); await H.tab('co');
+  ok((await page.locator('#diagList .it.w').count()) === 3 && !/aviso A|scanf-sin-amp|línea/.test(await page.textContent('#diagList')) && (await page.locator('#diagList .mute, #diagList .cd').count()) === 0, 'ayuda apagada: tres avisos, sin mensaje, sin código y sin línea');
+  await page.evaluate(() => window.__editorc.setNivel(2));
   await page.evaluate((r) => window.__editorc.showDiag(r), fake);
-  ok((await page.locator('#diagList .it.w').count()) === 2 && !/scanf-sin-amp/.test(await page.textContent('#diagList')), 'el silencio sobrevive a recargar');
-  await H.menu(); await H.tap('#settings');
-  ok(await page.isVisible('#mutedRow'), 'Ajustes lista los avisos silenciados');
-  await H.tap('#mutedReset'); await page.click('#dSet [data-close]');
-  await page.evaluate((r) => window.__editorc.showDiag(r), fake);
-  ok((await page.locator('#diagList .it.w').count()) === 3, 'restaurar vuelve a mostrar los avisos silenciados');
+  ok(/línea 2/.test(await page.textContent('#diagList')) && !/aviso A|scanf-sin-amp/.test(await page.textContent('#diagList')), 'ayuda con línea: avisos con su línea y sin mensaje ni código');
+  await page.evaluate(() => window.__editorc.setNivel(1));
   await page.evaluate(() => window.__editorc.showDiag({ errors: [{ line: 1, msg: 'sin campo code' }], warnings: [] }));
-  ok((await page.locator('#diagList .cd').count()) === 0 && (await page.locator('#diagList .it.e').count()) === 1, 'sin campo `code` el panel funciona igual');
+  ok((await page.locator('#diagList .it.e').count()) === 1, 'sin campo `code` el panel funciona igual');
 
   ok(errors.length === 0, 'sin errores ni avisos en consola' + (errors.length ? ': ' + errors.join(' | ') : ''));
   ok(net.length === 0, 'cero pedidos de red externos' + (net.length ? ': ' + net.join(' ') : ''));
@@ -344,6 +351,226 @@ async function suite(browser, target, mobile) {
 }
 
 // ------------------------------------------------------------------ escritorio: divisor
+// ------------------------------------------------------------------ diseño (estilo iOS) y ayudas de lectura
+async function disenoSuite(browser, target, mobile) {
+  console.log('\n== diseño y lectura · ' + target.label + (mobile ? ' (celular)' : ' (escritorio)'));
+  const ctx = await newCtx(browser, mobile), page = await ctx.newPage();
+  const errors = []; page.on('console', (m) => { if (m.type() === 'error' || m.type() === 'warning') errors.push(m.text()); }); page.on('pageerror', (e) => errors.push(e.message));
+  const H = helpers(page, mobile);
+  await page.goto(target.url); await page.waitForSelector('#code');
+  const PROG = '#include <stdio.h>\nint main() {\n    int A;\n    if (A > 0) {\n        printf("}(");\n    }\n    return 0;\n}\n';
+  await H.setCode(PROG);
+  const caret = (pos) => page.evaluate((p) => { const t = document.getElementById('code'); t.focus(); t.setSelectionRange(p, p); document.dispatchEvent(new Event('selectionchange')); }, pos);
+  const marks = (c) => page.evaluate((k) => document.querySelectorAll('#br .' + k).length, c);
+  // 1) pareja de llaves
+  await caret(PROG.indexOf('{') + 1); await page.waitForTimeout(80);
+  ok(await marks('bm') === 2, 'pareja: con el cursor junto a "{" se marcan las dos llaves del bloque');
+  const txt = await page.evaluate(() => Array.from(document.querySelectorAll('#br .bm')).map((e) => e.textContent).join(''));
+  ok(txt === '{}', 'pareja: las marcadas son "{" y "}" (' + txt + ')');
+  await caret(PROG.indexOf('(', PROG.indexOf('if')) + 1); await page.waitForTimeout(80);
+  const par = await page.evaluate(() => document.getElementById('br').textContent);
+  ok(await marks('bm') === 2, 'pareja: con "(" del if se marcan los dos paréntesis (los de la cadena "}(" no cuentan)');
+  await caret(PROG.indexOf('A;') ); await page.waitForTimeout(80);
+  ok(await marks('bm') === 0 && await marks('bu') === 0, 'pareja: sin llave junto al cursor no se marca nada');
+  await H.setCode('int main() {\n    return 0;\n');
+  await caret(12); await page.waitForTimeout(80);
+  ok(await marks('bu') === 1 && await marks('bm') === 0, 'pareja: una llave sin cerrar se marca como sin pareja');
+  await H.setCode(PROG);
+  // 2) línea actual
+  await caret(PROG.indexOf('return')); await page.waitForTimeout(80);
+  const cur = await page.evaluate(() => { const g = document.querySelector('#gut .cur'); return g ? g.textContent : null; });
+  ok(cur === '7', 'línea actual: el número de la línea del cursor está resaltado (' + cur + ')');
+  const geo = await page.evaluate(() => { const c = document.getElementById('curline').getBoundingClientRect(), g = document.querySelector('#gut .cur').getBoundingClientRect(); return { dy: Math.abs((c.top + c.height / 2) - (g.top + g.height / 2)), h: c.height }; });
+  ok(geo.dy < 2 && geo.h > 10, 'línea actual: la banda coincide con el renglón (desvío ' + geo.dy.toFixed(1) + ' px)');
+  const pos = await page.textContent('#pos');
+  ok(/Lín 7, Col 5/.test(pos), 'contador: Lín/Col del cursor (' + pos + ')');
+  // 3) guías de sangría y espacios
+  const guides = () => page.evaluate(() => document.querySelectorAll('#gd i.ig').length);
+  ok(await guides() >= 6, 'guías de sangría: hay guías en las líneas sangradas (' + await guides() + ')');
+  ok(await page.evaluate(() => getComputedStyle(document.getElementById('gd')).pointerEvents === 'none'), 'guías: la capa no intercepta clics');
+  // 4) ajustes: sangría, espacios, renglones
+  await H.menu(); await H.tap('#settings'); await page.waitForSelector('#tabSel', { state: 'visible' });
+  await page.selectOption('#tabSel', '2');
+  ok(await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--tab').trim() === '2'), 'sangría: --tab pasa a 2');
+  ok(await guides() >= 12, 'sangría 2: las guías se recalculan (' + await guides() + ')');
+  await page.check('#wsChk');
+  ok(await page.evaluate(() => document.querySelectorAll('#gd b.sp').length) > 5, 'espacios visibles: se dibujan puntos en los espacios');
+  await page.uncheck('#wsChk');
+  ok(await page.evaluate(() => document.querySelectorAll('#gd b.sp').length) === 0, 'espacios visibles: se apagan');
+  ok(await page.evaluate(() => !document.getElementById('ruleChk') && getComputedStyle(document.getElementById('codeBox')).backgroundImage === 'none'), 'sin renglones de cuaderno: ni ajuste ni fondo rayado');
+  ok(await page.evaluate(() => getComputedStyle(document.querySelector('.gut')).borderRightColor !== 'rgb(192, 57, 43)'), 'sin margen rojo junto a los números');
+  await page.evaluate(() => { document.getElementById('dSet').close(); if (innerWidth < 900) document.getElementById('more').open = false; });
+  await H.setCode('int main() {\n');
+  await page.evaluate(() => { const t = document.getElementById('code'); t.focus(); t.setSelectionRange(t.value.length, t.value.length); });
+  await page.keyboard.press('Tab');
+  ok((await page.$eval('#code', (t) => t.value)) === 'int main() {\n  ', 'sangría 2: Tab inserta 2 espacios');
+  await H.menu(); await H.tap('#settings'); await page.selectOption('#tabSel', '4'); await page.evaluate(() => { document.getElementById('dSet').close(); if (innerWidth < 900) document.getElementById('more').open = false; });
+  ok(await page.evaluate(() => localStorage.getItem('editorc.sang')) === '4', 'sangría: se recuerda en el dispositivo');
+  // 5) cartel de ejecución
+  await H.setCode(LOOP);
+  await H.run(); await H.tab('co');
+  await page.waitForSelector('#runBar:not([hidden])', { timeout: 4000 });
+  await page.waitForFunction(() => /Ejecutando/.test(document.getElementById('runBarTxt').textContent), null, { timeout: 8000 });
+  ok(/Ejecutando/.test(await page.textContent('#runBarTxt')), 'cartel: mientras corre dice "Ejecutando…" (' + await page.textContent('#runBarTxt') + ')');
+  await H.tap('#stop'); await page.waitForTimeout(500);
+  ok(await page.evaluate(() => document.getElementById('runBar').hidden), 'cartel: se oculta al detener');
+  await H.setCode(SCANF); await H.tab('ed'); await H.run();
+  await page.waitForSelector('.stdin input');
+  ok(/Esperando datos/.test(await page.textContent('#runBarTxt')) && await page.evaluate(() => document.getElementById('runBar').classList.contains('wait')), 'cartel: pidiendo datos dice "Esperando datos"');
+  await H.typeLine('1'); await H.typeLine('2'); await H.done();
+  ok(await page.evaluate(() => document.getElementById('runBar').hidden), 'cartel: al terminar no queda a la vista');
+  ok(await page.evaluate(() => { const i = document.querySelector('#out .in'); return !!i && +getComputedStyle(i).fontWeight >= 600 && getComputedStyle(i).color !== getComputedStyle(document.getElementById('out')).color; }), 'consola: lo tipeado se distingue (matiz y peso), no solo por el color');
+  // 6) modo lectura
+  await H.tab('ed'); await H.setCode(PROG);
+  await H.tap('#readBtn'); await page.waitForTimeout(150);
+  ok(await page.evaluate(() => document.documentElement.classList.contains('lectura') && document.getElementById('code').readOnly), 'lectura: se activa y el código queda de solo lectura');
+  ok(await page.evaluate(() => getComputedStyle(document.querySelector('.bar')).display === 'none' && getComputedStyle(document.getElementById('paneCo')).display === 'none'), 'lectura: se ocultan la barra y la consola');
+  const r0 = await page.$eval('#code', (t) => t.value);
+  await page.evaluate(() => { const t = document.getElementById('code'); t.focus(); t.setSelectionRange(0, 0); });
+  await page.keyboard.type('zzz'); await page.keyboard.press('Tab'); await page.keyboard.press('Enter');
+  ok((await page.$eval('#code', (t) => t.value)) === r0, 'lectura: tipear, Tab y Enter no cambian el código');
+  const rb = await page.locator('#readBtn').boundingBox();
+  ok(rb && rb.height >= (mobile ? 43.5 : 27), 'lectura: el botón para salir está a la vista (' + Math.round(rb.width) + 'x' + Math.round(rb.height) + ')');
+  ok(!(await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth)), 'lectura: sin desplazamiento horizontal de la página');
+  await page.screenshot({ path: path.join(STEP, 'd-lectura-' + (mobile ? 'cel' : 'esc') + '.png') });
+  await page.keyboard.press('Escape'); await page.waitForTimeout(100);
+  ok(await page.evaluate(() => !document.documentElement.classList.contains('lectura') && !document.getElementById('code').readOnly), 'lectura: Esc vuelve a editar');
+  ok(await page.evaluate(() => getComputedStyle(document.querySelector('.bar')).display !== 'none'), 'lectura: vuelve la barra');
+  // 7) contraste WCAG AA de la paleta (claro y oscuro)
+  const lum = (h) => { const c = [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16) / 255).map((v) => v <= .03928 ? v / 12.92 : Math.pow((v + .055) / 1.055, 2.4)); return .2126 * c[0] + .7152 * c[1] + .0722 * c[2]; };
+  const cr = (a, b) => { const x = lum(a), y = lum(b); return (Math.max(x, y) + .05) / (Math.min(x, y) + .05); };
+  for (const th of ['light', 'dark']) {
+    const v = await page.evaluate((t) => { document.documentElement.dataset.theme = t; const cs = getComputedStyle(document.documentElement), o = {}; ['panel', 'panel2', 'bg', 'text', 'muted', 'accent', 'accent-ink', 'danger', 'warn', 'input', 'ok', 'kw', 'ty', 'st', 'nu', 'co', 'fn', 'pp', 'gut', 'lineS'].forEach((k) => { o[k] = cs.getPropertyValue('--' + k).trim(); }); return o; }, th);
+    const bad = [];
+    for (const k of ['text', 'muted', 'accent', 'danger', 'warn', 'input', 'ok', 'kw', 'ty', 'st', 'nu', 'co', 'fn', 'pp']) for (const bg of ['panel', 'panel2']) if (cr(v[k], v[bg]) < 4.5) bad.push(k + ' sobre ' + bg + ' ' + cr(v[k], v[bg]).toFixed(2));
+    for (const k of ['text', 'muted', 'danger', 'warn', 'input', 'ok']) if (cr(v[k], v.bg) < 4.5) bad.push(k + ' sobre bg ' + cr(v[k], v.bg).toFixed(2));
+    if (cr(v.gut, v.panel) < 4.5) bad.push('números de línea sobre panel ' + cr(v.gut, v.panel).toFixed(2));
+    if (cr(v['accent-ink'], v.accent) < 4.5) bad.push('texto de botón primario');
+    if (cr(v.lineS, v.panel) < 3) bad.push('borde de campos');
+    ok(bad.length === 0, 'contraste WCAG AA (' + th + '): texto >= 4,5:1 y bordes de campos >= 3:1' + (bad.length ? ' -> ' + bad.join('; ') : ''));
+  }
+  await page.evaluate(() => { delete document.documentElement.dataset.theme; });
+  // 8) hoja de atajos incluye Esc; tabla de atajos sin choque con F1/?
+  await page.evaluate(() => document.getElementById('dlg').showModal());
+  ok(/Esc/.test(await page.textContent('#dlg .keys')) && /F1/.test(await page.textContent('#dlg .keys')), 'atajos: la hoja muestra F1 y Esc');
+  await page.evaluate(() => document.getElementById('dlg').close());
+  // 9) celular: nada se sale, cabecera de la hoja en una sola fila
+  if (mobile) {
+    const hh = await page.$eval('#paneEd .pane-head', (e) => e.getBoundingClientRect().height);
+    ok(hh <= 60, 'celular: la cabecera del editor cabe en una fila (' + Math.round(hh) + ' px)');
+    ok(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), 'celular: sin desplazamiento horizontal');
+    const small = await page.evaluate(() => Array.from(document.querySelectorAll('.bar .btn, .tab, #readBtn, #findBtn, #whatBtn, #pname')).filter((e) => e.offsetParent && (e.getBoundingClientRect().height < 43.5 || e.getBoundingClientRect().width < 43.5)).map((e) => e.id || e.className));
+    ok(small.length === 0, 'celular: objetivos táctiles de 44 px en la barra, pestañas y cabecera' + (small.length ? ' -> ' + small.join(',') : ''));
+  }
+  // 10) la imagen de la captura: hoja blanca con tira azul arriba, sin pedir nada a la red
+  await H.setCode(PROG);
+  await H.menu(); await H.tap('#shot'); await page.waitForFunction(() => document.getElementById('shotImg').getAttribute('src'));
+  await page.waitForTimeout(300);
+  const px = await page.evaluate(() => new Promise((res) => { const im = new Image(); im.onload = () => {
+    const c = document.createElement('canvas'); c.width = im.width; c.height = im.height; const x = c.getContext('2d', { willReadFrequently: true }); x.drawImage(im, 0, 0);
+    const W = im.width, H = im.height, d = x.getImageData(0, 0, W, H).data;
+    let head = 0, logo = 0, tealN = 0, edge = 0, nonwhite = 0;
+    for (let Y = 0; Y < H; Y++) for (let X = 0; X < W; X++) {
+      const o = (Y * W + X) * 4, r = d[o], g = d[o + 1], b = d[o + 2];
+      if (r > 245 && g > 245 && b > 245) continue;
+      nonwhite++;
+      const dk = r < 90 && g < 90 && b < 90, tl = r < 40 && g > 90 && g < 150 && b > 100 && b < 160;
+      if (Y < H * 0.07 && dk) head++;
+      if (Y > H - 80 && X < W * 0.2) { if (dk) logo++; if (tl) tealN++; }
+      if (X > W - 8 || Y > H - 3 || X < 8 || Y < 3) edge++;
+    }
+    res({ w: W, h: H, frac: nonwhite / (W * H), head, logo, tealN, edge });
+  }; im.src = document.getElementById('shotImg').src; }));
+  ok(px.frac > 0.03 && px.frac < 0.6, 'captura: no es una hoja en blanco ni está saturada (' + (px.frac * 100).toFixed(1) + ' % de píxeles con tinta)');
+  ok(px.head > 300, 'captura: la cabecera tiene texto oscuro (' + px.head + ' px)');
+  ok(px.logo > 20 && px.tealN > 10, 'captura: el logo (C oscura y cursor turquesa) aparece al pie (' + px.logo + ' / ' + px.tealN + ' px)');
+  ok(px.edge === 0, 'captura: nada toca los bordes (el texto cabe) (' + px.edge + ' px)');
+  ok(px.w <= 1400, 'captura: ancho razonable para verla en el celular (' + px.w + ' px)');
+  await page.evaluate(() => { document.getElementById('dShot').close(); if (innerWidth < 900) document.getElementById('more').open = false; });
+  ok(errors.length === 0, 'diseño: sin errores ni avisos en la consola del navegador' + (errors.length ? ' -> ' + errors.slice(0, 2).join(' | ') : ''));
+  await ctx.close();
+}
+
+
+// ------------------------------------------------------------------ identidad: temas, contraste, íconos de la app, favicon, sprite
+async function identidadSuite(browser, target) {
+  console.log('\n== identidad · ' + target.label);
+  const lum = (h) => { const c = [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16) / 255).map((v) => v <= .03928 ? v / 12.92 : Math.pow((v + .055) / 1.055, 2.4)); return .2126 * c[0] + .7152 * c[1] + .0722 * c[2]; };
+  const cr = (a, b) => { const x = lum(a), y = lum(b); return (Math.max(x, y) + .05) / (Math.min(x, y) + .05); };
+  const hex = (rgb) => '#' + rgb.map((v) => Math.round(v).toString(16).padStart(2, '0')).join('');
+  const css = fs.readFileSync(path.join(ROOT, 'src', 'app.css'), 'utf8');
+  // 1) la paleta oscura del modo automático es idéntica a la del tema oscuro elegido a mano
+  const bloque = (re) => { const m = css.match(re); return m ? m[1].replace(/\s+/g, ' ').trim() : null; };
+  const auto = bloque(/@media \(prefers-color-scheme: dark\) \{\s*:root:not\(\[data-theme\]\) \{([^}]*)\}/), manual = bloque(/:root\[data-theme="dark"\] \{([^}]*)\}/);
+  ok(auto && auto === manual, 'tema oscuro: el automático y el manual tienen los mismos valores');
+  ok(!/gradient/.test(css) && !/[\u{1F300}-\u{1FAFF}☀-➿]/u.test(fs.readFileSync(path.join(ROOT, 'src', 'template.html'), 'utf8')), 'estilo: sin degradados en el CSS ni emoji en la página');
+  // 2) tres temas, con la preferencia del sistema emulada
+  for (const [scheme, tema, esperado] of [['light', 'auto', 'light'], ['dark', 'auto', 'dark'], ['dark', 'light', 'light'], ['light', 'dark', 'dark']]) {
+    const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 }, colorScheme: scheme });
+    await ctx.addInitScript((t) => { try { localStorage.setItem('editorc.theme', t); } catch (e) {} }, tema);
+    const page = await ctx.newPage(); await page.goto(target.url); await page.waitForSelector('#code');
+    const v = await page.evaluate(() => { const cs = getComputedStyle(document.documentElement), o = {}; ['bg', 'panel', 'panel2', 'text', 'muted', 'accent', 'accent-ink', 'danger', 'warn', 'ok', 'input', 'gut', 'lineS', 'kw', 'ty', 'st', 'nu', 'co', 'fn', 'pp'].forEach((k) => { o[k] = cs.getPropertyValue('--' + k).trim(); }); o.body = getComputedStyle(document.body).backgroundColor; o.fill = cs.getPropertyValue('--fill').trim(); return o; });
+    const oscuro = lum(v.panel) < .2;
+    ok(oscuro === (esperado === 'dark'), 'tema ' + tema + ' con sistema ' + scheme + ': se ve ' + esperado + ' (panel ' + v.panel + ')');
+    const bodyHex = hex(v.body.match(/\d+/g).slice(0, 3).map(Number));
+    ok(bodyHex === v.bg, 'tema ' + tema + '/' + scheme + ': el fondo de la página es --bg (' + bodyHex + ')');
+    // contraste AA de cada par que se usa, y de los textos sobre el relleno gris de los botones
+    const f = v.fill.match(/[\d.]+/g).map(Number), base = v.panel, bb = [1, 3, 5].map((i) => parseInt(base.slice(i, i + 2), 16));
+    const comp = hex([0, 1, 2].map((i) => f[i] * f[3] + bb[i] * (1 - f[3])));
+    const bad = [];
+    for (const k of ['text', 'muted', 'accent', 'danger', 'warn', 'ok', 'input', 'kw', 'ty', 'st', 'nu', 'co', 'fn', 'pp', 'gut']) if (cr(v[k], v.panel) < 4.5) bad.push(k + '/panel ' + cr(v[k], v.panel).toFixed(2));
+    for (const k of ['text', 'muted', 'accent', 'danger', 'warn', 'ok']) { if (cr(v[k], v.bg) < 4.5) bad.push(k + '/bg ' + cr(v[k], v.bg).toFixed(2)); if (cr(v[k], comp) < 4.5) bad.push(k + '/relleno ' + cr(v[k], comp).toFixed(2)); }
+    if (cr(v['accent-ink'], v.accent) < 4.5) bad.push('botón primario ' + cr(v['accent-ink'], v.accent).toFixed(2));
+    if (cr(v.lineS, v.panel) < 3) bad.push('borde de campos ' + cr(v.lineS, v.panel).toFixed(2));
+    ok(bad.length === 0, 'contraste AA (' + tema + '/' + scheme + '): textos >= 4,5:1, bordes >= 3:1' + (bad.length ? ' -> ' + bad.join('; ') : ''));
+    // meta theme-color de claro y de oscuro
+    const metas = await page.evaluate(() => Array.from(document.querySelectorAll('meta[name=theme-color]')).map((m) => m.getAttribute('content')));
+    ok(metas.length === 2, 'theme-color: hay una meta para claro y otra para oscuro (' + metas.join(', ') + ')');
+    await ctx.close();
+  }
+  // 3) íconos del manifest, favicon y pantalla de inicio: existen y tienen el tamaño declarado
+  const png = (f) => { const b = fs.readFileSync(path.join(ROOT, f)); return { ok: b.subarray(0, 8).toString('hex') === '89504e470d0a1a0a', w: b.readUInt32BE(16), h: b.readUInt32BE(20) }; };
+  const mf = JSON.parse(fs.readFileSync(path.join(ROOT, 'manifest.webmanifest'), 'utf8'));
+  ok(mf.theme_color && mf.background_color && /^#[0-9a-f]{6}$/i.test(mf.theme_color), 'manifest: theme_color y background_color definidos (' + mf.theme_color + ', ' + mf.background_color + ')');
+  for (const ic of mf.icons) { const i = png(ic.src); ok(i.ok && i.w + 'x' + i.h === ic.sizes, 'manifest: ' + ic.src + ' (' + ic.purpose + ') existe y mide ' + ic.sizes); }
+  for (const [f, n] of [['assets/apple-touch-icon.png', 180], ['assets/favicon-32.png', 32]]) { const i = png(f); ok(i.ok && i.w === n && i.h === n, f + ' mide ' + n + 'x' + n); }
+  const ico = fs.readFileSync(path.join(ROOT, 'assets', 'favicon.ico'));
+  ok(ico.readUInt16LE(0) === 0 && ico.readUInt16LE(2) === 1 && ico.readUInt16LE(4) === 3 && [16, 32, 48].every((n, i) => ico[6 + 16 * i] === n), 'favicon.ico: contiene 16, 32 y 48 px');
+  const fsvg = fs.readFileSync(path.join(ROOT, 'assets', 'favicon.svg'), 'utf8');
+  ok(/<svg[^>]+viewBox/.test(fsvg) && /prefers-color-scheme:dark/.test(fsvg), 'favicon.svg: válido y con variante para pestañas oscuras');
+  const sp = png('assets/splash-claro.png'); ok(sp.ok && sp.w === 1170 && sp.h === 2532, 'pantalla de inicio: 1170x2532');
+  // 4) el ícono «maskable»: el símbolo cabe en el círculo seguro (radio 40 %) y el fondo llega a las esquinas (por http, para poder leer los píxeles)
+  if (target.origin) {
+    const ctx = await browser.newContext(); const page = await ctx.newPage(); await page.goto(target.url);
+    const r = await page.evaluate(async () => {
+      const im = new Image(); im.src = 'assets/icon-maskable-512.png'; await new Promise((x, y) => { im.onload = x; im.onerror = y; });
+      const c = document.createElement('canvas'); c.width = c.height = 512; const x = c.getContext('2d'); x.drawImage(im, 0, 0);
+      const d = x.getImageData(0, 0, 512, 512).data, bg = [d[0], d[1], d[2]]; let fuera = 0, dentro = 0;
+      for (let Y = 0; Y < 512; Y++) for (let X = 0; X < 512; X++) { const o = (Y * 512 + X) * 4; if (Math.abs(d[o] - bg[0]) + Math.abs(d[o + 1] - bg[1]) + Math.abs(d[o + 2] - bg[2]) > 40) { if (Math.hypot(X - 256, Y - 256) > 0.4 * 512) fuera++; else dentro++; } }
+      const esq = [[0, 0], [511, 0], [0, 511], [511, 511]].every(([X, Y]) => { const o = (Y * 512 + X) * 4; return d[o + 3] === 255 && d[o] === bg[0]; });
+      return { fuera, dentro, esq };
+    }, null);
+    ok(r.fuera === 0 && r.dentro > 2000, 'ícono maskable: todo el símbolo está dentro de la zona segura (' + r.dentro + ' px dentro, ' + r.fuera + ' fuera)');
+    ok(r.esq, 'ícono maskable: el fondo opaco llega a las cuatro esquinas');
+    // el ícono «any» tiene esquinas transparentes y símbolo en el centro
+    const a = await page.evaluate(async () => { const im = new Image(); im.src = 'assets/icon-512.png'; await new Promise((x, y) => { im.onload = x; im.onerror = y; }); const c = document.createElement('canvas'); c.width = c.height = 512; const x = c.getContext('2d'); x.drawImage(im, 0, 0); return { esq: x.getImageData(2, 2, 1, 1).data[3], centro: x.getImageData(256, 256, 1, 1).data[3] }; });
+    ok(a.esq === 0 && a.centro === 255, 'ícono any: esquinas transparentes y centro opaco');
+    await ctx.close();
+  }
+  // 5) el sprite: cada ícono pedido por la página existe, y la marca de la barra coincide con el SVG del símbolo
+  {
+    const ctx = await browser.newContext(); const page = await ctx.newPage(); await page.goto(target.url); await page.waitForSelector('#code');
+    const faltan = await page.evaluate(() => Array.from(document.querySelectorAll('use')).map((u) => u.getAttribute('href')).filter((h, i, a) => a.indexOf(h) === i && !document.querySelector(h)));
+    ok(faltan.length === 0, 'sprite: todos los íconos que usa la página existen' + (faltan.length ? ' -> faltan ' + faltan.join(', ') : ''));
+    const n = await page.evaluate(() => document.querySelectorAll('symbol').length);
+    ok(n >= 25, 'sprite: ' + n + ' íconos propios en la página');
+    const mark = await page.evaluate(() => Array.from(document.querySelectorAll('.mark path')).map((p) => p.getAttribute('d')));
+    const sim = fs.readFileSync(path.join(ROOT, 'docs', 'identidad', 'simbolo.svg'), 'utf8');
+    ok(mark.length === 2 && mark.every((d) => sim.includes(d)), 'marca: el logo de la barra es el mismo trazo que docs/identidad/simbolo.svg');
+    await ctx.close();
+  }
+}
+
 async function dividerSuite(browser, target) {
   console.log('\n== divisor · ' + target.label + ' (escritorio)');
   const ctx = await newCtx(browser, false), page = await ctx.newPage();
@@ -509,7 +736,7 @@ async function pwaSuite(browser, mobile) {
   const ctx = await newCtx(browser, mobile), page = await ctx.newPage();
   const errors = [], net = [];
   page.on('console', (m) => { if (m.type() === 'error' || m.type() === 'warning') errors.push(m.text()); });
-  page.on('pageerror', (e) => errors.push('pageerror: ' + e.message));
+  page.on('pageerror', (e) => { errors.push('pageerror: ' + e.message); if (process.env.DBG) console.log('PAGEERROR', e.message); });
   ctx.on('request', (r) => { if (!r.url().startsWith(S.url) && !/^(data|blob|about):/.test(r.url())) net.push(r.url()); });
   await page.goto(S.url + 'index.html');
   await until(page, () => navigator.serviceWorker.getRegistration().then((r) => !!(r && r.active)), 15000);
@@ -523,7 +750,7 @@ async function pwaSuite(browser, mobile) {
   ok(['index.html', 'manifest.webmanifest', 'assets/app.js', 'assets/compiler.js', 'assets/runtime.js', 'assets/styles.css', 'assets/examples.js', 'assets/icon-192.png', 'assets/icon-512.png'].every((f) => cached.includes(f)), 'se precachea todo lo necesario (' + cached.length + ' archivos)');
   // manifest e íconos
   const mf = JSON.parse(await page.evaluate(() => fetch(document.querySelector('link[rel=manifest]').href).then((r) => r.text())));
-  ok(mf.name === 'Editor C' && mf.display === 'standalone' && mf.start_url && mf.theme_color === '#141922' && mf.background_color === '#0e1116', 'manifest: nombre, display y colores de los tokens');
+  ok(mf.name === 'Editor C' && mf.display === 'standalone' && mf.start_url && mf.theme_color === '#141517' && mf.background_color === '#17181b', 'manifest: nombre, display y colores (grafito del tema oscuro y del ícono)');
   const sizes = {};
   for (const ic of mf.icons) {
     const buf = fs.readFileSync(path.join(tmp, ic.src));
@@ -571,6 +798,318 @@ async function pwaSuite(browser, mobile) {
   fs.rmSync(tmp, { recursive: true, force: true });
 }
 
+// ------------------------------------------------------------------ el entrenador: ayuda por niveles, panel Ayuda, «¿Qué es esto?», casos sin respuesta, proceso, cierre automático
+const SCANF_MAL = '#include <stdio.h>\nint main() {\n    int A;\n    scanf("%d", A);\n    printf("%d\\n", A);\n    return 0;\n}\n';
+const CON_CABECERA = '// Pérez, Ana\n// 5° 2da\n// Lenguajes Electrónicos V\n// Ciclo lectivo 2026\n\n#include <stdio.h>\nint main() {\n    int A;\n    A = 1;\n    printf("%d\\n", A);\n    return 0;\n}\n';
+const DESCONOCIDO = { errors: [{ line: 9, msg: 'zzz error inventado que la base no conoce (prueba)', code: 'E-prueba-sin-kb' }], warnings: [] };
+
+async function entrenadorSuite(browser, target, mobile) {
+  const label = target.label;
+  console.log('\n== entrenador · ' + label + (mobile ? ' (celular)' : ' (escritorio)'));
+  const ctx = await newCtx(browser, mobile);
+  const page = await ctx.newPage();
+  const errors = [], net = [], extra = [];
+  page.on('console', (m) => { if (m.type() === 'error' || m.type() === 'warning') errors.push(m.text()); });
+  page.on('pageerror', (e) => { errors.push('pageerror: ' + e.message); if (process.env.DBG) console.log('PAGEERROR', e.message); });
+  ctx.on('page', (p) => extra.push(p.url()));
+  ctx.on('request', (r) => { const u = r.url(); if (/^(file|data|blob|about):/.test(u)) return; if (target.origin && u.startsWith(target.origin)) return; net.push(u); });
+  const H = helpers(page, mobile), tg = (mobile ? 'm' : 'd') + '-ent-' + label.replace(/\W+/g, '');
+  const shot = (n) => page.screenshot({ path: path.join(STEP, tg + '-' + n + '.png') });
+  const open = async (q) => { await page.goto(target.url + (q || '')); await page.waitForSelector('#code'); };
+  const openSettings = async () => { await H.menu(); await H.tap('#settings'); await page.waitForSelector('#dSet[open]'); };
+  const closeDlg = async () => { await page.keyboard.press('Escape'); await page.waitForFunction(() => !document.querySelector('dialog[open]')); };
+  const runShow = async (code) => { await H.setCode(code); await H.run(); await page.waitForSelector('#diag:not([hidden])'); await H.tab('co'); };
+  const items = (cls) => page.locator('#diagList .it' + (cls || ''));
+  const vis = (sel) => page.evaluate((s) => { const e = document.querySelector(s); if (!e) return false; const r = e.getBoundingClientRect(); return r.width > 0 && r.height > 0 && getComputedStyle(e).visibility !== 'hidden' && !e.closest('[hidden]'); }, sel);
+  // punto de pantalla (centro) del carácter `idx`-ésimo del texto, para tocar el editor sin mover el cursor
+  const pointOf = (needle, delta) => page.evaluate(([n, d]) => {
+    const t = document.getElementById('code'), v = t.value, i = v.indexOf(n) + (d || 0), lines = v.slice(0, i).split('\n');
+    const cs = getComputedStyle(t), r = t.getBoundingClientRect(), c = document.createElement('canvas').getContext('2d'); c.font = cs.fontSize + ' ' + cs.fontFamily;
+    const cw = c.measureText('M').width, lh = parseFloat(cs.lineHeight);
+    return { x: r.left + parseFloat(cs.paddingLeft) + (lines[lines.length - 1].length + 0.5) * cw - t.scrollLeft, y: r.top + parseFloat(cs.paddingTop) + (lines.length - 0.5) * lh - t.scrollTop };
+  }, [needle, delta]);
+  const tapAt = (pt) => (mobile ? page.touchscreen.tap(pt.x, pt.y) : page.mouse.click(pt.x, pt.y));
+  await open();
+  await H.tab('ed');
+
+  // ---- A) ayuda apagada por defecto: no dice dónde está el error ni qué dice el compilador
+  ok((await page.evaluate(() => window.__editorc.nivelAyuda())) === 1, 'ayuda: el nivel por defecto es 1 (apagada)');
+  await runShow(SCANF_MAL);
+  const it0 = items('.e').first();
+  ok(/Error de sintaxis/.test(await it0.textContent()) && !/l[ií]nea|&|scanf/i.test(await it0.textContent()), 'apagada: solo el tipo general, sin línea ni mensaje (' + (await it0.textContent()).trim() + ')');
+  ok((await it0.locator('.help, .pistas, .hexp, .orig, .cd, button.mute').count()) === 0 && (await page.locator('.gut .e, #ul .e').count()) === 0, 'apagada: sin ayuda, sin pistas, sin código del error y sin marcas en el editor');
+  ok(!(await page.evaluate(() => document.getElementById('out').textContent.match(/l[ií]nea|falta el &/i))), 'apagada: la consola tampoco dice la línea');
+  await shot('1-apagada');
+  // el buscador y la ayuda de elementos de C siguen funcionando
+  await H.tab('ed');
+
+  // ---- B) ayuda con línea, desde Ajustes y desde el enlace
+  await openSettings();
+  ok(!(await page.isChecked('#autoCierre')), 'ajustes: el cierre automático está apagado por defecto');
+  ok((await page.locator('#ayudaSel button').count()) === 2 && /Apagada/.test(await page.textContent('#ayudaSel')) && /Línea/.test(await page.textContent('#ayudaSel')), 'ajustes: selector segmentado «Apagada / Línea» (solo dos niveles)');
+  await page.click('#ayudaSel [data-v="2"]');
+  await closeDlg();
+  await runShow(SCANF_MAL);
+  const it2 = items('.e').first();
+  ok(/línea \d+/.test(await it2.textContent()) && !/&|scanf|falta/.test(await it2.textContent()), 'línea: el panel indica la línea y nada más (' + (await it2.textContent()).trim() + ')');
+  ok((await it2.locator('.help, .pistas, .hexp, .orig, .cd').count()) === 0 && (await page.locator('.gut .e').count()) >= 1, 'línea: sin pistas ni explicación, y la línea queda marcada');
+  await shot('2-linea');
+  await page.reload(); await page.waitForSelector('#code');
+  ok((await page.evaluate(() => window.__editorc.nivelAyuda())) === 2, 'el nivel elegido se recuerda en el dispositivo');
+  await open('?ayuda=1');
+  ok((await page.evaluate(() => window.__editorc.nivelAyuda())) === 1, '?ayuda=1 en el enlace fija la ayuda apagada');
+  await page.goto(target.url); await page.waitForSelector('#code');
+  ok((await page.evaluate(() => window.__editorc.nivelAyuda())) === 1, '?ayuda= además se recuerda para la próxima vez');
+  await open('?ayuda=2');
+  ok((await page.evaluate(() => window.__editorc.nivelAyuda())) === 2, '?ayuda=2 en el enlace fija la ayuda con línea');
+  await open('?ayuda=0');
+  ok((await page.evaluate(() => window.__editorc.nivelAyuda())) === 1, '?ayuda=0 (viejo) cae en apagada: no hay nivel 0');
+  await openSettings(); await page.click('#ayudaSel [data-v="1"]'); await closeDlg();
+
+  // ---- C) sin explicación: el caso se guarda solo en el dispositivo y se manda desde Ajustes (el panel no ofrece nada)
+  await H.setCode(CON_CABECERA);
+  await page.evaluate((r) => window.__editorc.showDiag(r), DESCONOCIDO);
+  await H.tab('co');
+  ok(!/zzz error inventado|Todavía no tengo/.test(await items('.e').first().textContent()), 'sin explicación: el panel no muestra el mensaje ni ofrece nada (ayuda apagada)');
+  await shot('3-sin-respuesta');
+  await openSettings();
+  ok(/Casos para enviar \(1\)/.test(await page.textContent('#casosBtn')), 'sin explicación: el caso quedó guardado (contador en Ajustes)');
+  await page.evaluate(() => { window.CONFIG.WHATSAPP_NUMERO = ''; });   // las pruebas de «sin número» parten de la configuración vacía
+  await H.tap('#casosBtn');
+  await page.waitForSelector('#dCasos[open]');
+  const prev = await page.textContent('#cPrev');
+  ok(prev.includes('zzz error inventado') && prev.includes('printf("%d\\n", A);') && /```c/.test(prev), 'casos: la vista previa muestra el mensaje y el código que se enviaría');
+  ok(!/Pérez|Ana|5° 2da|Lenguajes Electrónicos/.test(prev), 'casos: sin nombre ni datos personales (se quitó la cabecera)');
+  ok(/Nada se envía solo/.test(await page.textContent('#dCasos')) && /sin nombre ni datos personales/i.test(await page.textContent('#dCasos')), 'casos: aviso de privacidad visible');
+  const href0 = await page.getAttribute('#cWa', 'href');
+  ok(/^https:\/\/wa\.me\/\?text=/.test(href0) && decodeURIComponent(href0).includes('zzz error inventado'), 'WhatsApp sin número: abre wa.me sin destinatario con el texto armado');
+  ok(/sin destinatario/.test(await page.textContent('#cNota')), 'WhatsApp sin número: lo dice');
+  ok((await page.getAttribute('#cWa', 'target')) === '_blank' && /noopener/.test(await page.getAttribute('#cWa', 'rel')), 'WhatsApp: pestaña nueva con rel=noopener');
+  await page.evaluate(() => { window.CONFIG.WHATSAPP_NUMERO = '5491112345678'; });
+  await H.tap('#cList input[type=checkbox]'); await H.tap('#cList input[type=checkbox]');
+  const href1 = await page.getAttribute('#cWa', 'href');
+  ok(/^https:\/\/wa\.me\/5491112345678\?text=/.test(href1) && !/sin destinatario/.test(await page.textContent('#cNota')), 'WhatsApp con número configurado: enlace wa.me/<número>?text=…');
+  await page.evaluate(() => { window.CONFIG.WHATSAPP_NUMERO = ''; });
+  await shot('4-casos');
+  // copiar: éxito y portapapeles bloqueado
+  await page.evaluate(() => { window.__copiado = null; navigator.clipboard.writeText = (t) => { window.__copiado = t; return Promise.resolve(); }; });
+  await H.tap('#cCopy');
+  await page.waitForFunction(() => window.__copiado !== null);
+  ok(/#DATOS/.test(await page.evaluate(() => window.__copiado)), 'Copiar: copia el texto completo');
+  await page.evaluate(() => { navigator.clipboard.writeText = () => Promise.reject(new Error('bloqueado')); document.execCommand = () => false; });
+  await H.tap('#cCopy');
+  await page.waitForFunction(() => /no dejó copiar/.test(document.getElementById('cNota').textContent));
+  ok(true, 'Copiar con el portapapeles bloqueado: estado claro y texto seleccionado para copiar a mano');
+  // descargar
+  const dl = page.waitForEvent('download');
+  await H.tap('#cDl');
+  const d = await dl;
+  const dj = JSON.parse(fs.readFileSync(await d.path(), 'utf8'));
+  ok(/^casos-editor-c-\d{8}\.json$/.test(d.suggestedFilename()) && dj.formato === 'casos-sin-respuesta-v1' && dj.casos.length === 1 && !/Pérez/.test(JSON.stringify(dj)), 'Descargar .json: archivo exportado sin datos personales (' + d.suggestedFilename() + ')');
+  // borrar uno (con deshacer) y todos
+  await H.tap('#cList button[aria-label="Borrar este caso"]');
+  ok((await page.locator('#cList li').count()) === 0 && (await vis('#cVacio')), 'borrar un caso: queda el estado vacío');
+  await H.tap('#toast button:has-text("Deshacer")');
+  ok((await page.locator('#cList li').count()) === 1, 'Deshacer devuelve el caso');
+  await H.tap('#cDelAll');
+  ok((await page.locator('#cList li').count()) === 0 && !(await vis('#cWa')), 'Borrar todos');
+  await closeDlg();
+  // desde Ajustes
+  await page.evaluate((r) => window.__editorc.showDiag(r), DESCONOCIDO);
+  await openSettings();
+  ok(/Casos para enviar \(1\)/.test(await page.textContent('#casosBtn')), 'Ajustes: «Casos para enviar» con el contador');
+  await H.tap('#casosBtn'); await page.waitForSelector('#dCasos[open]');
+  ok((await page.locator('#cList li').count()) === 1, 'Ajustes → Casos para enviar: la lista');
+  await H.tap('#cDelAll'); await closeDlg();
+  ok(extra.length === 0, 'casos: no se abrió ninguna pestaña sola');
+
+  // ---- D) panel Ayuda
+  await H.tap('#ayudaBtn'); await page.waitForSelector('#dAyuda[open]');
+  ok((await page.evaluate(() => document.activeElement.id)) === 'aQ', 'Ayuda: el foco queda en la búsqueda');
+  await page.keyboard.type('por qué 7/2 da 3');
+  await page.waitForFunction(() => document.querySelectorAll('#aList button').length > 0);
+  ok(/Lección/.test(await page.textContent('#aList')), 'Ayuda: «por qué 7/2 da 3» encuentra una lección');
+  await shot('5-ayuda');
+  if (!mobile) {
+    await page.keyboard.press('ArrowDown');
+    ok(await page.evaluate(() => !!document.activeElement.closest('#aList')), 'Ayuda: la flecha abajo pasa a los resultados');
+    await page.keyboard.press('ArrowDown'); await page.keyboard.press('ArrowUp'); await page.keyboard.press('ArrowUp');
+    ok((await page.evaluate(() => document.activeElement.id)) === 'aQ', 'Ayuda: la flecha arriba vuelve a la búsqueda');
+  }
+  await page.fill('#aQ', 'scanf');
+  const tipos = await page.$$eval('#aList .tipo', (l) => Array.from(new Set(l.map((x) => x.textContent))));
+  ok(tipos.length >= 2, 'Ayuda: resultados mezclados con su tipo (' + tipos.join(', ') + ')');
+  await page.fill('#aQ', 'scanf sin &');
+  await H.tap('#aList .tipo.error >> xpath=ancestor::button');
+  ok((await page.locator('#aDet .tipo.error').count()) === 1 && (await page.locator('#aDet button:has-text("Abrir en el editor")').count()) >= 1 && (await page.locator('#aDet button:has-text("Pista")').count()) === 1, 'Ayuda: detalle de un error con ejemplo y pistas por demanda');
+  ok(/Qué pasa|Cómo arreglarlo/i.test(await page.textContent('#aDet')), 'Ayuda: detalle de un error con explicación y cómo arreglarlo');
+  await H.tap('#aDet button:has-text("Pista")');
+  ok((await page.locator('#aDet .pistas li').count()) === 1, 'Ayuda: las pistas del detalle se piden de a una');
+  const nprog = await H.progCount();
+  await H.tap('#aDet button:has-text("Abrir en el editor") >> nth=-1');
+  await page.waitForFunction(() => !document.querySelector('dialog[open]'));
+  ok((await H.progCount()) === nprog + 1 && /scanf/.test(await page.inputValue('#code')), 'Ayuda: «Abrir en el editor» abre el ejemplo como programa nuevo');
+  // lección con «Probar»
+  await H.tap('#ayudaBtn'); await page.waitForSelector('#dAyuda[open]');
+  await page.fill('#aQ', 'por qué 7/2 da 3');
+  await H.tap('#aList .tipo.leccion >> xpath=ancestor::button >> nth=0');
+  ok((await page.locator('#aDet button:has-text("Probar")').count()) === 1, 'Ayuda: la lección trae un ejemplo con «Probar»');
+  // navegación a un relacionado y volver
+  const rel = page.locator('#aDet .rel button');
+  if (await rel.count()) { const t0 = await page.textContent('#aDet h2.dt'); await H.tap('#aDet .rel button >> nth=0'); ok((await page.textContent('#aDet h2.dt')) !== t0, 'Ayuda: navegar a un relacionado'); await H.tap('#aDet button:has-text("Volver")'); ok((await page.textContent('#aDet h2.dt')) === t0, 'Ayuda: «Volver» regresa al anterior'); }
+  else ok(true, 'Ayuda: (esta lección no trae relacionados)');
+  await H.tap('#aDet button:has-text("Probar")');
+  await page.waitForFunction(() => !document.querySelector('dialog[open]'));
+  ok((await H.progCount()) === nprog + 2 && (await page.inputValue('#code')).length > 20, 'Ayuda: «Probar» carga el ejemplo en un programa nuevo');
+  await H.tap('#ayudaBtn'); await page.waitForSelector('#dAyuda[open]');
+  await page.keyboard.press('Escape');
+  ok(!(await page.evaluate(() => document.getElementById('dAyuda').open)), 'Ayuda: Esc cierra el panel');
+
+  // ---- E) «¿Qué es esto?» sobre el código
+  await H.tab('ed');
+  await H.setCode(SCANF_MAL.replace('int A;', 'int A;\n    float PROM;'));
+  await page.evaluate(() => { const t = document.getElementById('code'); t.focus(); t.setSelectionRange(7, 7); });
+  const code0 = await page.inputValue('#code'), sel0 = await page.evaluate(() => document.getElementById('code').selectionStart);
+  await H.tap('#whatBtn');
+  ok((await page.getAttribute('#whatBtn', 'aria-pressed')) === 'true' && (await vis('#whatLay')), '¿Qué es esto?: el modo se activa con el botón');
+  await tapAt(await pointOf('%d', 1));
+  await page.waitForSelector('#bubble:not([hidden])');
+  ok(/%d/.test(await page.textContent('#bubble')) && /formato|int/i.test(await page.textContent('#bubble')), '¿Qué es esto?: tocar un %d abre la burbuja con su ayuda');
+  await shot('6-burbuja');
+  ok((await page.inputValue('#code')) === code0 && (await page.evaluate(() => document.getElementById('code').selectionStart)) === sel0, '¿Qué es esto?: no cambia el código ni mueve el cursor');
+  await H.tap('#bubble button[aria-label^="Cerrar"]');
+  if (mobile) ok((await page.getAttribute('#whatBtn', 'aria-pressed')) === 'false' && !(await vis('#whatLay')), 'celular: el modo se desactiva al cerrar la burbuja');
+  else { ok(await vis('#whatLay'), 'escritorio: el modo sigue activo hasta apagarlo'); await H.tap('#whatBtn'); }
+  if ((await page.getAttribute('#whatBtn', 'aria-pressed')) !== 'true') await H.tap('#whatBtn');
+  await tapAt(await pointOf('printf', 2));
+  await page.waitForSelector('#bubble:not([hidden])');
+  ok(/printf/.test(await page.textContent('#bubble')), '¿Qué es esto?: tocar una palabra (printf)');
+  await page.keyboard.press('Escape');
+  ok(!(await vis('#bubble')), '¿Qué es esto?: Esc cierra la burbuja');
+  if ((await page.getAttribute('#whatBtn', 'aria-pressed')) === 'true') { if (mobile) await H.tap('#whatBtn'); else await page.keyboard.press('Escape'); }
+  ok((await page.getAttribute('#whatBtn', 'aria-pressed')) === 'false', '¿Qué es esto?: se apaga');
+  // fuera del modo, tocar edita normalmente y no abre nada
+  const v0 = await page.inputValue('#code');
+  await tapAt(await pointOf('return', 0));
+  await page.keyboard.type('Z');
+  const v1 = await page.inputValue('#code');
+  ok(!(await vis('#bubble')) && v1.length === v0.length + 1 && v1.replace('Z', '') === v0, '¿Qué es esto?: fuera del modo se puede editar con normalidad');
+  if (!mobile) {
+    await page.keyboard.press('Control+Z');
+    const p2 = await pointOf('scanf', 1);
+    await page.keyboard.down('Alt'); await page.mouse.click(p2.x, p2.y); await page.keyboard.up('Alt');
+    await page.waitForSelector('#bubble:not([hidden])');
+    ok(/scanf/.test(await page.textContent('#bubble')), 'escritorio: Alt+clic abre la burbuja sin activar el modo');
+    await page.keyboard.press('Escape');
+  }
+
+  // ---- F) cierre automático: apagado por defecto, con interruptor
+  if (!mobile) {
+    await H.setCode(''); await page.click('#code');
+    await page.keyboard.type('if (x');
+    ok((await page.inputValue('#code')) === 'if (x', 'cierre automático apagado: tipear "(" no agrega ")"');
+    await page.keyboard.type(') {'); await page.keyboard.press('Enter');
+    ok((await page.inputValue('#code')) === 'if (x) {\n    ', 'cierre automático apagado: la sangría automática sigue funcionando');
+    await page.keyboard.type('puts("hola');
+    ok(!(await page.inputValue('#code')).includes('")') && !(await page.inputValue('#code')).includes('"hola")'), 'cierre automático apagado: tampoco cierra comillas');
+    await openSettings(); await page.check('#autoCierre'); await closeDlg();
+    await H.setCode(''); await page.click('#code');
+    await page.keyboard.type('if (x');
+    ok((await page.inputValue('#code')) === 'if (x)', 'cierre automático encendido desde Ajustes: cierra paréntesis');
+    await page.reload(); await page.waitForSelector('#code');
+    await H.setCode(''); await page.click('#code'); await page.keyboard.type('(');
+    ok((await page.inputValue('#code')) === '()', 'el interruptor se recuerda al recargar');
+    await openSettings(); await page.uncheck('#autoCierre'); await closeDlg();
+  }
+  ok(!/sugerencia|autocompletar/i.test(await page.evaluate(() => document.body.innerText)), 'no hay autocompletado ni sugerencias en el editor');
+
+  ok(errors.length === 0, 'entrenador: consola limpia' + (errors.length ? ': ' + errors.join(' | ') : ''));
+  ok(net.length === 0, 'entrenador: cero pedidos de red externos' + (net.length ? ': ' + net.join(' ') : ''));
+  await ctx.close();
+}
+
+// proceso (tipeado vs pegado) y modo práctica: teclado y portapapeles reales, solo escritorio
+async function procesoSuite(browser, target) {
+  console.log('\n== proceso y modo práctica · ' + target.label);
+  const ctx = await newCtx(browser, false), page = await ctx.newPage();
+  const errors = [], net = [];
+  page.on('console', (m) => { if (m.type() === 'error' || m.type() === 'warning') errors.push(m.text()); });
+  page.on('pageerror', (e) => { errors.push('pageerror: ' + e.message); if (process.env.DBG) console.log('PAGEERROR', e.message); });
+  ctx.on('request', (r) => { const u = r.url(); if (/^(file|data|blob|about):/.test(u)) return; if (target.origin && u.startsWith(target.origin)) return; net.push(u); });
+  const H = helpers(page, false);
+  // copia texto con teclado real: textarea temporal, Ctrl+A, Ctrl+C
+  const copiar = async (texto) => {
+    await page.evaluate((t) => { const x = document.createElement('textarea'); x.id = 'tmpclip'; x.value = t; document.body.appendChild(x); x.focus(); x.select(); }, texto);
+    await page.keyboard.press('Control+C');
+    await page.evaluate(() => document.getElementById('tmpclip').remove());
+  };
+  await page.goto(target.url); await page.waitForSelector('#code');
+  await page.click('#code'); await page.keyboard.press('Control+A'); await page.keyboard.press('Backspace');
+  await page.evaluate(() => window.__editorc.setCode(''));
+  await page.click('#code');
+  const tipeado = '#include <stdio.h>\nint main() {\nprintf("hola");\nreturn 0;\n}';
+  await page.keyboard.type(tipeado);
+  let r = await page.evaluate(() => window.__editorc.proceso());
+  ok(r.tipeado >= 70 && r.pegado === 0, 'proceso: lo tipeado cuenta como tipeado (' + r.tipeado + ' % tipeado, ' + r.pegado + ' % pegado, ' + r.automatico + ' % automático)');
+  const pegar = '\nint FUNCION_PEGADA(int X) {\n    return X * 2 + 1;\n}\n';
+  await copiar(pegar);
+  await page.click('#code'); await page.keyboard.press('Control+End'); await page.keyboard.press('Control+V');
+  ok((await page.inputValue('#code')).includes('FUNCION_PEGADA'), 'se pudo pegar con el teclado real (Ctrl+V)');
+  r = await page.evaluate(() => window.__editorc.proceso());
+  const esperado = Math.round(pegar.length * 100 / (tipeado.length + pegar.length));
+  ok(r.pegado >= esperado - 8 && r.pegado <= esperado + 8 && r.tipeado >= 40 && r.pegados >= 1, 'proceso: lo pegado cuenta como pegado (' + r.tipeado + ' % tipeado, ' + r.pegado + ' % pegado; esperado ~' + esperado + ' %)');
+  const linea = await page.evaluate(() => window.__editorc.procLinea());
+  ok(/% tipeado/.test(linea) && /% pegado/.test(linea) && /ejecuci/.test(linea) && !/\bIA\b/.test(linea), 'proceso: la línea de la captura (' + linea + ')');
+  // ejecutar cuenta ejecuciones y todo se guarda con el programa
+  await page.evaluate(() => window.__editorc.setCode('')); await page.click('#code'); await page.keyboard.type('int A;');
+  await page.keyboard.press('F5'); await page.waitForTimeout(700);
+  const antes = await page.evaluate(() => window.__editorc.proceso());
+  ok(antes.ejecuciones >= 1, 'proceso: cuenta las ejecuciones (' + antes.ejecuciones + ')');
+  await page.waitForTimeout(500);
+  await page.reload(); await page.waitForSelector('#code');
+  const desp = await page.evaluate(() => window.__editorc.proceso());
+  ok(desp.caracteres.t === antes.caracteres.t && desp.ejecuciones === antes.ejecuciones, 'proceso: se guarda y se restaura con el programa (' + desp.caracteres.t + ' caracteres tipeados)');
+  // captura: línea opcional
+  await page.keyboard.press('Control+End');
+  await H.tap('#shot');
+  await page.waitForFunction(() => { const i = document.getElementById('shotImg'); return i.complete && i.naturalWidth > 0; });
+  ok(await page.isChecked('#shotProc') && await page.isVisible('#shotProcRow'), 'captura: opción para incluir la línea de proceso, marcada por defecto');
+  const h1 = await page.evaluate(() => +document.getElementById('shotImg').dataset.h);
+  await page.uncheck('#shotProc');
+  await page.waitForFunction((h) => +document.getElementById('shotImg').dataset.h !== h, h1);
+  const h2 = await page.evaluate(() => +document.getElementById('shotImg').dataset.h);
+  ok(h1 > h2, 'captura: con la línea la imagen es más alta que sin ella (' + h1 + ' > ' + h2 + ')');
+  await page.screenshot({ path: path.join(STEP, 'd-proceso-captura-' + target.label.replace(/\W+/g, '') + '.png') });
+  await page.keyboard.press('Escape');
+  // transparencia: el texto de Ajustes, sin la palabra IA en ningún lado
+  await H.menu(); await H.tap('#settings'); await page.waitForSelector('#dSet[open]');
+  ok(/tipeaste/.test(await page.textContent('#dSet')) && /este dispositivo/.test(await page.textContent('#dSet')), 'Ajustes explica qué se mide y que queda en el dispositivo');
+  await page.keyboard.press('Escape');
+  const visible = await page.evaluate(() => Array.from(document.body.children).filter((e) => e.tagName !== 'SCRIPT').map((e) => e.textContent).join(' '));
+  ok(!/\bIA\b|inteligencia artificial/i.test(visible), 'la palabra «IA» no aparece en la interfaz');
+  // modo práctica
+  const pg2 = await ctx.newPage();
+  const e2 = []; pg2.on('console', (m) => { if (m.type() === 'error' || m.type() === 'warning') e2.push(m.text()); }); pg2.on('pageerror', (e) => e2.push(e.message));
+  await pg2.goto(target.url + '?practica=1'); await pg2.waitForSelector('#code');
+  ok(await pg2.isVisible('#practica') && /Modo práctica/.test(await pg2.textContent('#practica')), 'modo práctica: cartel visible mientras esté activo');
+  await pg2.evaluate(() => window.__editorc.setCode('')); await pg2.click('#code');
+  await pg2.evaluate((t) => { const x = document.createElement('textarea'); x.id = 'tmpclip'; x.value = t; document.body.appendChild(x); x.focus(); x.select(); }, 'PEGADO_PROHIBIDO();');
+  await pg2.keyboard.press('Control+C'); await pg2.evaluate(() => document.getElementById('tmpclip').remove());
+  await pg2.click('#code'); await pg2.keyboard.press('Control+V');
+  ok((await pg2.inputValue('#code')) === '', 'modo práctica: pegar con Ctrl+V no escribe nada');
+  ok(/no se puede pegar/i.test(await pg2.textContent('#toast')), 'modo práctica: avisa por qué no pegó');
+  await pg2.keyboard.type('int A;');
+  ok((await pg2.inputValue('#code')) === 'int A;', 'modo práctica: tipear sigue funcionando');
+  await pg2.evaluate(() => { const t = document.getElementById('code'); const dt = new DataTransfer(); dt.setData('text/plain', 'SOLTADO();'); t.dispatchEvent(new DragEvent('drop', { dataTransfer: dt, bubbles: true, cancelable: true })); });
+  ok(!(await pg2.inputValue('#code')).includes('SOLTADO'), 'modo práctica: soltar texto tampoco');
+  await pg2.screenshot({ path: path.join(STEP, 'd-practica-' + target.label.replace(/\W+/g, '') + '.png') });
+  const pg3 = await ctx.newPage(); await pg3.goto(target.url); await pg3.waitForSelector('#code');
+  ok(!(await pg3.isVisible('#practica')), 'sin ?practica=1 no hay cartel ni bloqueo');
+  ok(errors.length === 0 && e2.length === 0, 'proceso: consola limpia' + (errors.concat(e2).length ? ': ' + errors.concat(e2).join(' | ') : ''));
+  ok(net.length === 0, 'proceso: cero pedidos de red externos' + (net.length ? ': ' + net.join(' ') : ''));
+  await ctx.close();
+}
+
 // ------------------------------------------------------------------ capturas finales (SHOTS_FINAL=1)
 async function finalShots(browser, url) {
   console.log('\n== capturas finales');
@@ -614,8 +1153,18 @@ async function finalShots(browser, url) {
     await guard('dist file', () => suite(browser, T.one, m));
   }
   await guard('dist http', () => suite(browser, T.oneHttp, false));
+  for (const [n, t] of [['index file', T.idx], ['index http', T.idxHttp], ['dist file', T.one], ['dist http', T.oneHttp]]) await guard('entrenador ' + n, () => entrenadorSuite(browser, t, false));
+  for (const [n, t] of [['index file', T.idx], ['index http', T.idxHttp], ['dist file', T.one]]) await guard('entrenador ' + n + ' celular', () => entrenadorSuite(browser, t, true));
+  await guard('proceso index', () => procesoSuite(browser, T.idx));
+  await guard('proceso dist', () => procesoSuite(browser, T.one));
+  await guard('identidad index', () => identidadSuite(browser, T.idxHttp));
+  await guard('identidad dist', () => identidadSuite(browser, T.one));
   await guard('divisor', () => dividerSuite(browser, T.idx));
   await guard('divisor dist', () => dividerSuite(browser, T.one));
+  await guard('diseño index', () => disenoSuite(browser, T.idx, false));
+  await guard('diseño dist', () => disenoSuite(browser, T.one, false));
+  await guard('diseño index celular', () => disenoSuite(browser, T.idx, true));
+  await guard('diseño dist celular', () => disenoSuite(browser, T.one, true));
   await guard('celular index', () => phoneSuite(browser, T.idx));
   await guard('celular dist', () => phoneSuite(browser, T.one));
   await guard('sin worker', () => fallbackSuite(browser, T.idx));

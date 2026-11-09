@@ -10,9 +10,11 @@ const check = (c, m) => { if (c) { ok++; console.log('  ok   ' + m); } else { fa
 (async () => {
   const br = await chromium.launch();
 
-  // 1) tipear un programa completo con teclado real
-  {
-    const pg = await (await br.newContext({ viewport: { width: 1280, height: 800 } })).newPage();
+  // 1) tipear un programa completo con teclado real, con el cierre automático apagado (por defecto) y encendido
+  for (const cierre of [false, true]) {
+    const cx = await br.newContext({ viewport: { width: 1280, height: 800 } });
+    if (cierre) await cx.addInitScript(() => { try { localStorage.setItem('editorc.autocierre', '1'); } catch (e) { /* nada */ } });
+    const pg = await cx.newPage();
     await pg.goto(url); await pg.waitForSelector('#code');
     await pg.click('#code'); await pg.keyboard.press('Control+A'); await pg.keyboard.press('Backspace');
     await pg.keyboard.type('#include <stdio.h>'); await pg.keyboard.press('Enter');
@@ -21,7 +23,7 @@ const check = (c, m) => { if (c) { ok++; console.log('  ok   ' + m); } else { fa
     await pg.keyboard.type('return 0;'); await pg.keyboard.press('Enter');
     await pg.keyboard.type('}');
     const v = await pg.$eval('#code', (t) => t.value);
-    check((v.match(/\}/g) || []).length === 1 && (v.match(/\{/g) || []).length === 1, 'tipear un programa completo deja una sola llave de cierre');
+    check((v.match(/\}/g) || []).length === 1 && (v.match(/\{/g) || []).length === 1, 'tipear un programa completo deja una sola llave de cierre (cierre automático ' + (cierre ? 'encendido' : 'apagado') + ')');
     await pg.keyboard.press('F5'); await pg.waitForTimeout(1200);
     const out = await pg.$eval('#out', (o) => o.textContent);
     check(/hola/.test(out), 'el programa tipeado compila y ejecuta');
@@ -32,8 +34,8 @@ const check = (c, m) => { if (c) { ok++; console.log('  ok   ' + m); } else { fa
     await pg.keyboard.type('}'); await pg.keyboard.press('Enter');
     await pg.keyboard.type('}');
     const v2 = await pg.$eval('#code', (t) => t.value);
-    check((v2.match(/\}/g) || []).length === 2 && (v2.match(/\{/g) || []).length === 2, 'dos bloques anidados tipeados dejan dos llaves de cierre');
-    await pg.close();
+    check((v2.match(/\}/g) || []).length === 2 && (v2.match(/\{/g) || []).length === 2, 'dos bloques anidados tipeados dejan dos llaves de cierre (cierre automático ' + (cierre ? 'encendido' : 'apagado') + ')');
+    await cx.close();
   }
 
   // 2) «Deshacer» tras borrar un programa: un solo toque

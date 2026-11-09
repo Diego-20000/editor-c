@@ -1,5 +1,18 @@
 # Cambios de interfaz
 
+## Rediseño: neutro, tipo iPhone, con identidad propia (rama ent-d2)
+
+Reemplaza por completo la capa «hoja de cuaderno» (papel crema, renglones, margen rojo, lapiceras, subrayado punteado). Dirección completa en `docs/DISENO.md`; logo, paleta, íconos y guía en `docs/identidad/index.html`.
+
+- **Estilo**: tipografía del sistema, listas agrupadas con filetes, botón primario relleno, selectores segmentados (Editor/Consola en celular, tema, nivel de ayuda), interruptores para los demás ajustes, hojas que suben desde abajo en celular (con asa) y diálogos centrados en escritorio, radios de 8 a 16 px, sin degradados ni emoji, movimiento mínimo (se anula con `prefers-reduced-motion`).
+- **Temas**: Automático / Claro / Oscuro (el automático sigue `prefers-color-scheme`); dos `<meta name="theme-color">` y ajuste por JS cuando se elige un tema a mano. Contraste AA verificado por prueba en los tres temas.
+- **Identidad**: logo propio (una C y el cursor de texto), SVG del símbolo y del nombre (horizontal, apilado, mono, fondo oscuro), ícono de app 192/512/maskable, apple-touch-icon 180, favicon SVG/PNG/ICO, pantalla de inicio de iPhone, manifest actualizado. Se generan con `node tools/generar-identidad.js && node tools/generar-iconos.js`; `build.js` solo copia (sigue necesitando solo node).
+- **Íconos**: 30 íconos propios en un sprite inline (`docs/identidad/iconos.svg`), con `<use>`; funciona por file:// y en `dist/editor-c.html`.
+- **Captura de entrega** rehecha: hoja blanca, cabecera con datos, secciones en mayúscula con filetes, código con números de línea, salida sobre gris claro, evidencia de proceso y la marca al pie.
+- **Se conserva**: pareja de llaves, línea actual, guías de sangría, tamaño de sangría, mostrar espacios, modo lectura, cartel «ejecutando» (ahora plano). **Se quitó** el ajuste «Renglones de cuaderno de fondo». Lo tipeado en la consola va en turquesa y negrita (no subrayado punteado).
+- **Pruebas**: `tools/ui-smoke.js` ganó la suite «identidad» (temas con la preferencia del sistema emulada, contraste AA, íconos del manifest y zona segura del maskable, favicon, sprite, marca igual al SVG, píxeles de la captura). `tools/capturas-diseno.js` saca las capturas `ios-*` en `docs/capturas/`.
+
+
 Rama: `ui-pendientes` (primera tanda: `worktree-agent-aebad1991ae07a35f`). No se tocó `src/compiler.js`, `src/runtime.js` ni `test/`; el motor se usa solo por `CCompiler.compile(src, opts)` y `CRT.runProgram`.
 
 ## 1. Estructura
@@ -70,3 +83,59 @@ Sin navegación de errores (solo lista), sin subrayado en la línea, mensajes si
 ## 6. Pruebas (`tools/ui-smoke.js`)
 
 `node tools/ui-smoke.js` termina con código distinto de cero si algo falla. Recorre `index.html` (file://), `index.html` por http (servidor estático de node) y `dist/editor-c.html` (file:// y http), en escritorio (1280x800) y celular (390x844, `isMobile`, `hasTouch`): compilación en el Worker (se comprueba que `CCompiler.compile` no se llama en la página), errores y avisos, Detener en ejecución y en compilación, aviso de 5 s (umbral real una vez, reducido en el resto), bucle con y sin salida, tope de salida, arreglo gigante, fuente de 50 000 líneas, respaldo sin Worker, pestañas con scroll/foco, teclado virtual simulado, objetivos de 44 px (varias vistas y diálogos), divisor (mouse, teclado, orientación, persistencia), vista previa, exportar/importar (válidos, repetidos, renombrados e inválidos), códigos y silenciar, service worker solo en http, segunda carga con el servidor apagado, actualización con "versión nueva", consola limpia y cero pedidos de red externos. Con `SHOTS_FINAL=1` regenera `docs/capturas/`.
+
+## 6. Entrenador (rama ent-u1)
+
+Se integran en la interfaz los módulos ya hechos (`src/kb.js`, `src/compartir.js`, `src/proceso.js`, `src/config.js` y `kb/`); no se tocó el motor ni esos módulos. Todo es estático: sin red, sin IA, sin servidor.
+
+**Ayuda por niveles en Problemas.** Cada diagnóstico se explica con `KB.explicar` (por el campo `kb` si el motor lo trae, si no por plantilla del mensaje). Nivel 0: mensaje del compilador con la línea. Nivel 1 (por defecto): mensaje corto de la base (con la línea y los nombres de variable del alumno en lugar de los del ejemplo de la base) y botón «Pista» que revela de a una con `KB.pista`; la tercera es «Mostrar la solución» y pide confirmación en el lugar (sin `confirm()` del navegador). Nivel 2: además la explicación del concepto. El mensaje original del compilador queda siempre en chico («Compilador: …»). «¿Qué es esto?» abre la lección o ayuda relacionada. Al editar la línea marcada, la ayuda de ese problema se esconde (clase `stale`) hasta la próxima ejecución. Nivel: Ajustes o `?ayuda=0|1|2` (se recuerda en `editorc.ayuda`).
+
+**Mensajes ambiguos.** Si varias entradas de la base comparten el mismo mensaje del editor y el diagnóstico no trae `kb`, no se elige una al azar: se muestra el mensaje original y «Buscar en la ayuda». Ver pedido 1.
+
+**Panel «Ayuda»** (`#dAyuda`, botón en la barra): `KB.buscar`, resultados con su tipo, detalle de error/ayuda/lección, pistas por demanda, «Abrir en el editor» y «Probar» (programa nuevo, nunca pisa el actual), relacionados por `errores_ids`, volver. Teclado: foco en la búsqueda, flechas, Inicio/Fin, Esc.
+
+**«¿Qué es esto?»**: botón `?` en la cabecera del editor (`#whatBtn`), Alt+clic (escritorio) y F1 (en el cursor). Una capa transparente (`#whatLay`) recibe el toque, así que el cursor y el texto no se mueven; la posición se calcula con las métricas de la fuente monoespaciada. En celular el modo se apaga al cerrar la burbuja.
+
+**Casos sin respuesta.** Al mostrar un diagnóstico sin explicación se llama a `Compartir.nuevoCaso` + `guardar` (localStorage, tope y duplicados del módulo). Ajustes → «Casos para enviar» (`#dCasos`): lista con casillas, vista previa exacta, aviso de privacidad, «Enviar por WhatsApp» (un `<a target=_blank rel="noopener noreferrer">` con `Compartir.urlWhatsApp`; sin número en `CONFIG.WHATSAPP_NUMERO` abre WhatsApp sin destinatario y lo dice), «Copiar» (con estado claro si el navegador bloquea el portapapeles) y «Descargar archivo .json». Borrar uno (con Deshacer) o todos. Nunca se envía nada solo.
+
+**Evidencia de proceso** (`docs/PROCESO.md`): adaptador conectado al textarea antes de los demás listeners; `marcarAuto` en cada inserción del propio editor (sangría, Tab, comentar, cierre, reemplazar, cabecera); `marcarCargado` al abrir archivo, ejemplo, importar o plantilla; el estado va dentro de cada programa (`proc`) y se restaura con él; `proc.ejecutar()` en cada ejecución; línea al pie de la captura (se parte en renglones si no entra) con casilla para incluirla u omitirla (por defecto incluida; Ajustes la recuerda). Los programas de versiones anteriores, sin datos de proceso, arrancan como «origen no determinado». `?practica=1`: `Proceso.politicaDesdeEnlace` cancela pegar y soltar, con cartel fijo `#practica`. El texto de Ajustes explica qué se mide y que queda en el dispositivo; la palabra «IA» no aparece.
+
+**Cierre automático** apagado por defecto (`editorc.autocierre`), interruptor en Ajustes; la sangría automática no cambia. `pisarLlave` también queda apagado cuando el cierre está apagado (si no, tragaría una llave tipeada). Sin autocompletado ni sugerencias.
+
+**Pruebas.** `tools/ui-smoke.js` suma `entrenadorSuite` (escritorio y celular emulado 390x844, en `file://`, http y `dist/`) y `procesoSuite` (teclado y portapapeles reales). `tools/ui-reparos.js` prueba tipear con el cierre automático apagado y encendido. Ambos salen con código distinto de cero si algo falla. Hooks nuevos en `window.__editorc`: `proceso()`, `procLinea()`, `nivelAyuda()`.
+
+**Las ~14 fallas viejas de `ui-smoke`.** En este entorno la prueba de antes de los cambios dio 554 ok y una sola falla, y esa era de tiempo («50 000 líneas: la página responde durante la compilación», 1056 ms contra un tope de 1000 ms, con la máquina cargada). Los errores del tipo «browser has been closed» no son de la aplicación: ocurren cuando dos corridas de Playwright pelean por la máquina, o cuando algo reconstruye `assets/` mientras corre la prueba.
+
+### Pedidos a otros agentes
+
+1. **Motor (`src/compiler.js`)**: poner el campo `kb` (id de la base) en cada diagnóstico. Hoy, por plantilla del mensaje, «falta un ';' al final de esta línea (antes de 'A')» coincide con 5 entradas distintas (`SIN-001`, `PRF-022`, `SIN-032`, `SIN-057`, `SIN-058`) y `KB.explicar` devuelve la última, que es de otro tema («while con mayúscula»); la interfaz lo detecta y no lo muestra, pero con `kb` se explicaría bien. Lo mismo pasa con 19 entradas de `E-falta-punto-coma`.
+2. **Base (`kb/`)**: `build.js` no copia `codigo_mal` al sitio (`CAMPOS_ERROR`), así que el detalle de un error muestra solo «Así queda bien». La interfaz ya muestra «Así falla» con «Abrir en el editor» si el campo llega. Pedido: incluir `codigo_mal` (y `entrada`) en `assets/kb-data.js`.
+3. **Base**: los mensajes de `mensaje_editor` traen «Línea N:» y nombres de variable de un programa de ejemplo. La interfaz los reemplaza por la línea y los nombres del alumno cuando el mensaje del editor trae las mismas comillas simples; sería más seguro que la base use marcadores (`{LINEA}`, `{VAR}`).
+4. **`KB.explicar`**: devolver `null` (o una marca de ambigüedad) cuando varias entradas comparten plantilla, en lugar de elegir la última.
+5. **`src/config.js`**: falta el número real de `WHATSAPP_NUMERO` (pregunta abierta 1 del CLAUDE.md).
+
+## 6. Pulido de diseño: «hoja de cuaderno»
+
+Dirección, paleta (con contrastes WCAG AA verificados en claro y oscuro), tipografía, radios, íconos y lista de lo que NO se hace: `docs/DISENO.md`. Resumen: hoja crema o grafito, tinta azul para lo propio y lo tipeado, tinta roja solo para corregir, renglones y raya de margen en el editor, sin degradados, sombras difusas ni tarjetas redondeadas.
+
+**Qué cambió (solo apariencia; ningún texto funcional ni comportamiento)**
+- `src/app.css` reescrito sobre variables: paneles como hojas (radio 0), controles de 2 px, bordes de 1 px, sombra solo en menú, aviso y burbuja (desplazamiento duro de 2 px). Sintaxis más sobria y legible; los tipos van en seminegrita, los comentarios en cursiva.
+- Íconos SVG propios y coherentes (trazo 1,75 px) en la barra; marca «C» de lapicera; favicon nuevo; sin glifos de texto (▲ ▼ ✕).
+- Consola: lo tipeado va en azul con subrayado punteado (no solo color); estado como chip con forma distinta por estado (cuadrado, rombo, círculo).
+- Problemas y ayuda por niveles: mensaje primero; la explicación y las pistas quedan sangradas bajo un filete punteado; etiquetas «Error · línea N» con borde en lugar de relleno.
+- Ayuda, Ajustes, Programas, Casos y la burbuja «¿qué es esto?»: lista con filetes en lugar de tarjetas, títulos de sección en mayúscula chica.
+- Imagen de la captura rehecha como hoja de carpeta (tira azul, cabecera con filete doble, secciones subrayadas, renglones, raya de margen roja, datos tipeados en negrita y subrayado para que se lean impresos en blanco y negro). Más angosta (mínimo de 52 columnas) para verla en el celular.
+- Celular: cabecera del editor en una sola fila (el botón «Lectura» queda solo con ícono), objetivos de 44 px.
+
+**Funciones nuevas (ninguna escribe por el alumno)**
+- Línea actual resaltada (banda y número en negrita) y contador «Lín N, Col M» en monoespaciada.
+- Pareja de `()`, `[]`, `{}` del cursor: se marcan las dos; sin pareja se marca en rojo. Ignora lo que está en comentarios, textos y `#líneas`.
+- Guías de sangría tenues (capa transparente, no interceptan clics).
+- Ajustes → «Cómo se ve el código»: tamaño de la sangría (2, 3, 4 u 8; también la usan Tab, Enter y `}`), mostrar espacios y tabulaciones, renglones de cuaderno de fondo (se pueden apagar).
+- Cartel «Ejecutando…» / «Esperando datos» sobre la consola (rayado fijo, sin animación).
+- Modo lectura: botón «Lectura» en la cabecera del editor; oculta barra y consola, el código queda de solo lectura (Esc o «Salir» para volver).
+- Hoja de atajos: se agregó Esc. F1 y «?» no chocan con nada.
+
+**Pruebas.** `tools/ui-smoke.js` suma `disenoSuite` (escritorio y celular, `file://` y `dist/`): pareja de llaves, línea actual, guías, sangría/espacios/renglones, cartel de ejecución, modo lectura (solo lectura real), contraste AA de la paleta, objetivos táctiles, imagen de la captura. `tools/capturas-diseno.js <prefijo>` genera las capturas de revisión en `docs/capturas/` (`antes-*` y `despues-*`).
+
+**Pendiente.** Fuente monoespaciada propia con licencia libre embebida (hay que elegirla y descargarla con aprobación de Diego); hoy se usan las del sistema.

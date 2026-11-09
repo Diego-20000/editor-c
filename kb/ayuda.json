@@ -1,0 +1,6155 @@
+[
+ {
+  "elemento": "int",
+  "tipo": "tipo",
+  "que_es": "Tipo de los números enteros (sin decimales). En este entorno ocupa 4 bytes y va de -2147483648 a 2147483647.",
+  "como_se_usa": "int EDAD=17;\nprintf(\"%d\\n\",EDAD);",
+  "error_tipico": "Mostrarlo con %f: un int se muestra con %d.",
+  "en_la_materia": "Tipos",
+  "errores_ids": [
+   "EJE-012",
+   "PRF-002",
+   "SIN-022",
+   "SIN-024",
+   "TIP-008",
+   "TIP-018",
+   "TIP-024"
+  ],
+  "buscar": [
+   "int",
+   "entero",
+   "numero entero",
+   "sin decimales",
+   "integer",
+   "numero raro",
+   "sale negativo",
+   "numero muy grande"
+  ]
+ },
+ {
+  "elemento": "float",
+  "tipo": "tipo",
+  "que_es": "Tipo de los números decimales de precisión simple: unas 6 o 7 cifras exactas. Se lee y se muestra con %f.",
+  "como_se_usa": "float NOTA=8.5f;\nprintf(\"%.1f\\n\",NOTA);",
+  "error_tipico": "Leerlo con %lf en scanf: para float se usa %f (%lf es para double).",
+  "en_la_materia": "Tipos",
+  "errores_ids": [
+   "SIN-023",
+   "SIN-024",
+   "SIN-037",
+   "SIN-041",
+   "TIP-016",
+   "TIP-023",
+   "TIP-025",
+   "TIP-028",
+   "TIP-032",
+   "TIP-037"
+  ],
+  "buscar": [
+   "float",
+   "decimal",
+   "decimales",
+   "numero con coma",
+   "real",
+   "flotante",
+   "punto flotante",
+   "sale 0.000000",
+   "decimales raros",
+   "sale 0"
+  ]
+ },
+ {
+  "elemento": "double",
+  "tipo": "tipo",
+  "que_es": "Tipo de los números decimales de doble precisión: unas 15 o 16 cifras exactas. Se muestra con %f y se lee con %lf.",
+  "como_se_usa": "double PROM=8.25;\nprintf(\"%.2f\\n\",PROM);",
+  "error_tipico": "Leerlo con %f en scanf: para double hay que usar %lf.",
+  "en_la_materia": "Tipos",
+  "errores_ids": [
+   "SCN-006",
+   "SCN-007",
+   "TIP-025",
+   "TIP-026"
+  ],
+  "buscar": [
+   "double",
+   "decimal grande",
+   "doble precision",
+   "real"
+  ]
+ },
+ {
+  "elemento": "char",
+  "tipo": "tipo",
+  "que_es": "Tipo que guarda un solo carácter (una letra, un dígito, un símbolo) como un número de 1 byte. Se escribe entre comillas simples.",
+  "como_se_usa": "char LETRA='A';\nprintf(\"%c %d\\n\",LETRA,LETRA);",
+  "error_tipico": "Escribir \"A\" con comillas dobles: eso es un texto, no un carácter.",
+  "en_la_materia": "Tipos, caracteres",
+  "errores_ids": [
+   "ARR-035",
+   "ARR-046",
+   "ARR-047",
+   "ARR-050",
+   "SCN-008",
+   "SIN-012",
+   "SIN-013",
+   "SIN-050",
+   "SIN-053",
+   "TIP-010",
+   "TIP-011",
+   "TIP-012",
+   "TIP-013",
+   "TIP-015",
+   "TIP-040"
+  ],
+  "buscar": [
+   "char",
+   "caracter",
+   "letra",
+   "un solo caracter",
+   "ascii",
+   "sale numero en vez de letra",
+   "sale un numero"
+  ]
+ },
+ {
+  "elemento": "void",
+  "tipo": "tipo",
+  "que_es": "Significa \"nada\". Una función void no devuelve valor, y (void) en la lista de parámetros indica que no recibe datos.",
+  "como_se_usa": "void SALUDAR(void){\n printf(\"Hola\\n\");\n}",
+  "error_tipico": "Intentar guardar en una variable lo que devuelve una función void.",
+  "en_la_materia": "Funciones",
+  "errores_ids": [
+   "DEC-035",
+   "FUN-013",
+   "FUN-014",
+   "FUN-015",
+   "FUN-023"
+  ],
+  "buscar": [
+   "void",
+   "nada",
+   "vacio",
+   "sin retorno",
+   "funcion que no devuelve"
+  ]
+ },
+ {
+  "elemento": "short",
+  "tipo": "tipo",
+  "que_es": "Entero más chico que int: ocupa 2 bytes y va de -32768 a 32767. Se muestra con %hd.",
+  "como_se_usa": "short T=30000;\nprintf(\"%hd\\n\",T);",
+  "error_tipico": "Guardar un número que no entra (por ejemplo 40000): da la vuelta y queda negativo.",
+  "en_la_materia": "Tipos",
+  "errores_ids": [
+   "TIP-010"
+  ],
+  "buscar": [
+   "short",
+   "entero corto",
+   "short int",
+   "entero chico"
+  ]
+ },
+ {
+  "elemento": "long",
+  "tipo": "tipo",
+  "que_es": "Entero más grande que int: acá ocupa 8 bytes y va de -9223372036854775808 a 9223372036854775807. Se muestra con %ld.",
+  "como_se_usa": "long GRANDE=3000000000L;\nprintf(\"%ld\\n\",GRANDE);",
+  "error_tipico": "Mostrarlo con %d: tiene que ser %ld, o aparecen números raros.",
+  "en_la_materia": "Tipos",
+  "errores_ids": [
+   "EJE-011",
+   "POR-010",
+   "PRF-031",
+   "SCN-030",
+   "SCN-031",
+   "TIP-027"
+  ],
+  "buscar": [
+   "long",
+   "entero largo",
+   "long int",
+   "entero grande",
+   "numero muy grande",
+   "desborde"
+  ]
+ },
+ {
+  "elemento": "long long",
+  "tipo": "tipo",
+  "que_es": "Entero de 8 bytes, igual de ancho que long en este entorno. Se muestra con %lld.",
+  "como_se_usa": "long long N=1234567890123LL;\nprintf(\"%lld\\n\",N);",
+  "error_tipico": "Usar %ld o %d para mostrarlo.",
+  "en_la_materia": "Tipos",
+  "errores_ids": [
+   "POR-015"
+  ],
+  "buscar": [
+   "long long",
+   "long long int",
+   "entero muy largo",
+   "lld"
+  ]
+ },
+ {
+  "elemento": "unsigned",
+  "tipo": "tipo",
+  "que_es": "Modificador que hace al entero \"sin signo\": solo guarda 0 o positivos, y llega al doble de alto. Un unsigned int va de 0 a 4294967295.",
+  "como_se_usa": "unsigned int N=4000000000u;\nprintf(\"%u\\n\",N);",
+  "error_tipico": "Guardar un negativo: el valor da la vuelta y queda enorme.",
+  "en_la_materia": "Tipos",
+  "errores_ids": [
+   "EJE-020",
+   "PRF-032",
+   "TIP-020",
+   "TIP-021",
+   "TIP-022",
+   "TIP-041"
+  ],
+  "buscar": [
+   "unsigned",
+   "sin signo",
+   "unsigned int",
+   "solo positivos",
+   "natural"
+  ]
+ },
+ {
+  "elemento": "signed",
+  "tipo": "tipo",
+  "que_es": "Modificador que aclara que el entero tiene signo (admite negativos). Es lo normal: int es lo mismo que signed int.",
+  "como_se_usa": "signed int T=-5;\nprintf(\"%d\\n\",T);",
+  "error_tipico": "Creer que signed agranda el rango: no cambia nada respecto de int.",
+  "en_la_materia": "Tipos",
+  "errores_ids": [],
+  "buscar": [
+   "signed",
+   "con signo",
+   "signed int"
+  ]
+ },
+ {
+  "elemento": "bool",
+  "tipo": "tipo",
+  "que_es": "Tipo lógico: guarda true (1) o false (0). Hay que escribir #include <stdbool.h> para usarlo.",
+  "como_se_usa": "bool LISTO=true;\nprintf(\"%d\\n\",LISTO);",
+  "error_tipico": "Usar bool sin incluir stdbool.h.",
+  "en_la_materia": "Condiciones",
+  "errores_ids": [
+   "PRE-038"
+  ],
+  "buscar": [
+   "bool",
+   "booleano",
+   "verdadero falso",
+   "logico",
+   "boolean",
+   "stdbool"
+  ]
+ },
+ {
+  "elemento": "true",
+  "tipo": "constante",
+  "que_es": "Valor lógico \"verdadero\". Vale 1. Requiere #include <stdbool.h>.",
+  "como_se_usa": "bool OK=true;\nif(OK) printf(\"Si\\n\");",
+  "error_tipico": "Escribir True o TRUE con mayúsculas: no existen.",
+  "en_la_materia": "Condiciones",
+  "errores_ids": [],
+  "buscar": [
+   "true",
+   "verdadero",
+   "cierto"
+  ]
+ },
+ {
+  "elemento": "false",
+  "tipo": "constante",
+  "que_es": "Valor lógico \"falso\". Vale 0. Requiere #include <stdbool.h>.",
+  "como_se_usa": "bool OK=false;\nif(!OK) printf(\"No\\n\");",
+  "error_tipico": "Pensar que false vale -1: vale 0.",
+  "en_la_materia": "Condiciones",
+  "errores_ids": [],
+  "buscar": [
+   "false",
+   "falso",
+   "cero"
+  ]
+ },
+ {
+  "elemento": "const",
+  "tipo": "palabra clave",
+  "que_es": "Marca una variable como constante: después de darle el valor inicial, ya no se puede cambiar.",
+  "como_se_usa": "const int TOPE=10;\nprintf(\"%d\\n\",TOPE);",
+  "error_tipico": "Intentar asignarle otro valor más adelante: es un error de compilación.",
+  "en_la_materia": "Constantes",
+  "errores_ids": [
+   "DEC-010",
+   "DEC-026",
+   "PRE-028"
+  ],
+  "buscar": [
+   "const",
+   "constante",
+   "no cambia",
+   "valor fijo"
+  ]
+ },
+ {
+  "elemento": "static",
+  "tipo": "palabra clave",
+  "que_es": "En una variable local hace que conserve su valor entre una llamada y la siguiente a la función.",
+  "como_se_usa": "static int VECES=0;\nVECES++;",
+  "error_tipico": "Creer que se reinicia en cada llamada: justamente no lo hace.",
+  "en_la_materia": "Funciones, ámbito",
+  "errores_ids": [],
+  "buscar": [
+   "static",
+   "estatica",
+   "conserva valor",
+   "recordar valor"
+  ]
+ },
+ {
+  "elemento": "register",
+  "tipo": "palabra clave",
+  "que_es": "Pide al compilador que guarde la variable en un registro del procesador. Hoy el compilador decide solo; casi no se usa.",
+  "como_se_usa": "register int I;\nfor(I=0;I<3;I++) printf(\"%d\\n\",I);",
+  "error_tipico": "Esperar que el programa corra más rápido: no lo hace.",
+  "en_la_materia": null,
+  "errores_ids": [],
+  "buscar": [
+   "register",
+   "registro"
+  ]
+ },
+ {
+  "elemento": "volatile",
+  "tipo": "palabra clave",
+  "que_es": "Avisa que el valor de la variable puede cambiar por fuera del programa; en la materia casi no se usa.",
+  "como_se_usa": "volatile int SENSOR=0;\nprintf(\"%d\\n\",SENSOR);",
+  "error_tipico": "Usarla pensando que protege la variable de cambios: no hace eso.",
+  "en_la_materia": null,
+  "errores_ids": [],
+  "buscar": [
+   "volatile",
+   "volatil"
+  ]
+ },
+ {
+  "elemento": "auto",
+  "tipo": "palabra clave",
+  "que_es": "Indica que la variable es local y automática. Es lo normal, por eso casi nunca se escribe.",
+  "como_se_usa": "auto int A=5;\nprintf(\"%d\\n\",A);",
+  "error_tipico": "Confundirla con la palabra auto de C++, que deduce el tipo: en C no hace eso.",
+  "en_la_materia": null,
+  "errores_ids": [],
+  "buscar": [
+   "auto",
+   "automatica"
+  ]
+ },
+ {
+  "elemento": "size_t",
+  "tipo": "tipo",
+  "que_es": "Tipo entero sin signo que usa C para tamaños y cantidades, como lo que devuelve sizeof o strlen. Se muestra con %zu.",
+  "como_se_usa": "size_t N=sizeof(int);\nprintf(\"%zu\\n\",N);",
+  "error_tipico": "Mostrarlo con %d: lo correcto es %zu.",
+  "en_la_materia": "Tipos",
+  "errores_ids": [
+   "POR-011",
+   "PRF-039"
+  ],
+  "buscar": [
+   "size_t",
+   "tamano",
+   "tipo de sizeof"
+  ]
+ },
+ {
+  "elemento": "time_t",
+  "tipo": "tipo",
+  "que_es": "Tipo que guarda una hora como cantidad de segundos desde 1970. Lo devuelve time().",
+  "como_se_usa": "time_t AHORA=time(NULL);\nprintf(\"%d\\n\",AHORA>0);",
+  "error_tipico": "Mostrarlo con %d: guarda un número grande y conviene %ld.",
+  "en_la_materia": "Tiempo",
+  "errores_ids": [
+   "PRE-009"
+  ],
+  "buscar": [
+   "time_t",
+   "segundos",
+   "hora",
+   "fecha"
+  ]
+ },
+ {
+  "elemento": "clock_t",
+  "tipo": "tipo",
+  "que_es": "Tipo que guarda tiempo de procesador en \"ticks\". Lo devuelve clock().",
+  "como_se_usa": "clock_t T=clock();\nprintf(\"%d\\n\",T>=0);",
+  "error_tipico": "Interpretar los ticks como segundos: hay que dividir por CLOCKS_PER_SEC.",
+  "en_la_materia": "Tiempo",
+  "errores_ids": [],
+  "buscar": [
+   "clock_t",
+   "ticks",
+   "tiempo de proceso"
+  ]
+ },
+ {
+  "elemento": "if",
+  "tipo": "palabra clave",
+  "que_es": "Ejecuta una instrucción (o un bloque entre llaves) solo si la condición es verdadera.",
+  "como_se_usa": "if(EDAD>=18) printf(\"Mayor\\n\");",
+  "error_tipico": "Poner un ; justo después del paréntesis: el if queda con cuerpo vacío.",
+  "en_la_materia": "BC",
+  "errores_ids": [
+   "CTL-001",
+   "CTL-002",
+   "CTL-003",
+   "CTL-004",
+   "CTL-005",
+   "CTL-006",
+   "CTL-029",
+   "CTL-041",
+   "LOG-008",
+   "LOG-009",
+   "LOG-010",
+   "LOG-032",
+   "OPE-001",
+   "SIN-004",
+   "SIN-006",
+   "SIN-015",
+   "SIN-027",
+   "SIN-028",
+   "SIN-060"
+  ],
+  "buscar": [
+   "if",
+   "si",
+   "condicional",
+   "condicion",
+   "decision",
+   "bifurcacion",
+   "siempre entra",
+   "nunca entra",
+   "no entra al if",
+   "siempre da verdadero"
+  ]
+ },
+ {
+  "elemento": "else",
+  "tipo": "palabra clave",
+  "que_es": "Marca lo que se hace cuando la condición del if NO se cumple. Va pegado al if o a su bloque.",
+  "como_se_usa": "if(A>0) printf(\"Positivo\\n\");\nelse printf(\"No positivo\\n\");",
+  "error_tipico": "Poner dos instrucciones sin llaves entre el if y el else: el else se queda sin if.",
+  "en_la_materia": "BC",
+  "errores_ids": [
+   "CTL-003",
+   "CTL-004",
+   "CTL-006",
+   "LOG-009",
+   "LOG-010",
+   "SIN-035"
+  ],
+  "buscar": [
+   "else",
+   "sino",
+   "si no",
+   "alternativa",
+   "en caso contrario"
+  ]
+ },
+ {
+  "elemento": "else if",
+  "tipo": "palabra clave",
+  "que_es": "Encadena otra condición que se mira solo si las anteriores dieron falso. Sirve para tomar una entre varias alternativas.",
+  "como_se_usa": "if(A>0) printf(\"+\\n\");\nelse if(A<0) printf(\"-\\n\");\nelse printf(\"0\\n\");",
+  "error_tipico": "Escribir elif o elseif: en C son dos palabras separadas, else if.",
+  "en_la_materia": "BC anidada",
+  "errores_ids": [
+   "CTL-004",
+   "CTL-005",
+   "CTL-042",
+   "SIN-016"
+  ],
+  "buscar": [
+   "else if",
+   "sino si",
+   "elif",
+   "elseif",
+   "varias condiciones",
+   "anidado"
+  ]
+ },
+ {
+  "elemento": "for",
+  "tipo": "palabra clave",
+  "que_es": "Lazo con tres partes entre paréntesis separadas por ;: inicio, condición y avance. Repite su cuerpo mientras la condición sea verdadera.",
+  "como_se_usa": "for(I=1;I<=3;I++) printf(\"%d\\n\",I);",
+  "error_tipico": "Separar las partes con comas en lugar de ;, o poner ; después del paréntesis.",
+  "en_la_materia": "LR",
+  "errores_ids": [
+   "CTL-016",
+   "CTL-017",
+   "CTL-018",
+   "CTL-019",
+   "CTL-020",
+   "CTL-046",
+   "LOG-022",
+   "LOG-023",
+   "LOG-033",
+   "LOG-034",
+   "LOG-053",
+   "SIN-005",
+   "SIN-032",
+   "SIN-055"
+  ],
+  "buscar": [
+   "for",
+   "para",
+   "repetir",
+   "lazo",
+   "bucle",
+   "ciclo",
+   "loop",
+   "iterar",
+   "repeticion",
+   "una sola vuelta",
+   "no entra al for",
+   "vuelta de mas",
+   "una vuelta menos"
+  ]
+ },
+ {
+  "elemento": "while",
+  "tipo": "palabra clave",
+  "que_es": "Lazo que repite su cuerpo mientras la condición sea verdadera. La condición se mira antes de cada vuelta, así que puede no ejecutarse nunca.",
+  "como_se_usa": "while(N>0){\n N--;\n}",
+  "error_tipico": "Olvidarse de modificar algo dentro del lazo y que no termine nunca.",
+  "en_la_materia": "LC",
+  "errores_ids": [
+   "CTL-021",
+   "CTL-022",
+   "CTL-028",
+   "EJE-013",
+   "OPE-046",
+   "SIN-058"
+  ],
+  "buscar": [
+   "while",
+   "mientras",
+   "lazo",
+   "bucle",
+   "ciclo",
+   "repetir mientras",
+   "loop",
+   "se cuelga",
+   "se tilda",
+   "no termina",
+   "nunca entra"
+  ]
+ },
+ {
+  "elemento": "do",
+  "tipo": "palabra clave",
+  "que_es": "Abre un lazo do-while: el cuerpo se ejecuta al menos una vez y la condición se mira al final.",
+  "como_se_usa": "do {\n N--;\n} while(N>0);",
+  "error_tipico": "Olvidar el ; después del while del final.",
+  "en_la_materia": "LC",
+  "errores_ids": [
+   "CTL-023",
+   "SIN-033"
+  ],
+  "buscar": [
+   "do",
+   "hacer mientras",
+   "do while",
+   "repetir hasta",
+   "al menos una vez"
+  ]
+ },
+ {
+  "elemento": "switch",
+  "tipo": "palabra clave",
+  "que_es": "Elige entre varias opciones comparando una expresión entera con los valores de cada case.",
+  "como_se_usa": "switch(OP){\n case 1: printf(\"Uno\\n\"); break;\n default: printf(\"Otro\\n\");\n}",
+  "error_tipico": "Usar un decimal o un texto como expresión del switch: solo sirven enteros y caracteres.",
+  "en_la_materia": "SS, BC",
+  "errores_ids": [
+   "CTL-007",
+   "CTL-008",
+   "CTL-009",
+   "CTL-010",
+   "CTL-011",
+   "CTL-012",
+   "CTL-045",
+   "SIN-034",
+   "SIN-036"
+  ],
+  "buscar": [
+   "switch",
+   "seleccion",
+   "menu",
+   "opciones",
+   "segun",
+   "case"
+  ]
+ },
+ {
+  "elemento": "case",
+  "tipo": "palabra clave",
+  "que_es": "Etiqueta de una opción del switch: un valor fijo seguido de dos puntos.",
+  "como_se_usa": "case 1: printf(\"Uno\\n\"); break;",
+  "error_tipico": "Usar una variable como valor, o olvidar los dos puntos.",
+  "en_la_materia": "BC",
+  "errores_ids": [
+   "CTL-008",
+   "CTL-011",
+   "CTL-012",
+   "CTL-013",
+   "CTL-014",
+   "CTL-015",
+   "SIN-034",
+   "SIN-036"
+  ],
+  "buscar": [
+   "case",
+   "caso",
+   "opcion del switch"
+  ]
+ },
+ {
+  "elemento": "default",
+  "tipo": "palabra clave",
+  "que_es": "Opción del switch que se ejecuta cuando ningún case coincide.",
+  "como_se_usa": "default: printf(\"Opción inválida\\n\");",
+  "error_tipico": "Olvidar los dos puntos, o ponerlo antes de otros case y olvidar el break.",
+  "en_la_materia": "BC",
+  "errores_ids": [
+   "CTL-009",
+   "SIN-034"
+  ],
+  "buscar": [
+   "default",
+   "por defecto",
+   "otro caso",
+   "ninguna opcion"
+  ]
+ },
+ {
+  "elemento": "break",
+  "tipo": "palabra clave",
+  "que_es": "Sale de inmediato del switch o del lazo más cercano.",
+  "como_se_usa": "for(I=0;I<10;I++){\n if(I==3) break;\n}",
+  "error_tipico": "Olvidarlo en un case y que se ejecuten también los siguientes.",
+  "en_la_materia": "BC, LC",
+  "errores_ids": [
+   "CTL-007",
+   "CTL-024",
+   "CTL-045"
+  ],
+  "buscar": [
+   "break",
+   "salir",
+   "romper",
+   "cortar el lazo",
+   "terminar bucle"
+  ]
+ },
+ {
+  "elemento": "continue",
+  "tipo": "palabra clave",
+  "que_es": "Salta lo que falta de la vuelta actual y pasa a la siguiente vuelta del lazo.",
+  "como_se_usa": "for(I=0;I<5;I++){\n if(I==2) continue;\n printf(\"%d\\n\",I);\n}",
+  "error_tipico": "Usarlo en un while sin avanzar antes la variable: el lazo queda trabado.",
+  "en_la_materia": "LC",
+  "errores_ids": [
+   "CTL-025"
+  ],
+  "buscar": [
+   "continue",
+   "continuar",
+   "siguiente vuelta",
+   "saltar"
+  ]
+ },
+ {
+  "elemento": "return",
+  "tipo": "palabra clave",
+  "que_es": "Termina la función y entrega un valor a quien la llamó. En main, return 0 indica que el programa terminó bien.",
+  "como_se_usa": "return 0;",
+  "error_tipico": "Olvidar el return en una función que debe devolver un valor.",
+  "en_la_materia": "Funciones",
+  "errores_ids": [
+   "FUN-011",
+   "FUN-012",
+   "FUN-014",
+   "FUN-015",
+   "FUN-040",
+   "SIN-003"
+  ],
+  "buscar": [
+   "return",
+   "devolver",
+   "retorno",
+   "retornar",
+   "resultado de la funcion",
+   "funcion sin return",
+   "control reaches end"
+  ]
+ },
+ {
+  "elemento": "goto",
+  "tipo": "palabra clave",
+  "que_es": "Salta a una etiqueta del programa. Existe en C pero la materia no la usa y este editor no la soporta.",
+  "como_se_usa": "goto FIN;",
+  "error_tipico": "Usarlo para repetir o salir de lazos: hay estructuras mejores (for, while, break).",
+  "en_la_materia": null,
+  "errores_ids": [],
+  "buscar": [
+   "goto",
+   "saltar",
+   "etiqueta"
+  ]
+ },
+ {
+  "elemento": "sizeof",
+  "tipo": "operador",
+  "que_es": "Operador que da el tamaño en bytes de un tipo o de una variable. Con un arreglo, da los bytes de todo el arreglo.",
+  "como_se_usa": "printf(\"%zu\\n\",sizeof(int));",
+  "error_tipico": "Creer que da la cantidad de elementos de un arreglo: da bytes.",
+  "en_la_materia": "Tipos, arreglos",
+  "errores_ids": [
+   "ARR-024",
+   "ARR-044",
+   "FUN-030",
+   "POR-011",
+   "PRF-039"
+  ],
+  "buscar": [
+   "sizeof",
+   "tamano",
+   "bytes",
+   "cuanto ocupa"
+  ]
+ },
+ {
+  "elemento": "main",
+  "tipo": "concepto",
+  "que_es": "La función por la que empieza a ejecutarse todo programa en C. Tiene que existir una sola.",
+  "como_se_usa": "int main(void){\n return 0;\n}",
+  "error_tipico": "Escribirla sin paréntesis, o sin int adelante.",
+  "en_la_materia": "Funciones",
+  "errores_ids": [
+   "FUN-023",
+   "FUN-024",
+   "FUN-025",
+   "POR-005",
+   "POR-006",
+   "SIN-026",
+   "SIN-054",
+   "SIN-062"
+  ],
+  "buscar": [
+   "main",
+   "principal",
+   "funcion principal",
+   "inicio del programa",
+   "empieza"
+  ]
+ },
+ {
+  "elemento": "struct",
+  "tipo": "palabra clave",
+  "que_es": "Define un tipo que agrupa varios datos distintos bajo un nombre. Todavía no está soportado en este editor.",
+  "como_se_usa": "struct ALUMNO { int LEGAJO; };",
+  "error_tipico": "Escribirlo en el editor: avisa que todavía no lo entiende.",
+  "en_la_materia": null,
+  "errores_ids": [],
+  "buscar": [
+   "struct",
+   "estructura",
+   "registro",
+   "agrupar datos"
+  ]
+ },
+ {
+  "elemento": "enum",
+  "tipo": "palabra clave",
+  "que_es": "Define una lista de constantes con nombre. Todavía no está soportado en este editor.",
+  "como_se_usa": "enum COLOR { ROJO, VERDE };",
+  "error_tipico": "Escribirlo en el editor: avisa que todavía no lo entiende. Para constantes podés usar #define.",
+  "en_la_materia": null,
+  "errores_ids": [],
+  "buscar": [
+   "enum",
+   "enumeracion",
+   "lista de constantes"
+  ]
+ },
+ {
+  "elemento": "typedef",
+  "tipo": "palabra clave",
+  "que_es": "Le pone un nombre nuevo a un tipo. Todavía no está soportado en este editor.",
+  "como_se_usa": "typedef int ENTERO;",
+  "error_tipico": "Escribirlo en el editor: avisa que todavía no lo entiende.",
+  "en_la_materia": null,
+  "errores_ids": [],
+  "buscar": [
+   "typedef",
+   "nuevo tipo",
+   "alias de tipo"
+  ]
+ },
+ {
+  "elemento": "+",
+  "tipo": "operador",
+  "que_es": "Suma dos valores. Con un solo operando (+A) no cambia nada.",
+  "como_se_usa": "C=A+B;\nprintf(\"%d\\n\",C);  // muestra: 5",
+  "error_tipico": "Esperar que junte textos como en otros lenguajes: en C no concatena.",
+  "en_la_materia": "Operadores",
+  "errores_ids": [
+   "PRF-035"
+  ],
+  "buscar": [
+   "+",
+   "suma",
+   "sumar",
+   "mas",
+   "adicion"
+  ]
+ },
+ {
+  "elemento": "-",
+  "tipo": "operador",
+  "que_es": "Resta dos valores, o cambia el signo de uno (-A).",
+  "como_se_usa": "D=A-B;\nprintf(\"%d\\n\",D);  // muestra: 2",
+  "error_tipico": "Pegarle un guion largo (–) copiado de un documento: C solo entiende el - del teclado.",
+  "en_la_materia": "Operadores",
+  "errores_ids": [
+   "SIN-063"
+  ],
+  "buscar": [
+   "-",
+   "resta",
+   "restar",
+   "menos",
+   "negativo",
+   "signo menos"
+  ]
+ },
+ {
+  "elemento": "*",
+  "tipo": "operador",
+  "que_es": "Multiplica dos valores. Siempre hay que escribirlo: 2A no es 2 por A.",
+  "como_se_usa": "P=A*B;\nprintf(\"%d\\n\",P);  // muestra: 12",
+  "error_tipico": "Omitirlo (2A) o escribir × o x en su lugar.",
+  "en_la_materia": "Operadores",
+  "errores_ids": [
+   "OPE-032",
+   "OPE-041",
+   "SIN-057",
+   "SIN-064"
+  ],
+  "buscar": [
+   "*",
+   "multiplicacion",
+   "multiplicar",
+   "por",
+   "asterisco",
+   "producto"
+  ]
+ },
+ {
+  "elemento": "/",
+  "tipo": "operador",
+  "que_es": "Divide el valor de la izquierda por el de la derecha. Si los dos son enteros, el resultado es entero: 7/2 da 3.",
+  "como_se_usa": "C=7/2;\nD=7/2.0;",
+  "error_tipico": "Dividir dos enteros y esperar decimales: hay que convertir uno a float o escribirlo con .0.",
+  "en_la_materia": "Operadores",
+  "errores_ids": [
+   "EJE-001",
+   "OPE-022",
+   "OPE-023",
+   "OPE-024",
+   "OPE-037",
+   "OPE-040",
+   "SIN-030",
+   "TIP-001",
+   "TIP-002"
+  ],
+  "buscar": [
+   "/",
+   "division",
+   "dividir",
+   "barra",
+   "cociente",
+   "division entera",
+   "por que 7/2 da 3",
+   "da 0",
+   "da cero",
+   "division da mal",
+   "7/2 da 3"
+  ]
+ },
+ {
+  "elemento": "%",
+  "tipo": "operador",
+  "que_es": "Da el resto de la división entera: 7%2 da 1. Solo funciona con enteros.",
+  "como_se_usa": "R=A%2;\nprintf(\"%d\\n\",R);  // muestra: 1",
+  "error_tipico": "Usarlo con float o double: no compila. Dividir por cero tampoco anda.",
+  "en_la_materia": "Operadores",
+  "errores_ids": [
+   "EJE-002",
+   "LOG-014",
+   "LOG-015",
+   "OPE-015",
+   "OPE-021",
+   "OPE-033",
+   "OPE-037",
+   "OPE-044"
+  ],
+  "buscar": [
+   "%",
+   "resto",
+   "modulo",
+   "mod",
+   "porcentaje",
+   "residuo",
+   "divisible",
+   "par o impar"
+  ]
+ },
+ {
+  "elemento": "=",
+  "tipo": "operador",
+  "que_es": "Asigna: guarda en la variable de la izquierda el valor de la derecha. No compara.",
+  "como_se_usa": "A=5;\nprintf(\"%d\\n\",A);  // muestra: 5",
+  "error_tipico": "Usarlo dentro de un if para comparar: if(A=5) asigna y siempre da verdadero. Para comparar es ==.",
+  "en_la_materia": "Operadores",
+  "errores_ids": [
+   "CTL-029",
+   "CTL-043",
+   "DEC-027",
+   "OPE-001",
+   "OPE-002",
+   "OPE-003",
+   "OPE-027",
+   "OPE-036",
+   "SIN-029"
+  ],
+  "buscar": [
+   "=",
+   "asignacion",
+   "asignar",
+   "igual",
+   "guardar valor",
+   "igual simple",
+   "siempre verdadero",
+   "siempre entra al if",
+   "pisa la variable"
+  ]
+ },
+ {
+  "elemento": "==",
+  "tipo": "operador",
+  "que_es": "Compara si dos valores son iguales y da verdadero o falso. Se escribe con dos signos =.",
+  "como_se_usa": "if(A==5) printf(\"Cinco\\n\");",
+  "error_tipico": "Escribir un solo = en el if: asigna en vez de comparar.",
+  "en_la_materia": "Operadores, BC",
+  "errores_ids": [
+   "ARR-021",
+   "ARR-036",
+   "CTL-029",
+   "CTL-031",
+   "CTL-032",
+   "CTL-049",
+   "OPE-001",
+   "OPE-009",
+   "OPE-010",
+   "TIP-016"
+  ],
+  "buscar": [
+   "==",
+   "igual a",
+   "comparar",
+   "comparacion",
+   "igualdad",
+   "doble igual",
+   "son iguales"
+  ]
+ },
+ {
+  "elemento": "!=",
+  "tipo": "operador",
+  "que_es": "Compara si dos valores son distintos.",
+  "como_se_usa": "if(A!=0) printf(\"No es cero\\n\");",
+  "error_tipico": "Escribir <> como en Pascal o SQL: en C es !=.",
+  "en_la_materia": "Operadores, BC",
+  "errores_ids": [
+   "CTL-037",
+   "CTL-039",
+   "CTL-040",
+   "OPE-011",
+   "OPE-028",
+   "OPE-029",
+   "SIN-017"
+  ],
+  "buscar": [
+   "!=",
+   "distinto",
+   "diferente",
+   "no igual",
+   "distinto de"
+  ]
+ },
+ {
+  "elemento": ">",
+  "tipo": "operador",
+  "que_es": "Da verdadero si el valor de la izquierda es mayor que el de la derecha.",
+  "como_se_usa": "if(A>5) printf(\"Mayor\\n\");",
+  "error_tipico": "Encadenar 0<A<10: no comprueba un intervalo. Hay que escribir A>0 && A<10.",
+  "en_la_materia": "Operadores, BC",
+  "errores_ids": [
+   "LOG-038",
+   "LOG-043",
+   "OPE-008"
+  ],
+  "buscar": [
+   ">",
+   "mayor",
+   "mayor que",
+   "comparar mayor"
+  ]
+ },
+ {
+  "elemento": "<",
+  "tipo": "operador",
+  "que_es": "Da verdadero si el valor de la izquierda es menor que el de la derecha.",
+  "como_se_usa": "if(A<5) printf(\"Menor\\n\");",
+  "error_tipico": "Encadenar 0<A<10: se evalúa mal. Usá A>0 && A<10.",
+  "en_la_materia": "Operadores, BC",
+  "errores_ids": [
+   "CTL-034",
+   "LOG-016",
+   "OPE-008"
+  ],
+  "buscar": [
+   "<",
+   "menor",
+   "menor que",
+   "comparar menor"
+  ]
+ },
+ {
+  "elemento": ">=",
+  "tipo": "operador",
+  "que_es": "Da verdadero si el valor de la izquierda es mayor o igual que el de la derecha.",
+  "como_se_usa": "if(A>=18) printf(\"Mayor de edad\\n\");",
+  "error_tipico": "Escribir => con los símbolos al revés.",
+  "en_la_materia": "Operadores, BC",
+  "errores_ids": [
+   "CTL-038",
+   "LOG-038",
+   "OPE-030",
+   "SIN-018"
+  ],
+  "buscar": [
+   ">=",
+   "mayor o igual",
+   "mayor igual",
+   "al menos"
+  ]
+ },
+ {
+  "elemento": "<=",
+  "tipo": "operador",
+  "que_es": "Da verdadero si el valor de la izquierda es menor o igual que el de la derecha.",
+  "como_se_usa": "if(A<=10) printf(\"Entra\\n\");",
+  "error_tipico": "Escribir =< con los símbolos al revés.",
+  "en_la_materia": "Operadores, BC",
+  "errores_ids": [
+   "ARR-001",
+   "ARR-002",
+   "CTL-017"
+  ],
+  "buscar": [
+   "<=",
+   "menor o igual",
+   "menor igual",
+   "como maximo"
+  ]
+ },
+ {
+  "elemento": "&&",
+  "tipo": "operador",
+  "que_es": "Operador \"y\" lógico: da verdadero solo si las dos condiciones son verdaderas.",
+  "como_se_usa": "if(A>0 && B>0) printf(\"Ambos positivos\\n\");",
+  "error_tipico": "Escribir and, o un solo & (que es otra cosa: opera con bits).",
+  "en_la_materia": "Operadores lógicos",
+  "errores_ids": [
+   "CTL-033",
+   "CTL-036",
+   "CTL-037",
+   "LOG-018",
+   "OPE-004",
+   "OPE-005",
+   "OPE-006",
+   "OPE-034",
+   "OPE-039",
+   "SIN-019"
+  ],
+  "buscar": [
+   "&&",
+   "y logico",
+   "and",
+   "ambas condiciones",
+   "las dos condiciones",
+   "y"
+  ]
+ },
+ {
+  "elemento": "||",
+  "tipo": "operador",
+  "que_es": "Operador \"o\" lógico: da verdadero si al menos una de las condiciones es verdadera.",
+  "como_se_usa": "if(A==0 || B==0) printf(\"Hay un cero\\n\");",
+  "error_tipico": "Escribir or, o un solo | (que es otra cosa: opera con bits).",
+  "en_la_materia": "Operadores lógicos",
+  "errores_ids": [
+   "CTL-035",
+   "CTL-037",
+   "LOG-044",
+   "OPE-006",
+   "OPE-010",
+   "OPE-011"
+  ],
+  "buscar": [
+   "||",
+   "o logico",
+   "or",
+   "alguna condicion",
+   "al menos una",
+   "o"
+  ]
+ },
+ {
+  "elemento": "!",
+  "tipo": "operador",
+  "que_es": "Operador \"no\" lógico: invierte verdadero y falso. !A es verdadero cuando A vale 0.",
+  "como_se_usa": "if(!LISTO) printf(\"Falta\\n\");",
+  "error_tipico": "Usarlo en lugar de != para comparar dos valores.",
+  "en_la_materia": "Operadores lógicos",
+  "errores_ids": [
+   "OPE-014",
+   "OPE-015"
+  ],
+  "buscar": [
+   "!",
+   "no logico",
+   "negacion",
+   "not",
+   "invertir",
+   "no"
+  ]
+ },
+ {
+  "elemento": "&",
+  "tipo": "operador",
+  "que_es": "Entre dos enteros hace un Y bit a bit. Delante de una variable (&A) es \"la dirección de A\", como en scanf.",
+  "como_se_usa": "scanf(\"%d\",&A);",
+  "error_tipico": "Usar & en lugar de && en una condición, o olvidarlo en scanf.",
+  "en_la_materia": "scanf",
+  "errores_ids": [
+   "OPE-004",
+   "OPE-005",
+   "PRF-024",
+   "SCN-001",
+   "SCN-002",
+   "SCN-003"
+  ],
+  "buscar": [
+   "&",
+   "ampersand",
+   "direccion de",
+   "y bit a bit",
+   "and bit",
+   "and comercial",
+   "por que el ampersand",
+   "scanf sin &"
+  ]
+ },
+ {
+  "elemento": "|",
+  "tipo": "operador",
+  "que_es": "Hace un O bit a bit entre dos enteros.",
+  "como_se_usa": "M=A|B;\nprintf(\"%d\\n\",M);  // muestra: 5",
+  "error_tipico": "Usarlo en lugar de || en una condición.",
+  "en_la_materia": "Operadores",
+  "errores_ids": [],
+  "buscar": [
+   "|",
+   "or bit a bit",
+   "barra vertical",
+   "pipe"
+  ]
+ },
+ {
+  "elemento": "^",
+  "tipo": "operador",
+  "que_es": "Hace un O exclusivo (XOR) bit a bit entre dos enteros.",
+  "como_se_usa": "R=A^B;\nprintf(\"%d\\n\",R);  // muestra: 5",
+  "error_tipico": "Creerlo la potencia: 2^3 da 1, no 8. Para potencias se usa pow.",
+  "en_la_materia": "Operadores",
+  "errores_ids": [
+   "OPE-031",
+   "PRE-044"
+  ],
+  "buscar": [
+   "^",
+   "xor",
+   "potencia",
+   "elevado",
+   "exponente",
+   "circunflejo",
+   "o exclusivo"
+  ]
+ },
+ {
+  "elemento": "~",
+  "tipo": "operador",
+  "que_es": "Invierte todos los bits de un entero.",
+  "como_se_usa": "R=~A;\nprintf(\"%d\\n\",R);  // muestra: -6",
+  "error_tipico": "Confundirlo con ! (que invierte verdadero y falso).",
+  "en_la_materia": "Operadores",
+  "errores_ids": [],
+  "buscar": [
+   "~",
+   "not bit a bit",
+   "complemento",
+   "tilde",
+   "invertir bits"
+  ]
+ },
+ {
+  "elemento": "<<",
+  "tipo": "operador",
+  "que_es": "Desplaza los bits hacia la izquierda: A<<1 equivale a multiplicar por 2 mientras no se desborde.",
+  "como_se_usa": "R=A<<1;\nprintf(\"%d\\n\",R);  // muestra: 6",
+  "error_tipico": "Desplazar una cantidad negativa o igual al ancho del tipo: el resultado es indefinido.",
+  "en_la_materia": "Operadores",
+  "errores_ids": [],
+  "buscar": [
+   "<<",
+   "desplazamiento",
+   "shift izquierda",
+   "corrimiento",
+   "shift left"
+  ]
+ },
+ {
+  "elemento": ">>",
+  "tipo": "operador",
+  "que_es": "Desplaza los bits hacia la derecha: A>>1 equivale a dividir por 2 (entero).",
+  "como_se_usa": "R=A>>1;\nprintf(\"%d\\n\",R);  // muestra: 4",
+  "error_tipico": "Usarlo con negativos esperando el mismo resultado en todos los entornos.",
+  "en_la_materia": "Operadores",
+  "errores_ids": [],
+  "buscar": [
+   ">>",
+   "shift derecha",
+   "corrimiento",
+   "shift right"
+  ]
+ },
+ {
+  "elemento": "++",
+  "tipo": "operador",
+  "que_es": "Suma 1 a la variable. A++ y ++A hacen lo mismo cuando están solos en una instrucción.",
+  "como_se_usa": "I++;\nprintf(\"%d\\n\",I);  // muestra: 1",
+  "error_tipico": "Escribir A++ + A++ en una misma expresión: el resultado no está definido.",
+  "en_la_materia": "Operadores, LC",
+  "errores_ids": [
+   "CTL-047",
+   "OPE-016",
+   "OPE-017",
+   "OPE-018",
+   "OPE-019"
+  ],
+  "buscar": [
+   "++",
+   "incremento",
+   "incrementar",
+   "sumar uno",
+   "mas mas",
+   "contador",
+   "contar"
+  ]
+ },
+ {
+  "elemento": "--",
+  "tipo": "operador",
+  "que_es": "Resta 1 a la variable.",
+  "como_se_usa": "I--;\nprintf(\"%d\\n\",I);  // muestra: 4",
+  "error_tipico": "Usarlo en un lazo en el sentido contrario al que hace falta y que no termine nunca.",
+  "en_la_materia": "Operadores, LC",
+  "errores_ids": [
+   "OPE-046"
+  ],
+  "buscar": [
+   "--",
+   "decremento",
+   "decrementar",
+   "restar uno",
+   "menos menos"
+  ]
+ },
+ {
+  "elemento": "+=",
+  "tipo": "operador",
+  "que_es": "Suma a la variable el valor de la derecha y guarda el resultado. SUMA+=A es lo mismo que SUMA=SUMA+A.",
+  "como_se_usa": "SUMA+=A;\nprintf(\"%d\\n\",SUMA);  // muestra: 4",
+  "error_tipico": "Escribir =+ (con los símbolos al revés): eso asigna un número positivo.",
+  "en_la_materia": "Operadores, acumulador",
+  "errores_ids": [
+   "CTL-044",
+   "OPE-016"
+  ],
+  "buscar": [
+   "+=",
+   "acumular",
+   "sumar y guardar",
+   "acumulador",
+   "mas igual"
+  ]
+ },
+ {
+  "elemento": "-=",
+  "tipo": "operador",
+  "que_es": "Resta a la variable el valor de la derecha y guarda el resultado.",
+  "como_se_usa": "SALDO-=PAGO;\nprintf(\"%d\\n\",SALDO);  // muestra: 70",
+  "error_tipico": "Invertir las variables y restar al revés.",
+  "en_la_materia": "Operadores",
+  "errores_ids": [],
+  "buscar": [
+   "-=",
+   "restar y guardar",
+   "menos igual"
+  ]
+ },
+ {
+  "elemento": "*=",
+  "tipo": "operador",
+  "que_es": "Multiplica la variable por el valor de la derecha y guarda el resultado.",
+  "como_se_usa": "FACT*=I;\nprintf(\"%d\\n\",FACT);  // muestra: 5",
+  "error_tipico": "Olvidar iniciar la variable en 1: si arranca en 0 todo da 0.",
+  "en_la_materia": "Operadores, acumulador",
+  "errores_ids": [],
+  "buscar": [
+   "*=",
+   "multiplicar y guardar",
+   "por igual",
+   "factorial"
+  ]
+ },
+ {
+  "elemento": "/=",
+  "tipo": "operador",
+  "que_es": "Divide la variable por el valor de la derecha y guarda el resultado.",
+  "como_se_usa": "A/=2;\nprintf(\"%d\\n\",A);  // muestra: 5",
+  "error_tipico": "Dividir por una variable que puede valer cero.",
+  "en_la_materia": "Operadores",
+  "errores_ids": [],
+  "buscar": [
+   "/=",
+   "dividir y guardar",
+   "dividido igual"
+  ]
+ },
+ {
+  "elemento": "%=",
+  "tipo": "operador",
+  "que_es": "Guarda en la variable el resto de dividirla por el valor de la derecha.",
+  "como_se_usa": "A%=10;\nprintf(\"%d\\n\",A);  // muestra: 7",
+  "error_tipico": "Usarlo con decimales o con divisor cero.",
+  "en_la_materia": "Operadores",
+  "errores_ids": [],
+  "buscar": [
+   "%=",
+   "resto y guardar",
+   "modulo igual"
+  ]
+ },
+ {
+  "elemento": "&=",
+  "tipo": "operador",
+  "que_es": "Hace Y bit a bit con el valor de la derecha y guarda el resultado en la variable.",
+  "como_se_usa": "M&=7;\nprintf(\"%d\\n\",M);  // muestra: 5",
+  "error_tipico": "Confundirlo con &&: uno trabaja con bits y el otro con condiciones.",
+  "en_la_materia": "Operadores",
+  "errores_ids": [],
+  "buscar": [
+   "&=",
+   "and igual",
+   "and bit y guardar"
+  ]
+ },
+ {
+  "elemento": "|=",
+  "tipo": "operador",
+  "que_es": "Hace O bit a bit con el valor de la derecha y guarda el resultado en la variable.",
+  "como_se_usa": "M|=1;\nprintf(\"%d\\n\",M);  // muestra: 5",
+  "error_tipico": "Confundirlo con ||.",
+  "en_la_materia": "Operadores",
+  "errores_ids": [],
+  "buscar": [
+   "|=",
+   "or igual",
+   "or bit y guardar"
+  ]
+ },
+ {
+  "elemento": "^=",
+  "tipo": "operador",
+  "que_es": "Hace O exclusivo bit a bit y guarda el resultado en la variable.",
+  "como_se_usa": "V^=3;\nprintf(\"%d\\n\",V);  // muestra: 6",
+  "error_tipico": "Creer que eleva a una potencia.",
+  "en_la_materia": "Operadores",
+  "errores_ids": [],
+  "buscar": [
+   "^=",
+   "xor igual"
+  ]
+ },
+ {
+  "elemento": "<<=",
+  "tipo": "operador",
+  "que_es": "Desplaza los bits de la variable a la izquierda y guarda el resultado.",
+  "como_se_usa": "V<<=1;\nprintf(\"%d\\n\",V);  // muestra: 6",
+  "error_tipico": "Desplazar más posiciones que bits tiene el tipo.",
+  "en_la_materia": "Operadores",
+  "errores_ids": [],
+  "buscar": [
+   "<<=",
+   "shift izquierda igual"
+  ]
+ },
+ {
+  "elemento": ">>=",
+  "tipo": "operador",
+  "que_es": "Desplaza los bits de la variable a la derecha y guarda el resultado.",
+  "como_se_usa": "V>>=1;\nprintf(\"%d\\n\",V);  // muestra: 4",
+  "error_tipico": "Usarlo con negativos esperando el mismo resultado en todos los entornos.",
+  "en_la_materia": "Operadores",
+  "errores_ids": [],
+  "buscar": [
+   ">>=",
+   "shift derecha igual"
+  ]
+ },
+ {
+  "elemento": "?:",
+  "tipo": "operador",
+  "que_es": "Operador condicional: CONDICION ? A : B da A si la condición es verdadera y B si no. Es un if dentro de una expresión.",
+  "como_se_usa": "MAYOR=(A>B)?A:B;\nprintf(\"%d\\n\",MAYOR);  // muestra: 8",
+  "error_tipico": "Anidar varios ?: y no entender cuál se evalúa: mejor usá if.",
+  "en_la_materia": "Operadores",
+  "errores_ids": [],
+  "buscar": [
+   "?:",
+   "ternario",
+   "operador ternario",
+   "condicional en una linea",
+   "if en una linea",
+   "interrogacion"
+  ]
+ },
+ {
+  "elemento": "(tipo)",
+  "tipo": "operador",
+  "que_es": "Conversión de tipo (cast): obliga a tratar un valor como de otro tipo. (float)A/B divide como decimales.",
+  "como_se_usa": "PROM=(float)SUMA/N;\nprintf(\"%g\\n\",PROM);  // muestra: 3.5",
+  "error_tipico": "Poner el cast sobre toda la cuenta: (float)(SUMA/N) divide como enteros primero.",
+  "en_la_materia": "Tipos, promedio",
+  "errores_ids": [
+   "TIP-003",
+   "TIP-035"
+  ],
+  "buscar": [
+   "(tipo)",
+   "cast",
+   "conversion",
+   "convertir tipo",
+   "forzar tipo",
+   "casteo",
+   "cambiar de tipo",
+   "pasar a float"
+  ]
+ },
+ {
+  "elemento": ",",
+  "tipo": "operador",
+  "que_es": "Separa variables en una declaración, argumentos en una llamada, o expresiones. No es separador decimal.",
+  "como_se_usa": "int A=1,B=2;",
+  "error_tipico": "Escribir 3,5 como decimal: en C el decimal es 3.5.",
+  "en_la_materia": "Sintaxis",
+  "errores_ids": [
+   "CTL-019",
+   "DEC-015",
+   "OPE-025",
+   "OPE-026",
+   "SCN-022",
+   "SIN-031",
+   "SIN-041",
+   "SIN-055"
+  ],
+  "buscar": [
+   ",",
+   "coma",
+   "separador",
+   "separar"
+  ]
+ },
+ {
+  "elemento": "()",
+  "tipo": "símbolo",
+  "que_es": "Los paréntesis agrupan una cuenta para cambiar el orden, encierran la condición de if/while/for y llevan los argumentos de una función.",
+  "como_se_usa": "R=(A+B)*C;\nprintf(\"%d\\n\",R);  // muestra: 9",
+  "error_tipico": "Dejar uno abierto o cerrar de más: C se queja en esa línea o en la siguiente.",
+  "en_la_materia": "Sintaxis",
+  "errores_ids": [
+   "CTL-041",
+   "FUN-037",
+   "SIN-006",
+   "SIN-007",
+   "SIN-027",
+   "SIN-028",
+   "SIN-047"
+  ],
+  "buscar": [
+   "()",
+   "parentesis",
+   "agrupar",
+   "precedencia",
+   "orden de las operaciones"
+  ]
+ },
+ {
+  "elemento": "{}",
+  "tipo": "símbolo",
+  "que_es": "Las llaves agrupan varias instrucciones en un bloque: el cuerpo de una función, de un if o de un lazo.",
+  "como_se_usa": "if(A>0){\n A--;\n B++;\n}",
+  "error_tipico": "Abrir una llave y no cerrarla, o escribir una de más.",
+  "en_la_materia": "Sintaxis",
+  "errores_ids": [
+   "CTL-002",
+   "LOG-032",
+   "LOG-034",
+   "SIN-008",
+   "SIN-009",
+   "SIN-035"
+  ],
+  "buscar": [
+   "{}",
+   "llaves",
+   "bloque",
+   "abrir llave",
+   "cerrar llave"
+  ]
+ },
+ {
+  "elemento": "[]",
+  "tipo": "símbolo",
+  "que_es": "Los corchetes declaran el tamaño de un arreglo y eligen una posición. La primera posición es la 0.",
+  "como_se_usa": "int V[3];\nV[0]=10;",
+  "error_tipico": "Usar un índice igual al tamaño: un arreglo de 3 llega hasta V[2].",
+  "en_la_materia": "Arreglos",
+  "errores_ids": [
+   "ARR-001",
+   "ARR-004",
+   "ARR-005",
+   "ARR-008",
+   "ARR-010",
+   "ARR-017",
+   "SIN-010"
+  ],
+  "buscar": [
+   "[]",
+   "corchetes",
+   "indice",
+   "posicion",
+   "arreglo",
+   "vector",
+   "array",
+   "subindice"
+  ]
+ },
+ {
+  "elemento": ";",
+  "tipo": "símbolo",
+  "que_es": "Termina cada instrucción y cada declaración. En el for separa sus tres partes.",
+  "como_se_usa": "A=3;\nprintf(\"%d\\n\",A);  // muestra: 3",
+  "error_tipico": "Olvidarlo al final de una línea, o ponerlo justo después de un if, for o while.",
+  "en_la_materia": "Sintaxis",
+  "errores_ids": [
+   "CTL-001",
+   "CTL-016",
+   "CTL-022",
+   "CTL-023",
+   "FUN-032",
+   "FUN-033",
+   "PRE-018",
+   "PRF-022",
+   "SIN-001",
+   "SIN-002",
+   "SIN-003",
+   "SIN-004",
+   "SIN-005",
+   "SIN-025",
+   "SIN-033"
+  ],
+  "buscar": [
+   ";",
+   "punto y coma",
+   "terminador de instruccion",
+   "fin de instruccion"
+  ]
+ },
+ {
+  "elemento": ".",
+  "tipo": "símbolo",
+  "que_es": "En un número separa la parte entera de la decimal: 3.5.",
+  "como_se_usa": "float A=3.5f;",
+  "error_tipico": "Escribir 3,5 o 1.2.3.",
+  "en_la_materia": "Tipos",
+  "errores_ids": [
+   "OPE-025",
+   "POR-020",
+   "SCN-022",
+   "SIN-037",
+   "SIN-041"
+  ],
+  "buscar": [
+   ".",
+   "punto decimal",
+   "decimales",
+   "coma decimal"
+  ]
+ },
+ {
+  "elemento": "//",
+  "tipo": "símbolo",
+  "que_es": "Comentario de una línea: todo lo que sigue hasta el final de la línea lo ignora el compilador.",
+  "como_se_usa": "// calculo el promedio",
+  "error_tipico": "Escribir # o -- en vez de //.",
+  "en_la_materia": "Comentarios",
+  "errores_ids": [
+   "SIN-059"
+  ],
+  "buscar": [
+   "//",
+   "comentario",
+   "comentar",
+   "comentario de linea",
+   "anotacion"
+  ]
+ },
+ {
+  "elemento": "/* */",
+  "tipo": "símbolo",
+  "que_es": "Comentario de varias líneas: lo que está entre /* y */ lo ignora el compilador.",
+  "como_se_usa": "/* esto es un\n   comentario largo */",
+  "error_tipico": "Abrirlo y olvidarse de cerrarlo: comenta el resto del programa.",
+  "en_la_materia": "Comentarios",
+  "errores_ids": [
+   "SIN-014"
+  ],
+  "buscar": [
+   "/* */",
+   "comentario de bloque",
+   "comentario largo",
+   "varias lineas",
+   "comentario multilinea"
+  ]
+ },
+ {
+  "elemento": "' '",
+  "tipo": "símbolo",
+  "que_es": "Las comillas simples encierran un único carácter: 'A'. El resultado es un número (su código ASCII).",
+  "como_se_usa": "char C='A';",
+  "error_tipico": "Poner más de un carácter, o usar comillas dobles.",
+  "en_la_materia": "Caracteres",
+  "errores_ids": [
+   "ARR-046",
+   "ARR-047",
+   "PRF-020",
+   "PRF-044",
+   "SIN-012",
+   "SIN-013",
+   "SIN-050",
+   "SIN-053"
+  ],
+  "buscar": [
+   "' '",
+   "comilla simple",
+   "caracter",
+   "apostrofe"
+  ]
+ },
+ {
+  "elemento": "\" \"",
+  "tipo": "símbolo",
+  "que_es": "Las comillas dobles encierran un texto (cadena de caracteres), como \"Hola\".",
+  "como_se_usa": "printf(\"Hola\\n\");",
+  "error_tipico": "Poner comillas dobles dentro del texto sin la barra: \"Dijo \"hola\"\".",
+  "en_la_materia": "Texto",
+  "errores_ids": [
+   "PRF-019",
+   "PRF-020",
+   "PRF-034",
+   "SIN-011",
+   "SIN-042",
+   "SIN-052",
+   "SIN-061"
+  ],
+  "buscar": [
+   "\" \"",
+   "comilla doble",
+   "cadena",
+   "texto",
+   "string",
+   "comillas"
+  ]
+ },
+ {
+  "elemento": "#",
+  "tipo": "símbolo",
+  "que_es": "Marca una directiva para el preprocesador, como #include o #define. No es un comentario.",
+  "como_se_usa": "#include <stdio.h>",
+  "error_tipico": "Usarlo para comentar como en Python.",
+  "en_la_materia": "Preprocesador",
+  "errores_ids": [
+   "PRE-015",
+   "PRE-016",
+   "PRE-032",
+   "SIN-059"
+  ],
+  "buscar": [
+   "#",
+   "numeral",
+   "gato",
+   "hashtag",
+   "directiva"
+  ]
+ },
+ {
+  "elemento": "%d",
+  "tipo": "formato",
+  "que_es": "Formato para mostrar o leer un int en decimal. Es el que más se usa.",
+  "como_se_usa": "scanf(\"%d\",&EDAD);\nprintf(\"%d\\n\",EDAD);  // muestra: 17",
+  "error_tipico": "Usarlo con un float (sale un número raro) o en scanf sin el & delante de la variable.",
+  "en_la_materia": "printf y scanf",
+  "errores_ids": [
+   "PRF-001",
+   "PRF-003",
+   "PRF-005",
+   "PRF-031",
+   "PRF-036",
+   "PRF-039",
+   "SCN-004",
+   "SCN-017",
+   "TIP-023",
+   "TIP-027"
+  ],
+  "buscar": [
+   "%d",
+   "entero",
+   "mostrar entero",
+   "leer entero",
+   "decimal",
+   "int",
+   "formato entero",
+   "porcentaje d",
+   "percent d",
+   "sale 0",
+   "sale numero raro"
+  ]
+ },
+ {
+  "elemento": "%i",
+  "tipo": "formato",
+  "que_es": "Como %d al mostrar. Al leer con scanf acepta también octal (con 0 adelante) y hexadecimal (con 0x).",
+  "como_se_usa": "scanf(\"%i\",&A);\nprintf(\"%i\\n\",A);  // muestra: 8",
+  "error_tipico": "Leer 010 con %i: lo toma como octal y vale 8, no 10. Por eso conviene %d.",
+  "en_la_materia": "printf y scanf",
+  "errores_ids": [
+   "SCN-017"
+  ],
+  "buscar": [
+   "%i",
+   "entero",
+   "formato i",
+   "octal",
+   "hexadecimal"
+  ]
+ },
+ {
+  "elemento": "%u",
+  "tipo": "formato",
+  "que_es": "Formato para un entero sin signo (unsigned).",
+  "como_se_usa": "unsigned int N=4000000000u;\nprintf(\"%u\\n\",N);  // muestra: 4000000000",
+  "error_tipico": "Mostrar un negativo con %u: sale un número enorme.",
+  "en_la_materia": "printf y scanf",
+  "errores_ids": [
+   "PRF-032"
+  ],
+  "buscar": [
+   "%u",
+   "sin signo",
+   "unsigned",
+   "positivo",
+   "formato u"
+  ]
+ },
+ {
+  "elemento": "%o",
+  "tipo": "formato",
+  "que_es": "Muestra un entero en base 8 (octal).",
+  "como_se_usa": "printf(\"%o\\n\",64);  // muestra: 100",
+  "error_tipico": "Esperar el mismo número que con %d.",
+  "en_la_materia": "printf",
+  "errores_ids": [],
+  "buscar": [
+   "%o",
+   "octal",
+   "base 8"
+  ]
+ },
+ {
+  "elemento": "%x",
+  "tipo": "formato",
+  "que_es": "Muestra un entero en hexadecimal con letras minúsculas. Con # agrega el prefijo 0x.",
+  "como_se_usa": "printf(\"%x %#x\\n\",255,255);  // muestra: ff 0xff",
+  "error_tipico": "Usarlo con un decimal (float).",
+  "en_la_materia": "printf",
+  "errores_ids": [],
+  "buscar": [
+   "%x",
+   "hexadecimal",
+   "hex",
+   "base 16"
+  ]
+ },
+ {
+  "elemento": "%X",
+  "tipo": "formato",
+  "que_es": "Muestra un entero en hexadecimal con letras mayúsculas.",
+  "como_se_usa": "printf(\"%X\\n\",255);  // muestra: FF",
+  "error_tipico": "Mezclarlo con %x: solo cambia el aspecto de las letras.",
+  "en_la_materia": "printf",
+  "errores_ids": [],
+  "buscar": [
+   "%x",
+   "hexadecimal mayusculas",
+   "hex mayuscula"
+  ]
+ },
+ {
+  "elemento": "%f",
+  "tipo": "formato",
+  "que_es": "Formato para decimales. En printf muestra float o double (6 decimales por defecto). En scanf lee un float.",
+  "como_se_usa": "printf(\"%f\\n\",NOTA);\nscanf(\"%f\",&NOTA);  // muestra: 7.500000",
+  "error_tipico": "Mostrar un int con %f, o leer un double con %f (para double es %lf).",
+  "en_la_materia": "printf y scanf",
+  "errores_ids": [
+   "PRF-002",
+   "PRF-036",
+   "SCN-005",
+   "SCN-006",
+   "TIP-024"
+  ],
+  "buscar": [
+   "%f",
+   "decimal",
+   "decimales",
+   "float",
+   "real",
+   "numero con coma",
+   "mostrar decimal",
+   "leer decimal",
+   "formato f",
+   "sale 0.000000",
+   "sale 0"
+  ]
+ },
+ {
+  "elemento": "%lf",
+  "tipo": "formato",
+  "que_es": "Formato para leer un double con scanf. En printf es igual que %f.",
+  "como_se_usa": "double PROM;\nscanf(\"%lf\",&PROM);",
+  "error_tipico": "Usar %f en scanf para un double: guarda mal el valor.",
+  "en_la_materia": "scanf",
+  "errores_ids": [
+   "SCN-006",
+   "SCN-007",
+   "TIP-025",
+   "TIP-026"
+  ],
+  "buscar": [
+   "%lf",
+   "double",
+   "leer double",
+   "lf",
+   "decimal grande"
+  ]
+ },
+ {
+  "elemento": "%Lf",
+  "tipo": "formato",
+  "que_es": "Formato para long double. Este editor todavía no soporta long double.",
+  "como_se_usa": "printf(\"%Lf\\n\",VALOR);",
+  "error_tipico": "Usarlo con un double común.",
+  "en_la_materia": "printf",
+  "errores_ids": [],
+  "buscar": [
+   "%lf",
+   "long double"
+  ]
+ },
+ {
+  "elemento": "%e",
+  "tipo": "formato",
+  "que_es": "Muestra un decimal en notación científica con e minúscula: 1.234500e+03.",
+  "como_se_usa": "printf(\"%e\\n\",1234.5);  // muestra: 1.234500e+03",
+  "error_tipico": "Creer que cambia el valor guardado: solo cambia cómo se muestra.",
+  "en_la_materia": "printf",
+  "errores_ids": [],
+  "buscar": [
+   "%e",
+   "notacion cientifica",
+   "cientifica",
+   "exponente"
+  ]
+ },
+ {
+  "elemento": "%E",
+  "tipo": "formato",
+  "que_es": "Como %e pero con la E mayúscula.",
+  "como_se_usa": "printf(\"%E\\n\",1234.5);  // muestra: 1.234500E+03",
+  "error_tipico": "Esperar un formato distinto del %e: solo cambia la letra.",
+  "en_la_materia": "printf",
+  "errores_ids": [],
+  "buscar": [
+   "%e",
+   "notacion cientifica mayuscula"
+  ]
+ },
+ {
+  "elemento": "%g",
+  "tipo": "formato",
+  "que_es": "Elige solo entre %f y %e según el valor y no muestra ceros de más: 0.5 sale 0.5 y 100000 sale 100000.",
+  "como_se_usa": "printf(\"%g %g\\n\",0.5,1000000.0);  // muestra: 0.5 1e+06",
+  "error_tipico": "Esperar siempre dos decimales: no es lo que hace.",
+  "en_la_materia": "printf",
+  "errores_ids": [],
+  "buscar": [
+   "%g",
+   "general",
+   "sin ceros",
+   "formato g",
+   "decimal corto"
+  ]
+ },
+ {
+  "elemento": "%G",
+  "tipo": "formato",
+  "que_es": "Como %g pero usa E mayúscula cuando pasa a notación científica.",
+  "como_se_usa": "printf(\"%G\\n\",1000000.0);  // muestra: 1E+06",
+  "error_tipico": "Confundirlo con %g: solo cambia la letra.",
+  "en_la_materia": "printf",
+  "errores_ids": [],
+  "buscar": [
+   "%g",
+   "general mayuscula"
+  ]
+ },
+ {
+  "elemento": "%a",
+  "tipo": "formato",
+  "que_es": "Muestra un decimal en hexadecimal de punto flotante. Casi nunca se usa.",
+  "como_se_usa": "printf(\"%a\\n\",1.0);  // muestra: 0x1p+0",
+  "error_tipico": "Confundirlo con %x, que es para enteros.",
+  "en_la_materia": "printf",
+  "errores_ids": [],
+  "buscar": [
+   "%a",
+   "hexadecimal flotante"
+  ]
+ },
+ {
+  "elemento": "%c",
+  "tipo": "formato",
+  "que_es": "Muestra o lee un carácter. Si le pasás un número, muestra el carácter con ese código ASCII.",
+  "como_se_usa": "printf(\"%c\\n\",LETRA);\nscanf(\" %c\",&LETRA);  // muestra: Z",
+  "error_tipico": "Leer sin el espacio antes de %c: toma el Enter que quedó pendiente.",
+  "en_la_materia": "printf y scanf",
+  "errores_ids": [
+   "PRF-004",
+   "PRF-007",
+   "PRF-044",
+   "SCN-009",
+   "SCN-010",
+   "SCN-011",
+   "SCN-034",
+   "TIP-013",
+   "TIP-014"
+  ],
+  "buscar": [
+   "%c",
+   "caracter",
+   "letra",
+   "char",
+   "leer letra",
+   "mostrar letra",
+   "formato c"
+  ]
+ },
+ {
+  "elemento": "%s",
+  "tipo": "formato",
+  "que_es": "Muestra o lee un texto (cadena de caracteres). Con scanf lee una palabra, hasta el primer espacio.",
+  "como_se_usa": "char NOMBRE[20];\nscanf(\"%s\",NOMBRE);\nprintf(\"%s\\n\",NOMBRE);",
+  "error_tipico": "Poner & delante del arreglo en scanf, o leer un texto más largo que el arreglo.",
+  "en_la_materia": "Texto",
+  "errores_ids": [
+   "ARR-032",
+   "ARR-033",
+   "ARR-034",
+   "ARR-049",
+   "PRF-006"
+  ],
+  "buscar": [
+   "%s",
+   "cadena",
+   "texto",
+   "string",
+   "palabra",
+   "leer texto",
+   "mostrar texto",
+   "formato s",
+   "nombre"
+  ]
+ },
+ {
+  "elemento": "%[...]",
+  "tipo": "formato",
+  "que_es": "En scanf lee caracteres que estén (o no) en un conjunto. %[^\\n] lee toda la línea, con espacios incluidos.",
+  "como_se_usa": "char FRASE[40];\nscanf(\"%[^\\n]\",FRASE);",
+  "error_tipico": "No dejar un espacio antes si quedó un Enter pendiente de una lectura anterior.",
+  "en_la_materia": "Texto, scanf",
+  "errores_ids": [
+   "ARR-033",
+   "ARR-042"
+  ],
+  "buscar": [
+   "%[...]",
+   "leer linea",
+   "linea completa",
+   "con espacios",
+   "conjunto",
+   "scanset",
+   "leer frase"
+  ]
+ },
+ {
+  "elemento": "%%",
+  "tipo": "formato",
+  "que_es": "Muestra un signo de porcentaje.",
+  "como_se_usa": "printf(\"Avance: 50%%\\n\");  // muestra: Avance: 50%",
+  "error_tipico": "Escribir un solo %: C cree que empieza un formato.",
+  "en_la_materia": "printf",
+  "errores_ids": [
+   "PRF-016",
+   "PRF-017"
+  ],
+  "buscar": [
+   "%%",
+   "porcentaje",
+   "signo porcentaje",
+   "mostrar el simbolo %",
+   "percent"
+  ]
+ },
+ {
+  "elemento": "%p",
+  "tipo": "formato",
+  "que_es": "Muestra la dirección de memoria de un puntero. La materia no la usa y el editor no la soporta.",
+  "como_se_usa": "printf(\"%p\\n\",(void*)&A);",
+  "error_tipico": "Esperar que la dirección sea siempre la misma.",
+  "en_la_materia": null,
+  "errores_ids": [],
+  "buscar": [
+   "%p",
+   "puntero",
+   "direccion de memoria"
+  ]
+ },
+ {
+  "elemento": "%5d",
+  "tipo": "formato",
+  "que_es": "Reserva un ancho mínimo de 5 lugares y alinea el número a la derecha.",
+  "como_se_usa": "printf(\"[%5d]\\n\",42);  // muestra: [   42]",
+  "error_tipico": "Creer que corta los números largos: solo agrega espacios cuando sobra lugar.",
+  "en_la_materia": "printf",
+  "errores_ids": [
+   "PRF-029",
+   "PRF-041",
+   "PRF-043"
+  ],
+  "buscar": [
+   "%5d",
+   "ancho",
+   "ancho de campo",
+   "alinear derecha",
+   "columnas",
+   "tabla",
+   "espacios"
+  ]
+ },
+ {
+  "elemento": "%-5d",
+  "tipo": "formato",
+  "que_es": "Reserva un ancho de 5 lugares y alinea el número a la izquierda.",
+  "como_se_usa": "printf(\"[%-5d]\\n\",42);  // muestra: [42   ]",
+  "error_tipico": "Poner el - después del número de ancho: va antes.",
+  "en_la_materia": "printf",
+  "errores_ids": [
+   "PRF-041"
+  ],
+  "buscar": [
+   "%-5d",
+   "alinear izquierda",
+   "menos",
+   "justificar izquierda"
+  ]
+ },
+ {
+  "elemento": "%05d",
+  "tipo": "formato",
+  "que_es": "Rellena con ceros a la izquierda hasta llegar a 5 lugares.",
+  "como_se_usa": "printf(\"%05d\\n\",42);  // muestra: 00042",
+  "error_tipico": "Usarlo con un negativo y esperar los ceros antes del signo: el signo va primero.",
+  "en_la_materia": "printf",
+  "errores_ids": [
+   "PRF-029"
+  ],
+  "buscar": [
+   "%05d",
+   "ceros a la izquierda",
+   "rellenar con ceros",
+   "cero adelante",
+   "relleno"
+  ]
+ },
+ {
+  "elemento": "%+d",
+  "tipo": "formato",
+  "que_es": "Muestra siempre el signo, también en los positivos.",
+  "como_se_usa": "printf(\"%+d %+d\\n\",5,-5);  // muestra: +5 -5",
+  "error_tipico": "Esperar el signo con %d: solo aparece en los negativos.",
+  "en_la_materia": "printf",
+  "errores_ids": [],
+  "buscar": [
+   "%+d",
+   "mostrar signo",
+   "signo mas",
+   "con signo"
+  ]
+ },
+ {
+  "elemento": "% d",
+  "tipo": "formato",
+  "que_es": "Deja un espacio delante de los números positivos, para que alineen con los negativos.",
+  "como_se_usa": "printf(\"[% d] [% d]\\n\",5,-5);  // muestra: [ 5] [-5]",
+  "error_tipico": "Confundirlo con %d: el espacio es parte del formato.",
+  "en_la_materia": "printf",
+  "errores_ids": [],
+  "buscar": [
+   "% d",
+   "espacio delante",
+   "espacio positivo"
+  ]
+ },
+ {
+  "elemento": "%#x",
+  "tipo": "formato",
+  "que_es": "La bandera # agrega el prefijo 0x al hexadecimal (y 0 al octal).",
+  "como_se_usa": "printf(\"%#x %#o\\n\",255,8);  // muestra: 0xff 010",
+  "error_tipico": "Pensar que # cambia el valor: solo agrega el prefijo.",
+  "en_la_materia": "printf",
+  "errores_ids": [],
+  "buscar": [
+   "%#x",
+   "prefijo 0x",
+   "bandera numeral"
+  ]
+ },
+ {
+  "elemento": "%.2f",
+  "tipo": "formato",
+  "que_es": "Muestra un decimal con exactamente 2 cifras después del punto, redondeando solo al mostrar.",
+  "como_se_usa": "printf(\"%.2f\\n\",PROM);  // muestra: 7.46",
+  "error_tipico": "Creer que redondea la variable: el valor guardado no cambia.",
+  "en_la_materia": "printf",
+  "errores_ids": [
+   "PRF-027",
+   "PRF-028",
+   "PRF-030",
+   "TIP-038"
+  ],
+  "buscar": [
+   "%.2f",
+   "dos decimales",
+   "cantidad de decimales",
+   "redondear",
+   "precision",
+   "limitar decimales",
+   "decimales fijos",
+   "2 decimales"
+  ]
+ },
+ {
+  "elemento": "%5.2f",
+  "tipo": "formato",
+  "que_es": "Ancho mínimo 5 (incluido el punto) y 2 decimales.",
+  "como_se_usa": "printf(\"[%5.2f]\\n\",3.14159);  // muestra: [ 3.14]",
+  "error_tipico": "Confundir el 5 (ancho total) con la cantidad de decimales.",
+  "en_la_materia": "printf",
+  "errores_ids": [
+   "PRF-027",
+   "SCN-029"
+  ],
+  "buscar": [
+   "%5.2f",
+   "ancho y decimales",
+   "tabla de decimales"
+  ]
+ },
+ {
+  "elemento": "%-8.2f",
+  "tipo": "formato",
+  "que_es": "Ancho 8, 2 decimales y alineado a la izquierda.",
+  "como_se_usa": "printf(\"[%-8.2f]\\n\",3.14159);  // muestra: [3.14    ]",
+  "error_tipico": "Poner el - después del punto.",
+  "en_la_materia": "printf",
+  "errores_ids": [],
+  "buscar": [
+   "%-8.2f",
+   "decimal alineado izquierda"
+  ]
+ },
+ {
+  "elemento": "%.0f",
+  "tipo": "formato",
+  "que_es": "Decimal sin cifras después del punto: redondea al entero más cercano al mostrarlo.",
+  "como_se_usa": "printf(\"%.0f\\n\",2.5);  // muestra: 2",
+  "error_tipico": "Esperar que 2.5 muestre 3: se redondea al par más cercano y sale 2.",
+  "en_la_materia": "printf",
+  "errores_ids": [],
+  "buscar": [
+   "%.0f",
+   "sin decimales",
+   "redondear entero",
+   "cero decimales"
+  ]
+ },
+ {
+  "elemento": "%.3s",
+  "tipo": "formato",
+  "que_es": "Con un texto, la precisión limita cuántos caracteres se muestran.",
+  "como_se_usa": "printf(\"%.3s\\n\",\"Computadora\");  // muestra: Com",
+  "error_tipico": "Esperar decimales: acá cuenta caracteres.",
+  "en_la_materia": "Texto",
+  "errores_ids": [],
+  "buscar": [
+   "%.3s",
+   "cortar texto",
+   "mostrar solo algunos caracteres"
+  ]
+ },
+ {
+  "elemento": "%10s",
+  "tipo": "formato",
+  "que_es": "Muestra el texto alineado a la derecha en 10 lugares. Con %-10s queda a la izquierda.",
+  "como_se_usa": "printf(\"[%10s] [%-10s]\\n\",\"Ana\",\"Ana\");  // muestra: [       Ana] [Ana       ]",
+  "error_tipico": "Olvidar que el texto más largo que el ancho se muestra completo.",
+  "en_la_materia": "Texto",
+  "errores_ids": [],
+  "buscar": [
+   "%10s",
+   "alinear texto",
+   "columna de texto"
+  ]
+ },
+ {
+  "elemento": "%*d",
+  "tipo": "formato",
+  "que_es": "El ancho se toma de un argumento entero que va antes del número.",
+  "como_se_usa": "printf(\"[%*d]\\n\",6,42);  // muestra: [    42]",
+  "error_tipico": "Olvidar pasar el argumento del ancho.",
+  "en_la_materia": "printf",
+  "errores_ids": [],
+  "buscar": [
+   "%*d",
+   "ancho variable",
+   "ancho dinamico",
+   "asterisco en formato"
+  ]
+ },
+ {
+  "elemento": "%.*f",
+  "tipo": "formato",
+  "que_es": "La cantidad de decimales se toma de un argumento entero que va antes del número.",
+  "como_se_usa": "printf(\"%.*f\\n\",3,3.14159);  // muestra: 3.142",
+  "error_tipico": "Olvidar pasar el argumento de la precisión.",
+  "en_la_materia": "printf",
+  "errores_ids": [],
+  "buscar": [
+   "%.*f",
+   "decimales variables",
+   "precision variable"
+  ]
+ },
+ {
+  "elemento": "%ld",
+  "tipo": "formato",
+  "que_es": "Formato para long.",
+  "como_se_usa": "long N=3000000000L;\nprintf(\"%ld\\n\",N);  // muestra: 3000000000",
+  "error_tipico": "Usar %d: muestra números raros.",
+  "en_la_materia": "printf y scanf",
+  "errores_ids": [
+   "PRF-031",
+   "SCN-030",
+   "SCN-031"
+  ],
+  "buscar": [
+   "%ld",
+   "long",
+   "entero largo",
+   "formato long"
+  ]
+ },
+ {
+  "elemento": "%lld",
+  "tipo": "formato",
+  "que_es": "Formato para long long.",
+  "como_se_usa": "long long N=9000000000LL;\nprintf(\"%lld\\n\",N);  // muestra: 9000000000",
+  "error_tipico": "Usar %ld o %d.",
+  "en_la_materia": "printf y scanf",
+  "errores_ids": [],
+  "buscar": [
+   "%lld",
+   "long long"
+  ]
+ },
+ {
+  "elemento": "%lu",
+  "tipo": "formato",
+  "que_es": "Formato para unsigned long (por ejemplo lo que devuelve strlen).",
+  "como_se_usa": "printf(\"%lu\\n\",strlen(\"Hola\"));  // muestra: 4",
+  "error_tipico": "Usar %d con un valor tan ancho.",
+  "en_la_materia": "printf",
+  "errores_ids": [],
+  "buscar": [
+   "%lu",
+   "unsigned long",
+   "sin signo largo"
+  ]
+ },
+ {
+  "elemento": "%zu",
+  "tipo": "formato",
+  "que_es": "Formato para size_t, el tipo de sizeof y strlen.",
+  "como_se_usa": "printf(\"%zu\\n\",sizeof(int));  // muestra: 4",
+  "error_tipico": "Usar %d para mostrar el resultado de sizeof.",
+  "en_la_materia": "printf",
+  "errores_ids": [
+   "PRF-039"
+  ],
+  "buscar": [
+   "%zu",
+   "size_t",
+   "sizeof",
+   "tamano"
+  ]
+ },
+ {
+  "elemento": "%hd",
+  "tipo": "formato",
+  "que_es": "Formato para short.",
+  "como_se_usa": "short T=30000;\nprintf(\"%hd\\n\",T);  // muestra: 30000",
+  "error_tipico": "Usar %d con un short en scanf: pisa memoria de más.",
+  "en_la_materia": "printf y scanf",
+  "errores_ids": [],
+  "buscar": [
+   "%hd",
+   "short",
+   "entero corto"
+  ]
+ },
+ {
+  "elemento": "%hu",
+  "tipo": "formato",
+  "que_es": "Formato para unsigned short.",
+  "como_se_usa": "unsigned short T=60000;\nprintf(\"%hu\\n\",T);  // muestra: 60000",
+  "error_tipico": "Usar %u en scanf para un short.",
+  "en_la_materia": "printf y scanf",
+  "errores_ids": [],
+  "buscar": [
+   "%hu",
+   "unsigned short"
+  ]
+ },
+ {
+  "elemento": "%hhd",
+  "tipo": "formato",
+  "que_es": "Formato para mostrar un char como número con signo.",
+  "como_se_usa": "char C='A';\nprintf(\"%hhd\\n\",C);  // muestra: 65",
+  "error_tipico": "Confundirlo con %c: uno muestra el número y el otro la letra.",
+  "en_la_materia": "printf",
+  "errores_ids": [],
+  "buscar": [
+   "%hhd",
+   "char como numero",
+   "codigo ascii"
+  ]
+ },
+ {
+  "elemento": "%hhu",
+  "tipo": "formato",
+  "que_es": "Formato para mostrar un unsigned char como número.",
+  "como_se_usa": "unsigned char C=200;\nprintf(\"%hhu\\n\",C);  // muestra: 200",
+  "error_tipico": "Interpretar el resultado como una letra.",
+  "en_la_materia": "printf",
+  "errores_ids": [],
+  "buscar": [
+   "%hhu",
+   "unsigned char"
+  ]
+ },
+ {
+  "elemento": "%3c",
+  "tipo": "formato",
+  "que_es": "Muestra un carácter en un campo de ancho 3.",
+  "como_se_usa": "printf(\"[%3c]\\n\",'A');  // muestra: [  A]",
+  "error_tipico": "Pensar que agrega tres caracteres.",
+  "en_la_materia": "printf",
+  "errores_ids": [],
+  "buscar": [
+   "%3c",
+   "caracter con ancho"
+  ]
+ },
+ {
+  "elemento": "%*d en scanf",
+  "tipo": "formato",
+  "que_es": "En scanf, el * lee un dato y lo descarta sin guardarlo: %*d saltea un entero.",
+  "como_se_usa": "scanf(\"%*d %d\",&B);",
+  "error_tipico": "Poner un & para el dato descartado: no hace falta ninguno.",
+  "en_la_materia": "scanf",
+  "errores_ids": [],
+  "buscar": [
+   "%*d en scanf",
+   "saltear dato",
+   "ignorar dato",
+   "descartar"
+  ]
+ },
+ {
+  "elemento": "\\n",
+  "tipo": "secuencia de escape",
+  "que_es": "Salto de línea: el cursor pasa al renglón siguiente. Se escribe dentro del texto.",
+  "como_se_usa": "printf(\"Hola\\nMundo\\n\");  // muestra: Hola ⏎ Mundo",
+  "error_tipico": "Apretar Enter dentro de las comillas en vez de escribir \\n: el texto queda sin cerrar.",
+  "en_la_materia": "printf",
+  "errores_ids": [
+   "PRF-013",
+   "PRF-014",
+   "PRF-015",
+   "SIN-042"
+  ],
+  "buscar": [
+   "\\n",
+   "salto de linea",
+   "enter",
+   "nueva linea",
+   "renglon",
+   "barra n",
+   "newline"
+  ]
+ },
+ {
+  "elemento": "\\t",
+  "tipo": "secuencia de escape",
+  "que_es": "Tabulador: avanza hasta la siguiente columna de tabulación. Sirve para alinear columnas.",
+  "como_se_usa": "printf(\"A\\tB\\n\");",
+  "error_tipico": "Usar muchos espacios en vez de \\t.",
+  "en_la_materia": "printf",
+  "errores_ids": [],
+  "buscar": [
+   "\\t",
+   "tabulador",
+   "tab",
+   "sangria",
+   "espacio grande",
+   "barra t"
+  ]
+ },
+ {
+  "elemento": "\\\\",
+  "tipo": "secuencia de escape",
+  "que_es": "Muestra una barra invertida. Hace falta escribirla doble porque la barra sola empieza un escape.",
+  "como_se_usa": "printf(\"C:\\\\Datos\\n\");  // muestra: C:\\Datos",
+  "error_tipico": "Escribir una sola barra: se arma un escape que no existe.",
+  "en_la_materia": "printf",
+  "errores_ids": [
+   "PRF-015",
+   "SIN-043",
+   "SIN-044"
+  ],
+  "buscar": [
+   "\\\\",
+   "barra invertida",
+   "backslash",
+   "barra",
+   "ruta"
+  ]
+ },
+ {
+  "elemento": "\\\"",
+  "tipo": "secuencia de escape",
+  "que_es": "Muestra una comilla doble dentro de un texto sin cerrarlo.",
+  "como_se_usa": "printf(\"Dijo \\\"Hola\\\"\\n\");  // muestra: Dijo \"Hola\"",
+  "error_tipico": "Poner la comilla sin la barra: cierra el texto.",
+  "en_la_materia": "printf",
+  "errores_ids": [
+   "PRF-034",
+   "SIN-061"
+  ],
+  "buscar": [
+   "\\\"",
+   "comilla dentro del texto",
+   "comillas en printf",
+   "escapar comillas"
+  ]
+ },
+ {
+  "elemento": "\\'",
+  "tipo": "secuencia de escape",
+  "que_es": "Muestra una comilla simple. Dentro de un texto no hace falta escaparla; en un carácter sí: '\\''.",
+  "como_se_usa": "char C='\\'';\nprintf(\"%c\\n\",C);  // muestra: '",
+  "error_tipico": "Escribir el carácter comilla simple como ''': no compila.",
+  "en_la_materia": "Caracteres",
+  "errores_ids": [],
+  "buscar": [
+   "\\'",
+   "comilla simple en char",
+   "apostrofe"
+  ]
+ },
+ {
+  "elemento": "\\r",
+  "tipo": "secuencia de escape",
+  "que_es": "Retorno de carro: vuelve el cursor al comienzo de la línea sin bajar.",
+  "como_se_usa": "printf(\"AB\\rC\\n\");",
+  "error_tipico": "Confundirlo con \\n.",
+  "en_la_materia": "printf",
+  "errores_ids": [],
+  "buscar": [
+   "\\r",
+   "retorno de carro",
+   "volver al inicio"
+  ]
+ },
+ {
+  "elemento": "\\0",
+  "tipo": "secuencia de escape",
+  "que_es": "El carácter nulo, de código 0. Marca el final de un texto (terminador).",
+  "como_se_usa": "char FIN='\\0';\nprintf(\"%d\\n\",FIN);  // muestra: 0",
+  "error_tipico": "Confundirlo con el carácter '0' (el dígito), cuyo código es 48.",
+  "en_la_materia": "Texto",
+  "errores_ids": [
+   "ARR-029",
+   "ARR-060"
+  ],
+  "buscar": [
+   "\\0",
+   "terminador",
+   "nulo",
+   "fin de cadena",
+   "null",
+   "barra cero"
+  ]
+ },
+ {
+  "elemento": "\\b",
+  "tipo": "secuencia de escape",
+  "que_es": "Retroceso: mueve el cursor un lugar atrás. Su efecto depende de la terminal.",
+  "como_se_usa": "printf(\"AB\\bC\\n\");",
+  "error_tipico": "Esperar que borre siempre una letra.",
+  "en_la_materia": "printf",
+  "errores_ids": [],
+  "buscar": [
+   "\\b",
+   "retroceso",
+   "backspace"
+  ]
+ },
+ {
+  "elemento": "\\a",
+  "tipo": "secuencia de escape",
+  "que_es": "Alerta sonora (campanita). En el editor y en muchas terminales no suena.",
+  "como_se_usa": "printf(\"\\a\");",
+  "error_tipico": "Esperar que suene siempre.",
+  "en_la_materia": "printf",
+  "errores_ids": [],
+  "buscar": [
+   "\\a",
+   "campana",
+   "beep",
+   "sonido",
+   "alerta"
+  ]
+ },
+ {
+  "elemento": "\\f",
+  "tipo": "secuencia de escape",
+  "que_es": "Avance de página (form feed). Casi no se usa.",
+  "como_se_usa": "printf(\"A\\fB\\n\");",
+  "error_tipico": "Usarlo para limpiar la pantalla: no lo hace.",
+  "en_la_materia": "printf",
+  "errores_ids": [],
+  "buscar": [
+   "\\f",
+   "form feed",
+   "salto de pagina"
+  ]
+ },
+ {
+  "elemento": "\\v",
+  "tipo": "secuencia de escape",
+  "que_es": "Tabulación vertical. Casi no se usa.",
+  "como_se_usa": "printf(\"A\\vB\\n\");",
+  "error_tipico": "Esperar que baje varias líneas.",
+  "en_la_materia": "printf",
+  "errores_ids": [],
+  "buscar": [
+   "\\v",
+   "tabulacion vertical"
+  ]
+ },
+ {
+  "elemento": "\\?",
+  "tipo": "secuencia de escape",
+  "que_es": "Muestra un signo de pregunta. Casi nunca hace falta escaparlo.",
+  "como_se_usa": "printf(\"Seguro\\?\\n\");  // muestra: Seguro?",
+  "error_tipico": "Escaparlo siempre: no es necesario.",
+  "en_la_materia": "printf",
+  "errores_ids": [],
+  "buscar": [
+   "\\?",
+   "signo de pregunta",
+   "trigrafos"
+  ]
+ },
+ {
+  "elemento": "\\x41",
+  "tipo": "secuencia de escape",
+  "que_es": "Escape hexadecimal: \\x seguido de dos dígitos hexa da el carácter con ese código (\\x41 es la A).",
+  "como_se_usa": "printf(\"\\x41\\n\");  // muestra: A",
+  "error_tipico": "Poner letras que no son dígitos hexadecimales justo después.",
+  "en_la_materia": "printf",
+  "errores_ids": [],
+  "buscar": [
+   "\\x41",
+   "codigo hexadecimal",
+   "ascii hexa",
+   "barra x"
+  ]
+ },
+ {
+  "elemento": "\\101",
+  "tipo": "secuencia de escape",
+  "que_es": "Escape octal: \\ seguido de hasta tres dígitos del 0 al 7 da el carácter con ese código (\\101 es la A).",
+  "como_se_usa": "printf(\"\\101\\n\");  // muestra: A",
+  "error_tipico": "Usar los dígitos 8 o 9: no son octales.",
+  "en_la_materia": "printf",
+  "errores_ids": [],
+  "buscar": [
+   "\\101",
+   "codigo octal",
+   "ascii octal"
+  ]
+ },
+ {
+  "elemento": "printf",
+  "tipo": "función",
+  "que_es": "Muestra texto y valores en pantalla (stdio.h). El primer argumento es el texto con formatos (%d, %f, %c, %s...) y después van los valores en el mismo orden.",
+  "como_se_usa": "printf(\"Total: %d\\n\",TOTAL);  // muestra: Total: 12",
+  "error_tipico": "Poner un formato que no coincide con el tipo del dato (%d con un float) o menos datos que formatos.",
+  "en_la_materia": "Salida de datos",
+  "errores_ids": [
+   "PRE-001",
+   "PRF-008",
+   "PRF-009",
+   "PRF-010",
+   "PRF-011",
+   "PRF-012",
+   "PRF-018",
+   "PRF-019",
+   "PRF-021",
+   "PRF-022",
+   "PRF-023",
+   "PRF-024",
+   "PRF-025",
+   "PRF-026",
+   "PRF-040",
+   "SIN-007",
+   "SIN-020",
+   "SIN-021",
+   "SIN-031",
+   "SIN-056"
+  ],
+  "buscar": [
+   "printf",
+   "mostrar",
+   "imprimir",
+   "escribir en pantalla",
+   "salida",
+   "print",
+   "sacar por pantalla",
+   "mostrar por pantalla",
+   "no muestra nada",
+   "sale mal el printf",
+   "sale basura",
+   "sale cualquier cosa"
+  ]
+ },
+ {
+  "elemento": "scanf",
+  "tipo": "función",
+  "que_es": "Lee datos que escribe el usuario (stdio.h). Lleva el formato y, para cada dato, la dirección de la variable con &. Devuelve cuántos datos pudo leer.",
+  "como_se_usa": "scanf(\"%d\",&EDAD);",
+  "error_tipico": "Olvidar el & delante de la variable, o usar un formato que no coincide con su tipo.",
+  "en_la_materia": "Entrada de datos",
+  "errores_ids": [
+   "PRE-002",
+   "SCN-001",
+   "SCN-002",
+   "SCN-003",
+   "SCN-004",
+   "SCN-005",
+   "SCN-010",
+   "SCN-012",
+   "SCN-013",
+   "SCN-014",
+   "SCN-015",
+   "SCN-016",
+   "SCN-019",
+   "SCN-020",
+   "SCN-023",
+   "SCN-028",
+   "SCN-033"
+  ],
+  "buscar": [
+   "scanf",
+   "leer",
+   "ingresar",
+   "pedir dato",
+   "entrada",
+   "teclado",
+   "leer por teclado",
+   "cargar datos",
+   "no anda scanf",
+   "scanf no lee",
+   "scanf no espera",
+   "el programa no me deja ingresar"
+  ]
+ },
+ {
+  "elemento": "getchar",
+  "tipo": "función",
+  "que_es": "Lee un carácter de la entrada (stdio.h) y devuelve su código como int. Devuelve EOF (-1) si no hay más datos.",
+  "como_se_usa": "C=getchar();\nprintf(\"%d\\n\",C);",
+  "error_tipico": "Esperar que lea una palabra completa: lee un solo carácter, y el Enter también cuenta.",
+  "en_la_materia": "Entrada de datos",
+  "errores_ids": [
+   "POR-014",
+   "SCN-010"
+  ],
+  "buscar": [
+   "getchar",
+   "leer caracter",
+   "tecla",
+   "leer una letra",
+   "enter pendiente"
+  ]
+ },
+ {
+  "elemento": "putchar",
+  "tipo": "función",
+  "que_es": "Muestra un solo carácter (stdio.h).",
+  "como_se_usa": "putchar('A');\nputchar('\\n');  // muestra: A",
+  "error_tipico": "Pasarle un texto entre comillas dobles en vez de un carácter.",
+  "en_la_materia": "Salida de datos",
+  "errores_ids": [],
+  "buscar": [
+   "putchar",
+   "mostrar caracter",
+   "escribir una letra"
+  ]
+ },
+ {
+  "elemento": "puts",
+  "tipo": "función",
+  "que_es": "Muestra un texto y agrega un salto de línea al final (stdio.h).",
+  "como_se_usa": "puts(\"Hola\");  // muestra: Hola",
+  "error_tipico": "Agregarle un \\n: sale una línea en blanco de más.",
+  "en_la_materia": "Salida de datos",
+  "errores_ids": [],
+  "buscar": [
+   "puts",
+   "mostrar texto",
+   "imprimir linea"
+  ]
+ },
+ {
+  "elemento": "fputs",
+  "tipo": "función",
+  "que_es": "Escribe un texto en un destino (por ejemplo stdout) sin agregar salto de línea (stdio.h).",
+  "como_se_usa": "fputs(\"Hola\\n\",stdout);  // muestra: Hola",
+  "error_tipico": "Esperar que agregue el salto de línea como puts.",
+  "en_la_materia": "Salida de datos",
+  "errores_ids": [],
+  "buscar": [
+   "fputs",
+   "escribir texto",
+   "stdout"
+  ]
+ },
+ {
+  "elemento": "fputc",
+  "tipo": "función",
+  "que_es": "Escribe un carácter en un destino como stdout (stdio.h). putc es lo mismo.",
+  "como_se_usa": "fputc('A',stdout);\nfputc('\\n',stdout);  // muestra: A",
+  "error_tipico": "Pasarle un texto en vez de un carácter.",
+  "en_la_materia": "Salida de datos",
+  "errores_ids": [],
+  "buscar": [
+   "fputc",
+   "escribir caracter",
+   "putc"
+  ]
+ },
+ {
+  "elemento": "putc",
+  "tipo": "función",
+  "que_es": "Igual que fputc: escribe un carácter en un destino (stdio.h).",
+  "como_se_usa": "putc('B',stdout);\nputc('\\n',stdout);  // muestra: B",
+  "error_tipico": "Pasarle un texto en vez de un carácter.",
+  "en_la_materia": "Salida de datos",
+  "errores_ids": [],
+  "buscar": [
+   "putc",
+   "escribir caracter"
+  ]
+ },
+ {
+  "elemento": "fprintf",
+  "tipo": "función",
+  "que_es": "Como printf pero eligiendo el destino: stdout para la pantalla o stderr para errores (stdio.h).",
+  "como_se_usa": "fprintf(stdout,\"Valor: %d\\n\",A);  // muestra: Valor: 3",
+  "error_tipico": "Olvidar el destino como primer argumento.",
+  "en_la_materia": "Salida de datos",
+  "errores_ids": [],
+  "buscar": [
+   "fprintf",
+   "stderr",
+   "escribir error",
+   "imprimir en stdout"
+  ]
+ },
+ {
+  "elemento": "sprintf",
+  "tipo": "función",
+  "que_es": "Como printf pero escribe el resultado dentro de un arreglo de char en vez de la pantalla (stdio.h).",
+  "como_se_usa": "char TXT[30];\nsprintf(TXT,\"A=%d\",A);\nputs(TXT);",
+  "error_tipico": "Usar un arreglo demasiado chico: escribe fuera de él.",
+  "en_la_materia": "Texto",
+  "errores_ids": [
+   "ARR-031"
+  ],
+  "buscar": [
+   "sprintf",
+   "formatear texto",
+   "armar texto",
+   "numero a texto"
+  ]
+ },
+ {
+  "elemento": "snprintf",
+  "tipo": "función",
+  "que_es": "Como sprintf pero con un máximo de caracteres a escribir, así no se pasa del arreglo (stdio.h).",
+  "como_se_usa": "char TXT[8];\nsnprintf(TXT,8,\"A=%d\",12345);\nputs(TXT);",
+  "error_tipico": "Pasar un tamaño mayor que el del arreglo.",
+  "en_la_materia": "Texto",
+  "errores_ids": [],
+  "buscar": [
+   "snprintf",
+   "texto seguro",
+   "formatear con limite"
+  ]
+ },
+ {
+  "elemento": "fgets",
+  "tipo": "función",
+  "que_es": "Lee una línea de texto completa, con espacios, hasta un máximo de caracteres (stdio.h). Guarda también el Enter si entra.",
+  "como_se_usa": "char LINEA[40];\nfgets(LINEA,40,stdin);",
+  "error_tipico": "Mezclarla con scanf sin limpiar el Enter pendiente: lee una línea vacía.",
+  "en_la_materia": "Texto",
+  "errores_ids": [
+   "ARR-041",
+   "ARR-042",
+   "ARR-043"
+  ],
+  "buscar": [
+   "fgets",
+   "leer linea",
+   "leer frase",
+   "leer texto con espacios",
+   "linea completa",
+   "no espera",
+   "lee vacio",
+   "salta el fgets"
+  ]
+ },
+ {
+  "elemento": "gets",
+  "tipo": "función",
+  "que_es": "Leía una línea sin límite. Es insegura y se eliminó del lenguaje: usá fgets.",
+  "como_se_usa": "gets(LINEA);",
+  "error_tipico": "Usarla: puede escribir fuera del arreglo.",
+  "en_la_materia": "Texto",
+  "errores_ids": [
+   "ARR-040",
+   "POR-016"
+  ],
+  "buscar": [
+   "gets",
+   "leer linea insegura"
+  ]
+ },
+ {
+  "elemento": "fflush",
+  "tipo": "función",
+  "que_es": "Vacía el buffer de salida (stdio.h). El editor la acepta pero no hace nada visible.",
+  "como_se_usa": "fflush(stdout);",
+  "error_tipico": "Usar fflush(stdin) para limpiar el teclado: no es válido en C estándar.",
+  "en_la_materia": "Portabilidad",
+  "errores_ids": [
+   "POR-007",
+   "PRE-049"
+  ],
+  "buscar": [
+   "fflush",
+   "limpiar buffer",
+   "vaciar buffer",
+   "limpiar teclado",
+   "fflush stdin"
+  ]
+ },
+ {
+  "elemento": "setbuf",
+  "tipo": "función",
+  "que_es": "Define el buffer de un flujo (stdio.h). El editor la acepta pero la ignora.",
+  "como_se_usa": "setbuf(stdout,NULL);",
+  "error_tipico": "Usarla esperando efectos visibles en la consola del editor.",
+  "en_la_materia": "Portabilidad",
+  "errores_ids": [],
+  "buscar": [
+   "setbuf",
+   "buffer"
+  ]
+ },
+ {
+  "elemento": "setvbuf",
+  "tipo": "función",
+  "que_es": "Define el modo del buffer de un flujo (stdio.h). El editor la acepta pero la ignora.",
+  "como_se_usa": "setvbuf(stdout,NULL,_IONBF,0);",
+  "error_tipico": "Usarla esperando efectos visibles en la consola del editor.",
+  "en_la_materia": "Portabilidad",
+  "errores_ids": [],
+  "buscar": [
+   "setvbuf",
+   "buffer"
+  ]
+ },
+ {
+  "elemento": "stdin",
+  "tipo": "función",
+  "que_es": "Representa la entrada estándar (el teclado). Se usa como argumento de fgets.",
+  "como_se_usa": "fgets(LINEA,40,stdin);",
+  "error_tipico": "Escribirla en mayúsculas.",
+  "en_la_materia": "Entrada de datos",
+  "errores_ids": [],
+  "buscar": [
+   "stdin",
+   "entrada estandar",
+   "teclado"
+  ]
+ },
+ {
+  "elemento": "stdout",
+  "tipo": "función",
+  "que_es": "Representa la salida estándar (la pantalla). Se usa como destino de fprintf o fputs.",
+  "como_se_usa": "fprintf(stdout,\"Hola\\n\");  // muestra: Hola",
+  "error_tipico": "Escribirla en mayúsculas.",
+  "en_la_materia": "Salida de datos",
+  "errores_ids": [],
+  "buscar": [
+   "stdout",
+   "salida estandar",
+   "pantalla"
+  ]
+ },
+ {
+  "elemento": "stderr",
+  "tipo": "función",
+  "que_es": "Representa la salida de errores. Se usa como destino de fprintf para mensajes de error.",
+  "como_se_usa": "fprintf(stderr,\"Error\\n\");",
+  "error_tipico": "Esperar verlo mezclado con la salida normal en todos los entornos.",
+  "en_la_materia": "Salida de datos",
+  "errores_ids": [],
+  "buscar": [
+   "stderr",
+   "salida de error",
+   "error estandar"
+  ]
+ },
+ {
+  "elemento": "getch",
+  "tipo": "función",
+  "que_es": "Lee una tecla sin esperar Enter. No es estándar: viene de conio.h y existe en Windows, no en Linux.",
+  "como_se_usa": "C=getch();\nprintf(\"%d\\n\",C);",
+  "error_tipico": "Usarla y que el programa no compile en otro sistema. Si necesitás una pausa, getchar() es portable.",
+  "en_la_materia": "Portabilidad",
+  "errores_ids": [
+   "POR-003",
+   "PRE-037",
+   "PRE-038"
+  ],
+  "buscar": [
+   "getch",
+   "pausa",
+   "esperar tecla",
+   "conio",
+   "conio.h",
+   "presionar una tecla",
+   "windows"
+  ]
+ },
+ {
+  "elemento": "getche",
+  "tipo": "función",
+  "que_es": "Como getch pero muestra la tecla. No es estándar: viene de conio.h y existe en Windows.",
+  "como_se_usa": "C=getche();\nprintf(\"%d\\n\",C);",
+  "error_tipico": "Usarla en un programa que tiene que compilar en Linux.",
+  "en_la_materia": "Portabilidad",
+  "errores_ids": [],
+  "buscar": [
+   "getche",
+   "conio"
+  ]
+ },
+ {
+  "elemento": "rand",
+  "tipo": "función",
+  "que_es": "Devuelve un número entero pseudoaleatorio entre 0 y RAND_MAX (stdlib.h). Sin srand da siempre la misma serie.",
+  "como_se_usa": "N=rand()%6+1;\nprintf(\"%d\\n\",N);",
+  "error_tipico": "Esperar números distintos en cada ejecución sin llamar antes a srand.",
+  "en_la_materia": "Números al azar",
+  "errores_ids": [
+   "POR-021",
+   "PRE-008"
+  ],
+  "buscar": [
+   "rand",
+   "aleatorio",
+   "azar",
+   "random",
+   "numero al azar",
+   "dado",
+   "sortear",
+   "siempre el mismo numero",
+   "numeros repetidos"
+  ]
+ },
+ {
+  "elemento": "srand",
+  "tipo": "función",
+  "que_es": "Fija la semilla de rand (stdlib.h). Con una semilla distinta en cada ejecución, por ejemplo time(NULL), salen series distintas.",
+  "como_se_usa": "srand(time(NULL));",
+  "error_tipico": "Llamarla antes de cada rand: se repite el mismo valor.",
+  "en_la_materia": "Números al azar",
+  "errores_ids": [
+   "POR-021"
+  ],
+  "buscar": [
+   "srand",
+   "semilla",
+   "cambiar azar",
+   "random seed",
+   "inicializar aleatorio"
+  ]
+ },
+ {
+  "elemento": "abs",
+  "tipo": "función",
+  "que_es": "Valor absoluto de un int (stdlib.h): le saca el signo negativo.",
+  "como_se_usa": "N=abs(-7);\nprintf(\"%d\\n\",N);  // muestra: 7",
+  "error_tipico": "Usarla con un float: pierde los decimales. Para decimales es fabs.",
+  "en_la_materia": "Matemática",
+  "errores_ids": [
+   "PRE-005",
+   "PRE-043",
+   "TIP-034"
+  ],
+  "buscar": [
+   "abs",
+   "valor absoluto",
+   "sin signo",
+   "modulo de un numero"
+  ]
+ },
+ {
+  "elemento": "labs",
+  "tipo": "función",
+  "que_es": "Valor absoluto de un long (stdlib.h).",
+  "como_se_usa": "N=labs(-3000000000L);\nprintf(\"%ld\\n\",N);  // muestra: 3000000000",
+  "error_tipico": "Usar abs con números tan grandes.",
+  "en_la_materia": "Matemática",
+  "errores_ids": [],
+  "buscar": [
+   "labs",
+   "valor absoluto long"
+  ]
+ },
+ {
+  "elemento": "exit",
+  "tipo": "función",
+  "que_es": "Termina el programa en el acto con el código que le indiques (stdlib.h). exit(0) es \"terminó bien\".",
+  "como_se_usa": "exit(1);",
+  "error_tipico": "Usarla en lugar de un return normal y cortar el programa antes de tiempo.",
+  "en_la_materia": "Funciones",
+  "errores_ids": [
+   "PRE-010"
+  ],
+  "buscar": [
+   "exit",
+   "terminar programa",
+   "salir del programa",
+   "cortar programa"
+  ]
+ },
+ {
+  "elemento": "system",
+  "tipo": "función",
+  "que_es": "Ejecuta un comando del sistema (stdlib.h). El editor la acepta pero no hace nada.",
+  "como_se_usa": "system(\"pause\");",
+  "error_tipico": "Usar system(\"pause\") para frenar la pantalla: solo anda en Windows.",
+  "en_la_materia": "Portabilidad",
+  "errores_ids": [
+   "POR-001",
+   "POR-002",
+   "PRE-039",
+   "PRE-040"
+  ],
+  "buscar": [
+   "system",
+   "pause",
+   "system pause",
+   "cls",
+   "clear",
+   "limpiar pantalla",
+   "pausa",
+   "windows"
+  ]
+ },
+ {
+  "elemento": "atoi",
+  "tipo": "función",
+  "que_es": "Convierte un texto con un número a int (stdlib.h).",
+  "como_se_usa": "N=atoi(\"123\");\nprintf(\"%d\\n\",N);  // muestra: 123",
+  "error_tipico": "Pasarle un texto que no empieza con un número: devuelve 0 sin avisar.",
+  "en_la_materia": "Texto",
+  "errores_ids": [],
+  "buscar": [
+   "atoi",
+   "texto a numero",
+   "convertir texto",
+   "string a int"
+  ]
+ },
+ {
+  "elemento": "atol",
+  "tipo": "función",
+  "que_es": "Convierte un texto con un número a long (stdlib.h).",
+  "como_se_usa": "N=atol(\"123456789012\");\nprintf(\"%ld\\n\",N);  // muestra: 123456789012",
+  "error_tipico": "Usar atoi con números muy grandes.",
+  "en_la_materia": "Texto",
+  "errores_ids": [],
+  "buscar": [
+   "atol",
+   "texto a long"
+  ]
+ },
+ {
+  "elemento": "atof",
+  "tipo": "función",
+  "que_es": "Convierte un texto con un número a double (stdlib.h).",
+  "como_se_usa": "D=atof(\"3.75\");\nprintf(\"%g\\n\",D);  // muestra: 3.75",
+  "error_tipico": "Escribir el decimal con coma: \"3,75\" se convierte en 3.",
+  "en_la_materia": "Texto",
+  "errores_ids": [],
+  "buscar": [
+   "atof",
+   "texto a decimal",
+   "string a float"
+  ]
+ },
+ {
+  "elemento": "strlen",
+  "tipo": "función",
+  "que_es": "Cuenta los caracteres de un texto sin contar el terminador (string.h).",
+  "como_se_usa": "N=strlen(\"Hola\");\nprintf(\"%lu\\n\",N);  // muestra: 4",
+  "error_tipico": "Confundirlo con el tamaño del arreglo: strlen cuenta lo que hay escrito.",
+  "en_la_materia": "Texto",
+  "errores_ids": [
+   "ARR-044",
+   "ARR-051",
+   "ARR-057",
+   "PRE-006"
+  ],
+  "buscar": [
+   "strlen",
+   "largo del texto",
+   "longitud",
+   "cantidad de letras",
+   "largo de cadena"
+  ]
+ },
+ {
+  "elemento": "strcpy",
+  "tipo": "función",
+  "que_es": "Copia un texto dentro de un arreglo de char (string.h). El arreglo tiene que tener lugar para el texto y el terminador.",
+  "como_se_usa": "char DEST[20];\nstrcpy(DEST,\"Hola\");",
+  "error_tipico": "Usar = para copiar textos: no se puede, hay que usar strcpy.",
+  "en_la_materia": "Texto",
+  "errores_ids": [
+   "ARR-031",
+   "ARR-039",
+   "ARR-054"
+  ],
+  "buscar": [
+   "strcpy",
+   "copiar texto",
+   "copiar cadena",
+   "asignar texto"
+  ]
+ },
+ {
+  "elemento": "strncpy",
+  "tipo": "función",
+  "que_es": "Copia como máximo N caracteres de un texto (string.h). Si el texto es más largo, no agrega el terminador.",
+  "como_se_usa": "char DEST[5]=\"\";\nstrncpy(DEST,\"Hola\",4);\nDEST[4]=0;",
+  "error_tipico": "Olvidar poner el terminador cuando el texto no entra.",
+  "en_la_materia": "Texto",
+  "errores_ids": [
+   "ARR-060"
+  ],
+  "buscar": [
+   "strncpy",
+   "copiar con limite"
+  ]
+ },
+ {
+  "elemento": "strcat",
+  "tipo": "función",
+  "que_es": "Pega un texto al final de otro (string.h).",
+  "como_se_usa": "char T[20]=\"Hola \";\nstrcat(T,\"Ana\");",
+  "error_tipico": "Pegar en un arreglo sin lugar suficiente.",
+  "en_la_materia": "Texto",
+  "errores_ids": [
+   "ARR-052",
+   "ARR-053"
+  ],
+  "buscar": [
+   "strcat",
+   "concatenar",
+   "unir textos",
+   "pegar texto",
+   "sumar textos"
+  ]
+ },
+ {
+  "elemento": "strncat",
+  "tipo": "función",
+  "que_es": "Pega como máximo N caracteres de un texto al final de otro (string.h).",
+  "como_se_usa": "char T[20]=\"Hola \";\nstrncat(T,\"Ana Maria\",3);",
+  "error_tipico": "Contar mal el lugar que queda.",
+  "en_la_materia": "Texto",
+  "errores_ids": [],
+  "buscar": [
+   "strncat"
+  ]
+ },
+ {
+  "elemento": "strcmp",
+  "tipo": "función",
+  "que_es": "Compara dos textos (string.h). Da 0 si son iguales, negativo si el primero va antes en orden alfabético y positivo si va después.",
+  "como_se_usa": "if(strcmp(\"A\",\"B\")<0) puts(\"A va antes\");  // muestra: A va antes",
+  "error_tipico": "Comparar textos con ==: compara direcciones, no letras.",
+  "en_la_materia": "Texto",
+  "errores_ids": [
+   "ARR-036",
+   "ARR-037",
+   "ARR-038",
+   "PRE-007"
+  ],
+  "buscar": [
+   "strcmp",
+   "comparar textos",
+   "comparar cadenas",
+   "textos iguales",
+   "orden alfabetico"
+  ]
+ },
+ {
+  "elemento": "strncmp",
+  "tipo": "función",
+  "que_es": "Compara solo los primeros N caracteres de dos textos (string.h).",
+  "como_se_usa": "if(strncmp(\"Hola\",\"Holanda\",4)==0) puts(\"Igual\");  // muestra: Igual",
+  "error_tipico": "Esperar que devuelva 1 o 0: devuelve 0 si son iguales.",
+  "en_la_materia": "Texto",
+  "errores_ids": [],
+  "buscar": [
+   "strncmp"
+  ]
+ },
+ {
+  "elemento": "time",
+  "tipo": "función",
+  "que_es": "Devuelve la hora actual como segundos desde 1970 (time.h). time(NULL) se usa para la semilla de srand.",
+  "como_se_usa": "T=time(NULL);",
+  "error_tipico": "Mostrar el resultado esperando una fecha legible: es un número de segundos.",
+  "en_la_materia": "Tiempo",
+  "errores_ids": [
+   "PRE-009"
+  ],
+  "buscar": [
+   "time",
+   "hora",
+   "fecha",
+   "tiempo",
+   "segundos desde 1970"
+  ]
+ },
+ {
+  "elemento": "clock",
+  "tipo": "función",
+  "que_es": "Devuelve el tiempo de procesador usado por el programa, en ticks (time.h). Dividido por CLOCKS_PER_SEC da segundos.",
+  "como_se_usa": "T=clock();",
+  "error_tipico": "Interpretarlo como segundos directamente.",
+  "en_la_materia": "Tiempo",
+  "errores_ids": [],
+  "buscar": [
+   "clock",
+   "cronometro",
+   "medir tiempo",
+   "tiempo de ejecucion"
+  ]
+ },
+ {
+  "elemento": "isdigit",
+  "tipo": "función",
+  "que_es": "Dice si un carácter es un dígito del 0 al 9 (ctype.h). Devuelve distinto de 0 si lo es.",
+  "como_se_usa": "if(isdigit(C)) puts(\"Dígito\");\nelse puts(\"No\");  // muestra: No",
+  "error_tipico": "Usarlo para validar un número entero entero: solo mira un carácter.",
+  "en_la_materia": "Texto, ctype.h",
+  "errores_ids": [],
+  "buscar": [
+   "isdigit",
+   "es digito",
+   "es numero",
+   "validar numero"
+  ]
+ },
+ {
+  "elemento": "isalpha",
+  "tipo": "función",
+  "que_es": "Dice si un carácter es una letra (ctype.h).",
+  "como_se_usa": "if(isalpha(C)) puts(\"Letra\");  // muestra: Letra",
+  "error_tipico": "Esperar que reconozca la ñ o las letras con tilde: solo las del alfabeto inglés.",
+  "en_la_materia": "Texto, ctype.h",
+  "errores_ids": [],
+  "buscar": [
+   "isalpha",
+   "es letra",
+   "letra o no"
+  ]
+ },
+ {
+  "elemento": "isalnum",
+  "tipo": "función",
+  "que_es": "Dice si un carácter es una letra o un dígito (ctype.h).",
+  "como_se_usa": "if(isalnum(C)) puts(\"Letra o dígito\");  // muestra: Letra o dígito",
+  "error_tipico": "Esperar que acepte espacios o signos.",
+  "en_la_materia": "Texto, ctype.h",
+  "errores_ids": [],
+  "buscar": [
+   "isalnum",
+   "letra o numero",
+   "alfanumerico"
+  ]
+ },
+ {
+  "elemento": "isupper",
+  "tipo": "función",
+  "que_es": "Dice si un carácter es una letra mayúscula (ctype.h).",
+  "como_se_usa": "if(isupper(C)) puts(\"Mayúscula\");\nelse puts(\"No\");  // muestra: No",
+  "error_tipico": "Confundirla con toupper: isupper solo pregunta, no convierte.",
+  "en_la_materia": "Texto, ctype.h",
+  "errores_ids": [],
+  "buscar": [
+   "isupper",
+   "es mayuscula",
+   "mayuscula"
+  ]
+ },
+ {
+  "elemento": "islower",
+  "tipo": "función",
+  "que_es": "Dice si un carácter es una letra minúscula (ctype.h).",
+  "como_se_usa": "if(islower(C)) puts(\"Minúscula\");  // muestra: Minúscula",
+  "error_tipico": "Confundirla con tolower: islower solo pregunta.",
+  "en_la_materia": "Texto, ctype.h",
+  "errores_ids": [],
+  "buscar": [
+   "islower",
+   "es minuscula",
+   "minuscula"
+  ]
+ },
+ {
+  "elemento": "isspace",
+  "tipo": "función",
+  "que_es": "Dice si un carácter es un espacio en blanco: espacio, tabulador o salto de línea (ctype.h).",
+  "como_se_usa": "if(isspace(' ')) puts(\"Espacio\");  // muestra: Espacio",
+  "error_tipico": "Creer que solo detecta el espacio común.",
+  "en_la_materia": "Texto, ctype.h",
+  "errores_ids": [],
+  "buscar": [
+   "isspace",
+   "es espacio",
+   "espacio en blanco"
+  ]
+ },
+ {
+  "elemento": "ispunct",
+  "tipo": "función",
+  "que_es": "Dice si un carácter es un signo de puntuación o símbolo (ctype.h).",
+  "como_se_usa": "if(ispunct('!')) puts(\"Signo\");  // muestra: Signo",
+  "error_tipico": "Esperar que incluya el espacio: no lo incluye.",
+  "en_la_materia": "Texto, ctype.h",
+  "errores_ids": [],
+  "buscar": [
+   "ispunct",
+   "es signo",
+   "puntuacion",
+   "simbolo"
+  ]
+ },
+ {
+  "elemento": "isprint",
+  "tipo": "función",
+  "que_es": "Dice si un carácter se puede imprimir, incluido el espacio (ctype.h).",
+  "como_se_usa": "if(isprint(C)) puts(\"Se imprime\");  // muestra: Se imprime",
+  "error_tipico": "Esperar que el salto de línea cuente como imprimible.",
+  "en_la_materia": "Texto, ctype.h",
+  "errores_ids": [],
+  "buscar": [
+   "isprint",
+   "imprimible"
+  ]
+ },
+ {
+  "elemento": "isgraph",
+  "tipo": "función",
+  "que_es": "Dice si un carácter tiene forma visible: imprimible sin contar el espacio (ctype.h).",
+  "como_se_usa": "if(isgraph(C)) puts(\"Visible\");  // muestra: Visible",
+  "error_tipico": "Confundirlo con isprint, que sí acepta el espacio.",
+  "en_la_materia": "Texto, ctype.h",
+  "errores_ids": [],
+  "buscar": [
+   "isgraph",
+   "visible"
+  ]
+ },
+ {
+  "elemento": "iscntrl",
+  "tipo": "función",
+  "que_es": "Dice si un carácter es de control, como el salto de línea o el tabulador (ctype.h).",
+  "como_se_usa": "if(iscntrl('\\n')) puts(\"Control\");  // muestra: Control",
+  "error_tipico": "Esperar que sea verdadero para letras.",
+  "en_la_materia": "Texto, ctype.h",
+  "errores_ids": [],
+  "buscar": [
+   "iscntrl",
+   "control",
+   "caracter de control"
+  ]
+ },
+ {
+  "elemento": "isxdigit",
+  "tipo": "función",
+  "que_es": "Dice si un carácter es un dígito hexadecimal: 0-9, a-f o A-F (ctype.h).",
+  "como_se_usa": "if(isxdigit('f')) puts(\"Hexa\");  // muestra: Hexa",
+  "error_tipico": "Esperar que acepte la letra g.",
+  "en_la_materia": "Texto, ctype.h",
+  "errores_ids": [],
+  "buscar": [
+   "isxdigit",
+   "digito hexadecimal",
+   "hexa"
+  ]
+ },
+ {
+  "elemento": "isblank",
+  "tipo": "función",
+  "que_es": "Dice si un carácter es espacio o tabulador (ctype.h), pero no salto de línea.",
+  "como_se_usa": "if(isblank(' ')) puts(\"Blanco\");  // muestra: Blanco",
+  "error_tipico": "Confundirlo con isspace, que también acepta el salto de línea.",
+  "en_la_materia": "Texto, ctype.h",
+  "errores_ids": [],
+  "buscar": [
+   "isblank",
+   "espacio o tab"
+  ]
+ },
+ {
+  "elemento": "toupper",
+  "tipo": "función",
+  "que_es": "Devuelve la mayúscula de una letra (ctype.h). No modifica la variable: hay que guardar el resultado.",
+  "como_se_usa": "C=toupper(C);\nputchar(C);  // muestra: A",
+  "error_tipico": "Llamarla sin asignar el resultado y esperar que cambie la variable.",
+  "en_la_materia": "Texto, ctype.h",
+  "errores_ids": [
+   "PRE-011"
+  ],
+  "buscar": [
+   "toupper",
+   "pasar a mayuscula",
+   "convertir a mayuscula",
+   "mayusculas"
+  ]
+ },
+ {
+  "elemento": "tolower",
+  "tipo": "función",
+  "que_es": "Devuelve la minúscula de una letra (ctype.h). No modifica la variable: hay que guardar el resultado.",
+  "como_se_usa": "C=tolower('Q');\nputchar(C);  // muestra: q",
+  "error_tipico": "Llamarla sin asignar el resultado.",
+  "en_la_materia": "Texto, ctype.h",
+  "errores_ids": [
+   "PRE-011"
+  ],
+  "buscar": [
+   "tolower",
+   "pasar a minuscula",
+   "convertir a minuscula",
+   "minusculas"
+  ]
+ },
+ {
+  "elemento": "sqrt",
+  "tipo": "función",
+  "que_es": "Raíz cuadrada. Está en math.h.",
+  "como_se_usa": "R=sqrt(16.0);\nprintf(\"%g\\n\",R);  // muestra: 4",
+  "error_tipico": "Pasarle un negativo: el resultado no es un número (nan).",
+  "en_la_materia": "math.h",
+  "errores_ids": [
+   "EJE-017",
+   "PRE-003",
+   "PRE-046"
+  ],
+  "buscar": [
+   "sqrt",
+   "raiz cuadrada",
+   "raiz",
+   "cuadrada",
+   "raiz de negativo",
+   "sale nan",
+   "nan"
+  ]
+ },
+ {
+  "elemento": "pow",
+  "tipo": "función",
+  "que_es": "Potencia: pow(BASE,EXP) calcula BASE elevado a EXP. Está en math.h.",
+  "como_se_usa": "R=pow(2,10);\nprintf(\"%g\\n\",R);  // muestra: 1024",
+  "error_tipico": "Usar ^ para potencias: en C eso es XOR.",
+  "en_la_materia": "math.h",
+  "errores_ids": [
+   "OPE-031",
+   "OPE-032",
+   "POR-025",
+   "PRE-004",
+   "PRE-044",
+   "PRE-045"
+  ],
+  "buscar": [
+   "pow",
+   "potencia",
+   "elevar",
+   "elevado a",
+   "exponente",
+   "cuadrado",
+   "cubo"
+  ]
+ },
+ {
+  "elemento": "fabs",
+  "tipo": "función",
+  "que_es": "Valor absoluto de un decimal. Está en math.h.",
+  "como_se_usa": "R=fabs(-2.5);\nprintf(\"%g\\n\",R);  // muestra: 2.5",
+  "error_tipico": "Usar abs con decimales: corta la parte decimal.",
+  "en_la_materia": "math.h",
+  "errores_ids": [],
+  "buscar": [
+   "fabs",
+   "valor absoluto decimal",
+   "absoluto"
+  ]
+ },
+ {
+  "elemento": "floor",
+  "tipo": "función",
+  "que_es": "Redondea hacia abajo: el entero más cercano que no supera al número. Está en math.h.",
+  "como_se_usa": "R=floor(-2.5);\nprintf(\"%g\\n\",R);  // muestra: -3",
+  "error_tipico": "Creer que floor(-2.5) da -2: da -3.",
+  "en_la_materia": "math.h",
+  "errores_ids": [],
+  "buscar": [
+   "floor",
+   "redondear hacia abajo",
+   "piso",
+   "parte entera"
+  ]
+ },
+ {
+  "elemento": "ceil",
+  "tipo": "función",
+  "que_es": "Redondea hacia arriba: el entero más cercano que no es menor que el número. Está en math.h.",
+  "como_se_usa": "R=ceil(2.1);\nprintf(\"%g\\n\",R);  // muestra: 3",
+  "error_tipico": "Creer que modifica la variable que le pasás.",
+  "en_la_materia": "math.h",
+  "errores_ids": [],
+  "buscar": [
+   "ceil",
+   "redondear hacia arriba",
+   "techo"
+  ]
+ },
+ {
+  "elemento": "round",
+  "tipo": "función",
+  "que_es": "Redondea al entero más cercano; el .5 se redondea alejándose de cero. Está en math.h.",
+  "como_se_usa": "R=round(2.5);\nprintf(\"%g\\n\",R);  // muestra: 3",
+  "error_tipico": "Esperar que devuelva un int: devuelve double.",
+  "en_la_materia": "math.h",
+  "errores_ids": [],
+  "buscar": [
+   "round",
+   "redondear",
+   "redondeo",
+   "aproximar"
+  ]
+ },
+ {
+  "elemento": "trunc",
+  "tipo": "función",
+  "que_es": "Corta la parte decimal sin redondear. Está en math.h.",
+  "como_se_usa": "R=trunc(-2.9);\nprintf(\"%g\\n\",R);  // muestra: -2",
+  "error_tipico": "Confundirlo con floor en negativos: trunc(-2.9) da -2.",
+  "en_la_materia": "math.h",
+  "errores_ids": [],
+  "buscar": [
+   "trunc",
+   "truncar",
+   "cortar decimales",
+   "sin decimales"
+  ]
+ },
+ {
+  "elemento": "sin",
+  "tipo": "función",
+  "que_es": "Seno de un ángulo en radianes. Está en math.h.",
+  "como_se_usa": "R=sin(M_PI/2);\nprintf(\"%g\\n\",R);  // muestra: 1",
+  "error_tipico": "Pasarle grados: la función trabaja en radianes.",
+  "en_la_materia": "math.h",
+  "errores_ids": [],
+  "buscar": [
+   "sin",
+   "seno",
+   "trigonometria",
+   "grados a radianes"
+  ]
+ },
+ {
+  "elemento": "cos",
+  "tipo": "función",
+  "que_es": "Coseno de un ángulo en radianes. Está en math.h.",
+  "como_se_usa": "R=cos(0);\nprintf(\"%g\\n\",R);  // muestra: 1",
+  "error_tipico": "Pasarle grados.",
+  "en_la_materia": "math.h",
+  "errores_ids": [],
+  "buscar": [
+   "cos",
+   "coseno",
+   "trigonometria"
+  ]
+ },
+ {
+  "elemento": "tan",
+  "tipo": "función",
+  "que_es": "Tangente de un ángulo en radianes. Está en math.h.",
+  "como_se_usa": "R=tan(M_PI/4);\nprintf(\"%g\\n\",R);  // muestra: 1",
+  "error_tipico": "Pasarle grados.",
+  "en_la_materia": "math.h",
+  "errores_ids": [],
+  "buscar": [
+   "tan",
+   "tangente",
+   "trigonometria"
+  ]
+ },
+ {
+  "elemento": "asin",
+  "tipo": "función",
+  "que_es": "Arcoseno: devuelve en radianes el ángulo cuyo seno es el valor (entre -1 y 1). Está en math.h.",
+  "como_se_usa": "R=asin(1);\nprintf(\"%g\\n\",R);  // muestra: 1.5708",
+  "error_tipico": "Pasarle un valor fuera de -1 a 1: da nan.",
+  "en_la_materia": "math.h",
+  "errores_ids": [],
+  "buscar": [
+   "asin",
+   "arcoseno",
+   "seno inverso"
+  ]
+ },
+ {
+  "elemento": "acos",
+  "tipo": "función",
+  "que_es": "Arcocoseno: devuelve en radianes el ángulo cuyo coseno es el valor (entre -1 y 1). Está en math.h.",
+  "como_se_usa": "R=acos(1);\nprintf(\"%g\\n\",R);  // muestra: 0",
+  "error_tipico": "Pasarle un valor fuera de -1 a 1: da nan.",
+  "en_la_materia": "math.h",
+  "errores_ids": [],
+  "buscar": [
+   "acos",
+   "arcocoseno",
+   "coseno inverso"
+  ]
+ },
+ {
+  "elemento": "atan",
+  "tipo": "función",
+  "que_es": "Arcotangente: devuelve en radianes el ángulo cuya tangente es el valor. Está en math.h.",
+  "como_se_usa": "R=atan(1);\nprintf(\"%g\\n\",R);  // muestra: 0.785398",
+  "error_tipico": "Esperar el resultado en grados.",
+  "en_la_materia": "math.h",
+  "errores_ids": [],
+  "buscar": [
+   "atan",
+   "arcotangente",
+   "tangente inversa"
+  ]
+ },
+ {
+  "elemento": "atan2",
+  "tipo": "función",
+  "que_es": "Arcotangente de Y/X que tiene en cuenta los signos, para saber en qué cuadrante está el punto. Está en math.h.",
+  "como_se_usa": "R=atan2(1,1);\nprintf(\"%g\\n\",R);  // muestra: 0.785398",
+  "error_tipico": "Pasar los argumentos en orden X,Y: va primero Y.",
+  "en_la_materia": "math.h",
+  "errores_ids": [],
+  "buscar": [
+   "atan2",
+   "angulo de un punto",
+   "cuadrante"
+  ]
+ },
+ {
+  "elemento": "sinh",
+  "tipo": "función",
+  "que_es": "Seno hiperbólico. Está en math.h.",
+  "como_se_usa": "R=sinh(0);\nprintf(\"%g\\n\",R);  // muestra: 0",
+  "error_tipico": "Confundirlo con sin.",
+  "en_la_materia": "math.h",
+  "errores_ids": [],
+  "buscar": [
+   "sinh",
+   "seno hiperbolico"
+  ]
+ },
+ {
+  "elemento": "cosh",
+  "tipo": "función",
+  "que_es": "Coseno hiperbólico. Está en math.h.",
+  "como_se_usa": "R=cosh(0);\nprintf(\"%g\\n\",R);  // muestra: 1",
+  "error_tipico": "Confundirlo con cos.",
+  "en_la_materia": "math.h",
+  "errores_ids": [],
+  "buscar": [
+   "cosh",
+   "coseno hiperbolico"
+  ]
+ },
+ {
+  "elemento": "tanh",
+  "tipo": "función",
+  "que_es": "Tangente hiperbólica. Está en math.h.",
+  "como_se_usa": "R=tanh(0);\nprintf(\"%g\\n\",R);  // muestra: 0",
+  "error_tipico": "Confundirlo con tan.",
+  "en_la_materia": "math.h",
+  "errores_ids": [],
+  "buscar": [
+   "tanh",
+   "tangente hiperbolica"
+  ]
+ },
+ {
+  "elemento": "asinh",
+  "tipo": "función",
+  "que_es": "Seno hiperbólico inverso. Está en math.h.",
+  "como_se_usa": "R=asinh(0);\nprintf(\"%g\\n\",R);  // muestra: 0",
+  "error_tipico": "Confundirlo con asin.",
+  "en_la_materia": "math.h",
+  "errores_ids": [],
+  "buscar": [
+   "asinh"
+  ]
+ },
+ {
+  "elemento": "acosh",
+  "tipo": "función",
+  "que_es": "Coseno hiperbólico inverso (el valor tiene que ser mayor o igual a 1). Está en math.h.",
+  "como_se_usa": "R=acosh(1);\nprintf(\"%g\\n\",R);  // muestra: 0",
+  "error_tipico": "Pasarle un valor menor que 1: da nan.",
+  "en_la_materia": "math.h",
+  "errores_ids": [],
+  "buscar": [
+   "acosh"
+  ]
+ },
+ {
+  "elemento": "atanh",
+  "tipo": "función",
+  "que_es": "Tangente hiperbólica inversa (el valor tiene que estar entre -1 y 1). Está en math.h.",
+  "como_se_usa": "R=atanh(0);\nprintf(\"%g\\n\",R);  // muestra: 0",
+  "error_tipico": "Pasarle 1 o -1: da infinito.",
+  "en_la_materia": "math.h",
+  "errores_ids": [],
+  "buscar": [
+   "atanh"
+  ]
+ },
+ {
+  "elemento": "exp",
+  "tipo": "función",
+  "que_es": "Calcula e elevado al número que le pasás. Está en math.h.",
+  "como_se_usa": "R=exp(1);\nprintf(\"%g\\n\",R);  // muestra: 2.71828",
+  "error_tipico": "Confundirla con pow(10,X).",
+  "en_la_materia": "math.h",
+  "errores_ids": [],
+  "buscar": [
+   "exp",
+   "exponencial",
+   "e elevado",
+   "numero e"
+  ]
+ },
+ {
+  "elemento": "exp2",
+  "tipo": "función",
+  "que_es": "Calcula 2 elevado al número que le pasás. Está en math.h.",
+  "como_se_usa": "R=exp2(10);\nprintf(\"%g\\n\",R);  // muestra: 1024",
+  "error_tipico": "Confundirla con exp.",
+  "en_la_materia": "math.h",
+  "errores_ids": [],
+  "buscar": [
+   "exp2",
+   "dos elevado",
+   "potencia de 2"
+  ]
+ },
+ {
+  "elemento": "expm1",
+  "tipo": "función",
+  "que_es": "Calcula e elevado a X menos 1, con más precisión para valores muy chicos. Está en math.h.",
+  "como_se_usa": "R=expm1(0);\nprintf(\"%g\\n\",R);  // muestra: 0",
+  "error_tipico": "Usarla sin necesitar tanta precisión: exp(X)-1 alcanza.",
+  "en_la_materia": "math.h",
+  "errores_ids": [],
+  "buscar": [
+   "expm1"
+  ]
+ },
+ {
+  "elemento": "log",
+  "tipo": "función",
+  "que_es": "Logaritmo natural (base e). Está en math.h.",
+  "como_se_usa": "R=log(M_E);\nprintf(\"%g\\n\",R);  // muestra: 1",
+  "error_tipico": "Pasarle 0 o un negativo: no da un resultado válido.",
+  "en_la_materia": "math.h",
+  "errores_ids": [],
+  "buscar": [
+   "log",
+   "logaritmo",
+   "logaritmo natural",
+   "ln"
+  ]
+ },
+ {
+  "elemento": "log10",
+  "tipo": "función",
+  "que_es": "Logaritmo en base 10. Está en math.h.",
+  "como_se_usa": "R=log10(1000);\nprintf(\"%g\\n\",R);  // muestra: 3",
+  "error_tipico": "Confundirlo con log, que es base e.",
+  "en_la_materia": "math.h",
+  "errores_ids": [],
+  "buscar": [
+   "log10",
+   "logaritmo decimal",
+   "base 10",
+   "cantidad de digitos"
+  ]
+ },
+ {
+  "elemento": "log2",
+  "tipo": "función",
+  "que_es": "Logaritmo en base 2. Está en math.h.",
+  "como_se_usa": "R=log2(8);\nprintf(\"%g\\n\",R);  // muestra: 3",
+  "error_tipico": "Confundirlo con log.",
+  "en_la_materia": "math.h",
+  "errores_ids": [],
+  "buscar": [
+   "log2",
+   "logaritmo base 2"
+  ]
+ },
+ {
+  "elemento": "log1p",
+  "tipo": "función",
+  "que_es": "Logaritmo natural de 1+X, con más precisión para valores muy chicos. Está en math.h.",
+  "como_se_usa": "R=log1p(0);\nprintf(\"%g\\n\",R);  // muestra: 0",
+  "error_tipico": "Usarla cuando log(1+X) alcanza.",
+  "en_la_materia": "math.h",
+  "errores_ids": [],
+  "buscar": [
+   "log1p"
+  ]
+ },
+ {
+  "elemento": "cbrt",
+  "tipo": "función",
+  "que_es": "Raíz cúbica. Está en math.h.",
+  "como_se_usa": "R=cbrt(27);\nprintf(\"%g\\n\",R);  // muestra: 3",
+  "error_tipico": "Usar pow(X,1/3): 1/3 entero vale 0.",
+  "en_la_materia": "math.h",
+  "errores_ids": [],
+  "buscar": [
+   "cbrt",
+   "raiz cubica"
+  ]
+ },
+ {
+  "elemento": "fmod",
+  "tipo": "función",
+  "que_es": "Resto de dividir dos decimales. Es el % de los decimales. Está en math.h.",
+  "como_se_usa": "R=fmod(7.5,2);\nprintf(\"%g\\n\",R);  // muestra: 1.5",
+  "error_tipico": "Usar % con decimales: no compila.",
+  "en_la_materia": "math.h",
+  "errores_ids": [],
+  "buscar": [
+   "fmod",
+   "resto decimal",
+   "modulo decimal",
+   "resto de division con decimales"
+  ]
+ },
+ {
+  "elemento": "fmax",
+  "tipo": "función",
+  "que_es": "El mayor de dos decimales. Está en math.h.",
+  "como_se_usa": "R=fmax(3,7);\nprintf(\"%g\\n\",R);  // muestra: 7",
+  "error_tipico": "Confundirlo con una función que acepta más de dos valores.",
+  "en_la_materia": "math.h",
+  "errores_ids": [],
+  "buscar": [
+   "fmax",
+   "maximo",
+   "mayor de dos"
+  ]
+ },
+ {
+  "elemento": "fmin",
+  "tipo": "función",
+  "que_es": "El menor de dos decimales. Está en math.h.",
+  "como_se_usa": "R=fmin(3,7);\nprintf(\"%g\\n\",R);  // muestra: 3",
+  "error_tipico": "Confundirlo con una función que acepta más de dos valores.",
+  "en_la_materia": "math.h",
+  "errores_ids": [],
+  "buscar": [
+   "fmin",
+   "minimo",
+   "menor de dos"
+  ]
+ },
+ {
+  "elemento": "hypot",
+  "tipo": "función",
+  "que_es": "Calcula la raíz de X al cuadrado más Y al cuadrado: la hipotenusa. Está en math.h.",
+  "como_se_usa": "R=hypot(3,4);\nprintf(\"%g\\n\",R);  // muestra: 5",
+  "error_tipico": "Escribirlo como sqrt(X^2+Y^2): el ^ no es potencia.",
+  "en_la_materia": "math.h",
+  "errores_ids": [],
+  "buscar": [
+   "hypot",
+   "hipotenusa",
+   "pitagoras",
+   "distancia"
+  ]
+ },
+ {
+  "elemento": "fdim",
+  "tipo": "función",
+  "que_es": "Diferencia positiva: X-Y si X es mayor, y 0 si no. Está en math.h.",
+  "como_se_usa": "R=fdim(7,3);\nprintf(\"%g\\n\",R);  // muestra: 4",
+  "error_tipico": "Esperar un resultado negativo: nunca lo da.",
+  "en_la_materia": "math.h",
+  "errores_ids": [],
+  "buscar": [
+   "fdim",
+   "diferencia positiva"
+  ]
+ },
+ {
+  "elemento": "copysign",
+  "tipo": "función",
+  "que_es": "Devuelve el valor del primer argumento con el signo del segundo. Está en math.h.",
+  "como_se_usa": "R=copysign(5,-1);\nprintf(\"%g\\n\",R);  // muestra: -5",
+  "error_tipico": "Confundir cuál argumento aporta el signo: el segundo.",
+  "en_la_materia": "math.h",
+  "errores_ids": [],
+  "buscar": [
+   "copysign",
+   "copiar signo"
+  ]
+ },
+ {
+  "elemento": "rint",
+  "tipo": "función",
+  "que_es": "Redondea al entero más cercano según el modo de redondeo (el .5 va al par). Está en math.h.",
+  "como_se_usa": "R=rint(2.5);\nprintf(\"%g\\n\",R);  // muestra: 2",
+  "error_tipico": "Esperar el mismo resultado que round: rint(2.5) da 2.",
+  "en_la_materia": "math.h",
+  "errores_ids": [],
+  "buscar": [
+   "rint",
+   "redondeo al par"
+  ]
+ },
+ {
+  "elemento": "nearbyint",
+  "tipo": "función",
+  "que_es": "Igual que rint: redondea al entero más cercano (el .5 va al par). Está en math.h.",
+  "como_se_usa": "R=nearbyint(3.5);\nprintf(\"%g\\n\",R);  // muestra: 4",
+  "error_tipico": "Esperar el mismo resultado que round.",
+  "en_la_materia": "math.h",
+  "errores_ids": [],
+  "buscar": [
+   "nearbyint"
+  ]
+ },
+ {
+  "elemento": "lround",
+  "tipo": "función",
+  "que_es": "Redondea como round pero devuelve un long en vez de un double. Está en math.h.",
+  "como_se_usa": "N=lround(2.5);\nprintf(\"%ld\\n\",N);  // muestra: 3",
+  "error_tipico": "Guardar el resultado en un double sin necesidad.",
+  "en_la_materia": "math.h",
+  "errores_ids": [],
+  "buscar": [
+   "lround",
+   "redondear a entero"
+  ]
+ },
+ {
+  "elemento": "llround",
+  "tipo": "función",
+  "que_es": "Igual que lround pero devuelve un long long. Está en math.h.",
+  "como_se_usa": "N=llround(2.5);\nprintf(\"%lld\\n\",N);  // muestra: 3",
+  "error_tipico": "Usarla con valores que entran en un long.",
+  "en_la_materia": "math.h",
+  "errores_ids": [],
+  "buscar": [
+   "llround"
+  ]
+ },
+ {
+  "elemento": "isnan",
+  "tipo": "función",
+  "que_es": "Dice si un decimal no es un número (nan), por ejemplo el resultado de sqrt(-1). Está en math.h.",
+  "como_se_usa": "if(isnan(R)) puts(\"No es número\");  // muestra: No es número",
+  "error_tipico": "Comparar con == nan: nunca es verdadero.",
+  "en_la_materia": "math.h",
+  "errores_ids": [],
+  "buscar": [
+   "isnan",
+   "es nan",
+   "not a number",
+   "no es un numero"
+  ]
+ },
+ {
+  "elemento": "isinf",
+  "tipo": "función",
+  "que_es": "Dice si un decimal es infinito, por ejemplo el resultado de dividir un decimal por cero. Está en math.h.",
+  "como_se_usa": "if(isinf(R)) puts(\"Infinito\");  // muestra: Infinito",
+  "error_tipico": "Pensar que dividir enteros por cero da infinito: eso corta el programa.",
+  "en_la_materia": "math.h",
+  "errores_ids": [],
+  "buscar": [
+   "isinf",
+   "es infinito",
+   "infinito"
+  ]
+ },
+ {
+  "elemento": "isfinite",
+  "tipo": "función",
+  "que_es": "Dice si un decimal es un número común, ni infinito ni nan. Está en math.h.",
+  "como_se_usa": "if(isfinite(R)) puts(\"Número normal\");  // muestra: Número normal",
+  "error_tipico": "Usarla con enteros: no tiene sentido.",
+  "en_la_materia": "math.h",
+  "errores_ids": [],
+  "buscar": [
+   "isfinite",
+   "es finito"
+  ]
+ },
+ {
+  "elemento": "signbit",
+  "tipo": "función",
+  "que_es": "Dice si el signo de un decimal es negativo (también detecta el -0). Está en math.h.",
+  "como_se_usa": "if(signbit(R)) puts(\"Negativo\");  // muestra: Negativo",
+  "error_tipico": "Esperar que devuelva exactamente 1: devuelve distinto de 0.",
+  "en_la_materia": "math.h",
+  "errores_ids": [],
+  "buscar": [
+   "signbit",
+   "signo negativo"
+  ]
+ },
+ {
+  "elemento": "EOF",
+  "tipo": "constante",
+  "que_es": "Valor que indica \"no hay más datos\" al leer. Vale -1 (stdio.h).",
+  "como_se_usa": "C=getchar();\nif(C==EOF) puts(\"Fin\");  // muestra: Fin",
+  "error_tipico": "Guardar getchar en un char: no puede representar bien el -1.",
+  "en_la_materia": "stdio.h",
+  "errores_ids": [],
+  "buscar": [
+   "eof",
+   "fin de archivo",
+   "fin de entrada",
+   "end of file",
+   "ctrl d"
+  ]
+ },
+ {
+  "elemento": "NULL",
+  "tipo": "constante",
+  "que_es": "Valor nulo, \"ninguna dirección\". Vale 0. Se usa sobre todo con punteros (stdio.h).",
+  "como_se_usa": "srand(time(NULL));",
+  "error_tipico": "Confundirlo con el carácter '\\0' o con el texto vacío.",
+  "en_la_materia": "stdio.h",
+  "errores_ids": [],
+  "buscar": [
+   "null",
+   "nulo",
+   "puntero nulo",
+   "vacio"
+  ]
+ },
+ {
+  "elemento": "RAND_MAX",
+  "tipo": "constante",
+  "que_es": "El mayor valor que puede devolver rand() (stdlib.h). Vale 2147483647.",
+  "como_se_usa": "printf(\"%d\\n\",RAND_MAX);  // muestra: 2147483647",
+  "error_tipico": "Escribirla en minúscula o sin el #include que corresponde.",
+  "en_la_materia": "stdlib.h",
+  "errores_ids": [],
+  "buscar": [
+   "rand_max",
+   "maximo de rand",
+   "limite del azar"
+  ]
+ },
+ {
+  "elemento": "INT_MAX",
+  "tipo": "constante",
+  "que_es": "El mayor int posible (limits.h). Vale 2147483647.",
+  "como_se_usa": "printf(\"%d\\n\",INT_MAX);  // muestra: 2147483647",
+  "error_tipico": "Sumarle 1 y esperar un número más grande: da la vuelta y es comportamiento indefinido.",
+  "en_la_materia": "limits.h",
+  "errores_ids": [
+   "EJE-012",
+   "TIP-008"
+  ],
+  "buscar": [
+   "int_max",
+   "maximo entero",
+   "entero mas grande",
+   "limite del int",
+   "desborde"
+  ]
+ },
+ {
+  "elemento": "INT_MIN",
+  "tipo": "constante",
+  "que_es": "El menor int posible (limits.h). Vale -2147483648.",
+  "como_se_usa": "printf(\"%d\\n\",INT_MIN);  // muestra: -2147483648",
+  "error_tipico": "Escribirla en minúscula o sin el #include que corresponde.",
+  "en_la_materia": "limits.h",
+  "errores_ids": [
+   "EJE-018"
+  ],
+  "buscar": [
+   "int_min",
+   "minimo entero",
+   "entero mas chico"
+  ]
+ },
+ {
+  "elemento": "UINT_MAX",
+  "tipo": "constante",
+  "que_es": "El mayor unsigned int posible (limits.h). Vale 4294967295.",
+  "como_se_usa": "printf(\"%u\\n\",UINT_MAX);  // muestra: 4294967295",
+  "error_tipico": "Escribirla en minúscula o sin el #include que corresponde.",
+  "en_la_materia": "limits.h",
+  "errores_ids": [],
+  "buscar": [
+   "uint_max",
+   "maximo sin signo"
+  ]
+ },
+ {
+  "elemento": "LONG_MAX",
+  "tipo": "constante",
+  "que_es": "El mayor long posible (limits.h). Vale 9223372036854775807.",
+  "como_se_usa": "printf(\"%ld\\n\",LONG_MAX);  // muestra: 9223372036854775807",
+  "error_tipico": "Escribirla en minúscula o sin el #include que corresponde.",
+  "en_la_materia": "limits.h",
+  "errores_ids": [],
+  "buscar": [
+   "long_max",
+   "maximo long"
+  ]
+ },
+ {
+  "elemento": "LONG_MIN",
+  "tipo": "constante",
+  "que_es": "El menor long posible (limits.h). Vale -9223372036854775808.",
+  "como_se_usa": "printf(\"%ld\\n\",LONG_MIN);  // muestra: -9223372036854775808",
+  "error_tipico": "Escribirla en minúscula o sin el #include que corresponde.",
+  "en_la_materia": "limits.h",
+  "errores_ids": [],
+  "buscar": [
+   "long_min"
+  ]
+ },
+ {
+  "elemento": "ULONG_MAX",
+  "tipo": "constante",
+  "que_es": "El mayor unsigned long posible (limits.h). Vale 18446744073709551615.",
+  "como_se_usa": "printf(\"%lu\\n\",ULONG_MAX);  // muestra: 18446744073709551615",
+  "error_tipico": "Escribirla en minúscula o sin el #include que corresponde.",
+  "en_la_materia": "limits.h",
+  "errores_ids": [],
+  "buscar": [
+   "ulong_max"
+  ]
+ },
+ {
+  "elemento": "LLONG_MAX",
+  "tipo": "constante",
+  "que_es": "El mayor long long posible (limits.h). Vale 9223372036854775807.",
+  "como_se_usa": "printf(\"%lld\\n\",LLONG_MAX);  // muestra: 9223372036854775807",
+  "error_tipico": "Escribirla en minúscula o sin el #include que corresponde.",
+  "en_la_materia": "limits.h",
+  "errores_ids": [],
+  "buscar": [
+   "llong_max"
+  ]
+ },
+ {
+  "elemento": "LLONG_MIN",
+  "tipo": "constante",
+  "que_es": "El menor long long posible (limits.h). Vale -9223372036854775808.",
+  "como_se_usa": "printf(\"%lld\\n\",LLONG_MIN);  // muestra: -9223372036854775808",
+  "error_tipico": "Escribirla en minúscula o sin el #include que corresponde.",
+  "en_la_materia": "limits.h",
+  "errores_ids": [],
+  "buscar": [
+   "llong_min"
+  ]
+ },
+ {
+  "elemento": "ULLONG_MAX",
+  "tipo": "constante",
+  "que_es": "El mayor unsigned long long posible (limits.h). Vale 18446744073709551615.",
+  "como_se_usa": "printf(\"%llu\\n\",ULLONG_MAX);  // muestra: 18446744073709551615",
+  "error_tipico": "Escribirla en minúscula o sin el #include que corresponde.",
+  "en_la_materia": "limits.h",
+  "errores_ids": [],
+  "buscar": [
+   "ullong_max"
+  ]
+ },
+ {
+  "elemento": "SHRT_MAX",
+  "tipo": "constante",
+  "que_es": "El mayor short posible (limits.h). Vale 32767.",
+  "como_se_usa": "printf(\"%d\\n\",SHRT_MAX);  // muestra: 32767",
+  "error_tipico": "Escribirla en minúscula o sin el #include que corresponde.",
+  "en_la_materia": "limits.h",
+  "errores_ids": [],
+  "buscar": [
+   "shrt_max",
+   "maximo short"
+  ]
+ },
+ {
+  "elemento": "SHRT_MIN",
+  "tipo": "constante",
+  "que_es": "El menor short posible (limits.h). Vale -32768.",
+  "como_se_usa": "printf(\"%d\\n\",SHRT_MIN);  // muestra: -32768",
+  "error_tipico": "Escribirla en minúscula o sin el #include que corresponde.",
+  "en_la_materia": "limits.h",
+  "errores_ids": [],
+  "buscar": [
+   "shrt_min"
+  ]
+ },
+ {
+  "elemento": "USHRT_MAX",
+  "tipo": "constante",
+  "que_es": "El mayor unsigned short posible (limits.h). Vale 65535.",
+  "como_se_usa": "printf(\"%d\\n\",USHRT_MAX);  // muestra: 65535",
+  "error_tipico": "Escribirla en minúscula o sin el #include que corresponde.",
+  "en_la_materia": "limits.h",
+  "errores_ids": [],
+  "buscar": [
+   "ushrt_max"
+  ]
+ },
+ {
+  "elemento": "CHAR_MAX",
+  "tipo": "constante",
+  "que_es": "El mayor char posible (limits.h). Vale 127.",
+  "como_se_usa": "printf(\"%d\\n\",CHAR_MAX);  // muestra: 127",
+  "error_tipico": "Escribirla en minúscula o sin el #include que corresponde.",
+  "en_la_materia": "limits.h",
+  "errores_ids": [],
+  "buscar": [
+   "char_max"
+  ]
+ },
+ {
+  "elemento": "CHAR_MIN",
+  "tipo": "constante",
+  "que_es": "El menor char posible (limits.h). Vale -128.",
+  "como_se_usa": "printf(\"%d\\n\",CHAR_MIN);  // muestra: -128",
+  "error_tipico": "Escribirla en minúscula o sin el #include que corresponde.",
+  "en_la_materia": "limits.h",
+  "errores_ids": [],
+  "buscar": [
+   "char_min"
+  ]
+ },
+ {
+  "elemento": "UCHAR_MAX",
+  "tipo": "constante",
+  "que_es": "El mayor unsigned char posible (limits.h). Vale 255.",
+  "como_se_usa": "printf(\"%d\\n\",UCHAR_MAX);  // muestra: 255",
+  "error_tipico": "Escribirla en minúscula o sin el #include que corresponde.",
+  "en_la_materia": "limits.h",
+  "errores_ids": [],
+  "buscar": [
+   "uchar_max"
+  ]
+ },
+ {
+  "elemento": "CHAR_BIT",
+  "tipo": "constante",
+  "que_es": "Cantidad de bits de un char (limits.h). Vale 8.",
+  "como_se_usa": "printf(\"%d\\n\",CHAR_BIT);  // muestra: 8",
+  "error_tipico": "Escribirla en minúscula o sin el #include que corresponde.",
+  "en_la_materia": "limits.h",
+  "errores_ids": [],
+  "buscar": [
+   "char_bit",
+   "bits de un char"
+  ]
+ },
+ {
+  "elemento": "EXIT_SUCCESS",
+  "tipo": "constante",
+  "que_es": "Código que indica que el programa terminó bien. Vale 0 (stdlib.h).",
+  "como_se_usa": "return EXIT_SUCCESS;",
+  "error_tipico": "Escribirla en minúscula o sin el #include que corresponde.",
+  "en_la_materia": "stdlib.h",
+  "errores_ids": [],
+  "buscar": [
+   "exit_success",
+   "terminar bien",
+   "codigo de salida"
+  ]
+ },
+ {
+  "elemento": "EXIT_FAILURE",
+  "tipo": "constante",
+  "que_es": "Código que indica que el programa terminó con error. Vale 1 (stdlib.h).",
+  "como_se_usa": "return EXIT_FAILURE;",
+  "error_tipico": "Escribirla en minúscula o sin el #include que corresponde.",
+  "en_la_materia": "stdlib.h",
+  "errores_ids": [],
+  "buscar": [
+   "exit_failure",
+   "terminar con error"
+  ]
+ },
+ {
+  "elemento": "M_PI",
+  "tipo": "constante",
+  "que_es": "El número pi (math.h). Vale aproximadamente 3.14159.",
+  "como_se_usa": "printf(\"%.5f\\n\",M_PI);  // muestra: 3.14159",
+  "error_tipico": "Escribirla en minúscula o sin el #include que corresponde.",
+  "en_la_materia": "math.h",
+  "errores_ids": [
+   "PRE-036"
+  ],
+  "buscar": [
+   "m_pi",
+   "pi",
+   "numero pi",
+   "3.14",
+   "circunferencia",
+   "area del circulo"
+  ]
+ },
+ {
+  "elemento": "M_E",
+  "tipo": "constante",
+  "que_es": "El número e (math.h). Vale aproximadamente 2.71828.",
+  "como_se_usa": "printf(\"%.5f\\n\",M_E);  // muestra: 2.71828",
+  "error_tipico": "Escribirla en minúscula o sin el #include que corresponde.",
+  "en_la_materia": "math.h",
+  "errores_ids": [],
+  "buscar": [
+   "m_e",
+   "numero e",
+   "euler"
+  ]
+ },
+ {
+  "elemento": "M_PI_2",
+  "tipo": "constante",
+  "que_es": "Pi dividido 2 (math.h). Vale aproximadamente 1.57080.",
+  "como_se_usa": "printf(\"%.5f\\n\",M_PI_2);  // muestra: 1.57080",
+  "error_tipico": "Escribirla en minúscula o sin el #include que corresponde.",
+  "en_la_materia": "math.h",
+  "errores_ids": [],
+  "buscar": [
+   "m_pi_2",
+   "pi medios"
+  ]
+ },
+ {
+  "elemento": "M_PI_4",
+  "tipo": "constante",
+  "que_es": "Pi dividido 4 (math.h). Vale aproximadamente 0.78540.",
+  "como_se_usa": "printf(\"%.5f\\n\",M_PI_4);  // muestra: 0.78540",
+  "error_tipico": "Escribirla en minúscula o sin el #include que corresponde.",
+  "en_la_materia": "math.h",
+  "errores_ids": [],
+  "buscar": [
+   "m_pi_4",
+   "pi cuartos"
+  ]
+ },
+ {
+  "elemento": "M_1_PI",
+  "tipo": "constante",
+  "que_es": "1 dividido pi (math.h). Vale aproximadamente 0.31831.",
+  "como_se_usa": "printf(\"%.5f\\n\",M_1_PI);  // muestra: 0.31831",
+  "error_tipico": "Escribirla en minúscula o sin el #include que corresponde.",
+  "en_la_materia": "math.h",
+  "errores_ids": [],
+  "buscar": [
+   "m_1_pi"
+  ]
+ },
+ {
+  "elemento": "M_2_PI",
+  "tipo": "constante",
+  "que_es": "2 dividido pi (math.h). Vale aproximadamente 0.63662.",
+  "como_se_usa": "printf(\"%.5f\\n\",M_2_PI);  // muestra: 0.63662",
+  "error_tipico": "Escribirla en minúscula o sin el #include que corresponde.",
+  "en_la_materia": "math.h",
+  "errores_ids": [],
+  "buscar": [
+   "m_2_pi"
+  ]
+ },
+ {
+  "elemento": "M_2_SQRTPI",
+  "tipo": "constante",
+  "que_es": "2 dividido la raíz de pi (math.h). Vale aproximadamente 1.12838.",
+  "como_se_usa": "printf(\"%.5f\\n\",M_2_SQRTPI);  // muestra: 1.12838",
+  "error_tipico": "Escribirla en minúscula o sin el #include que corresponde.",
+  "en_la_materia": "math.h",
+  "errores_ids": [],
+  "buscar": [
+   "m_2_sqrtpi"
+  ]
+ },
+ {
+  "elemento": "M_SQRT2",
+  "tipo": "constante",
+  "que_es": "Raíz cuadrada de 2 (math.h). Vale aproximadamente 1.41421.",
+  "como_se_usa": "printf(\"%.5f\\n\",M_SQRT2);  // muestra: 1.41421",
+  "error_tipico": "Escribirla en minúscula o sin el #include que corresponde.",
+  "en_la_materia": "math.h",
+  "errores_ids": [],
+  "buscar": [
+   "m_sqrt2",
+   "raiz de 2"
+  ]
+ },
+ {
+  "elemento": "M_SQRT1_2",
+  "tipo": "constante",
+  "que_es": "Raíz cuadrada de 1/2 (math.h). Vale aproximadamente 0.70711.",
+  "como_se_usa": "printf(\"%.5f\\n\",M_SQRT1_2);  // muestra: 0.70711",
+  "error_tipico": "Escribirla en minúscula o sin el #include que corresponde.",
+  "en_la_materia": "math.h",
+  "errores_ids": [],
+  "buscar": [
+   "m_sqrt1_2"
+  ]
+ },
+ {
+  "elemento": "M_LN2",
+  "tipo": "constante",
+  "que_es": "Logaritmo natural de 2 (math.h). Vale aproximadamente 0.69315.",
+  "como_se_usa": "printf(\"%.5f\\n\",M_LN2);  // muestra: 0.69315",
+  "error_tipico": "Escribirla en minúscula o sin el #include que corresponde.",
+  "en_la_materia": "math.h",
+  "errores_ids": [],
+  "buscar": [
+   "m_ln2",
+   "ln 2"
+  ]
+ },
+ {
+  "elemento": "M_LN10",
+  "tipo": "constante",
+  "que_es": "Logaritmo natural de 10 (math.h). Vale aproximadamente 2.30259.",
+  "como_se_usa": "printf(\"%.5f\\n\",M_LN10);  // muestra: 2.30259",
+  "error_tipico": "Escribirla en minúscula o sin el #include que corresponde.",
+  "en_la_materia": "math.h",
+  "errores_ids": [],
+  "buscar": [
+   "m_ln10",
+   "ln 10"
+  ]
+ },
+ {
+  "elemento": "M_LOG2E",
+  "tipo": "constante",
+  "que_es": "Logaritmo en base 2 de e (math.h). Vale aproximadamente 1.44270.",
+  "como_se_usa": "printf(\"%.5f\\n\",M_LOG2E);  // muestra: 1.44270",
+  "error_tipico": "Escribirla en minúscula o sin el #include que corresponde.",
+  "en_la_materia": "math.h",
+  "errores_ids": [],
+  "buscar": [
+   "m_log2e"
+  ]
+ },
+ {
+  "elemento": "M_LOG10E",
+  "tipo": "constante",
+  "que_es": "Logaritmo en base 10 de e (math.h). Vale aproximadamente 0.43429.",
+  "como_se_usa": "printf(\"%.5f\\n\",M_LOG10E);  // muestra: 0.43429",
+  "error_tipico": "Escribirla en minúscula o sin el #include que corresponde.",
+  "en_la_materia": "math.h",
+  "errores_ids": [],
+  "buscar": [
+   "m_log10e"
+  ]
+ },
+ {
+  "elemento": "INFINITY",
+  "tipo": "constante",
+  "que_es": "El valor infinito de tipo float (math.h). Vale inf.",
+  "como_se_usa": "printf(\"%f\\n\",INFINITY);  // muestra: inf",
+  "error_tipico": "Escribirla en minúscula o sin el #include que corresponde.",
+  "en_la_materia": "math.h",
+  "errores_ids": [],
+  "buscar": [
+   "infinity",
+   "infinito",
+   "inf"
+  ]
+ },
+ {
+  "elemento": "NAN",
+  "tipo": "constante",
+  "que_es": "El valor \"no es un número\" de tipo float (math.h). Vale nan.",
+  "como_se_usa": "printf(\"%f\\n\",NAN);  // muestra: nan",
+  "error_tipico": "Escribirla en minúscula o sin el #include que corresponde.",
+  "en_la_materia": "math.h",
+  "errores_ids": [],
+  "buscar": [
+   "nan",
+   "not a number",
+   "no es un numero"
+  ]
+ },
+ {
+  "elemento": "HUGE_VAL",
+  "tipo": "constante",
+  "que_es": "Valor infinito de tipo double que devuelven algunas funciones al desbordar (math.h). Vale inf.",
+  "como_se_usa": "printf(\"%f\\n\",HUGE_VAL);  // muestra: inf",
+  "error_tipico": "Escribirla en minúscula o sin el #include que corresponde.",
+  "en_la_materia": "math.h",
+  "errores_ids": [],
+  "buscar": [
+   "huge_val"
+  ]
+ },
+ {
+  "elemento": "DBL_MAX",
+  "tipo": "constante",
+  "que_es": "El mayor double posible (float.h). Vale aproximadamente 1.797693e+308.",
+  "como_se_usa": "printf(\"%e\\n\",DBL_MAX);  // muestra: 1.797693e+308",
+  "error_tipico": "Escribirla en minúscula o sin el #include que corresponde.",
+  "en_la_materia": "float.h",
+  "errores_ids": [],
+  "buscar": [
+   "dbl_max",
+   "maximo double"
+  ]
+ },
+ {
+  "elemento": "DBL_MIN",
+  "tipo": "constante",
+  "que_es": "El menor double positivo normalizado (float.h). Vale aproximadamente 2.225074e-308.",
+  "como_se_usa": "printf(\"%e\\n\",DBL_MIN);  // muestra: 2.225074e-308",
+  "error_tipico": "Escribirla en minúscula o sin el #include que corresponde.",
+  "en_la_materia": "float.h",
+  "errores_ids": [],
+  "buscar": [
+   "dbl_min",
+   "minimo double"
+  ]
+ },
+ {
+  "elemento": "DBL_EPSILON",
+  "tipo": "constante",
+  "que_es": "La menor diferencia entre 1.0 y el número double siguiente (float.h). Vale aproximadamente 2.220446e-16.",
+  "como_se_usa": "printf(\"%e\\n\",DBL_EPSILON);  // muestra: 2.220446e-16",
+  "error_tipico": "Escribirla en minúscula o sin el #include que corresponde.",
+  "en_la_materia": "float.h",
+  "errores_ids": [],
+  "buscar": [
+   "dbl_epsilon",
+   "epsilon",
+   "comparar decimales",
+   "precision"
+  ]
+ },
+ {
+  "elemento": "FLT_MAX",
+  "tipo": "constante",
+  "que_es": "El mayor float posible (float.h). Vale aproximadamente 3.402823e+38.",
+  "como_se_usa": "printf(\"%e\\n\",FLT_MAX);  // muestra: 3.402823e+38",
+  "error_tipico": "Escribirla en minúscula o sin el #include que corresponde.",
+  "en_la_materia": "float.h",
+  "errores_ids": [],
+  "buscar": [
+   "flt_max",
+   "maximo float"
+  ]
+ },
+ {
+  "elemento": "FLT_MIN",
+  "tipo": "constante",
+  "que_es": "El menor float positivo normalizado (float.h). Vale aproximadamente 1.175494e-38.",
+  "como_se_usa": "printf(\"%e\\n\",FLT_MIN);  // muestra: 1.175494e-38",
+  "error_tipico": "Escribirla en minúscula o sin el #include que corresponde.",
+  "en_la_materia": "float.h",
+  "errores_ids": [],
+  "buscar": [
+   "flt_min",
+   "minimo float"
+  ]
+ },
+ {
+  "elemento": "FLT_EPSILON",
+  "tipo": "constante",
+  "que_es": "La menor diferencia entre 1.0 y el número float siguiente (float.h). Vale aproximadamente 1.192093e-07.",
+  "como_se_usa": "printf(\"%e\\n\",FLT_EPSILON);  // muestra: 1.192093e-07",
+  "error_tipico": "Escribirla en minúscula o sin el #include que corresponde.",
+  "en_la_materia": "float.h",
+  "errores_ids": [],
+  "buscar": [
+   "flt_epsilon"
+  ]
+ },
+ {
+  "elemento": "FLT_DIG",
+  "tipo": "constante",
+  "que_es": "Cantidad de cifras decimales que un float conserva sin error (float.h). Vale 6.",
+  "como_se_usa": "printf(\"%d\\n\",FLT_DIG);  // muestra: 6",
+  "error_tipico": "Escribirla en minúscula o sin el #include que corresponde.",
+  "en_la_materia": "float.h",
+  "errores_ids": [],
+  "buscar": [
+   "flt_dig",
+   "cifras de float"
+  ]
+ },
+ {
+  "elemento": "DBL_DIG",
+  "tipo": "constante",
+  "que_es": "Cantidad de cifras decimales que un double conserva sin error (float.h). Vale 15.",
+  "como_se_usa": "printf(\"%d\\n\",DBL_DIG);  // muestra: 15",
+  "error_tipico": "Escribirla en minúscula o sin el #include que corresponde.",
+  "en_la_materia": "float.h",
+  "errores_ids": [],
+  "buscar": [
+   "dbl_dig",
+   "cifras de double"
+  ]
+ },
+ {
+  "elemento": "FLT_MANT_DIG",
+  "tipo": "constante",
+  "que_es": "Cantidad de bits de la mantisa de un float (float.h). Vale 24.",
+  "como_se_usa": "printf(\"%d\\n\",FLT_MANT_DIG);  // muestra: 24",
+  "error_tipico": "Escribirla en minúscula o sin el #include que corresponde.",
+  "en_la_materia": "float.h",
+  "errores_ids": [],
+  "buscar": [
+   "flt_mant_dig",
+   "mantisa float"
+  ]
+ },
+ {
+  "elemento": "DBL_MANT_DIG",
+  "tipo": "constante",
+  "que_es": "Cantidad de bits de la mantisa de un double (float.h). Vale 53.",
+  "como_se_usa": "printf(\"%d\\n\",DBL_MANT_DIG);  // muestra: 53",
+  "error_tipico": "Escribirla en minúscula o sin el #include que corresponde.",
+  "en_la_materia": "float.h",
+  "errores_ids": [],
+  "buscar": [
+   "dbl_mant_dig",
+   "mantisa double"
+  ]
+ },
+ {
+  "elemento": "#include",
+  "tipo": "directiva",
+  "que_es": "Le dice al compilador que incorpore las declaraciones de una biblioteca antes de compilar. Va al principio del programa, con la cabecera entre < >.",
+  "como_se_usa": "#include <stdio.h>",
+  "error_tipico": "Escribir mal el nombre (studio.h) o ponerla dentro de main.",
+  "en_la_materia": "Preprocesador",
+  "errores_ids": [
+   "PRE-012",
+   "PRE-013",
+   "PRE-014",
+   "PRE-015",
+   "PRE-016",
+   "PRE-018",
+   "PRE-041",
+   "PRE-042"
+  ],
+  "buscar": [
+   "#include",
+   "incluir",
+   "libreria",
+   "biblioteca",
+   "cabecera",
+   "include",
+   "importar",
+   "header"
+  ]
+ },
+ {
+  "elemento": "#define",
+  "tipo": "directiva",
+  "que_es": "Define una constante o una macro con un nombre. Antes de compilar, el preprocesador reemplaza el nombre por su valor. No lleva ; ni =.",
+  "como_se_usa": "#define TOPE 10\nprintf(\"%d\\n\",TOPE);",
+  "error_tipico": "Poner ; al final o = entre el nombre y el valor: se copian en cada uso.",
+  "en_la_materia": "Preprocesador",
+  "errores_ids": [
+   "PRE-019",
+   "PRE-020",
+   "PRE-021",
+   "PRE-025",
+   "PRE-028",
+   "PRE-029",
+   "PRE-031",
+   "PRE-032",
+   "PRE-033",
+   "PRE-034"
+  ],
+  "buscar": [
+   "#define",
+   "constante simbolica",
+   "define",
+   "macro",
+   "definir constante",
+   "constante con nombre"
+  ]
+ },
+ {
+  "elemento": "#define con parámetros",
+  "tipo": "directiva",
+  "que_es": "Una macro que recibe argumentos: parece una función pero se reemplaza antes de compilar. Conviene poner todo entre paréntesis.",
+  "como_se_usa": "#define DOBLE(X) ((X)*2)\nprintf(\"%d\\n\",DOBLE(4));",
+  "error_tipico": "Olvidar los paréntesis: DOBLE(1+2) puede dar un resultado inesperado.",
+  "en_la_materia": "Preprocesador",
+  "errores_ids": [
+   "PRE-022",
+   "PRE-023",
+   "PRE-024",
+   "PRE-026",
+   "PRE-027"
+  ],
+  "buscar": [
+   "#define con parámetros",
+   "#define con parametros",
+   "macro con argumentos",
+   "macro funcion",
+   "define funcion",
+   "macro con parametros"
+  ]
+ },
+ {
+  "elemento": "#undef",
+  "tipo": "directiva",
+  "que_es": "Borra una definición hecha con #define para que deje de valer desde ahí.",
+  "como_se_usa": "#undef TOPE",
+  "error_tipico": "Usar el nombre después del #undef como si siguiera definido.",
+  "en_la_materia": "Preprocesador",
+  "errores_ids": [],
+  "buscar": [
+   "#undef",
+   "borrar define",
+   "undef",
+   "indefinir"
+  ]
+ },
+ {
+  "elemento": "#if",
+  "tipo": "directiva",
+  "que_es": "Compila el bloque que sigue solo si la condición (con números y macros) es verdadera. Se cierra con #endif.",
+  "como_se_usa": "#if MODO==1\n puts(\"Modo uno\");\n#endif",
+  "error_tipico": "Olvidar el #endif.",
+  "en_la_materia": "Preprocesador",
+  "errores_ids": [],
+  "buscar": [
+   "#if",
+   "compilacion condicional",
+   "if del preprocesador",
+   "if"
+  ]
+ },
+ {
+  "elemento": "#ifdef",
+  "tipo": "directiva",
+  "que_es": "Compila el bloque que sigue solo si el nombre fue definido con #define.",
+  "como_se_usa": "#ifdef DEPURAR\n puts(\"Depurando\");\n#endif",
+  "error_tipico": "Confundirlo con #if: #ifdef solo pregunta si existe.",
+  "en_la_materia": "Preprocesador",
+  "errores_ids": [],
+  "buscar": [
+   "#ifdef",
+   "si esta definido",
+   "ifdef",
+   "compilacion condicional"
+  ]
+ },
+ {
+  "elemento": "#ifndef",
+  "tipo": "directiva",
+  "que_es": "Compila el bloque que sigue solo si el nombre NO fue definido.",
+  "como_se_usa": "#ifndef TOPE\n#define TOPE 5\n#endif",
+  "error_tipico": "Olvidar el #endif.",
+  "en_la_materia": "Preprocesador",
+  "errores_ids": [],
+  "buscar": [
+   "#ifndef",
+   "si no esta definido",
+   "ifndef",
+   "proteccion"
+  ]
+ },
+ {
+  "elemento": "#else",
+  "tipo": "directiva",
+  "que_es": "Parte alternativa de un #if o #ifdef: se compila cuando la condición dio falso.",
+  "como_se_usa": "#else\n puts(\"Otro modo\");",
+  "error_tipico": "Usarlo sin un #if antes.",
+  "en_la_materia": "Preprocesador",
+  "errores_ids": [],
+  "buscar": [
+   "#else",
+   "else del preprocesador"
+  ]
+ },
+ {
+  "elemento": "#elif",
+  "tipo": "directiva",
+  "que_es": "Otra condición alternativa dentro de un #if.",
+  "como_se_usa": "#elif MODO==2\n puts(\"Modo dos\");",
+  "error_tipico": "Escribir #elseif: no existe.",
+  "en_la_materia": "Preprocesador",
+  "errores_ids": [],
+  "buscar": [
+   "#elif",
+   "elif del preprocesador"
+  ]
+ },
+ {
+  "elemento": "#endif",
+  "tipo": "directiva",
+  "que_es": "Cierra un bloque abierto con #if, #ifdef o #ifndef.",
+  "como_se_usa": "#endif",
+  "error_tipico": "Olvidarlo: el compilador avisa que falta.",
+  "en_la_materia": "Preprocesador",
+  "errores_ids": [],
+  "buscar": [
+   "#endif",
+   "fin de if",
+   "endif"
+  ]
+ },
+ {
+  "elemento": "#error",
+  "tipo": "directiva",
+  "que_es": "Hace fallar la compilación a propósito con el mensaje que escribas.",
+  "como_se_usa": "#error Falta definir MODO",
+  "error_tipico": "Dejarlo fuera de un #if y que el programa nunca compile.",
+  "en_la_materia": "Preprocesador",
+  "errores_ids": [],
+  "buscar": [
+   "#error",
+   "error del preprocesador"
+  ]
+ },
+ {
+  "elemento": "#pragma",
+  "tipo": "directiva",
+  "que_es": "Instrucción especial para el compilador. El editor la ignora.",
+  "como_se_usa": "#pragma once",
+  "error_tipico": "Depender de un pragma para que el programa funcione en otro compilador.",
+  "en_la_materia": "Preprocesador",
+  "errores_ids": [],
+  "buscar": [
+   "#pragma",
+   "pragma",
+   "pragma once"
+  ]
+ },
+ {
+  "elemento": "stdio.h",
+  "tipo": "biblioteca",
+  "que_es": "Cabecera de entrada y salida: printf, scanf, getchar, putchar, puts, fgets, sprintf...",
+  "como_se_usa": "#include <stdio.h>",
+  "error_tipico": "Escribir studio.h, o no incluirla y que printf quede sin declarar.",
+  "en_la_materia": "Bibliotecas",
+  "errores_ids": [
+   "PRE-001",
+   "PRE-002",
+   "PRE-012",
+   "PRE-013"
+  ],
+  "buscar": [
+   "stdio.h",
+   "entrada salida",
+   "stdio",
+   "printf scanf"
+  ]
+ },
+ {
+  "elemento": "math.h",
+  "tipo": "biblioteca",
+  "que_es": "Cabecera de matemática: sqrt, pow, sin, cos, floor, ceil, log, M_PI...",
+  "como_se_usa": "#include <math.h>",
+  "error_tipico": "Usar sqrt o pow sin incluirla. En gcc de escritorio también hay que enlazar con -lm.",
+  "en_la_materia": "Bibliotecas",
+  "errores_ids": [
+   "PRE-003",
+   "PRE-004"
+  ],
+  "buscar": [
+   "math.h",
+   "matematica",
+   "raiz",
+   "potencia",
+   "libreria matematica"
+  ]
+ },
+ {
+  "elemento": "stdlib.h",
+  "tipo": "biblioteca",
+  "que_es": "Cabecera de utilidades generales: rand, srand, abs, exit, atoi, system, EXIT_SUCCESS...",
+  "como_se_usa": "#include <stdlib.h>",
+  "error_tipico": "Usar rand o abs sin incluirla.",
+  "en_la_materia": "Bibliotecas",
+  "errores_ids": [
+   "PRE-005",
+   "PRE-008",
+   "PRE-010"
+  ],
+  "buscar": [
+   "stdlib.h",
+   "utilidades",
+   "stdlib",
+   "rand"
+  ]
+ },
+ {
+  "elemento": "ctype.h",
+  "tipo": "biblioteca",
+  "que_es": "Cabecera para clasificar y convertir caracteres: isdigit, isalpha, toupper, tolower...",
+  "como_se_usa": "#include <ctype.h>",
+  "error_tipico": "Usar toupper o isdigit sin incluirla.",
+  "en_la_materia": "Bibliotecas",
+  "errores_ids": [
+   "PRE-011"
+  ],
+  "buscar": [
+   "ctype.h",
+   "caracteres",
+   "ctype",
+   "mayuscula",
+   "letra"
+  ]
+ },
+ {
+  "elemento": "string.h",
+  "tipo": "biblioteca",
+  "que_es": "Cabecera para trabajar con textos: strlen, strcpy, strcat, strcmp...",
+  "como_se_usa": "#include <string.h>",
+  "error_tipico": "Usar strlen o strcpy sin incluirla.",
+  "en_la_materia": "Bibliotecas",
+  "errores_ids": [
+   "PRE-006",
+   "PRE-007"
+  ],
+  "buscar": [
+   "string.h",
+   "textos",
+   "cadenas",
+   "string"
+  ]
+ },
+ {
+  "elemento": "time.h",
+  "tipo": "biblioteca",
+  "que_es": "Cabecera de fechas y tiempos: time, clock, time_t, clock_t.",
+  "como_se_usa": "#include <time.h>",
+  "error_tipico": "Usar time(NULL) sin incluirla.",
+  "en_la_materia": "Bibliotecas",
+  "errores_ids": [
+   "PRE-009"
+  ],
+  "buscar": [
+   "time.h",
+   "tiempo",
+   "fecha",
+   "hora"
+  ]
+ },
+ {
+  "elemento": "limits.h",
+  "tipo": "biblioteca",
+  "que_es": "Cabecera con los límites de los tipos enteros: INT_MAX, INT_MIN, LONG_MAX...",
+  "como_se_usa": "#include <limits.h>",
+  "error_tipico": "Usar INT_MAX sin incluirla.",
+  "en_la_materia": "Bibliotecas",
+  "errores_ids": [],
+  "buscar": [
+   "limits.h",
+   "limites",
+   "maximo entero"
+  ]
+ },
+ {
+  "elemento": "float.h",
+  "tipo": "biblioteca",
+  "que_es": "Cabecera con los límites de los tipos decimales: DBL_MAX, FLT_EPSILON...",
+  "como_se_usa": "#include <float.h>",
+  "error_tipico": "Usar DBL_EPSILON sin incluirla.",
+  "en_la_materia": "Bibliotecas",
+  "errores_ids": [],
+  "buscar": [
+   "float.h",
+   "limites decimales",
+   "epsilon"
+  ]
+ },
+ {
+  "elemento": "stdbool.h",
+  "tipo": "biblioteca",
+  "que_es": "Cabecera que define bool, true y false.",
+  "como_se_usa": "#include <stdbool.h>",
+  "error_tipico": "Usar bool sin incluirla.",
+  "en_la_materia": "Bibliotecas",
+  "errores_ids": [],
+  "buscar": [
+   "stdbool.h",
+   "booleano",
+   "bool",
+   "verdadero falso"
+  ]
+ },
+ {
+  "elemento": "conio.h",
+  "tipo": "biblioteca",
+  "que_es": "Cabecera de Windows con getch y getche. No es estándar y no existe en Linux.",
+  "como_se_usa": "#include <conio.h>",
+  "error_tipico": "Incluirla en un programa que se compila en Linux: no compila.",
+  "en_la_materia": "Bibliotecas",
+  "errores_ids": [
+   "POR-003",
+   "POR-004",
+   "PRE-037"
+  ],
+  "buscar": [
+   "conio.h",
+   "conio",
+   "getch",
+   "clrscr",
+   "windows"
+  ]
+ },
+ {
+  "elemento": "variable",
+  "tipo": "concepto",
+  "que_es": "Un lugar de la memoria con nombre donde el programa guarda un dato que puede cambiar. Se declara con su tipo antes de usarla.",
+  "como_se_usa": "int CONT=0;\nCONT=CONT+1;",
+  "error_tipico": "Usarla antes de darle un valor: contiene basura.",
+  "en_la_materia": "Variables",
+  "errores_ids": [
+   "DEC-001",
+   "DEC-002",
+   "DEC-004",
+   "DEC-005",
+   "DEC-006",
+   "DEC-011",
+   "DEC-014",
+   "SIN-001",
+   "SIN-039",
+   "SIN-040",
+   "SIN-046",
+   "SIN-048",
+   "SIN-049"
+  ],
+  "buscar": [
+   "variable",
+   "declarar",
+   "declaracion",
+   "guardar un dato",
+   "nombre de variable",
+   "inicializar",
+   "sale basura",
+   "numero raro",
+   "sin valor"
+  ]
+ },
+ {
+  "elemento": "constante",
+  "tipo": "concepto",
+  "que_es": "Un valor que no cambia mientras corre el programa. Se escribe con const o con #define.",
+  "como_se_usa": "const int MAX=100;\nprintf(\"%d\\n\",MAX);",
+  "error_tipico": "Intentar asignarle otro valor: no compila.",
+  "en_la_materia": "Constantes",
+  "errores_ids": [
+   "DEC-010",
+   "DEC-026",
+   "PRE-028"
+  ],
+  "buscar": [
+   "constante",
+   "valor fijo",
+   "no cambia",
+   "definir constante"
+  ]
+ },
+ {
+  "elemento": "función",
+  "tipo": "concepto",
+  "que_es": "Un bloque de instrucciones con nombre que se puede llamar desde otras partes. Puede recibir datos (parámetros) y devolver un resultado.",
+  "como_se_usa": "int DOBLE(int X){\n return X*2;\n}",
+  "error_tipico": "Llamarla antes de definirla sin haber puesto su prototipo.",
+  "en_la_materia": "Funciones",
+  "errores_ids": [
+   "FUN-001",
+   "FUN-020",
+   "FUN-026",
+   "SIN-054"
+  ],
+  "buscar": [
+   "función",
+   "funcion",
+   "subprograma",
+   "procedimiento",
+   "modulo",
+   "definir funcion",
+   "llamar funcion"
+  ]
+ },
+ {
+  "elemento": "prototipo",
+  "tipo": "concepto",
+  "que_es": "La declaración de una función (tipo de retorno, nombre y tipos de parámetros) escrita antes de usarla, terminada con ;. Le avisa al compilador cómo es la función que definís más abajo.",
+  "como_se_usa": "int DOBLE(int);",
+  "error_tipico": "Olvidarlo cuando main llama a una función definida debajo: el compilador no la conoce.",
+  "en_la_materia": "Funciones",
+  "errores_ids": [
+   "FUN-001",
+   "FUN-002",
+   "FUN-003",
+   "FUN-004",
+   "FUN-005",
+   "FUN-006",
+   "FUN-009",
+   "FUN-032",
+   "SIN-054"
+  ],
+  "buscar": [
+   "prototipo",
+   "declarar funcion",
+   "declaracion de funcion",
+   "funcion definida despues",
+   "implicit declaration",
+   "conflicting types"
+  ]
+ },
+ {
+  "elemento": "argumento",
+  "tipo": "concepto",
+  "que_es": "El dato concreto que le pasás a una función cuando la llamás.",
+  "como_se_usa": "R=DOBLE(5);",
+  "error_tipico": "Pasar más o menos argumentos que parámetros tiene la función.",
+  "en_la_materia": "Funciones",
+  "errores_ids": [
+   "FUN-007",
+   "FUN-008",
+   "FUN-010",
+   "FUN-043"
+  ],
+  "buscar": [
+   "argumento",
+   "pasar datos",
+   "llamar con datos",
+   "valor que se pasa"
+  ]
+ },
+ {
+  "elemento": "parámetro",
+  "tipo": "concepto",
+  "que_es": "La variable que aparece en la definición de la función y recibe el argumento. Dentro de la función se usa como cualquier variable.",
+  "como_se_usa": "int DOBLE(int X){\n return X*2;\n}",
+  "error_tipico": "Usar el nombre del parámetro fuera de la función: ahí no existe.",
+  "en_la_materia": "Funciones",
+  "errores_ids": [
+   "FUN-031",
+   "FUN-035",
+   "FUN-041"
+  ],
+  "buscar": [
+   "parámetro",
+   "parametro",
+   "parametros de funcion",
+   "variable de la funcion"
+  ]
+ },
+ {
+  "elemento": "retorno",
+  "tipo": "concepto",
+  "que_es": "El valor que una función entrega a quien la llamó con return. El tipo que se anuncia antes del nombre es el tipo del retorno.",
+  "como_se_usa": "return SUMA;",
+  "error_tipico": "No escribir return en una función que debe devolver un valor.",
+  "en_la_materia": "Funciones",
+  "errores_ids": [
+   "FUN-011",
+   "FUN-012",
+   "FUN-015",
+   "FUN-017"
+  ],
+  "buscar": [
+   "retorno",
+   "valor devuelto",
+   "devolver un valor",
+   "resultado de funcion",
+   "return"
+  ]
+ },
+ {
+  "elemento": "ámbito",
+  "tipo": "concepto",
+  "que_es": "La parte del programa donde un nombre existe. Una variable declarada dentro de un bloque { } solo se puede usar ahí adentro.",
+  "como_se_usa": "{\n int A=1;\n printf(\"%d\\n\",A);\n}",
+  "error_tipico": "Usar fuera del bloque una variable que se declaró adentro: C dice que no está declarada.",
+  "en_la_materia": "Variables, funciones",
+  "errores_ids": [
+   "DEC-007",
+   "DEC-008",
+   "DEC-009",
+   "DEC-021",
+   "DEC-025",
+   "FUN-018",
+   "FUN-019"
+  ],
+  "buscar": [
+   "ámbito",
+   "ambito",
+   "alcance",
+   "scope",
+   "variable local",
+   "variable global",
+   "visibilidad",
+   "no esta declarada",
+   "undeclared"
+  ]
+ },
+ {
+  "elemento": "variable local",
+  "tipo": "concepto",
+  "que_es": "Variable declarada dentro de una función o bloque: vive mientras se ejecuta ese bloque y solo se ve ahí.",
+  "como_se_usa": "int CONT=0;",
+  "error_tipico": "Esperar que conserve su valor la próxima vez que se llame a la función: se vuelve a crear.",
+  "en_la_materia": "Variables",
+  "errores_ids": [
+   "DEC-007",
+   "FUN-018"
+  ],
+  "buscar": [
+   "variable local",
+   "local"
+  ]
+ },
+ {
+  "elemento": "variable global",
+  "tipo": "concepto",
+  "que_es": "Variable declarada fuera de todas las funciones: la ven todas las funciones. En la materia conviene evitarla.",
+  "como_se_usa": "int TOTAL=0;",
+  "error_tipico": "Usar globales para pasar datos entre funciones en vez de parámetros.",
+  "en_la_materia": "Variables",
+  "errores_ids": [
+   "DEC-009",
+   "DEC-024"
+  ],
+  "buscar": [
+   "variable global",
+   "global"
+  ]
+ },
+ {
+  "elemento": "contador",
+  "tipo": "concepto",
+  "que_es": "Variable que sube (o baja) siempre la misma cantidad, normalmente de a 1, cada vez que pasa algo. Cuenta cuántas veces ocurre un hecho.",
+  "como_se_usa": "CONT=0;\nCONT=CONT+1;",
+  "error_tipico": "No iniciarlo en 0 antes del lazo.",
+  "en_la_materia": "LC, LR",
+  "errores_ids": [
+   "DEC-006",
+   "LOG-025",
+   "LOG-036"
+  ],
+  "buscar": [
+   "contador",
+   "contar",
+   "cuantos",
+   "cantidad de veces",
+   "conteo"
+  ]
+ },
+ {
+  "elemento": "acumulador",
+  "tipo": "concepto",
+  "que_es": "Variable donde se va sumando (o multiplicando) un valor distinto en cada vuelta. Se inicia en 0 para sumas y en 1 para productos.",
+  "como_se_usa": "SUMA=0;\nSUMA=SUMA+A;",
+  "error_tipico": "Iniciar en 0 un acumulador de productos: todo da 0.",
+  "en_la_materia": "LC, LR",
+  "errores_ids": [
+   "DEC-005",
+   "DEC-020",
+   "DEC-030",
+   "DEC-036",
+   "LOG-024",
+   "LOG-037"
+  ],
+  "buscar": [
+   "acumulador",
+   "acumular",
+   "sumar valores",
+   "suma total",
+   "total",
+   "sumatoria"
+  ]
+ },
+ {
+  "elemento": "centinela",
+  "tipo": "concepto",
+  "que_es": "Valor especial que el usuario escribe para avisar que se terminó la carga de datos, por ejemplo 0 o -1. No se procesa como un dato más.",
+  "como_se_usa": "scanf(\"%d\",&A);\nwhile(A!=0){\n scanf(\"%d\",&A);\n}",
+  "error_tipico": "Procesar el centinela como si fuera un dato (sumarlo, contarlo).",
+  "en_la_materia": "LC",
+  "errores_ids": [
+   "CTL-026",
+   "LOG-040",
+   "LOG-041"
+  ],
+  "buscar": [
+   "centinela",
+   "valor de corte",
+   "condicion de corte",
+   "fin de carga",
+   "terminar con cero",
+   "ingresar hasta"
+  ]
+ },
+ {
+  "elemento": "lazo",
+  "tipo": "concepto",
+  "que_es": "Estructura que repite un grupo de instrucciones. En C: for, while y do-while. También se llama bucle o ciclo.",
+  "como_se_usa": "for(I=0;I<3;I++){\n printf(\"%d\\n\",I);\n}",
+  "error_tipico": "Un lazo que nunca llega a su condición de corte no termina.",
+  "en_la_materia": "LR, LC",
+  "errores_ids": [
+   "CTL-016",
+   "CTL-021",
+   "CTL-022",
+   "LOG-033",
+   "SIN-005",
+   "SIN-055",
+   "SIN-058"
+  ],
+  "buscar": [
+   "lazo",
+   "bucle",
+   "ciclo",
+   "repeticion",
+   "loop",
+   "iteracion",
+   "repetir"
+  ]
+ },
+ {
+  "elemento": "lazo repetitivo",
+  "tipo": "concepto",
+  "que_es": "En la materia, lazo cuya cantidad de vueltas se conoce de antemano (LR). Se resuelve con for.",
+  "como_se_usa": "for(I=1;I<=5;I++){\n printf(\"%d\\n\",I);\n}",
+  "error_tipico": "Usar un for cuando la cantidad de vueltas depende de un dato que ingresa el usuario.",
+  "en_la_materia": "LR",
+  "errores_ids": [],
+  "buscar": [
+   "lazo repetitivo",
+   "lr",
+   "for con cantidad fija",
+   "repetir n veces"
+  ]
+ },
+ {
+  "elemento": "lazo condicional",
+  "tipo": "concepto",
+  "que_es": "En la materia, lazo que repite mientras se cumpla una condición, sin saber de antemano cuántas vueltas serán (LC). Se resuelve con while o do-while.",
+  "como_se_usa": "while(A!=0){\n scanf(\"%d\",&A);\n}",
+  "error_tipico": "No cambiar dentro del lazo la variable de la condición.",
+  "en_la_materia": "LC",
+  "errores_ids": [],
+  "buscar": [
+   "lazo condicional",
+   "lc",
+   "while con condicion",
+   "repetir mientras"
+  ]
+ },
+ {
+  "elemento": "bucle infinito",
+  "tipo": "concepto",
+  "que_es": "Lazo cuya condición nunca deja de ser verdadera, así que el programa no termina.",
+  "como_se_usa": "while(1){\n /* nunca termina */\n}",
+  "error_tipico": "Olvidar actualizar la variable de la condición, o poner ; después del while.",
+  "en_la_materia": "LC",
+  "errores_ids": [
+   "CTL-021",
+   "CTL-022",
+   "EJE-013"
+  ],
+  "buscar": [
+   "bucle infinito",
+   "se cuelga",
+   "no termina",
+   "se tilda",
+   "lazo infinito",
+   "se queda trabado"
+  ]
+ },
+ {
+  "elemento": "arreglo",
+  "tipo": "concepto",
+  "que_es": "Conjunto de variables del mismo tipo con un solo nombre; cada una se elige con un índice que empieza en 0. También se llama vector o array.",
+  "como_se_usa": "int V[3]={10,20,30};\nprintf(\"%d\\n\",V[1]);",
+  "error_tipico": "Usar el índice igual al tamaño: V[3] en un arreglo de 3 está fuera de rango.",
+  "en_la_materia": "Arreglos",
+  "errores_ids": [
+   "ARR-001",
+   "ARR-004",
+   "ARR-005",
+   "ARR-008",
+   "ARR-012",
+   "ARR-021",
+   "ARR-022",
+   "SIN-010"
+  ],
+  "buscar": [
+   "arreglo",
+   "vector",
+   "array",
+   "lista",
+   "indice",
+   "matriz",
+   "posicion",
+   "fuera de rango",
+   "se rompe el programa",
+   "segmentation fault",
+   "se sale del arreglo"
+  ]
+ },
+ {
+  "elemento": "índice",
+  "tipo": "concepto",
+  "que_es": "El número que elige un elemento de un arreglo. Empieza en 0 y llega hasta tamaño menos 1.",
+  "como_se_usa": "V[0]=5;",
+  "error_tipico": "Usar un índice negativo o igual al tamaño: es comportamiento indefinido.",
+  "en_la_materia": "Arreglos",
+  "errores_ids": [
+   "ARR-001",
+   "ARR-003",
+   "ARR-004",
+   "ARR-005",
+   "EJE-003",
+   "EJE-004"
+  ],
+  "buscar": [
+   "índice",
+   "indice",
+   "subindice",
+   "posicion del arreglo",
+   "fuera de rango",
+   "fuera de limites"
+  ]
+ },
+ {
+  "elemento": "texto",
+  "tipo": "concepto",
+  "que_es": "En C no existe un tipo texto: un texto (cadena de caracteres) es un arreglo de char que termina en el carácter '\\0'.",
+  "como_se_usa": "char T[]=\"Hola\";\nprintf(\"%s\\n\",T);",
+  "error_tipico": "Comparar o copiar textos con == o =: hay que usar strcmp y strcpy.",
+  "en_la_materia": "Texto",
+  "errores_ids": [
+   "ARR-029",
+   "ARR-030",
+   "ARR-036",
+   "ARR-039",
+   "SIN-051"
+  ],
+  "buscar": [
+   "texto",
+   "cadena",
+   "cadena de caracteres",
+   "string",
+   "palabra",
+   "frase",
+   "arreglo de char",
+   "no puedo comparar textos",
+   "el texto sale con basura",
+   "texto no entra"
+  ]
+ },
+ {
+  "elemento": "terminador",
+  "tipo": "concepto",
+  "que_es": "El carácter '\\0' (código 0) que marca el final de un texto. strlen y printf con %s lo usan para saber dónde termina.",
+  "como_se_usa": "char T[]=\"Hi\";\nprintf(\"%d\\n\",T[2]);",
+  "error_tipico": "Declarar un arreglo del largo exacto del texto y dejar sin lugar al terminador.",
+  "en_la_materia": "Texto",
+  "errores_ids": [
+   "ARR-029",
+   "ARR-052",
+   "ARR-060"
+  ],
+  "buscar": [
+   "terminador",
+   "fin de cadena",
+   "nulo",
+   "barra cero",
+   "null terminator"
+  ]
+ },
+ {
+  "elemento": "comportamiento indefinido",
+  "tipo": "concepto",
+  "que_es": "Cuando el programa hace algo que C no define: puede dar cualquier resultado, o parecer que anda y fallar en otra máquina. Ejemplos: usar una variable sin valor, salirse de un arreglo, desbordar un int con signo, dividir por cero.",
+  "como_se_usa": "int V[3];\nV[5]=1;",
+  "error_tipico": "Confiar en que \"a mí me anduvo\": el resultado puede cambiar con otro compilador.",
+  "en_la_materia": "Portabilidad",
+  "errores_ids": [
+   "EJE-003",
+   "EJE-004",
+   "EJE-009",
+   "EJE-018",
+   "OPE-017",
+   "POR-012",
+   "POR-013"
+  ],
+  "buscar": [
+   "comportamiento indefinido",
+   "indefinido",
+   "ub",
+   "undefined behavior",
+   "a veces anda",
+   "resultado raro",
+   "basura",
+   "cosas raras",
+   "anda en mi casa",
+   "segmentation fault",
+   "falla en otra pc"
+  ]
+ },
+ {
+  "elemento": "desborde",
+  "tipo": "concepto",
+  "que_es": "Cuando una cuenta da un resultado que no entra en el tipo: un int se pasa de 2147483647 y da la vuelta a un número negativo.",
+  "como_se_usa": "int A=INT_MAX;\nA=A+1;",
+  "error_tipico": "No darse cuenta: la suma \"anda\" pero da un número absurdo. Probá con long.",
+  "en_la_materia": "Tipos",
+  "errores_ids": [
+   "EJE-010",
+   "EJE-011",
+   "EJE-012",
+   "TIP-008",
+   "TIP-009"
+  ],
+  "buscar": [
+   "desborde",
+   "overflow",
+   "se pasa del maximo",
+   "da negativo",
+   "numero muy grande",
+   "vuelta",
+   "factorial da mal",
+   "numero gigante"
+  ]
+ },
+ {
+  "elemento": "división entera",
+  "tipo": "concepto",
+  "que_es": "Cuando los dos operandos de / son enteros, el resultado también es entero y se pierde la parte decimal: 7/2 da 3 y 1/2 da 0.",
+  "como_se_usa": "printf(\"%d\\n\",7/2);",
+  "error_tipico": "Esperar 3.5: para eso uno de los dos tiene que ser decimal, como 7/2.0.",
+  "en_la_materia": "Operadores, tipos",
+  "errores_ids": [
+   "LOG-003",
+   "LOG-052",
+   "TIP-001",
+   "TIP-002",
+   "TIP-003",
+   "TIP-004",
+   "TIP-005",
+   "TIP-006",
+   "TIP-007"
+  ],
+  "buscar": [
+   "división entera",
+   "division entera",
+   "dividir enteros",
+   "da 0",
+   "por que 7/2 da 3",
+   "sin decimales",
+   "division"
+  ]
+ },
+ {
+  "elemento": "precedencia",
+  "tipo": "concepto",
+  "que_es": "El orden en que C resuelve los operadores de una cuenta: primero * / %, después + -, después las comparaciones, después && y por último ||. Los paréntesis lo cambian.",
+  "como_se_usa": "printf(\"%d %d\\n\",2+3*4,(2+3)*4);",
+  "error_tipico": "Mezclar && y || sin paréntesis y que se evalúe en otro orden del esperado.",
+  "en_la_materia": "Operadores",
+  "errores_ids": [
+   "LOG-002",
+   "OPE-013",
+   "OPE-014",
+   "OPE-043",
+   "OPE-045"
+  ],
+  "buscar": [
+   "precedencia",
+   "orden de operaciones",
+   "prioridad",
+   "parentesis",
+   "jerarquia de operadores"
+  ]
+ },
+ {
+  "elemento": "conversión de tipos",
+  "tipo": "concepto",
+  "que_es": "Cuando una cuenta mezcla tipos, C convierte solo al más \"ancho\": int con float da float. También podés forzarla con un cast: (float)A.",
+  "como_se_usa": "printf(\"%.1f\\n\",(float)7/2);",
+  "error_tipico": "Convertir el resultado en vez de los operandos: (float)(7/2) ya perdió los decimales.",
+  "en_la_materia": "Tipos",
+  "errores_ids": [
+   "TIP-001",
+   "TIP-003",
+   "TIP-035"
+  ],
+  "buscar": [
+   "conversión de tipos",
+   "conversion de tipos",
+   "conversion",
+   "cast",
+   "convertir",
+   "mezclar tipos",
+   "int con float",
+   "conversion implicita"
+  ]
+ },
+ {
+  "elemento": "expresión",
+  "tipo": "concepto",
+  "que_es": "Combinación de valores, variables y operadores que produce un valor: A+B*2, A>5, ...",
+  "como_se_usa": "R=(A+B)*2;\nprintf(\"%d\\n\",R);  // muestra: 6",
+  "error_tipico": "Escribir una expresión sin guardar ni usar el resultado: no hace nada.",
+  "en_la_materia": "Operadores",
+  "errores_ids": [
+   "OPE-020"
+  ],
+  "buscar": [
+   "expresión",
+   "expresion",
+   "cuenta",
+   "calculo",
+   "formula"
+  ]
+ },
+ {
+  "elemento": "instrucción",
+  "tipo": "concepto",
+  "que_es": "Una orden completa del programa; termina con ;. Por ejemplo una asignación, una llamada a printf o un return.",
+  "como_se_usa": "A=A+1;\nprintf(\"%d\\n\",A);  // muestra: 2",
+  "error_tipico": "Olvidar el ; al final.",
+  "en_la_materia": "SS",
+  "errores_ids": [
+   "CTL-050",
+   "OPE-003",
+   "SIN-001",
+   "SIN-002",
+   "SIN-003"
+  ],
+  "buscar": [
+   "instrucción",
+   "instruccion",
+   "sentencia",
+   "orden",
+   "statement"
+  ]
+ },
+ {
+  "elemento": "bloque",
+  "tipo": "concepto",
+  "que_es": "Grupo de instrucciones encerradas entre llaves { }. Un if o un lazo con más de una instrucción necesita bloque.",
+  "como_se_usa": "if(A>0){\n A--;\n B++;\n}",
+  "error_tipico": "No poner llaves y creer que el if controla las dos instrucciones.",
+  "en_la_materia": "BC, LR, LC",
+  "errores_ids": [
+   "CTL-002",
+   "LOG-032",
+   "LOG-034",
+   "SIN-008",
+   "SIN-009",
+   "SIN-035"
+  ],
+  "buscar": [
+   "bloque",
+   "llaves",
+   "cuerpo",
+   "grupo de instrucciones"
+  ]
+ },
+ {
+  "elemento": "condición",
+  "tipo": "concepto",
+  "que_es": "Expresión que da verdadero o falso y decide qué camino sigue el programa. En C, 0 es falso y cualquier otro valor es verdadero.",
+  "como_se_usa": "if(A>5) puts(\"Mayor\");",
+  "error_tipico": "Confundir = con == en la condición.",
+  "en_la_materia": "BC",
+  "errores_ids": [
+   "CTL-029",
+   "CTL-034",
+   "OPE-001"
+  ],
+  "buscar": [
+   "condición",
+   "condicion",
+   "verdadero o falso",
+   "comparar",
+   "decision",
+   "expresion logica"
+  ]
+ },
+ {
+  "elemento": "bandera",
+  "tipo": "concepto",
+  "que_es": "Variable que vale 0 o 1 para recordar si pasó algo (por ejemplo, si ya se encontró un dato). También se llama flag o indicador.",
+  "como_se_usa": "ENCONTRADO=0;\nif(A==5) ENCONTRADO=1;",
+  "error_tipico": "No iniciar la bandera antes del lazo.",
+  "en_la_materia": "LC, BC",
+  "errores_ids": [
+   "DEC-034"
+  ],
+  "buscar": [
+   "bandera",
+   "flag",
+   "indicador",
+   "senal",
+   "interruptor"
+  ]
+ },
+ {
+  "elemento": "promedio",
+  "tipo": "concepto",
+  "que_es": "La suma de los datos dividida por la cantidad. Hay que evitar dividir por cero si no se cargó ningún dato, y convertir a decimal para no perder la parte decimal.",
+  "como_se_usa": "PROM=(float)SUMA/N;\nprintf(\"%g\\n\",PROM);  // muestra: 3.5",
+  "error_tipico": "Dividir dos enteros: el promedio sale truncado. Dividir con N=0: error.",
+  "en_la_materia": "LC, acumulador",
+  "errores_ids": [
+   "LOG-002",
+   "LOG-003",
+   "LOG-026",
+   "LOG-027",
+   "LOG-028"
+  ],
+  "buscar": [
+   "promedio",
+   "media",
+   "promediar",
+   "dividir por cero",
+   "promedio da 0",
+   "promedio sin decimales"
+  ]
+ },
+ {
+  "elemento": "máximo y mínimo",
+  "tipo": "concepto",
+  "que_es": "Para hallar el mayor (o menor) de una serie se guarda el mejor valor visto hasta el momento y se lo compara con cada dato nuevo.",
+  "como_se_usa": "if(A>MAX) MAX=A;",
+  "error_tipico": "Iniciar MAX en 0: si todos los datos son negativos, queda mal. Mejor iniciarlo con el primer dato.",
+  "en_la_materia": "LC, BC",
+  "errores_ids": [
+   "LOG-029",
+   "LOG-030"
+  ],
+  "buscar": [
+   "máximo y mínimo",
+   "maximo y minimo",
+   "maximo",
+   "minimo",
+   "mayor",
+   "menor",
+   "el mas grande",
+   "el mas chico",
+   "mayor de una serie"
+  ]
+ },
+ {
+  "elemento": "SS",
+  "tipo": "concepto",
+  "que_es": "Secuencia simple: estructura de la materia en la que las instrucciones se ejecutan una detrás de otra, sin decisiones ni repeticiones.",
+  "como_se_usa": "LEER A;\nB = A * 2;",
+  "error_tipico": "Agregar decisiones o repeticiones a un ejercicio que se resuelve en secuencia.",
+  "en_la_materia": "SS",
+  "errores_ids": [],
+  "buscar": [
+   "ss",
+   "secuencia simple",
+   "estructura secuencial"
+  ]
+ },
+ {
+  "elemento": "BC",
+  "tipo": "concepto",
+  "que_es": "Bifurcación condicional: estructura de la materia en la que según una condición se ejecuta un camino u otro (if / if-else / switch).",
+  "como_se_usa": "if(A>0) puts(\"+\");\nelse puts(\"-\");",
+  "error_tipico": "Olvidar un caso: el que no cumple ninguna condición.",
+  "en_la_materia": "BC",
+  "errores_ids": [],
+  "buscar": [
+   "bc",
+   "bifurcacion condicional",
+   "si sino",
+   "decision"
+  ]
+ },
+ {
+  "elemento": "compilar",
+  "tipo": "concepto",
+  "que_es": "Traducir el programa C a lenguaje de máquina. Si hay errores de sintaxis, el compilador no genera el programa y te muestra los mensajes.",
+  "como_se_usa": "gcc programa.c -o programa",
+  "error_tipico": "Ignorar los avisos (warnings): suelen señalar errores de lógica.",
+  "en_la_materia": "Herramientas",
+  "errores_ids": [
+   "DEC-012",
+   "DEC-013"
+  ],
+  "buscar": [
+   "compilar",
+   "compilador",
+   "gcc",
+   "errores de compilacion",
+   "warning",
+   "aviso"
+  ]
+ },
+ {
+  "elemento": "identificador",
+  "tipo": "concepto",
+  "que_es": "El nombre que le ponés a una variable o función. Tiene letras, números y guion bajo, no empieza con número y no puede ser una palabra reservada.",
+  "como_se_usa": "int TOTAL_FINAL=0;",
+  "error_tipico": "Usar guion medio, espacios o empezar con un número.",
+  "en_la_materia": "Variables",
+  "errores_ids": [
+   "DEC-016",
+   "DEC-017",
+   "DEC-018",
+   "DEC-019",
+   "SIN-039",
+   "SIN-040",
+   "SIN-046",
+   "SIN-048"
+  ],
+  "buscar": [
+   "identificador",
+   "nombre de variable",
+   "nombre valido"
+  ]
+ },
+ {
+  "elemento": "mayúsculas y minúsculas",
+  "tipo": "concepto",
+  "que_es": "C distingue unas de otras: A y a son variables distintas, e int no es lo mismo que Int. Las palabras reservadas van siempre en minúscula.",
+  "como_se_usa": "int A=1;\nint a=2;",
+  "error_tipico": "Escribir el nombre de una variable con otra capitalización: C dice que no está declarada.",
+  "en_la_materia": "Sintaxis",
+  "errores_ids": [
+   "DEC-003",
+   "DEC-037",
+   "FUN-045",
+   "SIN-022",
+   "SIN-058"
+  ],
+  "buscar": [
+   "mayúsculas y minúsculas",
+   "mayusculas y minusculas",
+   "mayusculas",
+   "minusculas",
+   "case sensitive",
+   "distingue mayusculas"
+  ]
+ },
+ {
+  "elemento": "recursión",
+  "tipo": "concepto",
+  "que_es": "Cuando una función se llama a sí misma. Siempre necesita un caso base que corte las llamadas.",
+  "como_se_usa": "int FACT(int N){\n if(N<=1) return 1;\n return N*FACT(N-1);\n}",
+  "error_tipico": "Olvidar el caso base: la función se llama sin fin hasta que el programa se cae.",
+  "en_la_materia": "Funciones",
+  "errores_ids": [
+   "EJE-006",
+   "EJE-007",
+   "FUN-021",
+   "FUN-022"
+  ],
+  "buscar": [
+   "recursión",
+   "recursion",
+   "recursiva",
+   "funcion que se llama a si misma",
+   "factorial"
+  ]
+ },
+ {
+  "elemento": "buffer de entrada",
+  "tipo": "concepto",
+  "que_es": "Memoria donde se acumulan las teclas que escribís hasta que se las lee. scanf deja el Enter pendiente en el buffer, y por eso una lectura de char o de línea posterior puede tomarlo sin esperar.",
+  "como_se_usa": "scanf(\"%d\",&A);\nscanf(\" %c\",&C);",
+  "error_tipico": "Leer un char con %c justo después de un número: toma el Enter. Dejá un espacio antes de %c.",
+  "en_la_materia": "scanf",
+  "errores_ids": [
+   "ARR-042",
+   "SCN-010",
+   "SCN-011",
+   "SCN-034"
+  ],
+  "buscar": [
+   "buffer de entrada",
+   "buffer",
+   "enter pendiente",
+   "salta el scanf",
+   "no espera",
+   "scanf de char",
+   "limpiar buffer",
+   "no espera la letra"
+  ]
+ },
+ {
+  "elemento": "ASCII",
+  "tipo": "concepto",
+  "que_es": "Tabla que asigna un número a cada carácter: la A vale 65, la a vale 97 y el dígito 0 vale 48. Un char guarda ese número.",
+  "como_se_usa": "printf(\"%d\\n\",'A');",
+  "error_tipico": "Confundir el carácter '5' (código 53) con el número 5.",
+  "en_la_materia": "Caracteres",
+  "errores_ids": [
+   "TIP-012",
+   "TIP-030"
+  ],
+  "buscar": [
+   "ascii",
+   "codigo de caracter",
+   "tabla ascii",
+   "codigo de letra"
+  ]
+ },
+ {
+  "elemento": "literal",
+  "tipo": "concepto",
+  "que_es": "Un valor escrito directamente en el programa: 5, 3.14, 'A', \"Hola\".",
+  "como_se_usa": "A=5;\nprintf(\"%d\\n\",A);  // muestra: 5",
+  "error_tipico": "Confundir 5 (número) con '5' (carácter) o \"5\" (texto).",
+  "en_la_materia": "Tipos",
+  "errores_ids": [
+   "TIP-036"
+  ],
+  "buscar": [
+   "literal",
+   "valor escrito",
+   "constante literal"
+  ]
+ },
+ {
+  "elemento": "inicialización",
+  "tipo": "concepto",
+  "que_es": "Darle un valor a una variable en el momento de declararla. Una variable local sin inicializar contiene basura.",
+  "como_se_usa": "int A=0;",
+  "error_tipico": "Usar una variable que nunca recibió valor: el resultado es impredecible.",
+  "en_la_materia": "Variables",
+  "errores_ids": [
+   "DEC-005",
+   "DEC-006",
+   "DEC-034",
+   "EJE-009"
+  ],
+  "buscar": [
+   "inicialización",
+   "inicializacion",
+   "inicializar",
+   "valor inicial",
+   "sin inicializar",
+   "variable sin valor",
+   "basura"
+  ]
+ },
+ {
+  "elemento": "operador",
+  "tipo": "concepto",
+  "que_es": "Símbolo que hace una operación con uno o más valores: + - * / % = == != < > && || !",
+  "como_se_usa": "R=A+B;\nprintf(\"%d\\n\",R);  // muestra: 3",
+  "error_tipico": "Escribir operadores de otros lenguajes (<>, and, ^ para potencia).",
+  "en_la_materia": "Operadores",
+  "errores_ids": [
+   "OPE-028",
+   "OPE-029",
+   "OPE-030",
+   "OPE-031"
+  ],
+  "buscar": [
+   "operador",
+   "simbolo",
+   "operadores"
+  ]
+ },
+ {
+  "elemento": "biblioteca",
+  "tipo": "concepto",
+  "que_es": "Conjunto de funciones ya hechas, como printf o sqrt. Se usan incluyendo su cabecera con #include.",
+  "como_se_usa": "#include <math.h>",
+  "error_tipico": "Usar una función sin incluir su cabecera.",
+  "en_la_materia": "Bibliotecas",
+  "errores_ids": [
+   "PRE-001",
+   "PRE-003",
+   "PRE-005",
+   "PRE-006"
+  ],
+  "buscar": [
+   "biblioteca",
+   "libreria",
+   "cabecera",
+   "header",
+   "include"
+  ]
+ }
+]

@@ -1,0 +1,542 @@
+[
+  {
+    "titulo": "1. Una instrucción termina con punto y coma",
+    "explicacion": [
+      "En C, el punto y coma indica que terminó una instrucción.",
+      "El salto de línea solamente organiza el código para que lo leas mejor.",
+      "Una asignación, una llamada a printf y un return suelen terminar con ;.",
+      "Las llaves cierran bloques, pero no reemplazan ese símbolo.",
+      "Por eso un error puede aparecer señalado en la línea siguiente."
+    ],
+    "ejemplo": "int main(void){\n int A=3;\n A=A+2;\n return 0;\n}",
+    "resultado": "No muestra texto; termina correctamente.",
+    "errores_ids": [
+      1,
+      2,
+      3
+    ]
+  },
+  {
+    "titulo": "2. Qué hacen las llaves",
+    "explicacion": [
+      "Las llaves agrupan instrucciones en un bloque.",
+      "Cada { debe tener una } que cierre el mismo bloque.",
+      "Un if, un ciclo y una función pueden tener su propio bloque.",
+      "Si falta una llave, el compilador puede interpretar mal todo lo que sigue.",
+      "Indentá el código para ver con claridad qué instrucciones pertenecen a cada estructura."
+    ],
+    "ejemplo": "int main(void){\n if(1){\n  int A=2;\n }\n return 0;\n}",
+    "resultado": "No muestra texto; el bloque se cierra antes de return.",
+    "errores_ids": [
+      8,
+      9
+    ]
+  },
+  {
+    "titulo": "3. Los paréntesis delimitan expresiones",
+    "explicacion": [
+      "Los paréntesis agrupan expresiones y delimitan argumentos de funciones.",
+      "En if y while encierran la condición que se evalúa.",
+      "En printf encierran el formato y los valores que se muestran.",
+      "Cada apertura necesita su cierre correspondiente.",
+      "Un cierre sobrante también es un error."
+    ],
+    "ejemplo": "int main(void){\n int A=2;\n if(A>1) A++;\n return 0;\n}",
+    "resultado": "El programa termina sin imprimir.",
+    "errores_ids": [
+      6,
+      7,
+      28
+    ]
+  },
+  {
+    "titulo": "4. C distingue mayúsculas y minúsculas",
+    "explicacion": [
+      "Para C, A y a son identificadores diferentes.",
+      "Esto también se aplica a nombres de funciones y palabras reservadas.",
+      "La materia utiliza variables en MAYÚSCULAS como convención.",
+      "Las palabras del lenguaje, como int y while, se escriben en minúsculas.",
+      "No cambies la capitalización de un nombre a mitad del programa."
+    ],
+    "ejemplo": "int main(void){\n int NOTA=8;\n return NOTA;\n}",
+    "resultado": "El programa termina con código 8.",
+    "errores_ids": [
+      22,
+      23
+    ]
+  },
+  {
+    "titulo": "5. Identificadores válidos",
+    "explicacion": [
+      "Un identificador es el nombre de una variable o función.",
+      "Puede empezar con una letra o guion bajo.",
+      "No puede empezar con un número ni contener un guion medio.",
+      "Los números pueden aparecer después del primer carácter.",
+      "No se pueden usar palabras reservadas como nombres."
+    ],
+    "ejemplo": "int main(void){\n int NOTA1=7;\n return NOTA1;\n}",
+    "resultado": "El programa termina con código 7.",
+    "errores_ids": [
+      39,
+      40,
+      48,
+      49
+    ]
+  },
+  {
+    "titulo": "6. int guarda enteros",
+    "explicacion": [
+      "int representa números enteros sin parte decimal.",
+      "Se usa para contadores, cantidades y valores discretos.",
+      "Una división entre dos int produce un resultado entero.",
+      "El resultado no conserva la parte decimal.",
+      "Para trabajar con decimales necesitás float o double."
+    ],
+    "ejemplo": "#include <stdio.h>\nint main(void){\n int A=7;\n int B=2;\n printf(\"%d\\n\",A/B);\n return 0;\n}",
+    "resultado": "3",
+    "errores_ids": [
+      1,
+      22
+    ]
+  },
+  {
+    "titulo": "7. float y double",
+    "explicacion": [
+      "float y double permiten almacenar números con parte decimal.",
+      "double ofrece más precisión que float en el entorno de referencia.",
+      "Un literal float puede escribirse con el sufijo f, como 2.5f.",
+      "Un literal decimal sin sufijo normalmente tiene tipo double.",
+      "El formato de printf y scanf depende del contexto y del tipo."
+    ],
+    "ejemplo": "#include <stdio.h>\nint main(void){\n float A=2.5f;\n double B=3.25;\n printf(\"%.1f %.2f\\n\",A,B);\n return 0;\n}",
+    "resultado": "2.5 3.25",
+    "errores_ids": [
+      23,
+      24
+    ]
+  },
+  {
+    "titulo": "8. La división entera",
+    "explicacion": [
+      "Si dividís dos enteros, C calcula un resultado entero.",
+      "Por ejemplo, 7/2 da 3 porque se descarta la parte fraccionaria.",
+      "Guardar ese 3 en una variable float no recupera el decimal perdido.",
+      "Al menos uno de los operandos debe convertirse a decimal antes de dividir.",
+      "No confundas el tipo de destino con el tipo de la operación."
+    ],
+    "ejemplo": "#include <stdio.h>\nint main(void){\n printf(\"%d\\n\",7/2);\n printf(\"%.1f\\n\",7.0/2);\n return 0;\n}",
+    "resultado": "3\n3.5",
+    "errores_ids": [
+      1
+    ]
+  },
+  {
+    "titulo": "9. Qué es una variable sin inicializar",
+    "explicacion": [
+      "Declarar una variable reserva un lugar para guardar un valor.",
+      "Una variable local automática no recibe automáticamente un valor útil.",
+      "Leerla antes de asignarle un valor produce comportamiento indefinido en C.",
+      "Asignale un valor antes de utilizarla o asegurate de que scanf la haya leído correctamente.",
+      "No confíes en que aparezca cero por casualidad."
+    ],
+    "ejemplo": "#include <stdio.h>\nint main(void){\n int CONT=0;\n CONT++;\n printf(\"%d\\n\",CONT);\n return 0;\n}",
+    "resultado": "1",
+    "errores_ids": [
+      1,
+      2
+    ]
+  },
+  {
+    "titulo": "10. = no es ==",
+    "explicacion": [
+      "El signo = asigna un valor a una variable.",
+      "El operador == compara dos valores para saber si son iguales.",
+      "Dentro de un if, usar = puede cambiar la variable en lugar de comparar.",
+      "La asignación también produce un valor, por eso el código puede compilar.",
+      "Revisá cuál de las dos acciones querías realizar."
+    ],
+    "ejemplo": "#include <stdio.h>\nint main(void){\n int A=5;\n if(A==5) printf(\"Iguales\\n\");\n return 0;\n}",
+    "resultado": "Iguales",
+    "errores_ids": [
+      1,
+      17
+    ]
+  },
+  {
+    "titulo": "11. && y ||",
+    "explicacion": [
+      "&& significa Y lógico: las dos condiciones deben cumplirse.",
+      "|| significa O lógico: alcanza con que se cumpla una.",
+      "! invierte el resultado lógico de una expresión.",
+      "& y | son operadores a nivel de bits, no equivalentes a los lógicos.",
+      "Los operadores lógicos ayudan a representar condiciones compuestas."
+    ],
+    "ejemplo": "#include <stdio.h>\nint main(void){\n int A=5;\n if(A>0 && A<10) printf(\"En rango\\n\");\n return 0;\n}",
+    "resultado": "En rango",
+    "errores_ids": [
+      19
+    ]
+  },
+  {
+    "titulo": "12. Precedencia y paréntesis",
+    "explicacion": [
+      "C sigue reglas de precedencia para decidir qué operación hacer primero.",
+      "La multiplicación y la división tienen mayor prioridad que la suma y la resta.",
+      "Las comparaciones se realizan después de resolver las expresiones aritméticas que contienen.",
+      "Los paréntesis permiten dejar explícito el orden que querés.",
+      "Usalos cuando una expresión no sea fácil de leer."
+    ],
+    "ejemplo": "#include <stdio.h>\nint main(void){\n printf(\"%d\\n\",2+3*4);\n printf(\"%d\\n\",(2+3)*4);\n return 0;\n}",
+    "resultado": "14\n20",
+    "errores_ids": [
+      6,
+      28
+    ]
+  },
+  {
+    "titulo": "13. Incremento y decremento",
+    "explicacion": [
+      "++ aumenta una variable en uno.",
+      "-- disminuye una variable en uno.",
+      "En una expresión, ++A y A++ difieren en el momento en que se obtiene el valor.",
+      "Como instrucción independiente, ambos actualizan la variable.",
+      "No se pueden aplicar a una constante ni a una expresión que no se pueda modificar."
+    ],
+    "ejemplo": "#include <stdio.h>\nint main(void){\n int I=2;\n I++;\n printf(\"%d\\n\",I);\n return 0;\n}",
+    "resultado": "3",
+    "errores_ids": [
+      1
+    ]
+  },
+  {
+    "titulo": "14. Qué hace el módulo",
+    "explicacion": [
+      "El operador % calcula el resto de una división entera.",
+      "Por ejemplo, 7%2 da 1 porque sobra una unidad.",
+      "Se usa para detectar números pares e impares.",
+      "Sus operandos deben ser enteros.",
+      "No se puede usar directamente con float o double."
+    ],
+    "ejemplo": "#include <stdio.h>\nint main(void){\n printf(\"%d\\n\",7%2);\n return 0;\n}",
+    "resultado": "1",
+    "errores_ids": [
+      1
+    ]
+  },
+  {
+    "titulo": "15. Qué necesita printf",
+    "explicacion": [
+      "printf muestra texto y valores en la salida estándar.",
+      "Su primer argumento es una cadena de formato entre comillas dobles.",
+      "Cada especificador % indica qué tipo de dato se va a mostrar.",
+      "Los argumentos después de la cadena deben coincidir en cantidad y tipo.",
+      "Para mostrar un signo porcentaje literal escribí %%."
+    ],
+    "ejemplo": "#include <stdio.h>\nint main(void){\n int A=5;\n printf(\"Valor=%d%%\\n\",A);\n return 0;\n}",
+    "resultado": "Valor=5%",
+    "errores_ids": [
+      1,
+      20
+    ]
+  },
+  {
+    "titulo": "16. Formatos de printf",
+    "explicacion": [
+      "%d se utiliza para int y %c para un carácter.",
+      "%f muestra un número decimal, incluyendo valores double.",
+      "%.2f pide mostrar dos cifras después del punto decimal.",
+      "El ancho, como %8.2f, reserva un mínimo de ocho posiciones.",
+      "Un formato incorrecto puede producir advertencias o comportamiento indefinido."
+    ],
+    "ejemplo": "#include <stdio.h>\nint main(void){\n double A=3.14159;\n printf(\"%.2f\\n\",A);\n return 0;\n}",
+    "resultado": "3.14",
+    "errores_ids": [
+      1
+    ]
+  },
+  {
+    "titulo": "17. Por qué scanf necesita &",
+    "explicacion": [
+      "scanf tiene que escribir el dato leído dentro de una variable.",
+      "Para eso necesita recibir la dirección de esa variable.",
+      "El operador & obtiene esa dirección.",
+      "Por eso scanf(\"%d\", &A) es correcto para leer un int.",
+      "Olvidar & hace que scanf reciba un valor en lugar del lugar donde debe guardar."
+    ],
+    "ejemplo": "#include <stdio.h>\nint main(void){\n int A;\n scanf(\"%d\",&A);\n printf(\"%d\\n\",A);\n return 0;\n}",
+    "resultado": "Si se ingresa 12, muestra 12.",
+    "errores_ids": [
+      1
+    ]
+  },
+  {
+    "titulo": "18. Formatos de scanf",
+    "explicacion": [
+      "Para int se usa %d y se pasa &A.",
+      "Para float se usa %f y se pasa &A.",
+      "Para double se usa %lf y se pasa &A.",
+      "Para char se usa %c y se pasa &LETRA.",
+      "El formato describe qué tipo de espacio necesita scanf para guardar el dato."
+    ],
+    "ejemplo": "#include <stdio.h>\nint main(void){\n double A;\n scanf(\"%lf\",&A);\n printf(\"%.2f\\n\",A);\n return 0;\n}",
+    "resultado": "Si se ingresa 2.5, muestra 2.50.",
+    "errores_ids": [
+      1
+    ]
+  },
+  {
+    "titulo": "19. El salto de línea antes de %c",
+    "explicacion": [
+      "Después de leer un número, puede quedar un salto de línea pendiente en la entrada.",
+      "%c no descarta automáticamente todos los espacios previos.",
+      "Por eso puede leer el Enter en vez del carácter que el alumno quiere ingresar.",
+      "Un espacio antes de %c en el formato hace que scanf descarte espacios en blanco previos.",
+      "Esto ayuda cuando se lee un carácter después de un número."
+    ],
+    "ejemplo": "#include <stdio.h>\nint main(void){\n int N; char C;\n scanf(\"%d\",&N);\n scanf(\" %c\",&C);\n printf(\"%c\\n\",C);\n return 0;\n}",
+    "resultado": "Si se ingresa 5, Enter y A, muestra A.",
+    "errores_ids": [
+      1
+    ]
+  },
+  {
+    "titulo": "20. Comprobar scanf",
+    "explicacion": [
+      "scanf devuelve la cantidad de elementos que pudo leer y asignar.",
+      "Si el usuario escribe una letra donde se esperaba un número, la conversión puede fallar.",
+      "La variable correspondiente puede quedar sin modificar.",
+      "Comprobar el retorno evita usar datos que no se leyeron correctamente.",
+      "Para una sola lectura de int, el resultado esperado es 1."
+    ],
+    "ejemplo": "#include <stdio.h>\nint main(void){\n int A;\n if(scanf(\"%d\",&A)==1) printf(\"Leído\\n\");\n else printf(\"Dato inválido\\n\");\n return 0;\n}",
+    "resultado": "Con 7: Leído. Con una letra: Dato inválido.",
+    "errores_ids": [
+      1
+    ]
+  },
+  {
+    "titulo": "21. El centinela",
+    "explicacion": [
+      "Un centinela es un valor especial que indica que terminó la carga de datos.",
+      "No es un dato común que deba procesarse como los demás.",
+      "El ciclo debe leer el primer valor antes de evaluar la condición.",
+      "Después de procesar cada valor, tiene que leer el siguiente.",
+      "Si nunca se actualiza el dato, el ciclo puede no terminar."
+    ],
+    "ejemplo": "#include <stdio.h>\nint main(void){\n int N; scanf(\"%d\",&N);\n while(N!=-1){ printf(\"%d\\n\",N); scanf(\"%d\",&N); }\n return 0;\n}",
+    "resultado": "Con entrada 2, 4, -1 muestra 2 y 4.",
+    "errores_ids": [
+      1
+    ]
+  },
+  {
+    "titulo": "22. Cómo funciona un for",
+    "explicacion": [
+      "El for tiene inicio, condición y actualización.",
+      "Primero ejecuta el inicio una sola vez.",
+      "Después evalúa la condición; si es verdadera, ejecuta el cuerpo.",
+      "Al terminar el cuerpo, realiza la actualización y vuelve a evaluar.",
+      "Cuando la condición resulta falsa, sale del ciclo."
+    ],
+    "ejemplo": "#include <stdio.h>\nint main(void){\n for(int I=1;I<=3;I++) printf(\"%d\\n\",I);\n return 0;\n}",
+    "resultado": "1\n2\n3",
+    "errores_ids": [
+      1
+    ]
+  },
+  {
+    "titulo": "23. Cómo funciona un while",
+    "explicacion": [
+      "while evalúa la condición antes de ejecutar el cuerpo.",
+      "Si la condición es falsa al principio, el cuerpo no se ejecuta.",
+      "Si es verdadera, ejecuta las instrucciones y vuelve a comprobarla.",
+      "Alguna instrucción debe permitir que la condición cambie si se espera que el ciclo termine.",
+      "Sin una salida posible, el programa puede quedar repitiéndose."
+    ],
+    "ejemplo": "#include <stdio.h>\nint main(void){\n int I=1;\n while(I<=3){ printf(\"%d\\n\",I); I++; }\n return 0;\n}",
+    "resultado": "1\n2\n3",
+    "errores_ids": [
+      1
+    ]
+  },
+  {
+    "titulo": "24. do-while ejecuta al menos una vez",
+    "explicacion": [
+      "do-while ejecuta el cuerpo antes de evaluar la condición.",
+      "Por eso el cuerpo se ejecuta al menos una vez.",
+      "Después de cada ejecución se comprueba si debe repetirse.",
+      "La condición aparece después de la llave de cierre.",
+      "La estructura termina con punto y coma."
+    ],
+    "ejemplo": "#include <stdio.h>\nint main(void){\n int I=5;\n do { printf(\"%d\\n\",I); } while(I<0);\n return 0;\n}",
+    "resultado": "5",
+    "errores_ids": [
+      33
+    ]
+  },
+  {
+    "titulo": "25. Switch y caída entre case",
+    "explicacion": [
+      "switch compara una expresión entera con distintas etiquetas case.",
+      "Cuando encuentra una coincidencia, empieza a ejecutar desde esa etiqueta.",
+      "No se detiene automáticamente al terminar las instrucciones del case.",
+      "break permite salir del switch.",
+      "Sin break puede continuar ejecutando el siguiente case."
+    ],
+    "ejemplo": "#include <stdio.h>\nint main(void){\n int A=1;\n switch(A){case 1: printf(\"Uno\\n\"); break; default: printf(\"Otro\\n\");}\n return 0;\n}",
+    "resultado": "Uno",
+    "errores_ids": [
+      1
+    ]
+  },
+  {
+    "titulo": "26. Qué es un prototipo",
+    "explicacion": [
+      "Un prototipo informa al compilador cómo se llama una función, qué devuelve y qué parámetros recibe.",
+      "Se escribe antes de utilizar esa función.",
+      "Permite llamar a una función cuya definición aparece más abajo.",
+      "El prototipo y la definición deben coincidir en cantidad y tipos de parámetros.",
+      "El punto y coma termina el prototipo."
+    ],
+    "ejemplo": "#include <stdio.h>\nint DOBLE(int);\nint DOBLE(int A){ return A*2; }\nint main(void){ printf(\"%d\\n\",DOBLE(4)); return 0; }",
+    "resultado": "8",
+    "errores_ids": [
+      1
+    ]
+  },
+  {
+    "titulo": "27. Argumentos y parámetros",
+    "explicacion": [
+      "Los parámetros son los nombres y tipos que aparecen en la definición de una función.",
+      "Los argumentos son los valores concretos que se pasan al llamarla.",
+      "La cantidad y los tipos deben corresponder con lo que declara la función.",
+      "El orden también importa: cada argumento ocupa la posición de su parámetro.",
+      "Una llamada con cantidad incorrecta puede ser rechazada por el compilador."
+    ],
+    "ejemplo": "#include <stdio.h>\nint SUMA(int A,int B){ return A+B; }\nint main(void){ int X=SUMA(2,3); printf(\"%d\\n\",X); return 0; }",
+    "resultado": "5",
+    "errores_ids": [
+      1
+    ]
+  },
+  {
+    "titulo": "28. Función que devuelve un valor",
+    "explicacion": [
+      "Una función con retorno int debe entregar un valor entero cuando termina normalmente.",
+      "return finaliza la ejecución de esa llamada y entrega el resultado.",
+      "Una función void no entrega un valor que pueda guardarse en una variable.",
+      "No alcanza con calcular el resultado si nunca se lo devuelve.",
+      "Revisá todos los caminos posibles de la función."
+    ],
+    "ejemplo": "#include <stdio.h>\nint DOBLE(int A){ return A*2; }\nint main(void){ int B=DOBLE(4); printf(\"%d\\n\",B); return 0; }",
+    "resultado": "8",
+    "errores_ids": [
+      1
+    ]
+  },
+  {
+    "titulo": "29. Qué es el ámbito",
+    "explicacion": [
+      "El ámbito determina dónde se puede utilizar el nombre de una variable.",
+      "Una variable local declarada dentro de un bloque existe dentro de ese ámbito.",
+      "Al salir del bloque, el nombre deja de estar disponible.",
+      "Una variable global declarada fuera de las funciones tiene alcance de archivo en el ejemplo básico.",
+      "No confundas el alcance del nombre con cuánto dura el almacenamiento."
+    ],
+    "ejemplo": "int main(void){\n int A=2;\n { int B=3; A+=B; }\n return A;\n}",
+    "resultado": "El programa termina con código 5.",
+    "errores_ids": [
+      1
+    ]
+  },
+  {
+    "titulo": "30. Qué es un desborde",
+    "explicacion": [
+      "Un entero tiene un rango de valores limitado por su tipo y la implementación.",
+      "Si una operación produce un valor fuera del rango de un int con signo, el comportamiento es indefinido en C.",
+      "No se debe confiar en que el número vuelva a cero ni en que se comporte igual con todas las optimizaciones.",
+      "Revisá los límites antes de sumar o multiplicar cantidades grandes.",
+      "Los tipos unsigned tienen reglas diferentes para el desborde."
+    ],
+    "ejemplo": "#include <stdio.h>\n#include <limits.h>\nint main(void){ printf(\"%d\\n\",INT_MAX); return 0; }",
+    "resultado": "Muestra el mayor valor de int en el entorno.",
+    "errores_ids": [
+      1
+    ]
+  },
+  {
+    "titulo": "31. Por qué == con decimales puede fallar",
+    "explicacion": [
+      "Los valores decimales se guardan con una cantidad limitada de bits.",
+      "Muchos números decimales no tienen una representación binaria exacta.",
+      "Una cuenta puede quedar apenas por encima o por debajo del valor esperado.",
+      "Por eso dos resultados que parecen iguales pueden no compararse como iguales.",
+      "Cuando tiene sentido, compará si la diferencia está dentro de una tolerancia."
+    ],
+    "ejemplo": "#include <stdio.h>\n#include <math.h>\nint main(void){ double A=0.1+0.2; printf(\"%d\\n\",fabs(A-0.3)<0.000001); return 0; }",
+    "resultado": "1",
+    "errores_ids": [
+      1
+    ]
+  },
+  {
+    "titulo": "32. Comparación encadenada no representa un intervalo",
+    "explicacion": [
+      "En matemática se suele escribir 1 < A < 10.",
+      "En C, la primera comparación produce 0 o 1.",
+      "Luego ese resultado se compara con 10, no se vuelve a comparar A.",
+      "Para comprobar un intervalo se unen dos condiciones con &&.",
+      "Escribí cada comparación completa para evitar interpretaciones equivocadas."
+    ],
+    "ejemplo": "#include <stdio.h>\nint main(void){ int A=5; printf(\"%d\\n\",A>1 && A<10); return 0; }",
+    "resultado": "1",
+    "errores_ids": [
+      1
+    ]
+  },
+  {
+    "titulo": "33. Índices de arreglos",
+    "explicacion": [
+      "Un arreglo de tamaño N tiene N posiciones.",
+      "La primera posición se identifica con el índice 0.",
+      "La última posición válida es N-1.",
+      "Intentar leer o escribir V[N] queda fuera de los límites.",
+      "Ese acceso puede producir comportamiento indefinido en C."
+    ],
+    "ejemplo": "#include <stdio.h>\nint main(void){ int V[3]={4,5,6}; printf(\"%d\\n\",V[0]); return 0; }",
+    "resultado": "4",
+    "errores_ids": [
+      1
+    ]
+  },
+  {
+    "titulo": "34. Recorrer un arreglo",
+    "explicacion": [
+      "Un recorrido por posiciones suele comenzar con índice 0.",
+      "La condición habitual es I < N, donde N es la cantidad de elementos.",
+      "En cada vuelta se procesa V[I].",
+      "Después se incrementa I para avanzar a la siguiente posición.",
+      "Usar I <= N intenta acceder a una posición que no existe."
+    ],
+    "ejemplo": "#include <stdio.h>\nint main(void){ int V[3]={4,5,6}; for(int I=0;I<3;I++) printf(\"%d\\n\",V[I]); return 0; }",
+    "resultado": "4\n5\n6",
+    "errores_ids": [
+      1
+    ]
+  },
+  {
+    "titulo": "35. Comportamiento indefinido",
+    "explicacion": [
+      "C tiene situaciones en las que el estándar no define un resultado obligatorio.",
+      "Leer una variable local sin inicializar y acceder fuera de un arreglo son ejemplos.",
+      "El programa puede parecer funcionar y fallar con otra versión u optimización.",
+      "GCC no tiene obligación de detectar todos estos casos.",
+      "El editor debe advertir lo que pueda demostrar y no prometer resultados para el resto."
+    ],
+    "ejemplo": "int main(void){ int A=1; return A; }",
+    "resultado": "Termina con código 1; no muestra texto.",
+    "errores_ids": [
+      1
+    ]
+  }
+]
