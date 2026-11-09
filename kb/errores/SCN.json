@@ -246,9 +246,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "scanf: '%c' lee un carácter y 'N' es int",
+  "codigo_editor_actual": "W-scanf-formato",
   "verificado_editor_corrige": true
  },
  {
@@ -274,9 +274,9 @@
   "riesgo_falso_positivo": "Si el %c es el primer scanf del programa, sin espacio es correcto.",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "este scanf con %c va después de otra lectura: el Enter que quedó sin leer entra como carácter",
+  "codigo_editor_actual": "W-otro",
   "verificado_editor_corrige": true
  },
  {
@@ -302,9 +302,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "este scanf con %c va después de otra lectura: el Enter que quedó sin leer entra como carácter",
+  "codigo_editor_actual": "W-otro",
   "verificado_editor_corrige": true
  },
  {
@@ -806,9 +806,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "scanf no usa precisión como '%5.2f': al leer, el % solo lleva el tipo (y a lo sumo un ancho)",
+  "codigo_editor_actual": "W-otro",
   "verificado_editor_corrige": true
  },
  {
@@ -946,9 +946,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "este scanf con %c va después de otra lectura: el Enter que quedó sin leer entra como carácter",
+  "codigo_editor_actual": "W-otro",
   "verificado_editor_corrige": true
  },
  {
@@ -1030,9 +1030,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "error",
   "verificado_gcc13": true,
-  "detectado_editor": true,
-  "mensaje_editor_actual": "entre comillas simples va un solo carácter: un texto lleva comillas dobles (\"Hola\")",
-  "codigo_editor_actual": "E-sintaxis",
+  "detectado_editor": false,
+  "mensaje_editor_actual": null,
+  "codigo_editor_actual": null,
   "verificado_editor_corrige": true
  },
  {
@@ -1394,9 +1394,9 @@
   "riesgo_falso_positivo": "Leer dos veces la misma variable puede ser intencional si solo interesa conservar el último valor.",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "scanf lee dos valores en la misma variable 'A': el segundo pisa al primero",
+  "codigo_editor_actual": "W-scanf-formato",
   "verificado_editor_corrige": true
  },
  {
