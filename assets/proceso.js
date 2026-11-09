@@ -508,12 +508,47 @@
       contar() { sincronizar('u'); return p.contar(); },
       resumen() { sincronizar('u'); return resumen(p); },
       linea() { sincronizar('u'); return linea(resumen(p)); },
+      datosCaptura(codigo, programa, version) { sincronizar('u'); return datosCaptura(p, codigo, programa, version); },
       ejecutar() { p.ejecutar(); },
       desconectar() { lista.forEach(([n, f]) => ta.removeEventListener(n, f)); }
     };
   }
 
-  const api = { nuevo, restaurar, resumen, linea, conectar, politicaPegado, politicaDesdeEnlace, TOPE_INACTIVIDAD, _hash: hash, _dif: difMinimo };
+  /* ---------- texto dentro del PNG (chunks iTXt, UTF-8) ---------- */
+  let TABLA_CRC = null;
+  function crc32(b) {
+    if (!TABLA_CRC) { TABLA_CRC = []; for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1; TABLA_CRC[n] = c >>> 0; } }
+    let c = 0xffffffff;
+    for (let i = 0; i < b.length; i++) c = TABLA_CRC[(c ^ b[i]) & 0xff] ^ (c >>> 8);
+    return (c ^ 0xffffffff) >>> 0;
+  }
+  function utf8(t) { const r = []; const e = unescape(encodeURIComponent(String(t))); for (let i = 0; i < e.length; i++) r.push(e.charCodeAt(i)); return r; }
+  // bytes: Uint8Array de un PNG; claves: { palabra: texto }. Devuelve un Uint8Array nuevo con un iTXt por clave antes de IEND, o el mismo si no es un PNG
+  function pngConTexto(bytes, claves) {
+    const firma = [137, 80, 78, 71, 13, 10, 26, 10];
+    for (let i = 0; i < 8; i++) if (bytes[i] !== firma[i]) return bytes;
+    let fin = 8;
+    while (fin + 8 <= bytes.length) { const len = ((bytes[fin] << 24) | (bytes[fin + 1] << 16) | (bytes[fin + 2] << 8) | bytes[fin + 3]) >>> 0; if (String.fromCharCode(bytes[fin + 4], bytes[fin + 5], bytes[fin + 6], bytes[fin + 7]) === 'IEND') break; fin += 12 + len; }
+    if (fin + 12 > bytes.length) return bytes;
+    const trozos = [];
+    Object.keys(claves).forEach((k) => {
+      if (!/^[\x20-\x7e]{1,79}$/.test(k)) return;
+      const datos = utf8(k).concat([0, 0, 0, 0, 0], utf8(claves[k])), tipo = [105, 84, 88, 116], cuerpo = tipo.concat(datos), crc = crc32(cuerpo), n = datos.length;
+      trozos.push([(n >>> 24) & 255, (n >>> 16) & 255, (n >>> 8) & 255, n & 255].concat(cuerpo, [(crc >>> 24) & 255, (crc >>> 16) & 255, (crc >>> 8) & 255, crc & 255]));
+    });
+    const extra = [].concat.apply([], trozos), out = new Uint8Array(bytes.length + extra.length);
+    out.set(bytes.subarray(0, fin), 0); out.set(extra, fin); out.set(bytes.subarray(fin), fin + extra.length);
+    return out;
+  }
+  // lo que lleva el archivo de la captura: el mismo resumen que se ve escrito en la imagen
+  function datosCaptura(p, codigo, programa, version) {
+    const r = resumen(p), d = {};
+    d['Software'] = 'Editor C' + (version ? ' ' + version : '');
+    d['EditorC-Resumen'] = linea(r);
+    d['EditorC-Proceso'] = JSON.stringify({ tipeado: r.tipeado, pegado: r.pegado, automatico: r.automatico, cargado: r.cargado, minutos: r.minutos, ejecuciones: r.ejecuciones, huella: hash(String(codigo || '')), programa: programa || '', fecha: new Date().toISOString().slice(0, 10) });
+    return d;
+  }
+  const api = { nuevo, restaurar, resumen, linea, conectar, pngConTexto, datosCaptura, politicaPegado, politicaDesdeEnlace, TOPE_INACTIVIDAD, _hash: hash, _dif: difMinimo };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.Proceso = api;
 })(typeof self !== 'undefined' ? self : this);

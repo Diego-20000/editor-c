@@ -444,6 +444,21 @@ caso('fuzz del adaptador: 2000 ediciones simuladas', () => {
   }
 });
 
+caso('png con texto: agrega iTXt válidos antes de IEND y no toca el resto', () => {
+  const png = Uint8Array.from(Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGD4DwABBAEAHSxl4wAAAABJRU5ErkJggg==', 'base64'));
+  const o = P.pngConTexto(png, { Software: 'Editor C', 'EditorC-Resumen': 'Escrito: 85 % tipeado · ñ' });
+  assert.ok(o.length > png.length);
+  const t = Buffer.from(o).toString('latin1');
+  assert.strictEqual((t.match(/iTXt/g) || []).length, 2);
+  assert.ok(t.indexOf('iTXt') < t.indexOf('IEND') && t.endsWith('IEND\xaeB`\x82'));
+  assert.deepStrictEqual(Array.from(o.subarray(0, 8)), [137, 80, 78, 71, 13, 10, 26, 10]);
+  // CRC de cada trozo iTXt
+  const zlib = require('zlib'); const b = Buffer.from(o); let i = 8, n = 0;
+  while (i < b.length) { const len = b.readUInt32BE(i), tipo = b.toString('latin1', i + 4, i + 8); if (tipo === 'iTXt') { assert.strictEqual(zlib.crc32(b.subarray(i + 4, i + 8 + len)), b.readUInt32BE(i + 8 + len)); n++; } i += 12 + len; }
+  assert.strictEqual(n, 2);
+  assert.strictEqual(P.pngConTexto(Uint8Array.from([1, 2, 3]), { a: 'b' }).length, 3);   // no es un PNG: se devuelve igual
+});
+
 console.log((mal ? 'FALLÓ' : 'OK') + ': ' + ok + ' casos bien, ' + mal + ' mal (total ' + (ok + mal) + ')');
 fallas.forEach((f) => console.log('  - ' + f));
 process.exit(mal ? 1 : 0);

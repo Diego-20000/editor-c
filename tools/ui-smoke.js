@@ -262,7 +262,16 @@ async function suite(browser, target, mobile) {
   await H.tap('#shot');
   await page.waitForSelector('#dShot[open]');
   await page.waitForFunction(() => { const i = document.getElementById('shotImg'); return i.complete && i.naturalWidth > 0; });
+  const wDef = +(await page.getAttribute('#shotImg', 'data-w'));
+  await page.selectOption('#shotLay', 'lado'); await page.waitForTimeout(500);
+  const wLado = +(await page.getAttribute('#shotImg', 'data-w'));
+  await page.selectOption('#shotLay', 'abajo'); await page.waitForTimeout(500);
+  const wAbajo = +(await page.getAttribute('#shotImg', 'data-w'));
+  ok(wLado > wAbajo, 'vista previa: «lado a lado» es más ancha que «abajo» (' + wLado + ' vs ' + wAbajo + ')');
+  ok(await page.$eval('#shotLay', (e) => e.value) === 'abajo' && wDef > 0, 'vista previa: hay selector de disposición');
   const hWith = +(await page.getAttribute('#shotImg', 'data-h'));
+  const txt = await page.evaluate(async () => { const b = new Uint8Array(await (await fetch(document.getElementById('shotImg').src)).arrayBuffer()); let t = ''; for (let i = 0; i < b.length; i++) t += String.fromCharCode(b[i]); return t; });
+  ok((txt.match(/iTXt/g) || []).length >= 2 && txt.includes('EditorC-Resumen') && txt.includes('EditorC-Proceso'), 'la imagen lleva el resumen de proceso dentro del archivo (iTXt)');
   ok(await page.isVisible('#shotInRow'), 'vista previa: opción de incluir la entrada');
   await shot('6-vista-previa');
   await page.uncheck('#shotIn');
@@ -466,6 +475,7 @@ async function disenoSuite(browser, target, mobile) {
   await H.setCode(PROG);
   await H.menu(); await H.tap('#shot'); await page.waitForFunction(() => document.getElementById('shotImg').getAttribute('src'));
   await page.waitForTimeout(300);
+  await page.selectOption('#shotLay', 'abajo'); await page.waitForTimeout(500);   // en escritorio el valor por defecto es «lado a lado» (más ancha); acá se mide la vertical
   const px = await page.evaluate(() => new Promise((res) => { const im = new Image(); im.onload = () => {
     const c = document.createElement('canvas'); c.width = im.width; c.height = im.height; const x = c.getContext('2d', { willReadFrequently: true }); x.drawImage(im, 0, 0);
     const W = im.width, H = im.height, d = x.getImageData(0, 0, W, H).data;

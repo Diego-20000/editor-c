@@ -915,6 +915,13 @@
     $('cNota').textContent = notas.join(' ');
   }
   $('casosBtn').addEventListener('click', () => abrirCasos());
+  // «Avisar a Diego»: arma un caso con el programa actual y el último mensaje, lo deja elegido y abre la vista previa (nada se manda solo)
+  $('avisar').addEventListener('click', () => {
+    $('more').open = false;
+    const it = (typeof problems !== 'undefined' && problems && problems[0]) || { k: 'e', code: '', msg: 'Consulta del alumno: sin mensaje del compilador.', line: 0 };
+    const clave = guardarCaso(it);
+    abrirCasos(clave ? [clave] : undefined);
+  });
   $('cCopy').addEventListener('click', () => {
     copyText(casosTexto, dCasos).then((ok) => {
       if (ok) { toast('Texto copiado. Pegalo en el chat que quieras.'); return; }
@@ -1315,7 +1322,8 @@ self.postMessage({ type: 'ready' });`;
     const longest = Math.max.apply(null, codeLines.map((l) => l.replace(/\t/g, SP()).length));
     const cols = Math.max(52, Math.min(100, longest + 1));
     const gutW = Math.max(3, String(codeLines.length).length + 1) * cw + 16;
-    const W = Math.ceil(padX * 2 + gutW + cols * cw + 14);
+    const leftW = Math.ceil(gutW + cols * cw + 14), rightW = Math.ceil(46 * cw + 24), gapX = 30;
+    const W = opts.lado ? padX * 2 + leftW + gapX + rightW : padX * 2 + leftW;
     const codeRows = [];
     let curSegs = [];
     const lineSegs = [];
@@ -1329,9 +1337,10 @@ self.postMessage({ type: 'ready' });`;
       if (n.nodeType === 3) outSegs.push([null, n.textContent]);
       else if (!(n.classList.contains('stdin') || n.classList.contains('eofbtn'))) outSegs.push([n.className, n.textContent]);
     });
-    const outRows = rowsOf(outSegs, cols + 4);
+    const colsR = opts.lado ? 46 : cols + 4;
+    const outRows = rowsOf(outSegs, colsR);
     while (outRows.length > 1 && !outRows[outRows.length - 1].length) outRows.pop();
-    const inRows = opts.input !== false && inTxt.value.trim() ? rowsOf([['in', inTxt.value.replace(/\n+$/, '')]], cols + 4) : [];
+    const inRows = opts.input !== false && inTxt.value.trim() ? rowsOf([['in', inTxt.value.replace(/\n+$/, '')]], colsR) : [];
     const secH = 38, headH = 88, gap = 6, footH = 46;
     const procRows = [];
     const procTxt = opts.proc === false ? '' : proc.linea();
@@ -1342,7 +1351,9 @@ self.postMessage({ type: 'ready' });`;
       if (ln) procRows.push(ln);
     }
     const blockH = (n) => n * lh + 20;
-    const H = headH + gap + secH + blockH(codeRows.length) + (inRows.length ? gap + secH + blockH(inRows.length) : 0) + gap + secH + blockH(Math.max(1, outRows.length)) + (procRows.length ? 14 + procRows.length * 19 : 0) + footH;
+    const hCode = secH + blockH(codeRows.length), hIn = inRows.length ? secH + blockH(inRows.length) + gap : 0, hOut = secH + blockH(Math.max(1, outRows.length));
+    const bodyH = opts.lado ? Math.max(hCode, hIn + hOut) : hCode + gap + hIn + hOut;
+    const H = headH + gap + bodyH + (procRows.length ? 14 + procRows.length * 19 : 0) + footH;
     let S = 2; while (W * S * H * S > 14e6 && S > 1) S -= 0.5;
     cv.width = Math.round(W * S); cv.height = Math.round(H * S); ctx.scale(S, S);
     ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, W, H);
@@ -1357,21 +1368,22 @@ self.postMessage({ type: 'ready' });`;
     ctx.font = '13px ' + UI; ctx.fillStyle = SUB; ctx.fillText(stamp, W - padX, 58); ctx.textAlign = 'left';
     ctx.fillStyle = TXT; ctx.fillRect(padX, headH - 12, W - 2 * padX, 1.5);
     let y = headH + gap;
+    let xb = padX, wb = leftW;
     const section = (title) => {
       ctx.font = '700 12px ' + UI; ctx.fillStyle = SUB;
       if ('letterSpacing' in ctx) ctx.letterSpacing = '1.2px';
-      ctx.fillText(title.toUpperCase(), padX, y + secH / 2 + 6);
+      ctx.fillText(title.toUpperCase(), xb, y + secH / 2 + 6);
       if ('letterSpacing' in ctx) ctx.letterSpacing = '0px';
       y += secH;
     };
     const drawRows = (rows, x0, numbers) => {
-      const h = blockH(rows.length), bx = padX - 10, bw = W - 2 * padX + 20, rr = 10;
+      const h = blockH(rows.length), bx = xb - 10, bw = wb + 20, rr = 10;
       ctx.beginPath(); ctx.roundRect ? ctx.roundRect(bx + .5, y + .5, bw - 1, h - 1, rr) : ctx.rect(bx + .5, y + .5, bw - 1, h - 1);
       ctx.fillStyle = numbers ? '#ffffff' : PANEL; ctx.fill(); ctx.strokeStyle = HAIR; ctx.lineWidth = 1; ctx.stroke();
-      if (numbers) { ctx.fillStyle = HAIR; ctx.fillRect(padX + gutW - 6, y + 1, 1, h - 2); }
+      if (numbers) { ctx.fillStyle = HAIR; ctx.fillRect(xb + gutW - 6, y + 1, 1, h - 2); }
       rows.forEach((row, i) => {
         const r = numbers ? row.r : row, yy = y + 10 + i * lh + lh / 2;
-        if (numbers) { ctx.font = (fs - 1) + 'px ' + MONO; ctx.fillStyle = GUT; ctx.textAlign = 'right'; ctx.fillText(String(row.n), padX + gutW - 14, yy); ctx.textAlign = 'left'; }
+        if (numbers) { ctx.font = (fs - 1) + 'px ' + MONO; ctx.fillStyle = GUT; ctx.textAlign = 'right'; ctx.fillText(String(row.n), xb + gutW - 14, yy); ctx.textAlign = 'left'; }
         let x = x0;
         r.forEach(([cls, text]) => {
           const bold = cls === 'in' || cls === 't' || cls === 'er';
@@ -1382,11 +1394,14 @@ self.postMessage({ type: 'ready' });`;
       });
       y += h;
     };
+    const y0 = y;
     section('Código');
-    drawRows(codeRows, padX + gutW, true);
-    if (inRows.length) { y += gap; section('Datos de entrada (lo que se tipeó)'); drawRows(inRows, padX, false); }
-    y += gap; section('Salida');
-    drawRows(outRows.length && (outRows.length > 1 || outRows[0].length) ? outRows : [[['dim', '(sin salida: ejecutá el programa antes de sacar la captura)']]], padX, false);
+    drawRows(codeRows, xb + gutW, true);
+    if (opts.lado) { y = y0; xb = padX + leftW + gapX; wb = rightW; } else y += gap;
+    if (inRows.length) { section('Datos de entrada (lo que se tipeó)'); drawRows(inRows, xb, false); y += gap; }
+    section('Salida');
+    drawRows(outRows.length && (outRows.length > 1 || outRows[0].length) ? outRows : [[['dim', '(sin salida: ejecutá el programa antes de sacar la captura)']]], xb, false);
+    if (opts.lado) { y = y0 + bodyH; xb = padX; wb = leftW; }
     if (procRows.length) {
       ctx.font = '13px ' + UI; ctx.fillStyle = SUB;
       procRows.forEach((t, i) => ctx.fillText(t, padX, y + 18 + i * 19));
@@ -1406,14 +1421,25 @@ self.postMessage({ type: 'ready' });`;
   function shotRender() {
     const seq = ++shotSeq;
     let cv;
-    try { cv = makePng({ input: $('shotIn').checked, proc: $('shotProc').checked }); } catch (e) { toast('No se pudo armar la imagen: ' + e.message); dShot.close(); return; }
+    try { cv = makePng({ input: $('shotIn').checked, proc: $('shotProc').checked, lado: $('shotLay').value === 'lado' }); } catch (e) { toast('No se pudo armar la imagen: ' + e.message); dShot.close(); return; }
     cv.toBlob((blob) => {
       if (seq !== shotSeq) return;
       if (!blob) { toast('No se pudo generar la imagen.'); dShot.close(); return; }
-      shotBlob = blob;
-      if (shotUrl) URL.revokeObjectURL(shotUrl);
-      shotUrl = URL.createObjectURL(blob); $('shotImg').src = shotUrl;
-      $('shotImg').dataset.w = cv.width; $('shotImg').dataset.h = cv.height;
+      const listo = (b) => {
+        if (seq !== shotSeq) return;
+        shotBlob = b;
+        if (shotUrl) URL.revokeObjectURL(shotUrl);
+        shotUrl = URL.createObjectURL(b); $('shotImg').src = shotUrl;
+        $('shotImg').dataset.w = cv.width; $('shotImg').dataset.h = cv.height;
+      };
+      // el mismo resumen que se ve escrito en la imagen va también dentro del archivo (se avisa en Ajustes)
+      if ($('shotProc').checked && window.Proceso && Proceso.pngConTexto && blob.arrayBuffer) {
+        blob.arrayBuffer().then((ab) => {
+          let b = blob;
+          try { b = new Blob([Proceso.pngConTexto(new Uint8Array(ab), proc.datosCaptura ? proc.datosCaptura(ta.value, cur ? cur.name : '', (window.CONFIG && CONFIG.VERSION) || '') : {})], { type: 'image/png' }); } catch (e) { b = blob; }
+          listo(b);
+        }, () => listo(blob));
+      } else listo(blob);
     }, 'image/png');
   }
   $('shot').addEventListener('click', () => {
@@ -1422,10 +1448,13 @@ self.postMessage({ type: 'ready' });`;
     const hayProc = !!proc.linea(); $('shotProcRow').hidden = !hayProc; $('shotProc').checked = hayProc && store.get('proccap', '1') !== '0';
     const canShare = !!(coarse && typeof File === 'function' && navigator.canShare && navigator.canShare({ files: [new File([new Blob(['x'])], 'a.png', { type: 'image/png' })] }));
     $('shotShare').hidden = !canShare;
+    $('shotLay').value = !coarse && window.innerWidth >= 1000 ? 'lado' : 'abajo';
     shotBlob = null; $('shotImg').removeAttribute('src');
     dShot.showModal(); shotRender();
   });
   $('shotIn').addEventListener('change', shotRender);
+  $('shotLay').addEventListener('change', shotRender);
+  $('shotLay').addEventListener('change', () => shotRender());
   $('shotProc').addEventListener('change', shotRender);
   dShot.addEventListener('close', () => { shotSeq++; shotBlob = null; if (shotUrl) { URL.revokeObjectURL(shotUrl); shotUrl = ''; } $('shotImg').removeAttribute('src'); });
   $('shotDl').addEventListener('click', () => {

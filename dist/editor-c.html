@@ -178,7 +178,7 @@ html.lectura #code { caret-color: transparent; }
 #out .ok { color: var(--ok); }
 .stdin { display: inline-block; vertical-align: baseline; border-bottom: 2px solid var(--input); }
 .stdin input { font: inherit; font-weight: 700; color: var(--input); background: transparent; border: 0; padding: 0; margin: 0; width: 1ch; min-width: 1ch; max-width: 100%; outline: 0; caret-color: var(--input); }
-.eofbtn { margin-left: 10px; font: 600 13px var(--ui); color: var(--muted); background: var(--fill); border: 0; border-radius: 8px; padding: 4px 10px; cursor: pointer; }
+.eofbtn { display: block; margin: 10px 0 0 0; opacity: .85; font: 600 13px var(--ui); color: var(--muted); background: var(--fill); border: 0; border-radius: 8px; padding: 4px 10px; cursor: pointer; }
 
 /* ---------- problemas ---------- */
 .diag { max-height: 42%; overflow: auto; border-top: 1px solid var(--line); background: var(--panel); font-size: 14px; }
@@ -502,6 +502,7 @@ html.lectura .pane-head .hint { margin-right: 8px; }
       <select id="examples" class="btn sel" aria-label="Ejemplos"><option value="">Ejemplos…</option></select>
       <button id="shot" class="btn" title="Descargar una imagen PNG con el código y la salida" aria-label="Captura"><svg class="i" aria-hidden="true"><use href="#i-captura"/></svg><span class="l">Captura</span></button>
       <button id="save" class="btn" title="Descargar como archivo .c (Ctrl+S)" aria-label="Guardar .c"><svg class="i" aria-hidden="true"><use href="#i-descargar"/></svg><span class="l">Guardar .c</span></button>
+      <button id="avisar" class="btn" title="Mandarle a Diego tu programa y el mensaje que te dio, por WhatsApp" aria-label="Avisar a Diego"><svg class="i" aria-hidden="true"><use href="#i-compartir"/></svg><span class="l">Avisar a Diego</span></button>
       <button id="settings" class="btn" title="Ajustes: mis datos, tema, tamaño de letra" aria-label="Ajustes"><svg class="i" aria-hidden="true"><use href="#i-ajustes"/></svg><span class="l">Ajustes</span></button>
     </div></details>
   </div>
@@ -625,7 +626,9 @@ html.lectura .pane-head .hint { margin-right: 8px; }
   <h2 id="tShot">Vista previa de la captura</h2>
   <div class="group">
     <label class="chk" id="shotInRow"><input type="checkbox" id="shotIn" role="switch" checked> Incluir los datos de entrada</label>
+    <label class="chk" id="shotLayRow">Disposición <select id="shotLay" class="btn sel" aria-label="Disposición de la imagen"><option value="abajo">Código arriba, salida abajo</option><option value="lado">Código y salida lado a lado</option></select></label>
     <label class="chk" id="shotProcRow"><input type="checkbox" id="shotProc" role="switch" checked> Incluir cómo se escribió (tipeado, pegado, tiempo)</label>
+    <p class="fine">Esa línea también queda guardada dentro del archivo PNG, como dato de la imagen que no se ve a simple vista. Si la desactivás, no se incluye en ningún lado.</p>
   </div>
   <div class="shotbox"><img id="shotImg" alt="Vista previa de la captura: cabecera, código, entrada y salida"></div>
   <div class="drow"><button id="shotDl" class="btn primary" type="button"><svg class="i" aria-hidden="true"><use href="#i-descargar"/></svg>Descargar PNG</button><button id="shotShare" class="btn" type="button" hidden><svg class="i" aria-hidden="true"><use href="#i-compartir"/></svg>Compartir</button><button class="btn" type="button" data-close>Cancelar</button></div>
@@ -678,7 +681,7 @@ html.lectura .pane-head .hint { margin-right: 8px; }
 
 <dialog id="dCasos" aria-labelledby="tCasos" class="wide">
   <h2 id="tCasos">Casos para enviar</h2>
-  <p>Son los casos en los que el editor no supo explicar un mensaje. Están guardados solo en este dispositivo. <b>Nada se envía solo</b>: elegí cuáles mandar, mirá la vista previa y apretá el botón que quieras.</p>
+  <p>Son los casos que el editor no supo explicar, o que mandás vos con «Avisar a Diego» (menú Más). Están guardados solo en este dispositivo. <b>Nada se envía solo</b>: elegí cuáles mandar, mirá la vista previa y apretá el botón que quieras.</p>
   <p class="fine">Se manda únicamente el código del programa (sin la cabecera con tu nombre), los datos de entrada y el mensaje del compilador. Sin nombre ni datos personales.</p>
   <ul class="clist" id="cList"></ul>
   <p class="fine" id="cVacio" hidden>No hay casos guardados. Cuando el editor no sepa explicar algo, lo vas a poder mandar desde acá.</p>
@@ -4693,12 +4696,47 @@ int main() {
       contar() { sincronizar('u'); return p.contar(); },
       resumen() { sincronizar('u'); return resumen(p); },
       linea() { sincronizar('u'); return linea(resumen(p)); },
+      datosCaptura(codigo, programa, version) { sincronizar('u'); return datosCaptura(p, codigo, programa, version); },
       ejecutar() { p.ejecutar(); },
       desconectar() { lista.forEach(([n, f]) => ta.removeEventListener(n, f)); }
     };
   }
 
-  const api = { nuevo, restaurar, resumen, linea, conectar, politicaPegado, politicaDesdeEnlace, TOPE_INACTIVIDAD, _hash: hash, _dif: difMinimo };
+  /* ---------- texto dentro del PNG (chunks iTXt, UTF-8) ---------- */
+  let TABLA_CRC = null;
+  function crc32(b) {
+    if (!TABLA_CRC) { TABLA_CRC = []; for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1; TABLA_CRC[n] = c >>> 0; } }
+    let c = 0xffffffff;
+    for (let i = 0; i < b.length; i++) c = TABLA_CRC[(c ^ b[i]) & 0xff] ^ (c >>> 8);
+    return (c ^ 0xffffffff) >>> 0;
+  }
+  function utf8(t) { const r = []; const e = unescape(encodeURIComponent(String(t))); for (let i = 0; i < e.length; i++) r.push(e.charCodeAt(i)); return r; }
+  // bytes: Uint8Array de un PNG; claves: { palabra: texto }. Devuelve un Uint8Array nuevo con un iTXt por clave antes de IEND, o el mismo si no es un PNG
+  function pngConTexto(bytes, claves) {
+    const firma = [137, 80, 78, 71, 13, 10, 26, 10];
+    for (let i = 0; i < 8; i++) if (bytes[i] !== firma[i]) return bytes;
+    let fin = 8;
+    while (fin + 8 <= bytes.length) { const len = ((bytes[fin] << 24) | (bytes[fin + 1] << 16) | (bytes[fin + 2] << 8) | bytes[fin + 3]) >>> 0; if (String.fromCharCode(bytes[fin + 4], bytes[fin + 5], bytes[fin + 6], bytes[fin + 7]) === 'IEND') break; fin += 12 + len; }
+    if (fin + 12 > bytes.length) return bytes;
+    const trozos = [];
+    Object.keys(claves).forEach((k) => {
+      if (!/^[\x20-\x7e]{1,79}$/.test(k)) return;
+      const datos = utf8(k).concat([0, 0, 0, 0, 0], utf8(claves[k])), tipo = [105, 84, 88, 116], cuerpo = tipo.concat(datos), crc = crc32(cuerpo), n = datos.length;
+      trozos.push([(n >>> 24) & 255, (n >>> 16) & 255, (n >>> 8) & 255, n & 255].concat(cuerpo, [(crc >>> 24) & 255, (crc >>> 16) & 255, (crc >>> 8) & 255, crc & 255]));
+    });
+    const extra = [].concat.apply([], trozos), out = new Uint8Array(bytes.length + extra.length);
+    out.set(bytes.subarray(0, fin), 0); out.set(extra, fin); out.set(bytes.subarray(fin), fin + extra.length);
+    return out;
+  }
+  // lo que lleva el archivo de la captura: el mismo resumen que se ve escrito en la imagen
+  function datosCaptura(p, codigo, programa, version) {
+    const r = resumen(p), d = {};
+    d['Software'] = 'Editor C' + (version ? ' ' + version : '');
+    d['EditorC-Resumen'] = linea(r);
+    d['EditorC-Proceso'] = JSON.stringify({ tipeado: r.tipeado, pegado: r.pegado, automatico: r.automatico, cargado: r.cargado, minutos: r.minutos, ejecuciones: r.ejecuciones, huella: hash(String(codigo || '')), programa: programa || '', fecha: new Date().toISOString().slice(0, 10) });
+    return d;
+  }
+  const api = { nuevo, restaurar, resumen, linea, conectar, pngConTexto, datosCaptura, politicaPegado, politicaDesdeEnlace, TOPE_INACTIVIDAD, _hash: hash, _dif: difMinimo };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.Proceso = api;
 })(typeof self !== 'undefined' ? self : this);
@@ -5620,6 +5658,13 @@ int main() {
     $('cNota').textContent = notas.join(' ');
   }
   $('casosBtn').addEventListener('click', () => abrirCasos());
+  // «Avisar a Diego»: arma un caso con el programa actual y el último mensaje, lo deja elegido y abre la vista previa (nada se manda solo)
+  $('avisar').addEventListener('click', () => {
+    $('more').open = false;
+    const it = (typeof problems !== 'undefined' && problems && problems[0]) || { k: 'e', code: '', msg: 'Consulta del alumno: sin mensaje del compilador.', line: 0 };
+    const clave = guardarCaso(it);
+    abrirCasos(clave ? [clave] : undefined);
+  });
   $('cCopy').addEventListener('click', () => {
     copyText(casosTexto, dCasos).then((ok) => {
       if (ok) { toast('Texto copiado. Pegalo en el chat que quieras.'); return; }
@@ -6020,7 +6065,8 @@ self.postMessage({ type: 'ready' });`;
     const longest = Math.max.apply(null, codeLines.map((l) => l.replace(/\t/g, SP()).length));
     const cols = Math.max(52, Math.min(100, longest + 1));
     const gutW = Math.max(3, String(codeLines.length).length + 1) * cw + 16;
-    const W = Math.ceil(padX * 2 + gutW + cols * cw + 14);
+    const leftW = Math.ceil(gutW + cols * cw + 14), rightW = Math.ceil(46 * cw + 24), gapX = 30;
+    const W = opts.lado ? padX * 2 + leftW + gapX + rightW : padX * 2 + leftW;
     const codeRows = [];
     let curSegs = [];
     const lineSegs = [];
@@ -6034,9 +6080,10 @@ self.postMessage({ type: 'ready' });`;
       if (n.nodeType === 3) outSegs.push([null, n.textContent]);
       else if (!(n.classList.contains('stdin') || n.classList.contains('eofbtn'))) outSegs.push([n.className, n.textContent]);
     });
-    const outRows = rowsOf(outSegs, cols + 4);
+    const colsR = opts.lado ? 46 : cols + 4;
+    const outRows = rowsOf(outSegs, colsR);
     while (outRows.length > 1 && !outRows[outRows.length - 1].length) outRows.pop();
-    const inRows = opts.input !== false && inTxt.value.trim() ? rowsOf([['in', inTxt.value.replace(/\n+$/, '')]], cols + 4) : [];
+    const inRows = opts.input !== false && inTxt.value.trim() ? rowsOf([['in', inTxt.value.replace(/\n+$/, '')]], colsR) : [];
     const secH = 38, headH = 88, gap = 6, footH = 46;
     const procRows = [];
     const procTxt = opts.proc === false ? '' : proc.linea();
@@ -6047,7 +6094,9 @@ self.postMessage({ type: 'ready' });`;
       if (ln) procRows.push(ln);
     }
     const blockH = (n) => n * lh + 20;
-    const H = headH + gap + secH + blockH(codeRows.length) + (inRows.length ? gap + secH + blockH(inRows.length) : 0) + gap + secH + blockH(Math.max(1, outRows.length)) + (procRows.length ? 14 + procRows.length * 19 : 0) + footH;
+    const hCode = secH + blockH(codeRows.length), hIn = inRows.length ? secH + blockH(inRows.length) + gap : 0, hOut = secH + blockH(Math.max(1, outRows.length));
+    const bodyH = opts.lado ? Math.max(hCode, hIn + hOut) : hCode + gap + hIn + hOut;
+    const H = headH + gap + bodyH + (procRows.length ? 14 + procRows.length * 19 : 0) + footH;
     let S = 2; while (W * S * H * S > 14e6 && S > 1) S -= 0.5;
     cv.width = Math.round(W * S); cv.height = Math.round(H * S); ctx.scale(S, S);
     ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, W, H);
@@ -6062,21 +6111,22 @@ self.postMessage({ type: 'ready' });`;
     ctx.font = '13px ' + UI; ctx.fillStyle = SUB; ctx.fillText(stamp, W - padX, 58); ctx.textAlign = 'left';
     ctx.fillStyle = TXT; ctx.fillRect(padX, headH - 12, W - 2 * padX, 1.5);
     let y = headH + gap;
+    let xb = padX, wb = leftW;
     const section = (title) => {
       ctx.font = '700 12px ' + UI; ctx.fillStyle = SUB;
       if ('letterSpacing' in ctx) ctx.letterSpacing = '1.2px';
-      ctx.fillText(title.toUpperCase(), padX, y + secH / 2 + 6);
+      ctx.fillText(title.toUpperCase(), xb, y + secH / 2 + 6);
       if ('letterSpacing' in ctx) ctx.letterSpacing = '0px';
       y += secH;
     };
     const drawRows = (rows, x0, numbers) => {
-      const h = blockH(rows.length), bx = padX - 10, bw = W - 2 * padX + 20, rr = 10;
+      const h = blockH(rows.length), bx = xb - 10, bw = wb + 20, rr = 10;
       ctx.beginPath(); ctx.roundRect ? ctx.roundRect(bx + .5, y + .5, bw - 1, h - 1, rr) : ctx.rect(bx + .5, y + .5, bw - 1, h - 1);
       ctx.fillStyle = numbers ? '#ffffff' : PANEL; ctx.fill(); ctx.strokeStyle = HAIR; ctx.lineWidth = 1; ctx.stroke();
-      if (numbers) { ctx.fillStyle = HAIR; ctx.fillRect(padX + gutW - 6, y + 1, 1, h - 2); }
+      if (numbers) { ctx.fillStyle = HAIR; ctx.fillRect(xb + gutW - 6, y + 1, 1, h - 2); }
       rows.forEach((row, i) => {
         const r = numbers ? row.r : row, yy = y + 10 + i * lh + lh / 2;
-        if (numbers) { ctx.font = (fs - 1) + 'px ' + MONO; ctx.fillStyle = GUT; ctx.textAlign = 'right'; ctx.fillText(String(row.n), padX + gutW - 14, yy); ctx.textAlign = 'left'; }
+        if (numbers) { ctx.font = (fs - 1) + 'px ' + MONO; ctx.fillStyle = GUT; ctx.textAlign = 'right'; ctx.fillText(String(row.n), xb + gutW - 14, yy); ctx.textAlign = 'left'; }
         let x = x0;
         r.forEach(([cls, text]) => {
           const bold = cls === 'in' || cls === 't' || cls === 'er';
@@ -6087,11 +6137,14 @@ self.postMessage({ type: 'ready' });`;
       });
       y += h;
     };
+    const y0 = y;
     section('Código');
-    drawRows(codeRows, padX + gutW, true);
-    if (inRows.length) { y += gap; section('Datos de entrada (lo que se tipeó)'); drawRows(inRows, padX, false); }
-    y += gap; section('Salida');
-    drawRows(outRows.length && (outRows.length > 1 || outRows[0].length) ? outRows : [[['dim', '(sin salida: ejecutá el programa antes de sacar la captura)']]], padX, false);
+    drawRows(codeRows, xb + gutW, true);
+    if (opts.lado) { y = y0; xb = padX + leftW + gapX; wb = rightW; } else y += gap;
+    if (inRows.length) { section('Datos de entrada (lo que se tipeó)'); drawRows(inRows, xb, false); y += gap; }
+    section('Salida');
+    drawRows(outRows.length && (outRows.length > 1 || outRows[0].length) ? outRows : [[['dim', '(sin salida: ejecutá el programa antes de sacar la captura)']]], xb, false);
+    if (opts.lado) { y = y0 + bodyH; xb = padX; wb = leftW; }
     if (procRows.length) {
       ctx.font = '13px ' + UI; ctx.fillStyle = SUB;
       procRows.forEach((t, i) => ctx.fillText(t, padX, y + 18 + i * 19));
@@ -6111,14 +6164,25 @@ self.postMessage({ type: 'ready' });`;
   function shotRender() {
     const seq = ++shotSeq;
     let cv;
-    try { cv = makePng({ input: $('shotIn').checked, proc: $('shotProc').checked }); } catch (e) { toast('No se pudo armar la imagen: ' + e.message); dShot.close(); return; }
+    try { cv = makePng({ input: $('shotIn').checked, proc: $('shotProc').checked, lado: $('shotLay').value === 'lado' }); } catch (e) { toast('No se pudo armar la imagen: ' + e.message); dShot.close(); return; }
     cv.toBlob((blob) => {
       if (seq !== shotSeq) return;
       if (!blob) { toast('No se pudo generar la imagen.'); dShot.close(); return; }
-      shotBlob = blob;
-      if (shotUrl) URL.revokeObjectURL(shotUrl);
-      shotUrl = URL.createObjectURL(blob); $('shotImg').src = shotUrl;
-      $('shotImg').dataset.w = cv.width; $('shotImg').dataset.h = cv.height;
+      const listo = (b) => {
+        if (seq !== shotSeq) return;
+        shotBlob = b;
+        if (shotUrl) URL.revokeObjectURL(shotUrl);
+        shotUrl = URL.createObjectURL(b); $('shotImg').src = shotUrl;
+        $('shotImg').dataset.w = cv.width; $('shotImg').dataset.h = cv.height;
+      };
+      // el mismo resumen que se ve escrito en la imagen va también dentro del archivo (se avisa en Ajustes)
+      if ($('shotProc').checked && window.Proceso && Proceso.pngConTexto && blob.arrayBuffer) {
+        blob.arrayBuffer().then((ab) => {
+          let b = blob;
+          try { b = new Blob([Proceso.pngConTexto(new Uint8Array(ab), proc.datosCaptura ? proc.datosCaptura(ta.value, cur ? cur.name : '', (window.CONFIG && CONFIG.VERSION) || '') : {})], { type: 'image/png' }); } catch (e) { b = blob; }
+          listo(b);
+        }, () => listo(blob));
+      } else listo(blob);
     }, 'image/png');
   }
   $('shot').addEventListener('click', () => {
@@ -6127,10 +6191,13 @@ self.postMessage({ type: 'ready' });`;
     const hayProc = !!proc.linea(); $('shotProcRow').hidden = !hayProc; $('shotProc').checked = hayProc && store.get('proccap', '1') !== '0';
     const canShare = !!(coarse && typeof File === 'function' && navigator.canShare && navigator.canShare({ files: [new File([new Blob(['x'])], 'a.png', { type: 'image/png' })] }));
     $('shotShare').hidden = !canShare;
+    $('shotLay').value = !coarse && window.innerWidth >= 1000 ? 'lado' : 'abajo';
     shotBlob = null; $('shotImg').removeAttribute('src');
     dShot.showModal(); shotRender();
   });
   $('shotIn').addEventListener('change', shotRender);
+  $('shotLay').addEventListener('change', shotRender);
+  $('shotLay').addEventListener('change', () => shotRender());
   $('shotProc').addEventListener('change', shotRender);
   dShot.addEventListener('close', () => { shotSeq++; shotBlob = null; if (shotUrl) { URL.revokeObjectURL(shotUrl); shotUrl = ''; } $('shotImg').removeAttribute('src'); });
   $('shotDl').addEventListener('click', () => {
@@ -6486,7 +6553,7 @@ window.KB_DATA={"errores":[{"id":"ARR-001","categoria":"arreglos y textos","nomb
    (por ejemplo '5491112345678'). Vacío = el botón abre WhatsApp sin destinatario. */
 (function (root) {
   'use strict';
-  var CONFIG = { WHATSAPP_NUMERO: '5491137781528', VERSION: 'daf9154f4e44' };
+  var CONFIG = { WHATSAPP_NUMERO: '5491137781528', VERSION: 'a7669f3bad0e' };
   if (typeof module !== 'undefined' && module.exports) module.exports = CONFIG;
   else root.CONFIG = CONFIG;
 })(typeof self !== 'undefined' ? self : this);

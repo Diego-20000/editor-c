@@ -35,6 +35,7 @@
       <select id="examples" class="btn sel" aria-label="Ejemplos"><option value="">Ejemplos…</option></select>
       <button id="shot" class="btn" title="Descargar una imagen PNG con el código y la salida" aria-label="Captura"><svg class="i" aria-hidden="true"><use href="#i-captura"/></svg><span class="l">Captura</span></button>
       <button id="save" class="btn" title="Descargar como archivo .c (Ctrl+S)" aria-label="Guardar .c"><svg class="i" aria-hidden="true"><use href="#i-descargar"/></svg><span class="l">Guardar .c</span></button>
+      <button id="avisar" class="btn" title="Mandarle a Diego tu programa y el mensaje que te dio, por WhatsApp" aria-label="Avisar a Diego"><svg class="i" aria-hidden="true"><use href="#i-compartir"/></svg><span class="l">Avisar a Diego</span></button>
       <button id="settings" class="btn" title="Ajustes: mis datos, tema, tamaño de letra" aria-label="Ajustes"><svg class="i" aria-hidden="true"><use href="#i-ajustes"/></svg><span class="l">Ajustes</span></button>
     </div></details>
   </div>
@@ -158,7 +159,9 @@
   <h2 id="tShot">Vista previa de la captura</h2>
   <div class="group">
     <label class="chk" id="shotInRow"><input type="checkbox" id="shotIn" role="switch" checked> Incluir los datos de entrada</label>
+    <label class="chk" id="shotLayRow">Disposición <select id="shotLay" class="btn sel" aria-label="Disposición de la imagen"><option value="abajo">Código arriba, salida abajo</option><option value="lado">Código y salida lado a lado</option></select></label>
     <label class="chk" id="shotProcRow"><input type="checkbox" id="shotProc" role="switch" checked> Incluir cómo se escribió (tipeado, pegado, tiempo)</label>
+    <p class="fine">Esa línea también queda guardada dentro del archivo PNG, como dato de la imagen que no se ve a simple vista. Si la desactivás, no se incluye en ningún lado.</p>
   </div>
   <div class="shotbox"><img id="shotImg" alt="Vista previa de la captura: cabecera, código, entrada y salida"></div>
   <div class="drow"><button id="shotDl" class="btn primary" type="button"><svg class="i" aria-hidden="true"><use href="#i-descargar"/></svg>Descargar PNG</button><button id="shotShare" class="btn" type="button" hidden><svg class="i" aria-hidden="true"><use href="#i-compartir"/></svg>Compartir</button><button class="btn" type="button" data-close>Cancelar</button></div>
@@ -211,7 +214,7 @@
 
 <dialog id="dCasos" aria-labelledby="tCasos" class="wide">
   <h2 id="tCasos">Casos para enviar</h2>
-  <p>Son los casos en los que el editor no supo explicar un mensaje. Están guardados solo en este dispositivo. <b>Nada se envía solo</b>: elegí cuáles mandar, mirá la vista previa y apretá el botón que quieras.</p>
+  <p>Son los casos que el editor no supo explicar, o que mandás vos con «Avisar a Diego» (menú Más). Están guardados solo en este dispositivo. <b>Nada se envía solo</b>: elegí cuáles mandar, mirá la vista previa y apretá el botón que quieras.</p>
   <p class="fine">Se manda únicamente el código del programa (sin la cabecera con tu nombre), los datos de entrada y el mensaje del compilador. Sin nombre ni datos personales.</p>
   <ul class="clist" id="cList"></ul>
   <p class="fine" id="cVacio" hidden>No hay casos guardados. Cuando el editor no sepa explicar algo, lo vas a poder mandar desde acá.</p>
