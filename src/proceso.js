@@ -356,7 +356,7 @@
     if (r.pegado > 0) partes.push(r.pegado + ' % pegado');
     else if (r.caracteres && r.caracteres.p > 0) partes.push('menos de 1 % pegado');
     if (r.automatico >= 5) partes.push(r.automatico + ' % automático (sangría y llaves)');
-    if (r.cargado > 0) partes.push(r.cargado + ' % abierto desde un archivo');
+    if (r.cargado > 0 && r.cargado < 90) partes.push(r.cargado + ' % abierto desde un archivo');   // con casi todo cargado lo dice la frase del final
     if (r.desconocido >= 5) partes.push(r.desconocido + ' % de origen no determinado');
     partes.push(r.minutos < 1 ? 'menos de 1 min de trabajo' : r.minutos + ' min de trabajo');
     partes.push(r.ejecuciones + (r.ejecuciones === 1 ? ' ejecución' : ' ejecuciones'));
