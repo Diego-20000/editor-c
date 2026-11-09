@@ -86,21 +86,25 @@
 
   /* ---------- WhatsApp ---------- */
 
-  function mensajeWhatsApp(casos) {
+  function limpiarNota(n) { return String(n == null ? '' : n).replace(/\r/g, '').replace(/\n{3,}/g, '\n\n').trim().slice(0, 600); }
+  function mensajeWhatsApp(casos, nota) {
     casos = (casos || []).filter(Boolean);
+    nota = limpiarNota(nota);
     var ver = casos.length && casos[0].version ? casos[0].version : '';
-    var t = ['Caso para el entrenador del Editor C', 'Versión: ' + (ver || 's/d') + ' · ' + casos.length + (casos.length === 1 ? ' caso' : ' casos'), ''];
+    var datos = 'Versión: ' + (ver || 's/d') + ' · ' + casos.length + (casos.length === 1 ? ' caso' : ' casos');
+    // si el alumno escribió algo, su mensaje va primero con sus palabras; si no, queda el encabezado simple
+    var t = nota ? ['Mensaje del alumno:', nota, '', '--- Datos del programa (Editor C) ---', datos, ''] : ['Caso para el entrenador del Editor C', datos, ''];
     casos.forEach(function (c, i) {
       var d = c.diag || {};
       t.push('--- Caso ' + (i + 1) + ' ---');
-      t.push('Diagnóstico: ' + (d.nivel || 'error') + (d.code ? ' (' + d.code + ')' : '') + (d.line ? ' línea ' + d.line : '') + ': ' + (d.msg || ''));
+      t.push(d.msg ? 'Diagnóstico: ' + (d.nivel || 'error') + (d.code ? ' (' + d.code + ')' : '') + (d.line ? ' línea ' + d.line : '') + ': ' + d.msg : 'Diagnóstico: sin mensaje del compilador (consulta del alumno)');
       t.push('Ayuda nivel ' + (c.nivel_ayuda == null ? 1 : c.nivel_ayuda) + (c.fecha ? ' · ' + c.fecha : ''));
       if (c.entrada) t.push('Entrada: ' + c.entrada.replace(/\n/g, ' / '));
       t.push('```c', c.codigo || '', '```');
       if (c.aviso) t.push(c.aviso);
       t.push('');
     });
-    t.push('#DATOS ' + JSON.stringify({ formato: FORMATO, casos: casos }));
+    t.push('#DATOS ' + JSON.stringify(nota ? { formato: FORMATO, nota: nota, casos: casos } : { formato: FORMATO, casos: casos }));
     return t.join('\n');
   }
 
@@ -143,6 +147,7 @@
 
   function exportarJSON(casos, opts) {
     var o = { formato: FORMATO, casos: (casos || []).filter(Boolean) };
+    if (opts && opts.nota && limpiarNota(opts.nota)) o.nota = limpiarNota(opts.nota);
     return opts && opts.compacto ? JSON.stringify(o) : JSON.stringify(o, null, 1);
   }
 
