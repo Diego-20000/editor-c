@@ -1282,9 +1282,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "error",
   "verificado_gcc13": true,
-  "detectado_editor": true,
-  "mensaje_editor_actual": "entre comillas simples va un solo carácter: un texto lleva comillas dobles (\"Hola\")",
-  "codigo_editor_actual": "E-sintaxis",
+  "detectado_editor": false,
+  "mensaje_editor_actual": null,
+  "codigo_editor_actual": null,
   "verificado_editor_corrige": true
  },
  {
@@ -1311,8 +1311,8 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "un char se escribe con comillas simples ('A'): las comillas dobles son para textos",
-  "codigo_editor_actual": "E-comillas-dobles",
+  "mensaje_editor_actual": "a un char le asignás un texto entre comillas dobles: ¿es lo que querías guardar ahí? Pensá qué guarda cada tipo",
+  "codigo_editor_actual": "W-comillas-dobles",
   "verificado_editor_corrige": true
  },
  {
@@ -1647,8 +1647,8 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "entre comillas simples va un solo carácter: un texto lleva comillas dobles (\"Hola\")",
-  "codigo_editor_actual": "E-sintaxis",
+  "mensaje_editor_actual": "entre comillas simples hay 2 caracteres, y ahí va uno solo. ¿Qué tipo de dato guarda un solo carácter y cómo se escribe un texto?",
+  "codigo_editor_actual": "W-sintaxis",
   "verificado_editor_corrige": true
  },
  {

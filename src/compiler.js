@@ -179,6 +179,17 @@
           const cierra = resto.indexOf("'") >= 0;
           const p1 = out[out.length - 1], p2 = out[out.length - 2];
           let kb = 'SIN-013';
+          if (cierra && s.charCodeAt(0) < 128) { // como gcc: varios caracteres entre comillas simples es un AVISO y vale un int armado con los bytes
+            const vals = [s.charCodeAt(0)]; let k = j, bien = true;
+            while (k < n && text[k] !== "'" && text[k] !== '\n') { let ch; if (text[k] === '\\') { const r = esc(text, k, { includes, line }); ch = r[0]; k = r[1]; } else ch = text[k++]; if (ch.charCodeAt(0) > 127) { bien = false; break; } vals.push(ch.charCodeAt(0)); }
+            if (bien && text[k] === "'") {
+              let v = 0; for (const x of vals) v = ((v << 8) | x) | 0;
+              const p1 = out[out.length - 1], p2 = out[out.length - 2];
+              const kbm = p1 && p1.v === '(' && p2 && p2.v === 'printf' ? 'PRF-020' : p1 && p1.v === '(' && p2 && p2.v === 'scanf' ? 'SCN-037' : p1 && p1.v === '==' ? 'ARR-059' : p1 && p1.v === '=' && p2 && p2.v === ']' ? 'ARR-046' : vals.length > 4 ? 'SIN-052' : 'SIN-050';
+              includes.avisos.push({ line, kb: kbm, msg: "entre comillas simples hay " + vals.length + " caracteres, y ahí va uno solo. ¿Qué tipo de dato guarda un solo carácter y cómo se escribe un texto?" });
+              out.push({ t: 'num', v, kind: 'int', line }); i = k + 1; continue;
+            }
+          }
           if (cierra) {
             if (p1 && p1.v === '(' && p2 && p2.v === 'printf') kb = 'PRF-020';
             else if (p1 && p1.v === '(' && p2 && p2.v === 'scanf') kb = 'SCN-037';
@@ -1167,7 +1178,7 @@
             if (global && !this.isConstExpr(v.init)) this.err('el valor inicial de una variable global tiene que ser una constante (un número), no otra variable ni una llamada a función', v.line);
             const pi = this.inDeclInit, pc = this.copiaNode; this.inDeclInit = v.init; if (v.init.k === 'id') this.copiaNode = v.init;
             const r = this.expr(v.init); this.inDeclInit = pi; this.copiaNode = pc;
-            if (r.t === 'str' && (d.type === 'char' || d.type === 'uchar')) { this.err("un char se escribe con comillas simples ('A'): las comillas dobles son para textos", v.line, 'ARR-047'); init = '0'; }
+            if (r.t === 'str' && (d.type === 'char' || d.type === 'uchar')) { this.warn("a un char le asignás un texto entre comillas dobles: ¿es lo que querías guardar ahí? Pensá qué guarda cada tipo", v.line, 'ARR-047', 'SIN-053'); init = '0'; }
             else if (r.t === 'str' && INTLIKE.has(d.type)) { this.err('un ' + TNAME[d.type] + ' guarda un número, no un texto', v.line, 'ARR-045'); init = '0'; }
             else { this.checkIntDiv(r, d.type, v.line); init = this.conv(r, d.type); }
             assigned = true;
@@ -1482,7 +1493,7 @@
         const r = this.expr(n.r);
         this.autoAcum = pa; this.autoAcumUno = pu; this.copiaNode = pc;
         if (r.t === 'str' && lv.arrayElem && (lv.t === 'char' || lv.t === 'uchar')) { this.err("un elemento de un arreglo de char guarda una sola letra: se escribe con comillas simples ('A'), no con comillas dobles", n.line, 'ARR-058'); return { c: '0', t: 'int' }; }
-        if (r.t === 'str' && (lv.t === 'char' || lv.t === 'uchar' || INTLIKE.has(lv.t)) && !lv.arrayElem) { this.err(lv.t === 'char' || lv.t === 'uchar' ? "un char se escribe con comillas simples ('A'): las comillas dobles son para textos" : 'un ' + TNAME[lv.t] + ' guarda un número, no un texto', n.line, lv.t === 'char' || lv.t === 'uchar' ? 'ARR-047' : 'ARR-045'); return { c: '0', t: 'int' }; }
+        if (r.t === 'str' && (lv.t === 'char' || lv.t === 'uchar' || INTLIKE.has(lv.t)) && !lv.arrayElem) { (lv.t === 'char' || lv.t === 'uchar' ? this.warn : this.err).call(this, lv.t === 'char' || lv.t === 'uchar' ? "a un char le asignás un texto entre comillas dobles: ¿es lo que querías guardar ahí? Pensá qué guarda cada tipo" : 'un ' + TNAME[lv.t] + ' guarda un número, no un texto', n.line, lv.t === 'char' || lv.t === 'uchar' ? 'ARR-047' : 'ARR-045'); return { c: '0', t: 'int' }; }
         if (r.t === 'str') { this.err('los textos (char arrays) todavía no están soportados: solo se usan dentro de printf', n.line); return { c: '0', t: 'int' }; }
         if (r.t === 'void') { this.err('esa función no devuelve ningún valor', n.line, 'FUN-013'); return { c: '0', t: 'int' }; }
         this.checkIntDiv(r, lv.t, n.line);
