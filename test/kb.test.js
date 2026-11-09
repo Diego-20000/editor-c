@@ -288,6 +288,15 @@ t('herramienta: archivo malo o sin uso → error y no escribe', () => {
   fs.writeFileSync(path.join(TMP, 'c.json'), Compartir.exportarJSON(CASOS)); const r2 = herramienta(path.join(TMP, 'c.json'), '--salida', rota); ok(r2.status === 1); eq(fs.readFileSync(rota, 'utf8'), 'no es json');
 });
 
+t('mensajeWhatsApp: la nota del alumno va primero y el encabezado fijo se reemplaza', () => {
+  const c = Compartir.nuevoCaso(CASO), m = Compartir.mensajeWhatsApp([c], '  Me da 2 y esperaba 2.5  ');
+  ok(m.indexOf('Mensaje del alumno:\nMe da 2 y esperaba 2.5') === 0 && !m.includes('Caso para el entrenador'));
+  ok(Compartir.mensajeWhatsApp([c], '').startsWith('Caso para el entrenador del Editor C'));
+  ok(JSON.parse(Compartir.exportarJSON([c], { nota: 'hola' })).nota === 'hola' && !('nota' in JSON.parse(Compartir.exportarJSON([c]))));
+  ok(Compartir.mensajeWhatsApp([Compartir.nuevoCaso(Object.assign({}, CASO, { diag: { msg: '', line: 0 } }))]).includes('sin mensaje del compilador'));
+  eq(Compartir.importarJSON(m).casos, [c], 'el mensaje con nota se sigue pudiendo importar');
+});
+
 /* ---------- build: el sitio incluye la base ---------- */
 t('build: assets/kb-data.js y los scripts del entrenador', () => {
   const idx = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');

@@ -341,7 +341,14 @@ dialog > .group { margin-top: 12px; }
 /* vista previa de la captura */
 dialog.wide { width: min(760px, calc(100vw - 32px)); }
 .shotbox { max-height: 55dvh; overflow: auto; border-radius: 10px; box-shadow: 0 0 0 1px var(--line); background: #fff; }
-.shotbox img { display: block; width: 100%; height: auto; }
+.shotbox img { display: block; width: 100%; height: auto; transition: opacity .15s; }
+.shotbox { position: relative; min-height: 180px; }
+.shotbox .carga { display: none; position: absolute; inset: 0; align-items: center; justify-content: center; font: 600 14px var(--ui); color: var(--muted); }
+.shotbox.cargando .carga { display: flex; }
+.shotbox.cargando img { opacity: .25; }
+.fld { display: block; margin: 12px 0 6px; }
+#cNota2 { width: 100%; resize: vertical; min-height: 76px; max-height: 30vh; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel); color: var(--text); font: 15px/1.4 var(--ui); }
+@media (prefers-reduced-motion: reduce) { .shotbox img { transition: none; } }
 #impList li { margin-bottom: 2px; }
 
 /* ---------- ayuda por niveles en el panel de problemas ---------- */

@@ -880,7 +880,7 @@
       cb.type = 'checkbox'; cb.checked = casosSel.has(k); cb.setAttribute('aria-label', 'Incluir este caso en el envío');
       cb.addEventListener('change', () => { if (cb.checked) casosSel.add(k); else casosSel.delete(k); pintarVistaCasos(); });
       const cm = el('span', 'cm'); const d = c.diag || {};
-      cm.appendChild(el('b', '', (d.line ? 'Línea ' + d.line + ': ' : '') + (d.msg || '')));
+      cm.appendChild(el('b', '', d.msg ? (d.line ? 'Línea ' + d.line + ': ' : '') + d.msg : 'Consulta del alumno (sin mensaje del compilador)'));
       cm.appendChild(el('small', '', (d.nivel === 'aviso' ? 'Aviso' : 'Error') + (c.fecha ? ' · ' + c.fecha : '') + ' · ' + (c.codigo || '').split('\n').length + ' líneas de código'));
       lb.appendChild(cb); lb.appendChild(cm); li.appendChild(lb);
       const del = btnEl('', 'mini ico', () => {
@@ -902,7 +902,7 @@
       wa.setAttribute('aria-disabled', 'true'); wa.removeAttribute('href'); $('cCopy').disabled = true; $('cDl').disabled = true;
       return;
     }
-    const texto = Compartir.mensajeWhatsApp(sel), url = Compartir.urlWhatsApp(texto, cfgNum);
+    const nota = $('cNota2').value, texto = Compartir.mensajeWhatsApp(sel, nota), url = Compartir.urlWhatsApp(texto, cfgNum);
     casosTexto = Compartir.textoCompleto || texto;
     let enviado = texto;
     if (Compartir.recortado) { try { enviado = decodeURIComponent(url.slice(url.indexOf('?text=') + 6)); } catch (e) { enviado = texto; } }
@@ -913,13 +913,15 @@
     if (Compartir.recortado) notas.push('El texto es largo y por WhatsApp va recortado (es lo que ves arriba). Usá «Copiar» para tener el texto completo.');
     $('cNota').textContent = notas.join(' ');
   }
+  $('cNota2').addEventListener('input', () => pintarVistaCasos());
   $('casosBtn').addEventListener('click', () => abrirCasos());
   // «Avisar a Diego»: arma un caso con el programa actual y el último mensaje, lo deja elegido y abre la vista previa (nada se manda solo)
   $('avisar').addEventListener('click', () => {
     $('more').open = false;
-    const it = (typeof problems !== 'undefined' && problems && problems[0]) || { k: 'e', code: '', msg: 'Consulta del alumno: sin mensaje del compilador.', line: 0 };
+    const it = (typeof problems !== 'undefined' && problems && problems[0]) || { k: 'e', code: '', msg: '', line: 0 };
     const clave = guardarCaso(it);
     abrirCasos(clave ? [clave] : undefined);
+    setTimeout(() => $('cNota2').focus(), 50);
   });
   $('cCopy').addEventListener('click', () => {
     copyText(casosTexto, dCasos).then((ok) => {
@@ -931,7 +933,7 @@
   $('cDl').addEventListener('click', () => {
     if (!casosSelLista.length) return;
     const d = new Date(), stamp = d.getFullYear() + pad2(d.getMonth() + 1) + pad2(d.getDate());
-    download(new Blob([Compartir.exportarJSON(casosSelLista)], { type: 'application/json' }), 'casos-editor-c-' + stamp + '.json');
+    download(new Blob([Compartir.exportarJSON(casosSelLista, { nota: $('cNota2').value })], { type: 'application/json' }), 'casos-editor-c-' + stamp + '.json');
     toast('Archivo descargado. Mandalo vos si querés.');
   });
   $('cDelAll').addEventListener('click', () => {
@@ -1352,7 +1354,8 @@ self.postMessage({ type: 'ready' });`;
     const blockH = (n) => n * lh + 20;
     const hCode = secH + blockH(codeRows.length), hIn = inRows.length ? secH + blockH(inRows.length) + gap : 0, hOut = secH + blockH(Math.max(1, outRows.length));
     const bodyH = opts.lado ? Math.max(hCode, hIn + hOut) : hCode + gap + hIn + hOut;
-    const H = headH + gap + bodyH + (procRows.length ? 14 + procRows.length * 19 : 0) + footH;
+    const barH = procRows.length ? 18 : 0;
+    const H = headH + gap + bodyH + (procRows.length ? 14 + procRows.length * 19 + barH : 0) + footH;
     let S = 2; while (W * S * H * S > 14e6 && S > 1) S -= 0.5;
     cv.width = Math.round(W * S); cv.height = Math.round(H * S); ctx.scale(S, S);
     ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, W, H);
@@ -1402,9 +1405,25 @@ self.postMessage({ type: 'ready' });`;
     drawRows(outRows.length && (outRows.length > 1 || outRows[0].length) ? outRows : [[['dim', '(sin salida: ejecutá el programa antes de sacar la captura)']]], xb, false);
     if (opts.lado) { y = y0 + bodyH; xb = padX; wb = leftW; }
     if (procRows.length) {
+      // barra de cómo se escribió: sólido = tipeado, rayado = pegado, gris = automático (se distingue también en blanco y negro)
+      const rs = proc.resumen(), bw = Math.min(W - 2 * padX, 440), by = y + 12, bh = 8;
+      const tr = [[rs.tipeado, 'solid'], [rs.pegado, 'hatch'], [rs.automatico, 'gray'], [(rs.cargado || 0) + (rs.desconocido || 0), 'light']].filter((q) => q[0] > 0);
+      ctx.save(); ctx.beginPath(); ctx.roundRect ? ctx.roundRect(padX, by, bw, bh, 4) : ctx.rect(padX, by, bw, bh); ctx.clip();
+      ctx.fillStyle = '#ffffff'; ctx.fillRect(padX, by, bw, bh);
+      let bx0 = padX;
+      tr.forEach(([pc, kind]) => {
+        const w = bw * pc / 100;
+        if (kind === 'solid') { ctx.fillStyle = TXT; ctx.fillRect(bx0, by, w, bh); }
+        else if (kind === 'gray') { ctx.fillStyle = '#9a9aa0'; ctx.fillRect(bx0, by, w, bh); }
+        else if (kind === 'light') { ctx.fillStyle = HAIR; ctx.fillRect(bx0, by, w, bh); }
+        else { ctx.save(); ctx.beginPath(); ctx.rect(bx0, by, w, bh); ctx.clip(); ctx.strokeStyle = TXT; ctx.lineWidth = 1.5; for (let hx = bx0 - bh; hx < bx0 + w + bh; hx += 4) { ctx.beginPath(); ctx.moveTo(hx, by + bh); ctx.lineTo(hx + bh, by); ctx.stroke(); } ctx.restore(); }
+        bx0 += w;
+      });
+      ctx.restore();
+      ctx.strokeStyle = TXT; ctx.lineWidth = 1; ctx.beginPath(); ctx.roundRect ? ctx.roundRect(padX + .5, by + .5, bw - 1, bh - 1, 4) : ctx.rect(padX + .5, by + .5, bw - 1, bh - 1); ctx.stroke();
       ctx.font = '13px ' + UI; ctx.fillStyle = SUB;
-      procRows.forEach((t, i) => ctx.fillText(t, padX, y + 18 + i * 19));
-      y += 14 + procRows.length * 19;
+      procRows.forEach((t, i) => ctx.fillText(t, padX, y + 18 + barH + i * 19));
+      y += 14 + barH + procRows.length * 19;
     }
     // pie: la marca (mismo trazo que el logo: C de eje 19,5 y cursor) y el nombre, discretos
     const k = 0.34, mx = padX, my = y + 14;
@@ -1419,6 +1438,7 @@ self.postMessage({ type: 'ready' });`;
   let shotBlob = null, shotUrl = '', shotSeq = 0;
   function shotRender() {
     const seq = ++shotSeq;
+    $('shotBox').classList.add('cargando');
     let cv;
     try { cv = makePng({ input: $('shotIn').checked, proc: $('shotProc').checked, lado: $('shotLay').value === 'lado' }); } catch (e) { toast('No se pudo armar la imagen: ' + e.message); dShot.close(); return; }
     cv.toBlob((blob) => {
@@ -1426,7 +1446,7 @@ self.postMessage({ type: 'ready' });`;
       if (!blob) { toast('No se pudo generar la imagen.'); dShot.close(); return; }
       const listo = (b) => {
         if (seq !== shotSeq) return;
-        shotBlob = b;
+        shotBlob = b; $('shotBox').classList.remove('cargando');
         if (shotUrl) URL.revokeObjectURL(shotUrl);
         shotUrl = URL.createObjectURL(b); $('shotImg').src = shotUrl;
         $('shotImg').dataset.w = cv.width; $('shotImg').dataset.h = cv.height;
@@ -1449,7 +1469,7 @@ self.postMessage({ type: 'ready' });`;
     $('shotShare').hidden = !canShare;
     $('shotLay').value = !coarse && window.innerWidth >= 1000 ? 'lado' : 'abajo';
     shotBlob = null; $('shotImg').removeAttribute('src');
-    dShot.showModal(); shotRender();
+    dShot.showModal(); $('shotBox').classList.add('cargando'); setTimeout(shotRender, 40);   // primero se ve el cuadro, después se arma la imagen
   });
   $('shotIn').addEventListener('change', shotRender);
   $('shotLay').addEventListener('change', shotRender);
