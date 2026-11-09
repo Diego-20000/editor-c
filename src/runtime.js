@@ -115,6 +115,7 @@
         space = flags.indexOf(' ') >= 0, alt = flags.indexOf('#') >= 0;
       if (w < 0) { left = true; w = -w; }
       let p = prec === undefined ? -1 : (prec === '*' ? (Number(args[ai++]) | 0) : (prec === '' ? 0 : parseInt(prec, 10)));
+      if (w > 100000 || p > 100000) throw new CRuntimeError('el ancho o la precisión del formato es demasiado grande para este editor (máximo 100000)');   // también cuando viene de un * 
       const arg = args[ai++];
       let body = '', sign = '', numeric = true, isSpecial = false;
       const upper = conv === 'F' || conv === 'E' || conv === 'G' || conv === 'X';

@@ -19,6 +19,9 @@ process.on('exit', () => { try { fs.rmSync(T, { recursive: true, force: true });
 
 const PREF = ['SIN', 'DEC', 'TIP', 'OPE', 'PRF', 'SCN', 'CTL', 'FUN', 'ARR', 'PRE', 'EJE', 'LOG', 'POR', 'NOS'];
 const gccVer = (cp.spawnSync('gcc', ['--version'], { encoding: 'utf8' }).stdout || '').split('\n')[0];
+// la base promete «verificado con gcc 13»: con otra versión no se certifica nada
+const gccMayor = (/(\d+)\.\d+\.\d+/.exec(gccVer) || [])[1];
+if (gccMayor !== '13' && !process.env.KB_SIN_GCC13) { console.error('gcc no es de la versión 13 (' + (gccVer || 'no se encontró') + '): no se puede validar ni marcar verificado_gcc13.'); process.exit(2); }
 
 function gcc(codigo, args) { // compila con gcc; devuelve { exe, diag, ok }
   const f = path.join(T, 'p' + Math.random().toString(36).slice(2) + '.c');
@@ -35,12 +38,12 @@ function correr(exe, entrada) {
 function editor(codigo, entrada) { // compila con el editor y, si compila, lo ejecuta (en otro proceso, con tiempo límite)
   const r = compile(codigo);
   const d = r.errors.concat(r.warnings);
-  const res = { errores: r.errors, avisos: r.warnings, primero: d[0] || null, out: null, runtime: null };
+  const res = { errores: r.errors, avisos: r.warnings, primero: d[0] || null, out: null, runtime: null, code: null };
   if (!r.errors.length) {
     const f = path.join(T, 'e' + Math.random().toString(36).slice(2) + '.c');
     fs.writeFileSync(f, codigo);
     const p = cp.spawnSync('node', [path.join(raiz, 'test', 'run1.js'), f], { input: entrada || '', encoding: 'utf8', timeout: 8000, maxBuffer: 1 << 24 });
-    res.out = String(p.stdout || '');
+    res.out = String(p.stdout || ''); res.code = p.status === null ? 'señal' : p.status;
     const m = /RUNTIME ERR l(\d+|undefined): (.*)/.exec(String(p.stderr || ''));
     if (m) res.runtime = m[2];
   }
@@ -82,6 +85,7 @@ if (esAyuda) {
     const ed = editor(l.ejemplo, l.entrada);
     if (ed.errores.length) mal(id, 'el ejemplo no compila en el editor: ' + ed.errores[0].msg);
     else if (ed.out !== gr.out) mal(id, 'el editor da otra salida que gcc');
+    else if (ed.code !== gr.code) mal(id, 'el editor termina con otro código de salida que gcc (' + ed.code + ' contra ' + gr.code + ')');
     if (arreglar) l.resultado = gr.out;
     else if (l.resultado !== gr.out) mal(id, 'resultado no coincide con lo que da gcc');
   });
@@ -127,6 +131,7 @@ if (esAyuda) {
       if (edb.errores.length) mal(id, 'codigo_bien no compila en el editor: ' + edb.errores[0].msg);
       else if (edb.avisos.length) mal(id, 'codigo_bien da avisos en el editor: ' + edb.avisos[0].msg);
       else if (edb.out !== grb.out) mal(id, 'codigo_bien: el editor da otra salida que gcc');
+      else if (edb.code !== grb.code) mal(id, 'codigo_bien: el editor termina con otro código de salida que gcc (' + edb.code + ' contra ' + grb.code + ')');
       else corrige = true;
     }
     if (arreglar) {

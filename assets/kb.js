@@ -146,12 +146,17 @@
     var msg = String(diag.msg == null ? '' : diag.msg);
     var lista = S.plantillas[normalizarMensaje(msg)];
     if (lista && lista.length) {
-      var i;
-      for (i = 0; i < lista.length; i++) if (lista[i].mensaje_editor_actual === msg && (!diag.code || lista[i].codigo_editor_actual === diag.code)) e = lista[i];
-      if (!e && diag.code) for (i = 0; i < lista.length; i++) if (lista[i].codigo_editor_actual === diag.code) { e = lista[i]; break; }
-      if (!e) for (i = 0; i < lista.length; i++) if (lista[i].mensaje_editor_actual === msg) { e = lista[i]; break; }
-      if (!e) e = lista[0];
-      return { entrada: e, via: 'plantilla' };
+      // solo se devuelve una entrada si queda UN candidato; con varios es ambiguo y no se elige ninguno (no se enseña algo que quizá no corresponde)
+      var exactos = lista.filter(function (x) { return x.mensaje_editor_actual === msg && (!diag.code || x.codigo_editor_actual === diag.code); });
+      if (exactos.length === 1) e = exactos[0];
+      else if (!exactos.length) {
+        var porCod = diag.code ? lista.filter(function (x) { return x.codigo_editor_actual === diag.code; }) : [];
+        var porMsg = lista.filter(function (x) { return x.mensaje_editor_actual === msg; });
+        if (porCod.length === 1) e = porCod[0];
+        else if (!porCod.length && porMsg.length === 1) e = porMsg[0];
+        else if (lista.length === 1) e = lista[0];
+      }
+      if (e) return { entrada: e, via: 'plantilla' };
     }
     // 3) por código del diagnóstico, si una sola entrada lo usa
     if (diag.code && S.porCodigo[diag.code] && S.porCodigo[diag.code].length === 1) return { entrada: S.porCodigo[diag.code][0], via: 'codigo' };
