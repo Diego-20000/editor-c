@@ -166,7 +166,7 @@ html.lectura #code { caret-color: transparent; }
 #out .ok { color: var(--ok); }
 .stdin { display: inline-block; vertical-align: baseline; border-bottom: 2px solid var(--input); }
 .stdin input { font: inherit; font-weight: 700; color: var(--input); background: transparent; border: 0; padding: 0; margin: 0; width: 1ch; min-width: 1ch; max-width: 100%; outline: 0; caret-color: var(--input); }
-.eofbtn { margin-left: 10px; font: 600 13px var(--ui); color: var(--muted); background: var(--fill); border: 0; border-radius: 8px; padding: 4px 10px; cursor: pointer; }
+.eofbtn { display: block; margin: 10px 0 0 0; opacity: .85; font: 600 13px var(--ui); color: var(--muted); background: var(--fill); border: 0; border-radius: 8px; padding: 4px 10px; cursor: pointer; }
 
 /* ---------- problemas ---------- */
 .diag { max-height: 42%; overflow: auto; border-top: 1px solid var(--line); background: var(--panel); font-size: 14px; }
