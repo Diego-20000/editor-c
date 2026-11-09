@@ -1573,5 +1573,21 @@
    "define con punto y coma",
    "macro"
   ]
+ },
+ {
+  "id": "L-047",
+  "titulo": "lazo infinito por contador inverso",
+  "explicacion": "El contador se aleja del límite que debería terminar el lazo. Revisá hacia dónde cambia el contador.",
+  "ejemplo": "#include <stdio.h>\nint main() {\n int I=1; while(I<5){I++;}\n return 0;\n}",
+  "entrada": "",
+  "resultado": "",
+  "errores_ids": [],
+  "buscar": [
+   "lazo",
+   "infinito",
+   "por",
+   "contador",
+   "inverso"
+  ]
  }
 ]

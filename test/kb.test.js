@@ -250,7 +250,7 @@ t('importar: código entre 4000 y 8000 se recorta; más de 200 casos se ignoran;
   eq(Compartir.importarJSON(JSON.stringify({ formato: 'casos-sin-respuesta-v1', casos: muchos })).casos.length, 200);
   Compartir.importarJSON('{"formato":"casos-sin-respuesta-v1","casos":[{"__proto__":{"polluted":1},"v":1,"codigo":"x","diag":{"msg":"m"}}]}'); ok(({}).polluted === undefined);
 });
-t('config: forma', () => { eq(CONFIG.WHATSAPP_NUMERO, ''); ok(typeof CONFIG.VERSION === 'string' && CONFIG.VERSION.length > 0); });
+t('config: forma', () => { ok(/^(|\d{10,15})$/.test(CONFIG.WHATSAPP_NUMERO), 'solo dígitos con código de país'); ok(typeof CONFIG.VERSION === 'string' && CONFIG.VERSION.length > 0); });
 
 /* ---------- tools/kb-agregar-caso.js ---------- */
 const TMP = fs.mkdtempSync(path.join(os.tmpdir(), 'kbtest-'));

@@ -331,7 +331,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "falta una expresión antes de '<'",
+  "mensaje_editor_actual": "falta una expresión antes de '<': a cada lado del '&&' tiene que haber una comparación completa",
   "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
@@ -779,7 +779,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "hay una asignación '=' dentro de la condición: ¿querías comparar con '=='?",
+  "mensaje_editor_actual": "'=!' no es 'distinto': C lo lee como asignar el contrario. Para \"distinto\" se escribe '!='",
   "codigo_editor_actual": "W-asignacion-en-condicion",
   "verificado_editor_corrige": true
  },
@@ -808,7 +808,7 @@
   "verificado_gcc13": true,
   "detectado_editor": true,
   "mensaje_editor_actual": "en C \"distinto\" se escribe '!=' (no '<>')",
-  "codigo_editor_actual": "E-otro",
+  "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
  {
@@ -836,7 +836,7 @@
   "verificado_gcc13": true,
   "detectado_editor": true,
   "mensaje_editor_actual": "\"mayor o igual\" se escribe '>=' (no '=>')",
-  "codigo_editor_actual": "E-otro",
+  "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
  {
@@ -975,7 +975,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "'++' solo se puede aplicar a una variable",
+  "mensaje_editor_actual": "'++' solo se puede aplicar a una variable, no a una cuenta",
   "codigo_editor_actual": "E-otro",
   "verificado_editor_corrige": true
  },
@@ -1003,7 +1003,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "a la izquierda del = tiene que haber una variable",
+  "mensaje_editor_actual": "a la izquierda del '=' tiene que haber una variable, no un número",
   "codigo_editor_actual": "E-otro",
   "verificado_editor_corrige": true
  },
@@ -1059,7 +1059,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "a la izquierda del = tiene que haber una variable",
+  "mensaje_editor_actual": "a la izquierda del '=' tiene que haber una variable, y esto es una cuenta. Para comparar se usa '=='",
   "codigo_editor_actual": "E-otro",
   "verificado_editor_corrige": true
  },
@@ -1115,7 +1115,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "carácter no válido '\\': si querías escribir un texto, ponelo entre comillas, por ejemplo printf(\"Hola\\n\");",
+  "mensaje_editor_actual": "la barra invertida '\\' no es la división: dividir es '/'",
   "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
@@ -1143,7 +1143,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "la función 'B' no está declarada. ¿Quisiste decir 'H'? (en C todo va en minúscula y se escribe igual)",
+  "mensaje_editor_actual": "'B' es una variable, no una función: si querías multiplicar, la multiplicación siempre lleva el operador *",
   "codigo_editor_actual": "E-no-declarada",
   "verificado_editor_corrige": true,
   "notas": "El editor sí lo marca, pero con un mensaje equivocado (dice que la función B no está declarada y sugiere otra). Convendría decir que falta el * entre B y el paréntesis."

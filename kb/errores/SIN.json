@@ -164,7 +164,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "se esperaba ')' pero se encontró '{'",
+  "mensaje_editor_actual": "a la condición del if le falta cerrar el paréntesis",
   "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
@@ -192,7 +192,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "se esperaba ')' pero se encontró ';'",
+  "mensaje_editor_actual": "a la llamada de printf le falta el paréntesis de cierre antes del ;",
   "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
@@ -248,7 +248,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "no se entiende '}' fuera de una función",
+  "mensaje_editor_actual": "hay una '}' de más: la función ya estaba cerrada",
   "codigo_editor_actual": "E-funcion",
   "verificado_editor_corrige": true
  },
@@ -276,7 +276,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "se esperaba ']' pero se encontró ';'",
+  "mensaje_editor_actual": "abriste un corchete y falta el ] que lo cierra",
   "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
@@ -305,7 +305,7 @@
   "verificado_gcc13": true,
   "detectado_editor": true,
   "mensaje_editor_actual": "las comillas tipográficas “ no sirven en C: usá las comillas rectas \"",
-  "codigo_editor_actual": "E-otro",
+  "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
  {
@@ -333,7 +333,7 @@
   "verificado_gcc13": true,
   "detectado_editor": true,
   "mensaje_editor_actual": "las comillas tipográficas ‘ no sirven en C: usá las comillas rectas '",
-  "codigo_editor_actual": "E-otro",
+  "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
  {
@@ -360,8 +360,8 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "carácter con comillas simples mal escrito (usá 'a' con un solo carácter)",
-  "codigo_editor_actual": "E-otro",
+  "mensaje_editor_actual": "falta cerrar la comilla simple del carácter (usá 'a' con un solo carácter)",
+  "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
  {
@@ -389,7 +389,7 @@
   "verificado_gcc13": true,
   "detectado_editor": true,
   "mensaje_editor_actual": "comentario /* sin cerrar",
-  "codigo_editor_actual": "E-otro",
+  "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
  {
@@ -416,7 +416,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "no se entiende 'then A': ¿falta un operador, un ';' o es un tipo mal escrito?",
+  "mensaje_editor_actual": "'then' no existe en C: el cuerpo del if va después de la condición, con llaves si son varias instrucciones",
   "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
@@ -473,7 +473,7 @@
   "verificado_gcc13": true,
   "detectado_editor": true,
   "mensaje_editor_actual": "en C \"distinto\" se escribe '!=' (no '<>')",
-  "codigo_editor_actual": "E-otro",
+  "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
  {
@@ -501,7 +501,7 @@
   "verificado_gcc13": true,
   "detectado_editor": true,
   "mensaje_editor_actual": "\"mayor o igual\" se escribe '>=' (no '=>')",
-  "codigo_editor_actual": "E-otro",
+  "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
  {
@@ -556,7 +556,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "la función 'print' no está declarada. ¿Quisiste decir 'printf'? (en C todo va en minúscula y se escribe igual)",
+  "mensaje_editor_actual": "la función 'print' no existe en C: para mostrar datos se usa printf",
   "codigo_editor_actual": "E-no-declarada",
   "verificado_editor_corrige": true
  },
@@ -584,7 +584,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "'cout' no está declarada (¿falta declararla o está mal escrita?)",
+  "mensaje_editor_actual": "'cout' es de C++ y no existe en C: para mostrar datos se usa printf",
   "codigo_editor_actual": "E-no-declarada",
   "verificado_editor_corrige": true
  },
@@ -696,7 +696,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "carácter no válido ';'",
+  "mensaje_editor_actual": "carácter no válido ';': parece un punto y coma pero es otro carácter (viene de copiar y pegar); escribilo de nuevo",
   "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
@@ -725,7 +725,7 @@
   "verificado_gcc13": true,
   "detectado_editor": true,
   "mensaje_editor_actual": "a 'main' le faltan los paréntesis: main() { ... }",
-  "codigo_editor_actual": "E-otro",
+  "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
  {
@@ -752,7 +752,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "se esperaba '(' pero se encontró 'A'",
+  "mensaje_editor_actual": "se esperaba '(' después del if: la condición va entre paréntesis",
   "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
@@ -780,7 +780,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "falta una expresión antes de ')'",
+  "mensaje_editor_actual": "hay un paréntesis de cierre de más",
   "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
@@ -808,7 +808,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "falta una expresión antes de ';'",
+  "mensaje_editor_actual": "después del '=' falta el valor que querés guardar",
   "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
@@ -836,7 +836,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "falta una expresión antes de '/'",
+  "mensaje_editor_actual": "la operación necesita un valor a la izquierda del '/' y otro a la derecha",
   "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
@@ -864,7 +864,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "falta una expresión antes de ')'",
+  "mensaje_editor_actual": "hay una coma antes del paréntesis de cierre y después no hay ningún dato",
   "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
@@ -948,7 +948,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "se esperaba ':' pero se encontró 'printf'",
+  "mensaje_editor_actual": "después del valor del case falta el signo ':'",
   "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
@@ -1033,8 +1033,8 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "falta un ';' al final de esta línea (antes de '0.3')",
-  "codigo_editor_actual": "E-falta-punto-coma",
+  "mensaje_editor_actual": "ese número tiene dos puntos decimales: un número lleva uno solo",
+  "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
  {
@@ -1089,7 +1089,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "se esperaba un nombre pero se encontró '1'",
+  "mensaje_editor_actual": "un nombre de variable no puede empezar con un número: tiene que empezar con una letra o con _",
   "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
@@ -1117,8 +1117,8 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "falta un ';' al final de esta línea (antes de '-')",
-  "codigo_editor_actual": "E-falta-punto-coma",
+  "mensaje_editor_actual": "el guion '-' es el operador resta: no puede ir en el nombre de una variable",
+  "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
  {
@@ -1145,7 +1145,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "se esperaba un nombre pero se encontró '5'",
+  "mensaje_editor_actual": "los decimales se escriben con punto (12.5), no con coma: la coma separa variables",
   "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
@@ -1174,7 +1174,7 @@
   "verificado_gcc13": true,
   "detectado_editor": true,
   "mensaje_editor_actual": "cadena sin cerrar (falta la comilla \")",
-  "codigo_editor_actual": "E-otro",
+  "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
  {
@@ -1200,9 +1200,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "'\\q' no es una secuencia de escape conocida: C la reemplaza por el carácter q solo",
+  "codigo_editor_actual": "W-portabilidad",
   "verificado_editor_corrige": true
  },
  {
@@ -1342,7 +1342,7 @@
   "verificado_gcc13": true,
   "detectado_editor": true,
   "mensaje_editor_actual": "'for' es una palabra reservada, no puede usarse como nombre",
-  "codigo_editor_actual": "E-otro",
+  "codigo_editor_actual": "E-palabra-reservada",
   "verificado_editor_corrige": true
  },
  {
@@ -1369,7 +1369,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "se esperaba un nombre pero se encontró '='",
+  "mensaje_editor_actual": "después del tipo tiene que venir el nombre de la variable, y acá aparece directamente el =",
   "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
@@ -1397,8 +1397,8 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "carácter con comillas simples mal escrito (usá 'a' con un solo carácter)",
-  "codigo_editor_actual": "E-otro",
+  "mensaje_editor_actual": "entre comillas simples hay 2 caracteres, y ahí va uno solo. ¿Qué tipo de dato guarda un solo carácter y cómo se escribe un texto?",
+  "codigo_editor_actual": "W-sintaxis",
   "verificado_editor_corrige": true,
   "notas": "gcc 13 solo avisa (-Wmultichar) y compila; el editor lo rechaza como error."
  },
@@ -1453,9 +1453,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "error",
   "verificado_gcc13": true,
-  "detectado_editor": true,
-  "mensaje_editor_actual": "carácter con comillas simples mal escrito (usá 'a' con un solo carácter)",
-  "codigo_editor_actual": "E-otro",
+  "detectado_editor": false,
+  "mensaje_editor_actual": null,
+  "codigo_editor_actual": null,
   "verificado_editor_corrige": true,
   "notas": "gcc 13 compila con avisos y el programa se rompe al ejecutar; gcc 14 lo rechaza como error."
  },
@@ -1483,8 +1483,8 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "no se puede usar un texto entre comillas como número",
-  "codigo_editor_actual": "E-otro",
+  "mensaje_editor_actual": "a un char le asignás un texto entre comillas dobles: ¿es lo que querías guardar ahí? Pensá qué guarda cada tipo",
+  "codigo_editor_actual": "W-comillas-dobles",
   "verificado_editor_corrige": true,
   "notas": "gcc 13 compila con un aviso (-Wint-conversion); gcc 14 lo rechaza."
  },
@@ -1512,8 +1512,8 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "no se entiende '{' fuera de una función",
-  "codigo_editor_actual": "E-funcion",
+  "mensaje_editor_actual": "el ';' después del paréntesis cierra la declaración y la llave queda suelta",
+  "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
  {
@@ -1540,7 +1540,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "falta un ';' al final de esta línea (antes de ')')",
+  "mensaje_editor_actual": "las tres partes del for se separan con ';' y no con comas",
   "codigo_editor_actual": "E-falta-punto-coma",
   "verificado_editor_corrige": true
  },
@@ -1568,7 +1568,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "se esperaba ')' pero se encontró 'A'",
+  "mensaje_editor_actual": "falta una coma entre el texto y 'A'",
   "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
@@ -1596,8 +1596,8 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "falta un ';' al final de esta línea (antes de 'A')",
-  "codigo_editor_actual": "E-falta-punto-coma",
+  "mensaje_editor_actual": "en C la multiplicación siempre se escribe con '*': '2A' no es 2 por A",
+  "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
  {
@@ -1624,8 +1624,8 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "falta un ';' al final de esta línea (antes de 'A')",
-  "codigo_editor_actual": "E-falta-punto-coma",
+  "mensaje_editor_actual": "'While' no es una palabra de C: se escribe todo en minúscula ('while')",
+  "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
  {
@@ -1680,7 +1680,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "se esperaba '(' pero se encontró '{'",
+  "mensaje_editor_actual": "la condición del if va entre paréntesis ( ), no entre llaves { }",
   "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
@@ -1708,7 +1708,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "se esperaba ')' pero se encontró 'Hola'",
+  "mensaje_editor_actual": "las comillas de adentro cierran el texto antes de tiempo: para mostrar comillas hay que escribir \\\"",
   "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },

@@ -52,7 +52,7 @@
   "verificado_gcc13": true,
   "detectado_editor": true,
   "mensaje_editor_actual": "los punteros todavía no están soportados en este editor (solo char * para textos)",
-  "codigo_editor_actual": "E-texto-no-soportado",
+  "codigo_editor_actual": "E-no-soportado",
   "verificado_editor_corrige": true
  },
  {
@@ -108,7 +108,7 @@
   "verificado_gcc13": true,
   "detectado_editor": true,
   "mensaje_editor_actual": "los punteros todavía no están soportados en este editor (solo char * para textos)",
-  "codigo_editor_actual": "E-texto-no-soportado",
+  "codigo_editor_actual": "E-no-soportado",
   "verificado_editor_corrige": true
  },
  {
@@ -163,7 +163,7 @@
   "nivel": "informacion",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "'struct' todavía no está soportado en este editor",
+  "mensaje_editor_actual": "'struct' (un registro que agrupa varios datos en una sola variable) todavía no está soportado en este editor",
   "codigo_editor_actual": "E-no-soportado",
   "verificado_editor_corrige": true
  },
@@ -191,7 +191,7 @@
   "nivel": "informacion",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "'union' todavía no está soportado en este editor",
+  "mensaje_editor_actual": "'union' (varios datos que comparten el mismo lugar de memoria) todavía no está soportado en este editor",
   "codigo_editor_actual": "E-no-soportado",
   "verificado_editor_corrige": true
  },
@@ -219,7 +219,7 @@
   "nivel": "informacion",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "'enum' todavía no está soportado en este editor",
+  "mensaje_editor_actual": "'enum' (nombres para un grupo de constantes enteras) todavía no está soportado en este editor",
   "codigo_editor_actual": "E-no-soportado",
   "verificado_editor_corrige": true
  },
@@ -247,7 +247,7 @@
   "nivel": "informacion",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "'typedef' todavía no está soportado en este editor",
+  "mensaje_editor_actual": "'typedef' (le pone un nombre nuevo a un tipo) todavía no está soportado en este editor",
   "codigo_editor_actual": "E-no-soportado",
   "verificado_editor_corrige": true
  },
@@ -275,8 +275,8 @@
   "nivel": "informacion",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "'FILE' no está declarada (¿falta declararla o está mal escrita?)",
-  "codigo_editor_actual": "E-no-declarada",
+  "mensaje_editor_actual": "'FILE' (el manejo de archivos con fopen, fprintf y fclose) todavía no está soportado en este editor",
+  "codigo_editor_actual": "E-no-soportado",
   "verificado_editor_corrige": true
  },
  {
@@ -332,7 +332,7 @@
   "verificado_gcc13": true,
   "detectado_editor": true,
   "mensaje_editor_actual": "'strstr' todavía no está soportada en este editor (trabaja con punteros)",
-  "codigo_editor_actual": "E-otro",
+  "codigo_editor_actual": "E-no-soportado",
   "verificado_editor_corrige": true
  },
  {
@@ -387,8 +387,8 @@
   "nivel": "informacion",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "las funciones que devuelven char * (un puntero) todavía no están soportadas en este editor",
-  "codigo_editor_actual": "E-otro",
+  "mensaje_editor_actual": "las funciones que devuelven char * (un puntero a un texto) todavía no están soportadas en este editor",
+  "codigo_editor_actual": "E-no-soportado",
   "verificado_editor_corrige": true
  },
  {
@@ -415,8 +415,8 @@
   "nivel": "informacion",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "la función 'sscanf' no está declarada. ¿Quisiste decir 'scanf'? (en C todo va en minúscula y se escribe igual)",
-  "codigo_editor_actual": "E-no-declarada",
+  "mensaje_editor_actual": "sscanf (leer datos desde un texto) todavía no está soportada en este editor. Leé el número directamente con scanf",
+  "codigo_editor_actual": "E-no-soportado",
   "verificado_editor_corrige": true
  },
  {
@@ -443,7 +443,7 @@
   "nivel": "informacion",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "long double todavía no está soportado en este editor: usá double",
+  "mensaje_editor_actual": "long double (un decimal de más precisión) todavía no está soportado en este editor: usá double",
   "codigo_editor_actual": "E-no-soportado",
   "verificado_editor_corrige": true
  },
@@ -471,8 +471,8 @@
   "nivel": "informacion",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "falta un ';' al final de esta línea (antes de ':')",
-  "codigo_editor_actual": "E-falta-punto-coma",
+  "mensaje_editor_actual": "goto y las etiquetas ('INICIO:') todavía no están soportados en este editor. Usá un while o un for para repetir",
+  "codigo_editor_actual": "E-no-soportado",
   "verificado_editor_corrige": true
  },
  {
@@ -527,8 +527,8 @@
   "nivel": "informacion",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "se esperaba un nombre pero se encontró '('",
-  "codigo_editor_actual": "E-sintaxis",
+  "mensaje_editor_actual": "los punteros a función todavía no están soportados en este editor",
+  "codigo_editor_actual": "E-no-soportado",
   "verificado_editor_corrige": true
  },
  {

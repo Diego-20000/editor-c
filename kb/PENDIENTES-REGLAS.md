@@ -41,3 +41,33 @@ Para no avisar sin razón, estas reglas solo se disparan en el patrón exacto de
 ## Casos gemelos
 
 Un diagnóstico lleva un solo `kb`; si otro caso de la base es el mismo error, va en `kbAlt`: LOG-002 (OPE-013), LOG-018 (OPE-034, CTL-033), LOG-010 (CTL-006), OPE-043 (CTL-036), OPE-011 (CTL-037), LOG-024 (CTL-044, DEC-020), LOG-053 (CTL-046), TIP-021 (EJE-020), TIP-012 (PRF-005), LOG-005 (PRF-026), LOG-006 (SCN-028) y TIP-005 (LOG-052). Los casos de otras categorías de esa lista (CTL, DEC, EJE, PRF, SCN) ahora los detecta el editor: falta correr `node tools/kb-validar.js kb/errores/XXX.json --arreglar` en esos archivos.
+
+---
+
+# Segunda tanda (R2): kb por contexto y casos de SIN, DEC, PRF, SCN, CTL, FUN, ARR, PRE, POR, EJE
+
+Los diagnósticos que ya existían ahora llevan `kb` según el contexto (qué sentencia se cerraba, qué cierre faltaba, dónde se declaró la variable, tipos del printf/scanf…). Los casos que son el mismo error con otro enunciado van en `kbAlt` (tabla `GEMELOS` de `src/compiler.js`). `tools/kb-validar.js` ahora solo da `detectado_editor: true` si algún diagnóstico trae el id del caso (kb o kbAlt) o si el editor frena el programa al ejecutarlo.
+
+## Decisiones que quedan para Diego
+
+| Caso | Hoy | Recomendación |
+|---|---|---|
+| SIN-050 `char C='AB'`, ARR-059 `T[0]=='si'` | el editor da **error**; gcc 13 compila con aviso (-Wmultichar) | pasarlo a aviso y ejecutar con el valor que usa gcc |
+| SIN-052 `printf('Hola')`, PRF-020, SCN-037 | error; gcc 13 compila con aviso y falla al ejecutar | dejar como error (el programa no puede andar) |
+| SIN-053 / ARR-047 / TIP-015 `char C="A"` | error; gcc 13 avisa | pasarlo a aviso si se quiere fidelidad exacta |
+| FUN-037 `SALUDAR;` | ahora es **aviso** (gcc compila y no hace nada) | — |
+
+## Sin implementar
+
+| Caso | Motivo |
+|---|---|
+| POR-006, SIN-062, FUN-024 (`main()` sin tipo), FUN-044 (función sin tipo) | **Falso positivo comprobado:** las soluciones del profesor (`Ej05`, `Ej06`, `Ej09LC`, `Ej14B`, `Ej16`… en `brizuela/resoluciones`) escriben `main() {`. |
+| DEC-012, DEC-013 (variable sin usar) | pendiente: falta el análisis de lecturas con cuidado de los modismos; no se arriesgó. |
+| FUN-016, FUN-017, FUN-042, FUN-021, DEC-009, DEC-021, DEC-036, ARR-026, ARR-053 | reglas pensadas (pureza de la función, sombreado, producto en 0) pero sin implementar en esta tanda por tiempo; ninguna es segura sin probar contra toda la materia. |
+| CTL-005, CTL-009, CTL-017, CTL-018, CTL-026, CTL-028, CTL-030, CTL-045, CTL-047, CTL-015 | dependen del enunciado (vueltas de más/de menos, mostrar dentro del lazo) o son informativos (switch sin default aparece en código correcto). |
+| PRF-012…045 de formato (ancho, decimales, `\n` faltante), SCN-009…036 | dependen de lo que el alumno quiere mostrar/leer o de la entrada tipeada; no hay forma estática sin falsos positivos. |
+| ARR-008 (arreglo de tamaño variable) | C99 lo permite y gcc no avisa; avisaría en código correcto. |
+| EJE-xxx de ejecución | los que dependen de datos de entrada ya los frena el runtime; el resto (desbordes, scanf que falla) no se avisa estáticamente. |
+| POR-008…025 de entorno | no hay regla estática segura (comportamiento según sistema). |
+
+Excepciones en `test/cases`: `st1.c` usa `system("pause")` y `void main`: ahora avisa (acierto, no falso positivo).
