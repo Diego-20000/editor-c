@@ -386,9 +386,9 @@
   "riesgo_falso_positivo": "Una dirección que realmente lleva /n, como printf(\"c/n\").",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "el texto termina en '/n': el salto de línea se escribe con la barra invertida",
+  "codigo_editor_actual": "W-otro",
   "verificado_editor_corrige": true
  },
  {
@@ -442,9 +442,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "printf: hay un '%' suelto en el texto que no forma un formato válido: para mostrar el símbolo % se escribe %%",
+  "codigo_editor_actual": "W-printf-formato",
   "verificado_editor_corrige": true
  },
  {
@@ -554,9 +554,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "error",
   "verificado_gcc13": true,
-  "detectado_editor": true,
-  "mensaje_editor_actual": "entre comillas simples va un solo carácter: un texto lleva comillas dobles (\"Hola\")",
-  "codigo_editor_actual": "E-sintaxis",
+  "detectado_editor": false,
+  "mensaje_editor_actual": null,
+  "codigo_editor_actual": null,
   "verificado_editor_corrige": true
  },
  {
@@ -1086,9 +1086,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "printf: sizeof da un resultado sin signo y largo, que no es un int: hay un formato propio para ese tipo",
+  "codigo_editor_actual": "W-printf-formato",
   "verificado_editor_corrige": true
  },
  {
@@ -1170,9 +1170,9 @@
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "esta instrucción viene después de un 'return': nunca se ejecuta",
+  "codigo_editor_actual": "W-otro",
   "verificado_editor_corrige": true
  },
  {
@@ -1282,9 +1282,9 @@
   "riesgo_falso_positivo": "Un long pasado correctamente con %ld, por ejemplo printf(\"%ld\", VALOR_LONG).",
   "nivel": "aviso",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
-  "codigo_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "printf: '%ld' es para long y 'A' es int",
+  "codigo_editor_actual": "W-printf-formato",
   "verificado_editor_corrige": true
  },
  {

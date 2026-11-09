@@ -877,7 +877,7 @@
 
     funcCode(f) {
       const info = this.funcs.get(f.name);
-      this.cur = info; this.ntemp = 0; this.fnHoist = [];
+      this.cur = info; this.ntemp = 0; this.fnHoist = []; this.scanfPend = false;
       this.push();
       const ps = [];
       for (const p of f.params) { this.declare(p.name, p.array ? { type: p.type, js: 'v_' + p.name, assigned: true, array: true, ndims: p.dims, param: true } : { type: p.type, js: 'v_' + p.name, assigned: true, scalar: true, param: true }, p.line); ps.push('v_' + p.name); }
@@ -890,7 +890,10 @@
       let temps = ''; for (let i = 1; i <= this.ntemp; i++) temps += 'let $a' + i + ',$i' + i + ';';
       return (info.async ? 'async ' : '') + 'function f_' + f.name + '(' + ps.join(',') + '){let $t;' + temps + this.fnHoist.join('') + '\n' + body + tail + '\n}';
     }
-    stmtList(arr) { return arr.map((s) => this.stmt(s)).join('\n'); }
+    stmtList(arr) {
+      arr.forEach((s, i) => { const nx = arr[i + 1]; if (s.k === 'return' && nx && nx.k === 'expr' && nx.e && nx.e.k === 'call') this.warn("esta instrucción viene después de un 'return': nunca se ejecuta", nx.line || this.curLine, 'PRF-042'); });
+      return arr.map((s) => this.stmt(s)).join('\n');
+    }
     stmt(s) {
       if (s.line) this.curLine = s.line;
       switch (s.k) {
@@ -1699,6 +1702,8 @@
       }
       const fmt = args[0].v;
       const specs = this.parseFmt(fmt);
+      if (/%/.test(fmt.replace(/%([-+ #0]*)(\*|\d+)?(?:\.(\*|\d*))?(hh|h|ll|l|L|z|j|t)?([diouxXfFeEgGcsp%]|\[\^?\]?[^\]]*\])/g, ''))) this.warn("printf: hay un '%' suelto en el texto que no forma un formato válido: para mostrar el símbolo % se escribe %%", n.line, 'PRF-016');
+      if (/[^\s\/]\/n$/.test(fmt) || /^\/n$/.test(fmt)) this.warn("el texto termina en '/n': el salto de línea se escribe con la barra invertida", n.line, 'PRF-014');
       const vals = [];
       let si = 0;
       const rest = args.slice(1);
@@ -1725,6 +1730,8 @@
           else if (c === 's' && t !== 'str') this.warn("printf: '%s' es para textos (un arreglo de char) y " + d + ' es un número (' + t + "): usá '%d' o '%f'", n.line, a.k === 'id' && t === 'char' ? 'PRF-006' : undefined);
           else if (c === 'c' && isFl) this.warn("printf: '%c' espera un carácter, pero " + d + ' es ' + t, n.line);
           else if ((c === 'd' || c === 'i') && t === 'long' && target.len !== 'l' && target.len !== 'll') this.warn("printf: para un long usá '%ld'", n.line, 'TIP-027');
+          else if ((c === 'd' || c === 'i') && target.len === '' && a.k === 'sizeof') this.warn("printf: sizeof da un resultado sin signo y largo, que no es un int: hay un formato propio para ese tipo", n.line, 'PRF-039');
+          else if ((c === 'd' || c === 'i') && (target.len === 'l' || target.len === 'll') && (t === 'int' || t === 'short' || t === 'char')) this.warn("printf: '%" + target.len + c + "' es para long y " + d + ' es ' + t, n.line, 'PRF-046');
           else if (c === 'd' && t === 'str') this.warn("printf: '%d' espera un entero pero recibe un texto", n.line, 'PRF-038');
           else if (c === 'c' && t === 'str') this.warn("printf: '%c' espera un carácter (entre comillas simples 'a'), no un texto", n.line, 'PRF-007');
         }
@@ -1743,11 +1750,14 @@
       const specs = this.parseFmt(fmt).filter((s) => !/\*/.test(s.w || ''));
       const refs = [], types = [], pres = [];
       const rest = args.slice(1);
+      if (/%[-+ #0]*\d*\.\d+[a-zA-Z]/.test(fmt)) this.warn("scanf no usa precisión como '%5.2f': al leer, el % solo lleva el tipo (y a lo sumo un ancho)", n.line, 'SCN-029');
       const sobra = fmt.replace(/%[-+ #0]*(\*|\d+)?(\.\d+)?(hh|h|ll|l|L|z|j|t)?([diouxXfFeEgGcsp%]|\[\^?\]?[^\]]*\])/g, '');
       if (/[A-Za-z]/.test(sobra)) this.warn('el texto del scanf tiene letras que no son de lectura (' + JSON.stringify(sobra.trim()).slice(1, -1) + '): scanf solo lleva los % del dato; el mensaje para el usuario va en un printf aparte', n.line, 'SCN-014');
       else if (/\n\s*$/.test(fmt)) this.warn("no pongas '\\n' al final del scanf: hace que el programa espere un Enter de más", n.line, 'SCN-013');
       if (rest.length < specs.length) this.err('scanf pide leer ' + specs.length + ' valor(es) (hay ' + specs.length + " '%') pero solo tiene " + rest.length + " variable(s): falta una variable con '&' (por ejemplo scanf(\"%d %d\", &a, &b);)", n.line, rest.length === 0 ? 'SCN-033' : 'SCN-015');
       else if (rest.length !== specs.length) this.warn('scanf lee ' + specs.length + ' valor(es) por los % del texto, pero recibe ' + rest.length + ' variable(s)', n.line, 'SCN-016');
+      { const dir = rest.filter((x) => x.k === 'addr' && x.e && x.e.k === 'id').map((x) => x.e.name); const rep2 = dir.find((nm, i) => dir.indexOf(nm) !== i); if (rep2) this.warn("scanf lee dos valores en la misma variable '" + rep2 + "': el segundo pisa al primero", n.line, 'SCN-062'); }
+      if (/^%c/.test(fmt) && this.scanfPend) this.warn("este scanf con %c va después de otra lectura: el Enter que quedó sin leer entra como carácter", n.line, 'SCN-010', ['SCN-011', 'SCN-034']);
       rest.forEach((a, k) => {
         if (specs[k] && (specs[k].conv === 's' || specs[k].conv[0] === '[')) {
           const ca = this.charArr(a.k === 'addr' ? a.e : a);
@@ -1778,10 +1788,12 @@
             else if (sp.len === 'l' && t === 'float') this.warn("scanf: '%l" + c + "' es para double pero " + nm + " es float: usá '%f'", n.line, 'SCN-007');
             else if (INTLIKE.has(t)) this.warn("scanf: '%" + c + "' lee un decimal pero " + nm + ' es ' + t + ": usá '%d'", n.line, 'SCN-005');
           } else if (c === 'c' && !(t === 'char' || t === 'int')) this.warn("scanf: '%c' no corresponde al tipo " + t + ' de ' + nm, n.line);
+          else if (c === 'c' && t === 'int') this.warn("scanf: '%c' lee un carácter y " + nm + ' es int', n.line, 'SCN-009');
         }
         refs.push('[()=>' + lv.c + ',(v)=>{' + lv.c + '=v}]');
         types.push(JSON.stringify(lv.t));
       });
+      this.scanfPend = specs.length > 0 && !/\s$/.test(fmt) ? true : this.scanfPend;
       const sc = '(await $.scanf(' + JSON.stringify(fmt) + ',[' + refs.join(',') + '],[' + types.join(',') + '],' + n.line + '))';
       return { c: pres.length ? '(' + pres.reverse().join(',') + ',' + sc + ')' : sc, t: 'int' };
     }
