@@ -1,8 +1,9 @@
+/* Editor C, de Diego Segurotti (ArtPrograms Studio). Uso libre dentro de este sitio, sin fines comerciales. Prohibido copiar, redistribuir o vender sin permiso. PolyForm Strict License 1.0.0. */
 // Service worker de Editor C. build.js completa la versión (hash del contenido) y la lista de archivos.
 // Primera visita: precachea todo. Después sirve desde la caché (sin conexión). Una versión nueva queda
 // "en espera" hasta que la persona acepta recargar (la página manda SKIP_WAITING).
 'use strict';
-const VERSION = '911d845171cf';
+const VERSION = '2447b13bb254';
 const CACHE = 'editor-c-' + VERSION;
 const FILES = ["./","index.html","manifest.webmanifest","assets/styles.css","assets/compiler.js","assets/runtime.js","assets/examples.js","assets/proceso.js","assets/app.js","assets/kb-data.js","assets/config.js","assets/kb.js","assets/compartir.js","assets/favicon.svg","assets/favicon-32.png","assets/favicon.ico","assets/icon-192.png","assets/icon-512.png","assets/icon-maskable-512.png","assets/apple-touch-icon.png"];
 

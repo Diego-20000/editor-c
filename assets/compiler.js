@@ -1,3 +1,4 @@
+/* Editor C, de Diego Segurotti (ArtPrograms Studio). Uso libre dentro de este sitio, sin fines comerciales. Prohibido copiar, redistribuir o vender sin permiso. PolyForm Strict License 1.0.0. */
 /* Compilador del Editor C: subconjunto de C de la materia -> JavaScript.
    Entrada: texto C. Salida: { js, errors:[{line,msg,code,kb?}], warnings:[{line,msg,code,kb?,kbAlt?}] } */
 (function (root) {

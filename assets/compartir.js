@@ -1,3 +1,4 @@
+/* Editor C, de Diego Segurotti (ArtPrograms Studio). Uso libre dentro de este sitio, sin fines comerciales. Prohibido copiar, redistribuir o vender sin permiso. PolyForm Strict License 1.0.0. */
 /* Casos sin respuesta y compartir por decisión del alumno. Nada se envía solo: este módulo solo arma
    textos y enlaces; la persona ve la vista previa y elige. Sin nombres ni datos personales. */
 (function (root) {

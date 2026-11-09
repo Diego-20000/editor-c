@@ -1,3 +1,4 @@
+/* Editor C, de Diego Segurotti (ArtPrograms Studio). Uso libre dentro de este sitio, sin fines comerciales. Prohibido copiar, redistribuir o vender sin permiso. PolyForm Strict License 1.0.0. */
 (function () {
   'use strict';
   const $ = (id) => document.getElementById(id);
@@ -503,49 +504,38 @@
       items.push({ k: 'w', line: w.line, msg: w.msg, code, kb: typeof w.kb === 'string' ? w.kb : '' });
     });
     problems = items; problemLines = lines.length;
+    // Ayuda 1 (apagada, la predeterminada): no se dice dónde está el error ni qué dice el compilador; solo de qué tipo general es.
+    // Ayuda 2 (línea): se indica el número de línea y nada más (sin mensaje, sin sugerencias, sin pistas).
+    const conLinea = nivelAyuda >= 2;
     marks = new Map();
-    items.forEach((it) => { if (it.line && marks.get(it.line) !== 'e') marks.set(it.line, it.k); });
+    if (conLinea) items.forEach((it) => { if (it.line && marks.get(it.line) !== 'e') marks.set(it.line, it.k); });
+    if (!conLinea) problems = [];
     renderGutter(true); paintProblems();
+    if (!conLinea) problems = items;
     diagList.innerHTML = '';
     items.forEach((it) => {
       const wrap = document.createElement('div'); wrap.className = 'it ' + it.k;
-      if (it.line) { wrap.dataset.line = String(it.line); wrap.dataset.txt = lines[it.line - 1] || ''; }
-      const ay = ayudaItem(it);
+      if (conLinea && it.line) { wrap.dataset.line = String(it.line); wrap.dataset.txt = lines[it.line - 1] || ''; }
+      ayudaItem(it);   // los casos que el editor no supo explicar se guardan en el dispositivo (no se muestran acá)
       const b = document.createElement('button'); b.type = 'button';
       const tag = document.createElement('span'); tag.className = 'tag';
       tag.appendChild(ico(it.k === 'e' ? 'error' : 'aviso'));
-      tag.appendChild(document.createTextNode((it.k === 'e' ? (it.rt ? 'Error al ejecutar' : 'Error') : 'Aviso') + (it.line ? ' · línea ' + it.line : '')));
-      const body = document.createElement('span'); body.className = 'body';
-      const t = document.createElement('span'); t.className = 'msg'; t.textContent = ay.texto || it.msg; body.appendChild(t);
-      if (ay.texto) { const o = document.createElement('span'); o.className = 'orig'; o.textContent = 'Compilador: ' + it.msg; body.appendChild(o); }
-      if (it.line && lines[it.line - 1] !== undefined && lines[it.line - 1].trim()) { const c = document.createElement('code'); c.textContent = lines[it.line - 1].trim(); body.appendChild(c); }
-      if (it.code) { const c = document.createElement('span'); c.className = 'cd'; c.textContent = it.code; body.appendChild(c); }
-      b.appendChild(tag); b.appendChild(body);
-      if (it.line) { b.title = 'Ir a la línea ' + it.line; b.addEventListener('click', () => goLine(it.line)); }
+      tag.appendChild(document.createTextNode(tipoGeneral(it) + (conLinea && it.line ? ' · línea ' + it.line : '')));
+      b.appendChild(tag);
+      if (conLinea && it.line) { b.title = 'Ir a la línea ' + it.line; b.addEventListener('click', () => goLine(it.line)); }
+      else b.disabled = true;
       wrap.appendChild(b);
-      if (it.k === 'w' && it.code) {
-        const m = document.createElement('button'); m.type = 'button'; m.className = 'btn mini mute'; m.textContent = 'Silenciar';
-        m.title = 'No mostrar más avisos de tipo ' + it.code + ' (se guarda en este dispositivo)'; m.setAttribute('aria-label', 'Silenciar los avisos de tipo ' + it.code);
-        m.addEventListener('click', () => { if (muted.indexOf(it.code) < 0) muted.push(it.code); saveMuted(); renderDiag(res, rtErr, true); toast('Aviso silenciado: ' + it.code + '.', 'Deshacer', () => { muted = muted.filter((x) => x !== it.code); saveMuted(); renderDiag(res, rtErr, true); }); });
-        wrap.appendChild(m);
-      }
-      if (ay.bloque) wrap.appendChild(ay.bloque);
       diagList.appendChild(wrap);
     });
-    if (hidden && items.length) {
-      const f = document.createElement('div'); f.className = 'dfoot';
-      f.appendChild(document.createTextNode(hidden + (hidden === 1 ? ' aviso silenciado.' : ' avisos silenciados.') + ' '));
-      const r = document.createElement('button'); r.type = 'button'; r.className = 'btn mini'; r.textContent = 'Mostrar de nuevo';
-      r.addEventListener('click', () => { muted = []; saveMuted(); renderDiag(res, rtErr, true); });
-      f.appendChild(r); diagList.appendChild(f);
-    }
     const ne = items.filter((i) => i.k === 'e').length, nw = items.length - ne;
-    $('diagTitle').textContent = 'Problemas' + (items.length ? ' · ' + (ne ? ne + (ne === 1 ? ' error' : ' errores') : '') + (ne && nw ? ', ' : '') + (nw ? nw + (nw === 1 ? ' aviso' : ' avisos') : '') : '');
+    $('diagTitle').textContent = 'Problemas' + (conLinea && items.length ? ' · ' + (ne ? ne + (ne === 1 ? ' error' : ' errores') : '') + (ne && nw ? ', ' : '') + (nw ? nw + (nw === 1 ? ' aviso' : ' avisos') : '') : '');
     diag.hidden = !items.length;
     diagList.hidden = $('diagHead').getAttribute('aria-expanded') !== 'true';
     const first = items.find((i) => i.k === 'e' && i.line) || items.find((i) => i.line);
-    if (first && !noScroll) scrollToPos(lineOffset(first.line), false);
+    if (conLinea && first && !noScroll) scrollToPos(lineOffset(first.line), false);
   }
+  // tipo general del problema, sin detalle (ayuda apagada) y como rótulo (ayuda con línea)
+  function tipoGeneral(it) { return it.k === 'w' ? 'Aviso' : it.rt ? 'Error al ejecutar' : 'Error de sintaxis'; }
   function lineOffset(n) { const l = ta.value.split('\n'); let p = 0; for (let i = 0; i < n - 1 && i < l.length; i++) p += l[i].length + 1; return p; }
 
   /* ---------- ayuda por niveles, panel «Ayuda», «¿Qué es esto?» y casos sin respuesta ----------
@@ -556,12 +546,12 @@
   const KBx = () => (window.KB && window.KB.cargado ? window.KB : null);
   const kbDatos = () => (window.KB_DATA && typeof window.KB_DATA === 'object' ? window.KB_DATA : { errores: [], ayuda: [], lecciones: [] });
   const asLista = (v) => (Array.isArray(v) ? v.filter((x) => typeof x === 'string') : typeof v === 'string' && v ? [v] : []);
-  const NIVELES_TXT = ['Solo se muestra el mensaje del compilador, con el número de línea.', 'Se muestra un mensaje corto y vos pedís las pistas de a una. Nunca aparece la solución sola.', 'Se muestra el mensaje y una explicación del concepto; las pistas las pedís vos, de a una.'];
-  // nivel de ayuda: ?ayuda=0|1|2 en el enlace (se recuerda en el dispositivo) > lo guardado > 1
+  const NIVELES_TXT = { 1: 'Apagada: al ejecutar con un error solo se dice que no compiló y de qué tipo es. Encontrarlo es tu trabajo.', 2: 'Línea: además se marca el número de línea donde hay un problema. Nada más: sin mensaje, sin sugerencias y sin pistas.' };
+  // nivel de ayuda: ?ayuda=1|2 en el enlace (se recuerda en el dispositivo) > lo guardado > 1 (apagada). Solo hay dos niveles.
   let nivelAyuda = (function () {
     let q = null; try { q = new URLSearchParams(location.search).get('ayuda'); } catch (e) { q = null; }
-    if (q !== null && /^\s*[012]\s*$/.test(q)) { store.set('ayuda', q.trim()); return +q.trim(); }
-    const g = store.get('ayuda', ''); return /^[012]$/.test(g) ? +g : 1;
+    if (q !== null && /^\s*[012]\s*$/.test(q)) { const n = q.trim() === '2' ? 2 : 1; store.set('ayuda', String(n)); return n; }
+    return store.get('ayuda', '') === '2' ? 2 : 1;
   })();
   const almacen = { getItem(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, setItem(k, v) { localStorage.setItem(k, v); } };
 
@@ -666,31 +656,7 @@
   }
   function ayudaItem(it) {
     const r = explicarDiag(it);
-    let clave = null;
-    if (r.estado === 'sinexp') clave = guardarCaso(it);
-    if (nivelAyuda === 0 || r.estado === 'sinkb') return { texto: null, bloque: null };
-    const bloque = el('div', 'help');
-    if (r.estado === 'sinexp') {
-      bloque.appendChild(el('p', 'sinexp', 'Todavía no tengo una explicación para esto. Mirá el mensaje del compilador y la línea marcada.'));
-      const act = el('div', 'hact');
-      act.appendChild(btnEl('Mandárselo a Diego', 'mini', () => abrirCasos(clave ? [clave] : null)));
-      act.appendChild(btnEl('Buscar en la ayuda', 'mini link', () => abrirAyuda({ q: (it.msg || '').replace(/['"‹›]/g, ' ').slice(0, 80) })));
-      bloque.appendChild(act);
-      return { texto: null, bloque };
-    }
-    if (r.estado === 'ambiguo') {
-      bloque.appendChild(el('p', 'sinexp', 'Fijate bien en la línea marcada. Si querés más ayuda, buscá en el panel.'));
-      const act = el('div', 'hact');
-      act.appendChild(btnEl('Buscar en la ayuda', 'mini', () => abrirAyuda({ q: (it.msg || '').replace(/['"‹›]/g, ' ').slice(0, 80) })));
-      bloque.appendChild(act);
-      return { texto: null, bloque };
-    }
-    const e = r.entrada, ad = adaptador(it, e);
-    if (nivelAyuda >= 2 && e.explicacion) bloque.appendChild(el('p', 'hexp', ad(e.explicacion)));
-    const que = btnEl('¿Qué es esto?', 'mini link', () => abrirAyuda({ ver: relacionDe(e) }));
-    if (asLista(e.pistas).length) bloque.appendChild(pistasWidget(e, e.id + '|' + it.line + '|' + it.k, ad, que));
-    else { const act = el('div', 'hact'); act.appendChild(que); bloque.appendChild(act); }
-    return { texto: ad(e.mensaje_editor || e.nombre_corto || ''), bloque };
+    if (r.estado === 'sinexp') guardarCaso(it);   // sin cambios: el caso queda guardado en el dispositivo para que el alumno elija si lo manda
   }
   // al editar la línea marcada, la ayuda de ese problema se esconde sola (se vuelve a calcular al ejecutar)
   function revisarViejos() {
@@ -998,7 +964,7 @@
     $('casosBtn').textContent = 'Casos para enviar' + (n ? ' (' + n + ')' : '');
   }
   segInit($('ayudaSel'), (v) => {
-    nivelAyuda = +v; store.set('ayuda', String(nivelAyuda)); $('ayudaDesc').textContent = NIVELES_TXT[nivelAyuda];
+    nivelAyuda = +v === 2 ? 2 : 1; store.set('ayuda', String(nivelAyuda)); $('ayudaDesc').textContent = NIVELES_TXT[nivelAyuda];
     if (lastRes && problems.length) renderDiag(lastRes, lastRt, true);
   });
   $('autoCierre').addEventListener('change', () => { autoCierre = $('autoCierre').checked; store.set('autocierre', autoCierre ? '1' : '0'); });
@@ -1203,7 +1169,7 @@ self.postMessage({ type: 'ready' });`;
     if (!endsWithNewline()) appendText('\n');
     if (r.stopped) { appendText('— Detenido por el usuario —\n', 'dim'); setStatus('Detenido'); return; }
     if (r.error) {
-      appendText('Error' + (r.line ? ' en la línea ' + r.line : '') + ': ' + r.error + '\n', 'er');
+      appendText('Error al ejecutar: el programa falló' + (nivelAyuda >= 2 && r.line ? ' en la línea ' + r.line : '') + '.\n', 'er');
       showDiag(lastRes, { line: r.line, msg: r.error });
       setStatus('Error al ejecutar', 'err');
     } else {
@@ -1217,13 +1183,19 @@ self.postMessage({ type: 'ready' });`;
     if (!endsWithNewline()) appendText('\n');
     appendText('— Salida cortada: demasiado texto (¿bucle infinito?) —\n', 'er'); setStatus('Detenido', 'err');
   }
+  // ayuda 1: solo el tipo general; ayuda 2: además el número de línea
+  function mensajeNoCompilo(errs) {
+    if (nivelAyuda < 2) return 'No se pudo ejecutar: el programa no compiló (error de sintaxis). Revisá el código y volvé a ejecutar.';
+    const ls = errs.map((e) => e.line).filter((l, i, a) => l && a.indexOf(l) === i);
+    return 'No se pudo ejecutar: el programa no compiló (error de sintaxis)' + (ls.length ? (ls.length === 1 ? ' en la línea ' + ls[0] : ' en las líneas ' + ls.join(', ')) : '') + '. Corregí y volvé a ejecutar.';
+  }
   // devuelve true si había errores (y ya los mostró)
   function reportCompile(res) {
     lastRes = res; showDiag(res);
     if (res.errors.length) {
       const n = res.errors.length;
-      appendText('No se pudo ejecutar: ' + (n === 1 ? 'hay 1 error' : 'hay ' + n + ' errores') + ' (mirá "Problemas" y las líneas marcadas en rojo). Corregí y volvé a ejecutar.\n', 'er');
-      setStatus(n === 1 ? '1 error' : n + ' errores', 'err');
+      appendText(mensajeNoCompilo(res.errors) + '\n', 'er');
+      setStatus('No compiló', 'err');
       return true;
     }
     return false;

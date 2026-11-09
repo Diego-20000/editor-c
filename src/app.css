@@ -289,7 +289,7 @@ dialog > .group { margin-top: 12px; }
   .dhead { min-height: 44px; }
   .eofbtn { min-height: 44px; padding: 0 14px; }
   .diag .it > button { min-height: 44px; }
-  .seg button { min-height: 40px; }
+  .seg button { min-height: 44px; }
   .frow input, .group > label > input[type="text"] { height: 44px; font-size: 16px; }
   .stdin input, .plist input { font-size: 16px; }
   .stdin input { display: block; padding: 12px 0; margin: -12px 0; }
@@ -471,3 +471,5 @@ html.lectura .pane-head .hint { margin-right: 8px; }
 .group > label > input:focus-visible { outline-offset: -2px; border-radius: 8px; padding: 0 6px; }
 @media (max-width: 440px) { .bar .btn { padding: 0 8px; } .bar .btn.primary { padding: 0 12px; margin-right: 0; } .actions { gap: 0; } }
 @media (max-width: 440px) { .more > summary > span { display: none; } .more > summary { padding: 0; min-width: 44px; } }
+.diag .it > button:disabled { cursor: default; color: var(--text); }
+.acerca { margin-top: 20px; padding-top: 12px; border-top: 1px solid var(--line); }

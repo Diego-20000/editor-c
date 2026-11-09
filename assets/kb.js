@@ -1,3 +1,4 @@
+/* Editor C, de Diego Segurotti (ArtPrograms Studio). Uso libre dentro de este sitio, sin fines comerciales. Prohibido copiar, redistribuir o vender sin permiso. PolyForm Strict License 1.0.0. */
 /* El entrenador de Editor C: consulta la base de conocimiento (kb/) sin IA, sin red y sin dependencias.
    Navegador: window.KB (los datos vienen en window.KB_DATA, generado por build.js). Node: module.exports.
    API: cargar, explicar, entradaPara, ayudaNivel, pista, buscar, elementoEnPosicion, ayudaDe, normalizarMensaje. */

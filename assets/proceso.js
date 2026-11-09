@@ -1,3 +1,4 @@
+/* Editor C, de Diego Segurotti (ArtPrograms Studio). Uso libre dentro de este sitio, sin fines comerciales. Prohibido copiar, redistribuir o vender sin permiso. PolyForm Strict License 1.0.0. */
 /* Proceso: evidencia de cómo se escribió el código dentro del editor.
    Guarda, para cada carácter del texto, su PROCEDENCIA (no el contenido):
      t = tipeado, p = pegado, a = automático (lo puso el propio editor),

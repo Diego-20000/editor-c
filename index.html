@@ -1,4 +1,5 @@
 <!doctype html>
+<!-- Editor C, de Diego Segurotti (ArtPrograms Studio). Uso libre dentro de este sitio, sin fines comerciales. Prohibido copiar, redistribuir o vender sin permiso. PolyForm Strict License 1.0.0. -->
 <html lang="es">
 <head>
 <meta charset="utf-8">
@@ -130,8 +131,8 @@
   </fieldset>
   <fieldset><legend>Ayuda cuando algo no compila</legend>
     <div class="group">
-      <div class="segrow"><span id="ayudaLbl">Cuánta ayuda querés</span>
-        <div class="seg" id="ayudaSel" role="radiogroup" aria-labelledby="ayudaLbl"><button type="button" role="radio" data-v="0" title="Solo el mensaje del compilador">0 · Mensaje</button><button type="button" role="radio" data-v="1" title="Mensaje corto y pistas (recomendado)">1 · Pistas</button><button type="button" role="radio" data-v="2" title="Mensaje, explicación y pistas">2 · Explicación</button></div></div>
+      <div class="segrow"><span id="ayudaLbl">Ayuda</span>
+        <div class="seg" id="ayudaSel" role="radiogroup" aria-labelledby="ayudaLbl"><button type="button" role="radio" data-v="1" title="Solo dice que no compiló y de qué tipo es">Apagada</button><button type="button" role="radio" data-v="2" title="Indica la línea y nada más">Línea</button></div></div>
     </div>
     <p class="foot" id="ayudaDesc"></p>
   </fieldset>
@@ -149,6 +150,7 @@
     <div class="group"><button id="casosBtn" class="btn" type="button">Casos para enviar</button></div>
   </fieldset>
   <div class="group" id="mutedGroup"><div class="srow" id="mutedRow" hidden><span id="mutedTxt"></span><button id="mutedReset" class="btn" type="button">Mostrar de nuevo</button></div></div>
+  <p class="foot acerca" id="acerca">Editor C, de Diego Segurotti (ArtPrograms Studio). Uso libre dentro de este sitio, sin fines comerciales. Prohibido copiar, redistribuir o vender sin permiso. PolyForm Strict License 1.0.0.</p>
   <div class="drow"><button id="helpBtn" class="btn" type="button">Atajos y alcance</button><button class="btn primary" type="button" data-close>Listo</button></div>
 </dialog>
 

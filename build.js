@@ -7,7 +7,16 @@ const fs = require('fs'), path = require('path'), crypto = require('crypto');
 const ROOT = __dirname;
 const R = (f) => fs.readFileSync(path.join(ROOT, 'src', f), 'utf8');
 const OUT = {};   // archivo generado -> contenido (Buffer o texto), para calcular la versión
+// Aviso de licencia al inicio de cada archivo publicado (el .webmanifest es JSON y no admite comentarios)
+const AVISO = 'Editor C, de Diego Segurotti (ArtPrograms Studio). Uso libre dentro de este sitio, sin fines comerciales. Prohibido copiar, redistribuir o vender sin permiso. PolyForm Strict License 1.0.0.';
+const conAviso = (f, s) => {
+  if (typeof s !== 'string') return s;
+  if (/\.(js|css)$/.test(f)) return '/* ' + AVISO + ' */\n' + s;
+  if (/\.html$/.test(f)) return s.replace(/^(<!doctype html>\s*)/i, (m) => m.trimEnd() + '\n<!-- ' + AVISO + ' -->\n');
+  return s;
+};
 const W = (f, s) => {
+  s = conAviso(f, s);
   fs.mkdirSync(path.dirname(path.join(ROOT, f)), { recursive: true }); fs.writeFileSync(path.join(ROOT, f), s); OUT[f] = s;
   console.log(f.padEnd(28), (Buffer.byteLength(s) / 1024).toFixed(1) + ' KB');
 };
