@@ -44,12 +44,12 @@ async function ctx(br, mobile, tema) {
       await S(p, M + '-' + T + '-consola');
       // problemas con pistas
       if (mobile) await p.tap('#tabEd');
-      await p.evaluate((s) => window.__editorc.setCode(s), ERR);
+      await p.evaluate((s) => { window.__editorc.setNivel(2); window.__editorc.setCode(s); }, ERR);
       if (mobile) await p.tap('#run'); else await p.click('#run');
       await p.waitForTimeout(800);
       if (mobile) await p.tap('#tabCo');
-      const b = await p.$('.help .hact button:has-text("ista")'); if (b) { await b.click(); await p.waitForTimeout(200); }
       await S(p, M + '-' + T + '-problemas');
+      await p.evaluate(() => window.__editorc.setNivel(1));
       if (!mobile || tema === 'light') {
         // ayuda
         await p.evaluate(() => { const d = document.getElementById('dAyuda'); if (!d.open) document.getElementById('ayudaBtn').click(); });

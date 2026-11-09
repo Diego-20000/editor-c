@@ -1770,5 +1770,5 @@ self.postMessage({ type: 'ready' });`;
     } else showProgram(p);
     if (!store.get('seen', '')) { store.set('seen', '1'); }
   })();
-  window.__editorc = { run, cfg, proceso: () => proc.resumen(), procLinea: () => proc.linea(), nivelAyuda: () => nivelAyuda, setCode: (s) => { ta.value = s; proc.marcarCargado(s, 'c'); refresh(); scheduleSave(); }, compile: (s) => CCompiler.compile(s), showDiag: (r) => { lastRes = r; showDiag(r); } };
+  window.__editorc = { run, cfg, proceso: () => proc.resumen(), procLinea: () => proc.linea(), nivelAyuda: () => nivelAyuda, setNivel: (n) => { nivelAyuda = +n === 2 ? 2 : 1; store.set('ayuda', String(nivelAyuda)); segSet($('ayudaSel'), String(nivelAyuda)); $('ayudaDesc').textContent = NIVELES_TXT[nivelAyuda]; }, setCode: (s) => { ta.value = s; proc.marcarCargado(s, 'c'); refresh(); scheduleSave(); }, compile: (s) => CCompiler.compile(s), showDiag: (r) => { lastRes = r; showDiag(r); } };
 })();

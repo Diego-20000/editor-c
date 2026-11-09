@@ -97,8 +97,17 @@ async function suite(browser, target, mobile) {
   await setCode(ERR); await clickRun();
   await page.waitForSelector('#diag:not([hidden])');
   ok(await page.isVisible('#diagList .it.e'), 'panel de problemas con error');
-  ok((await page.locator('.gut .e').count()) >= 1, 'marca en el margen');
-  ok((await page.locator('#ul .e').count()) >= 1, 'subrayado en la línea');
+  // ayuda 1 (apagada, predeterminada): ni línea, ni mensaje, ni marca en el margen, ni subrayado; solo el tipo general
+  const pan = await page.textContent('#diagList'), cons = await page.textContent('#out');
+  ok((await page.locator('.gut .e').count()) === 0 && (await page.locator('#ul .e').count()) === 0, 'ayuda apagada: no se marca la línea del error');
+  ok(/Error de sintaxis/.test(pan) && !/l[ií]nea|falta|;/i.test(pan), 'ayuda apagada: el panel dice solo "Error de sintaxis" (' + pan.trim().slice(0, 60) + ')');
+  ok(/no compiló/.test(cons) && !/l[ií]nea \d|falta un/.test(cons), 'ayuda apagada: la consola dice que no compiló, sin línea ni mensaje');
+  await page.evaluate(() => window.__editorc.setNivel(2)); await setCode(ERR); await clickRun();
+  await page.waitForSelector('#diag:not([hidden])');
+  ok((await page.locator('.gut .e').count()) >= 1, 'ayuda con línea: marca en el margen');
+  ok((await page.locator('#ul .e').count()) >= 1, 'ayuda con línea: subrayado en la línea');
+  ok(/línea 3/.test(await page.textContent('#diagList')) && !/falta|;/.test(await page.textContent('#diagList')), 'ayuda con línea: el panel indica la línea y nada más');
+  ok(/en la línea 3/.test(await page.textContent('#out')) && !/falta un/.test(await page.textContent('#out')), 'ayuda con línea: la consola indica la línea, sin el mensaje');
   ok(await page.isEnabled('#run') && !(await page.isEnabled('#stop')), 'tras un error de compilación se puede volver a ejecutar');
   await shot('2-error');
   await page.click('#diagList .it.e button');
@@ -109,8 +118,9 @@ async function suite(browser, target, mobile) {
   await setCode(WARN); await clickRun();
   await page.waitForSelector('#diag:not([hidden])');
   ok((await page.locator('#diagList .it.w').count()) >= 1, 'avisos listados');
-  ok((await page.locator('.gut .w').count()) >= 1, 'marca de aviso en el margen');
+  ok((await page.locator('.gut .w').count()) >= 1, 'ayuda con línea: marca de aviso en el margen');
   await shot('3-aviso');
+  await page.evaluate(() => window.__editorc.setNivel(1));
 
   // ---- 4) bucle infinito sin salida: Detener durante la ejecución
   await setCode(LOOP); await clickRun();
@@ -161,7 +171,7 @@ async function suite(browser, target, mobile) {
   // ---- 7) arreglo gigante
   await setCode(BIGARR); await clickRun(); await H.done();
   t = await outText();
-  ok(/demasiado grande|memoria/.test(t) && (await H.alive()) < 500, 'arreglo gigante: mensaje claro y la página sigue viva');
+  ok(/Error al ejecutar/.test(t) && !/demasiado grande|memoria/.test(t) && (await H.alive()) < 500, 'arreglo gigante: dice que falló al ejecutar (sin detalle) y la página sigue viva');
 
   // ---- 8) fuente enorme (50 000 líneas): compila y ejecuta en el Worker; Detener durante la compilación
   await setCode(BIGSRC);
@@ -322,27 +332,18 @@ async function suite(browser, target, mobile) {
   await shot('7-claro');
   await page.click('#theme [data-v="auto"]').catch(() => {});
 
-  // ---- 16) códigos de diagnóstico: mostrar y silenciar (si el motor no manda `code`, no pasa nada)
-  await page.evaluate(() => { localStorage.removeItem('editorc.muted'); });
+  // ---- 16) el panel nunca muestra mensajes ni códigos del compilador (ni con la ayuda con línea)
   await page.reload();
   const fake = { errors: [], warnings: [{ line: 2, msg: 'aviso A', code: 'scanf-sin-amp' }, { line: 3, msg: 'aviso B', code: 'printf-tipo' }, { line: 4, msg: 'aviso sin código' }] };
   await H.tab('co');
   await page.evaluate((r) => window.__editorc.showDiag(r), fake);
-  ok((await page.locator('#diagList .cd').count()) === 2 && /scanf-sin-amp/.test(await page.textContent('#diagList')), 'código estable visible en el panel de problemas');
-  ok((await page.locator('#diagList .mute').count()) === 2, 'solo los avisos con código se pueden silenciar');
-  await H.tap('#diagList .it.w .mute');
-  ok((await page.locator('#diagList .it.w').count()) === 2 && !/scanf-sin-amp/.test(await page.textContent('#diagList .it.w')), 'silenciar oculta ese aviso');
-  ok(/scanf-sin-amp/.test(await page.evaluate(() => localStorage.getItem('editorc.muted'))), 'el silencio se guarda en el dispositivo');
-  await page.reload(); await H.tab('co');
+  ok((await page.locator('#diagList .it.w').count()) === 3 && !/aviso A|scanf-sin-amp|línea/.test(await page.textContent('#diagList')) && (await page.locator('#diagList .mute, #diagList .cd').count()) === 0, 'ayuda apagada: tres avisos, sin mensaje, sin código y sin línea');
+  await page.evaluate(() => window.__editorc.setNivel(2));
   await page.evaluate((r) => window.__editorc.showDiag(r), fake);
-  ok((await page.locator('#diagList .it.w').count()) === 2 && !/scanf-sin-amp/.test(await page.textContent('#diagList')), 'el silencio sobrevive a recargar');
-  await H.menu(); await H.tap('#settings');
-  ok(await page.isVisible('#mutedRow'), 'Ajustes lista los avisos silenciados');
-  await H.tap('#mutedReset'); await page.click('#dSet [data-close]');
-  await page.evaluate((r) => window.__editorc.showDiag(r), fake);
-  ok((await page.locator('#diagList .it.w').count()) === 3, 'restaurar vuelve a mostrar los avisos silenciados');
+  ok(/línea 2/.test(await page.textContent('#diagList')) && !/aviso A|scanf-sin-amp/.test(await page.textContent('#diagList')), 'ayuda con línea: avisos con su línea y sin mensaje ni código');
+  await page.evaluate(() => window.__editorc.setNivel(1));
   await page.evaluate(() => window.__editorc.showDiag({ errors: [{ line: 1, msg: 'sin campo code' }], warnings: [] }));
-  ok((await page.locator('#diagList .cd').count()) === 0 && (await page.locator('#diagList .it.e').count()) === 1, 'sin campo `code` el panel funciona igual');
+  ok((await page.locator('#diagList .it.e').count()) === 1, 'sin campo `code` el panel funciona igual');
 
   ok(errors.length === 0, 'sin errores ni avisos en consola' + (errors.length ? ': ' + errors.join(' | ') : ''));
   ok(net.length === 0, 'cero pedidos de red externos' + (net.length ? ': ' + net.join(' ') : ''));
@@ -831,71 +832,50 @@ async function entrenadorSuite(browser, target, mobile) {
   await open();
   await H.tab('ed');
 
-  // ---- A) nivel 1 por defecto: mensaje corto, pistas de a una, sin solución sola
-  ok((await page.evaluate(() => window.__editorc.nivelAyuda())) === 1, 'ayuda: el nivel por defecto es 1');
+  // ---- A) ayuda apagada por defecto: no dice dónde está el error ni qué dice el compilador
+  ok((await page.evaluate(() => window.__editorc.nivelAyuda())) === 1, 'ayuda: el nivel por defecto es 1 (apagada)');
   await runShow(SCANF_MAL);
-  const msg = await items('.e').first().locator('.msg').textContent();
-  ok(/falta el &/.test(msg) && /línea|Línea/.test(await items('.e').first().locator('.tag').textContent()), 'nivel 1: mensaje corto de la base con la línea (' + msg.slice(0, 50) + ')');
-  ok(/Compilador: .*scanf/.test(await items('.e').first().locator('.orig').textContent()), 'nivel 1: el mensaje del compilador sigue visible, en chico');
-  ok((await items('.e').first().locator('.pistas li').count()) === 0 && (await items('.e').first().locator('.hexp').count()) === 0, 'nivel 1: no se despliega ninguna pista ni explicación sola');
-  const pbtn = items('.e').first().locator('.help .hact button', { hasText: /^Pista$/ });
-  ok((await pbtn.count()) === 1, 'nivel 1: botón «Pista»');
-  await shot('1-nivel1');
-  await H.tap('#diagList .it.e .help .hact button:has-text("Pista")');
-  ok((await items('.e').first().locator('.pistas li').count()) === 1, 'pista 1: se muestra de a una');
-  await H.tap('#diagList .it.e .help .hact button:has-text("Otra pista")');
-  ok((await items('.e').first().locator('.pistas li').count()) === 2, 'pista 2: se muestra de a una');
-  ok((await items('.e').first().locator('.pistas li.sol').count()) === 0 && (await items('.e').first().locator('.help .hact button', { hasText: 'Mostrar la solución' }).count()) === 1, 'la tercera se llama «Mostrar la solución»');
-  await H.tap('#diagList .it.e .help .hact button:has-text("Mostrar la solución")');
-  ok((await items('.e').first().locator('.pistas li').count()) === 2 && /casi la solución/i.test(await items('.e').first().locator('.conf').textContent()), 'la solución pide confirmación y todavía no se muestra');
-  await H.tap('#diagList .it.e .conf button:has-text("Todavía no")');
-  ok((await items('.e').first().locator('.pistas li').count()) === 2 && (await items('.e').first().locator('.conf').count()) === 0, '«Todavía no» no muestra nada');
-  await H.tap('#diagList .it.e .help .hact button:has-text("Mostrar la solución")');
-  await H.tap('#diagList .it.e .conf button:has-text("Sí, mostrarla")');
-  ok((await items('.e').first().locator('.pistas li.sol').count()) === 1 && (await items('.e').first().locator('.help .hact button', { hasText: /Pista|solución/ }).count()) === 0, 'con la confirmación aparece la tercera pista y ya no quedan botones de pista');
-  // «¿Qué es esto?» abre la lección o ayuda relacionada
-  await H.tap('#diagList .it.e .help button:has-text("¿Qué es esto?")');
-  await page.waitForSelector('#dAyuda[open]');
-  ok(await vis('#aDet h2.dt') && /scanf|&/i.test(await page.textContent('#aDet h2.dt')), '«¿Qué es esto?» abre la ayuda relacionada (' + (await page.textContent('#aDet h2.dt')).trim() + ')');
-  await closeDlg();
-  // al corregir la línea, la ayuda de ese problema desaparece sin ruido
+  const it0 = items('.e').first();
+  ok(/Error de sintaxis/.test(await it0.textContent()) && !/l[ií]nea|&|scanf/i.test(await it0.textContent()), 'apagada: solo el tipo general, sin línea ni mensaje (' + (await it0.textContent()).trim() + ')');
+  ok((await it0.locator('.help, .pistas, .hexp, .orig, .cd, button.mute').count()) === 0 && (await page.locator('.gut .e, #ul .e').count()) === 0, 'apagada: sin ayuda, sin pistas, sin código del error y sin marcas en el editor');
+  ok(!(await page.evaluate(() => document.getElementById('out').textContent.match(/l[ií]nea|falta el &/i))), 'apagada: la consola tampoco dice la línea');
+  await shot('1-apagada');
+  // el buscador y la ayuda de elementos de C siguen funcionando
   await H.tab('ed');
-  await page.evaluate(() => { const t = document.getElementById('code'), i = t.value.indexOf('A);') ; t.focus(); t.setSelectionRange(i, i); });
-  await page.keyboard.type('&');
-  ok((await page.inputValue('#code')).includes('&A);'), 'se corrige tipeando el &');
-  await H.tab('co');
-  ok((await items('.e.stale').count()) === 1 && !(await vis('#diagList .it.e .help')), 'al corregir la línea, la ayuda del error se esconde sola');
-  await H.run(); await H.typeLine('4'); await H.done();
-  ok(!(await vis('#diag')), 'al ejecutar corregido no queda ningún problema');
 
-  // ---- B) nivel 2 y nivel 0 desde Ajustes
+  // ---- B) ayuda con línea, desde Ajustes y desde el enlace
   await openSettings();
   ok(!(await page.isChecked('#autoCierre')), 'ajustes: el cierre automático está apagado por defecto');
-  await page.click('#ayudaSel [data-v=\"2\"]');
+  ok((await page.locator('#ayudaSel button').count()) === 2 && /Apagada/.test(await page.textContent('#ayudaSel')) && /Línea/.test(await page.textContent('#ayudaSel')), 'ajustes: selector segmentado «Apagada / Línea» (solo dos niveles)');
+  await page.click('#ayudaSel [data-v="2"]');
   await closeDlg();
   await runShow(SCANF_MAL);
-  ok((await items('.e').first().locator('.hexp').count()) === 1 && (await items('.e').first().locator('.pistas li').count()) === 0, 'nivel 2: mensaje + explicación del concepto y pistas a pedido');
-  await shot('2-nivel2');
-  await openSettings(); await page.click('#ayudaSel [data-v=\"0\"]'); await closeDlg();
-  await H.tab('co');
-  ok((await items('.e').first().locator('.help').count()) === 0 && (await items('.e').first().locator('.orig').count()) === 0 && /a scanf le falta el '&'/.test(await items('.e').first().locator('.msg').textContent()), 'nivel 0: el mensaje del compilador tal cual, con la línea y sin ayuda');
+  const it2 = items('.e').first();
+  ok(/línea \d+/.test(await it2.textContent()) && !/&|scanf|falta/.test(await it2.textContent()), 'línea: el panel indica la línea y nada más (' + (await it2.textContent()).trim() + ')');
+  ok((await it2.locator('.help, .pistas, .hexp, .orig, .cd').count()) === 0 && (await page.locator('.gut .e').count()) >= 1, 'línea: sin pistas ni explicación, y la línea queda marcada');
+  await shot('2-linea');
   await page.reload(); await page.waitForSelector('#code');
-  ok((await page.evaluate(() => window.__editorc.nivelAyuda())) === 0, 'el nivel elegido se recuerda en el dispositivo');
+  ok((await page.evaluate(() => window.__editorc.nivelAyuda())) === 2, 'el nivel elegido se recuerda en el dispositivo');
   await open('?ayuda=1');
-  ok((await page.evaluate(() => window.__editorc.nivelAyuda())) === 1, '?ayuda=1 en el enlace fija el nivel');
+  ok((await page.evaluate(() => window.__editorc.nivelAyuda())) === 1, '?ayuda=1 en el enlace fija la ayuda apagada');
   await page.goto(target.url); await page.waitForSelector('#code');
   ok((await page.evaluate(() => window.__editorc.nivelAyuda())) === 1, '?ayuda= además se recuerda para la próxima vez');
   await open('?ayuda=2');
-  ok((await page.evaluate(() => window.__editorc.nivelAyuda())) === 2, '?ayuda=2 en el enlace fija el nivel 2');
-  await openSettings(); await page.click('#ayudaSel [data-v=\"1\"]'); await closeDlg();
+  ok((await page.evaluate(() => window.__editorc.nivelAyuda())) === 2, '?ayuda=2 en el enlace fija la ayuda con línea');
+  await open('?ayuda=0');
+  ok((await page.evaluate(() => window.__editorc.nivelAyuda())) === 1, '?ayuda=0 (viejo) cae en apagada: no hay nivel 0');
+  await openSettings(); await page.click('#ayudaSel [data-v="1"]'); await closeDlg();
 
-  // ---- C) sin explicación: se guarda el caso y se ofrece mandarlo
+  // ---- C) sin explicación: el caso se guarda solo en el dispositivo y se manda desde Ajustes (el panel no ofrece nada)
   await H.setCode(CON_CABECERA);
   await page.evaluate((r) => window.__editorc.showDiag(r), DESCONOCIDO);
   await H.tab('co');
-  ok(/Todavía no tengo una explicación para esto/.test(await items('.e').first().textContent()) && (await items('.e').first().locator('.msg').textContent()).includes('zzz error inventado'), 'sin explicación: mensaje original + «Todavía no tengo una explicación para esto»');
+  ok(!/zzz error inventado|Todavía no tengo/.test(await items('.e').first().textContent()), 'sin explicación: el panel no muestra el mensaje ni ofrece nada (ayuda apagada)');
   await shot('3-sin-respuesta');
-  await H.tap('#diagList .it.e button:has-text("Mandárselo a Diego")');
+  await openSettings();
+  ok(/Casos para enviar \(1\)/.test(await page.textContent('#casosBtn')), 'sin explicación: el caso quedó guardado (contador en Ajustes)');
+  await page.evaluate(() => { window.CONFIG.WHATSAPP_NUMERO = ''; });   // las pruebas de «sin número» parten de la configuración vacía
+  await H.tap('#casosBtn');
   await page.waitForSelector('#dCasos[open]');
   const prev = await page.textContent('#cPrev');
   ok(prev.includes('zzz error inventado') && prev.includes('printf("%d\\n", A);') && /```c/.test(prev), 'casos: la vista previa muestra el mensaje y el código que se enviaría');
