@@ -294,7 +294,7 @@ t('build: assets/kb-data.js y los scripts del entrenador', () => {
   const orden = ['compiler.js', 'runtime.js', 'examples.js', 'app.js', 'kb-data.js', 'config.js', 'kb.js', 'compartir.js'].map((f) => idx.indexOf('assets/' + f));
   ok(orden.every((p, i) => p > 0 && (i === 0 || p > orden[i - 1])), 'orden de scripts: ' + orden);
   ok(/<script defer src="assets\/kb\.js">/.test(idx));
-  ok(/^window\.KB_DATA=\{"errores":/.test(fs.readFileSync(path.join(ROOT, 'assets', 'kb-data.js'), 'utf8')));
+  ok(/^(\/\*[\s\S]*?\*\/\s*)?window\.KB_DATA=\{"errores":/.test(fs.readFileSync(path.join(ROOT, 'assets', 'kb-data.js'), 'utf8')));
   ok(fs.readFileSync(path.join(ROOT, 'sw.js'), 'utf8').includes('assets/kb-data.js'));
   const one = fs.readFileSync(path.join(ROOT, 'dist', 'editor-c.html'), 'utf8'); ok(one.includes('window.KB_DATA=') && one.includes('Compartir') && !/<script[^>]*src=/.test(one));
 });
