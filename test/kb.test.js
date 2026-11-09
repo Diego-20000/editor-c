@@ -297,6 +297,14 @@ t('mensajeWhatsApp: la nota del alumno va primero y el encabezado fijo se reempl
   eq(Compartir.importarJSON(m).casos, [c], 'el mensaje con nota se sigue pudiendo importar');
 });
 
+t('explicar: si varias entradas comparten la plantilla y ninguna coincide, no se elige ninguna', () => {
+  const mk = (id, msg) => ({ id, categoria: 'x', nombre_corto: id, codigo_mal: id, codigo_bien: id, mensaje_editor_actual: msg, codigo_editor_actual: 'R-runtime', detectado_editor: true, pistas: ['a', 'b', 'c'], explicacion: 'e', mensaje_editor: 'm', buscar: [] });
+  KB.cargar({ errores: [mk('AAA-001', "índice -1 fuera del arreglo A de 5 elementos"), mk('AAA-002', "índice -3 fuera del arreglo B de 10 elementos")], ayuda: [], lecciones: [] });
+  eq(KB.explicar({ msg: "índice -7 fuera del arreglo C de 20 elementos", code: 'R-runtime' }), null, 'ambiguo: no debe elegir lista[0]');
+  const r = KB.explicar({ msg: "índice -1 fuera del arreglo A de 5 elementos", code: 'R-runtime' }); ok(r && r.entrada.id === 'AAA-001', 'el mensaje exacto sí se reconoce');
+  KB.cargar(datos);
+});
+
 /* ---------- build: el sitio incluye la base ---------- */
 t('build: assets/kb-data.js y los scripts del entrenador', () => {
   const idx = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
