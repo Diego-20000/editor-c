@@ -35,6 +35,7 @@
       <select id="examples" class="btn sel" aria-label="Ejemplos"><option value="">Ejemplos…</option></select>
       <button id="shot" class="btn" title="Descargar una imagen PNG con el código y la salida" aria-label="Captura"><svg class="i" aria-hidden="true"><use href="#i-captura"/></svg><span class="l">Captura</span></button>
       <button id="save" class="btn" title="Descargar como archivo .c (Ctrl+S)" aria-label="Guardar .c"><svg class="i" aria-hidden="true"><use href="#i-descargar"/></svg><span class="l">Guardar .c</span></button>
+      <button id="enlace" class="btn" title="Armar un enlace para abrir este programa en otro dispositivo" aria-label="Pasar a otro dispositivo"><svg class="i" aria-hidden="true"><use href="#i-compartir"/></svg><span class="l">Pasar a otro dispositivo</span></button>
       <button id="avisar" class="btn" title="Mandarle a Diego tu programa y el mensaje que te dio, por WhatsApp" aria-label="Avisar a Diego"><svg class="i" aria-hidden="true"><use href="#i-compartir"/></svg><span class="l">Avisar a Diego</span></button>
       <button id="settings" class="btn" title="Ajustes: mis datos, tema, tamaño de letra" aria-label="Ajustes"><svg class="i" aria-hidden="true"><use href="#i-ajustes"/></svg><span class="l">Ajustes</span></button>
     </div></details>
@@ -165,6 +166,22 @@
   </div>
   <div class="shotbox" id="shotBox"><div class="carga" aria-live="polite">Armando la imagen…</div><img id="shotImg" decoding="async" alt="Vista previa de la captura: cabecera, código, entrada y salida"></div>
   <div class="drow"><button id="shotDl" class="btn primary" type="button"><svg class="i" aria-hidden="true"><use href="#i-descargar"/></svg>Descargar PNG</button><button id="shotShare" class="btn" type="button" hidden><svg class="i" aria-hidden="true"><use href="#i-compartir"/></svg>Compartir</button><button class="btn" type="button" data-close>Cancelar</button></div>
+</dialog>
+
+<dialog id="dEnlace" aria-labelledby="tEnlace">
+  <h2 id="tEnlace">Pasar a otro dispositivo</h2>
+  <p id="enlTxt"></p>
+  <textarea id="enlUrl" rows="3" readonly aria-label="Enlace del programa"></textarea>
+  <p class="fine">El programa viaja dentro del enlace y no se sube a ningún servidor. Quien tenga el enlace puede ver el código: mandalo solo a quien quieras.</p>
+  <div class="drow"><button id="enlCopy" class="btn primary" type="button">Copiar enlace</button><button id="enlShare" class="btn" type="button" hidden>Compartir…</button><button class="btn" type="button" data-close>Cerrar</button></div>
+</dialog>
+
+<dialog id="dRecibido" aria-labelledby="tRecibido">
+  <h2 id="tRecibido">Recibiste un programa</h2>
+  <p id="recTxt"></p>
+  <pre class="prev" id="recPrev" tabindex="0" aria-label="Vista previa del código recibido"></pre>
+  <p class="fine">Se abre como un programa nuevo. No se borra ni se pisa ninguno de los que ya tenés.</p>
+  <div class="drow"><button id="recOk" class="btn primary" type="button">Abrir como programa nuevo</button><button class="btn" type="button" data-close>No abrirlo</button></div>
 </dialog>
 
 <dialog id="dImp" aria-labelledby="tImp">

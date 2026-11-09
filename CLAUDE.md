@@ -43,7 +43,7 @@ ANSI C básico: `char`, `int`, `float`, `double`, operadores, `printf`/`scanf` (
   - `bash test/run_all.sh` compara cada programa de `test/cases` contra gcc (salida y código de salida).
   - `node test/diag.js` verifica los diagnósticos esperados de `test/diag`.
   - `bash test/fuzz_run.sh` compara programas aleatorios contra gcc.
-  - `node tools/ui-smoke.js` y `node tools/ui-reparos.js` prueban la interfaz con Chromium.
+  - `node tools/ui-smoke.js`, `node tools/ui-reparos.js` y `node tools/ui-enlace.js` prueban la interfaz con Chromium.
 - Nunca ejecutar código descargado de terceros (paquetes npm, etc.) sin que Diego lo autorice: el sistema de permisos lo bloquea.
 - Antes de fusionar: tests de motor, diagnósticos e interfaz en verde, y un control final con agentes de prueba (programas estilo TP contra gcc, errores de alumnos, revisión del motor y prueba de punta a punta del sitio).
 

@@ -1610,6 +1610,53 @@ self.postMessage({ type: 'ready' });`;
     }
   });
 
+  /* ---------- pasar un programa a otro dispositivo por enlace: los datos van en la parte # y no llegan a ningún servidor ---------- */
+  const MAX_ENLACE = 8000;
+  const b64u = (u8) => { let s = ''; for (let i = 0; i < u8.length; i++) s += String.fromCharCode(u8[i]); return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); };
+  const unb64u = (t) => { t = t.replace(/-/g, '+').replace(/_/g, '/'); while (t.length % 4) t += '='; const b = atob(t), u = new Uint8Array(b.length); for (let i = 0; i < b.length; i++) u[i] = b.charCodeAt(i); return u; };
+  async function empaquetar(obj) {
+    const raw = new TextEncoder().encode(JSON.stringify(obj));
+    if (typeof CompressionStream === 'function') { try { return 'z.' + b64u(new Uint8Array(await new Response(new Blob([raw]).stream().pipeThrough(new CompressionStream('deflate-raw'))).arrayBuffer())); } catch (e) { /* sin compresión */ } }
+    return 'r.' + b64u(raw);
+  }
+  async function desempaquetar(s) {
+    let u = unb64u(s.slice(2));
+    if (s.slice(0, 2) === 'z.') u = new Uint8Array(await new Response(new Blob([u]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).arrayBuffer());
+    else if (s.slice(0, 2) !== 'r.') throw new Error('formato');
+    const o = JSON.parse(new TextDecoder().decode(u));
+    if (!o || typeof o.c !== 'string' || o.c.length > MAX_ENLACE * 4) throw new Error('datos');
+    return { name: String(o.n || 'Programa recibido').slice(0, 60), code: o.c, input: typeof o.i === 'string' ? o.i.slice(0, 2000) : '' };
+  }
+  $('enlace').addEventListener('click', async () => {
+    $('more').open = false; flushSave();
+    if (!/^https?:$/.test(location.protocol)) { toast('El enlace funciona desde la página publicada. Desde un archivo usá «Guardar .c».'); return; }
+    if (cur.code.length > MAX_ENLACE) { toast('El programa es demasiado largo para un enlace. Usá «Guardar .c».'); return; }
+    let url;
+    try { url = location.origin + location.pathname + '#p=' + await empaquetar({ v: 1, n: cur.name, c: cur.code, i: cur.input || '' }); } catch (e) { toast('No se pudo armar el enlace.'); return; }
+    $('enlUrl').value = url;
+    $('enlTxt').textContent = 'Abrí este enlace en el otro dispositivo para traer «' + cur.name + '». Mandátelo a vos mismo, por ejemplo por WhatsApp.';
+    $('enlShare').hidden = !navigator.share;
+    $('dEnlace').showModal(); $('enlUrl').select();
+  });
+  $('enlCopy').addEventListener('click', () => {
+    copyText($('enlUrl').value, $('dEnlace')).then((ok) => { if (ok) toast('Enlace copiado.'); else { $('enlUrl').focus(); $('enlUrl').select(); toast('Tocá el enlace, copialo a mano y pegalo donde quieras.'); } });
+  });
+  $('enlShare').addEventListener('click', () => { navigator.share({ title: 'Programa de Editor C', url: $('enlUrl').value }).catch(() => {}); });
+  let recibido = null;
+  async function recibirEnlace() {
+    const m = /^#p=([zr]\.[A-Za-z0-9_-]+)$/.exec(location.hash);
+    if (!m) return;
+    try { history.replaceState(null, '', location.pathname + location.search); } catch (e) { /* nada */ }
+    try {
+      recibido = await desempaquetar(m[1]);
+      const lineas = recibido.code.split('\n').length;
+      $('recTxt').textContent = '«' + recibido.name + '» (' + lineas + (lineas === 1 ? ' línea' : ' líneas') + '). Revisá que lo esperabas antes de abrirlo.';
+      $('recPrev').textContent = recibido.code.split('\n').slice(0, 15).join('\n') + (lineas > 15 ? '\n…' : '');
+      $('dRecibido').showModal();
+    } catch (e) { toast('El enlace del programa no se pudo leer. Pedí que te lo manden de nuevo.'); }
+  }
+  $('recOk').addEventListener('click', () => { if (!recibido) return; newProgram(recibido.name, recibido.code, recibido.input); recibido = null; $('dRecibido').close(); toast('Programa abierto.'); });
+
   /* ---------- exportar e importar todos los programas (.json) ---------- */
   const EXP_APP = 'editor-c', MAX_PROGS = 1000, MAX_CODE = 1000000, MAX_FILE = 25e6;
   $('pexp').addEventListener('click', () => {
@@ -1818,5 +1865,6 @@ self.postMessage({ type: 'ready' });`;
     } else showProgram(p);
     if (!store.get('seen', '')) { store.set('seen', '1'); }
   })();
+  recibirEnlace();
   window.__editorc = { run, cfg, proceso: () => proc.resumen(), procLinea: () => proc.linea(), nivelAyuda: () => nivelAyuda, setNivel: (n) => { nivelAyuda = +n === 2 ? 2 : 1; store.set('ayuda', String(nivelAyuda)); segSet($('ayudaSel'), String(nivelAyuda)); $('ayudaDesc').textContent = NIVELES_TXT[nivelAyuda]; }, setCode: (s) => { ta.value = s; proc.marcarCargado(s, 'c'); refresh(); scheduleSave(); }, compile: (s) => CCompiler.compile(s), showDiag: (r) => { lastRes = r; showDiag(r); } };
 })();
