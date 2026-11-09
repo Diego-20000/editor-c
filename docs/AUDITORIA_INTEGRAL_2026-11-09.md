@@ -510,3 +510,10 @@ Mi recomendación final: **no sumaría cientos de reglas nuevas ni más funcione
 - kb/SCHEMA.md, kb/README.md, kb/PENDIENTES-REGLAS.md, kb/chatgpt/PROMPT_LOTE2.md y la base activa de errores, ayuda y lecciones.
 
 **Este commit agrega solamente este informe. No modifica el compilador, runtime, interfaz, base de conocimiento, pruebas ni artefactos generados.**
+
+
+## 14. Precisión adicional sobre la cobertura de lectura
+
+Para que el alcance no se interprete de más: se inspeccionó el árbol completo y se revisaron los módulos fuente y herramientas centrales por secciones amplias, además de los contratos, documentación y datos activos. Los **247 archivos C de prueba (131 de comparación y 116 de diagnóstico) fueron inventariados por ruta y cobertura**, pero no se hizo una lectura línea por línea de cada uno de esos 247 programas. Tampoco se inspeccionaron visualmente, uno por uno, los 67 PNG de documentación. Los assets y el HTML generado se trataron como productos del build, no como fuentes independientes para una segunda auditoría manual completa.
+
+La limitación más importante sigue siendo la misma: **no se ejecutaron las pruebas**. Por eso este documento es una auditoría estática sustancial, con defectos verificables directamente en el código y la base, pero no una certificación de que el repositorio completo compile, pase todas las suites o funcione correctamente en todos los navegadores. Para cumplir literalmente una lectura exhaustiva de cada fixture y cada imagen haría falta una pasada separada dedicada a esos artefactos.
