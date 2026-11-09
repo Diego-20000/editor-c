@@ -725,8 +725,8 @@ html.lectura .pane-head .hint { margin-right: 8px; }
 </dialog>
 
 <div class="bubble" id="bubble" role="dialog" aria-label="¿Qué es esto?" hidden></div>
-<input type="file" id="file" accept=".c,.h,.txt,text/plain" hidden>
-<input type="file" id="fileJson" accept=".json,application/json" hidden>
+<input type="file" id="file" hidden>
+<input type="file" id="fileJson" hidden>
 <script>
 /* Compilador del Editor C: subconjunto de C de la materia -> JavaScript.
    Entrada: texto C. Salida: { js, errors:[{line,msg,code,kb?}], warnings:[{line,msg,code,kb?,kbAlt?}] } */
@@ -6072,8 +6072,10 @@ self.postMessage({ type: 'ready' });`;
   $('file').addEventListener('change', (e) => {
     const f = e.target.files[0]; if (!f) return;
     const r = new FileReader();
+    const inp = e.target;
     r.onload = () => { newProgram(f.name.replace(/\.[^.]*$/, ''), String(r.result).replace(/\r\n?/g, '\n')); $('dProgs').close(); };
-    r.readAsText(f); e.target.value = '';
+    r.onloadend = () => { try { inp.value = ''; } catch (err) { /* nada */ } };
+    r.readAsText(f);
   });
 
   /* ---------- captura PNG (código + entrada + salida) ---------- */
@@ -6485,12 +6487,13 @@ self.postMessage({ type: 'ready' });`;
   }
   let impPending = null;
   $('fileJson').addEventListener('change', (e) => {
-    const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+    const inp = e.target, f = inp.files[0]; if (!f) return;   // el campo se vacía recién después de leer: en algunos celulares vaciarlo antes deja el archivo sin poder leerse
     if (f.size > MAX_FILE) { toast('El archivo es demasiado grande para ser una exportación de Editor C.'); return; }
     const r = new FileReader();
     r.onerror = () => toast('No se pudo leer el archivo.');
+    r.onloadend = () => { try { inp.value = ''; } catch (err) { /* nada */ } };
     r.onload = () => {
-      const pr = parseImport(String(r.result));
+      const pr = parseImport(String(r.result).replace(/^\uFEFF/, ''));
       if (pr.error) { toast('No se importó nada. ' + pr.error); return; }
       const plan = planImport(pr.list, false);
       impPending = pr.list;
@@ -6660,7 +6663,7 @@ window.KB_DATA={"errores":[{"id":"ARR-001","categoria":"arreglos y textos","nomb
    (por ejemplo '5491112345678'). Vacío = el botón abre WhatsApp sin destinatario. */
 (function (root) {
   'use strict';
-  var CONFIG = { WHATSAPP_NUMERO: '5491137781528', VERSION: 'c52e4260b2cb' };
+  var CONFIG = { WHATSAPP_NUMERO: '5491137781528', VERSION: '259d1edbf69e' };
   if (typeof module !== 'undefined' && module.exports) module.exports = CONFIG;
   else root.CONFIG = CONFIG;
 })(typeof self !== 'undefined' ? self : this);

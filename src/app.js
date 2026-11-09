@@ -1289,8 +1289,10 @@ self.postMessage({ type: 'ready' });`;
   $('file').addEventListener('change', (e) => {
     const f = e.target.files[0]; if (!f) return;
     const r = new FileReader();
+    const inp = e.target;
     r.onload = () => { newProgram(f.name.replace(/\.[^.]*$/, ''), String(r.result).replace(/\r\n?/g, '\n')); $('dProgs').close(); };
-    r.readAsText(f); e.target.value = '';
+    r.onloadend = () => { try { inp.value = ''; } catch (err) { /* nada */ } };
+    r.readAsText(f);
   });
 
   /* ---------- captura PNG (código + entrada + salida) ---------- */
@@ -1702,12 +1704,13 @@ self.postMessage({ type: 'ready' });`;
   }
   let impPending = null;
   $('fileJson').addEventListener('change', (e) => {
-    const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+    const inp = e.target, f = inp.files[0]; if (!f) return;   // el campo se vacía recién después de leer: en algunos celulares vaciarlo antes deja el archivo sin poder leerse
     if (f.size > MAX_FILE) { toast('El archivo es demasiado grande para ser una exportación de Editor C.'); return; }
     const r = new FileReader();
     r.onerror = () => toast('No se pudo leer el archivo.');
+    r.onloadend = () => { try { inp.value = ''; } catch (err) { /* nada */ } };
     r.onload = () => {
-      const pr = parseImport(String(r.result));
+      const pr = parseImport(String(r.result).replace(/^\uFEFF/, ''));
       if (pr.error) { toast('No se importó nada. ' + pr.error); return; }
       const plan = planImport(pr.list, false);
       impPending = pr.list;
