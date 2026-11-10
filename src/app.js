@@ -49,7 +49,7 @@
   }
 
   /* ---------- datos del alumno y cabecera ---------- */
-  let user = Object.assign({ name: '', curso: '', mat: '', ciclo: '' }, store.json('user', {}));
+  let user = Object.assign({ name: '', dni: '', curso: '', mat: '', ciclo: '' }, store.json('user', {}));
   function headerText() {
     const c = user.ciclo || String(new Date().getFullYear());
     return ['// ' + (user.name || 'Apellido, Nombre'), '// ' + (user.curso || 'Curso'), '// ' + (user.mat || 'Materia'),
@@ -1381,7 +1381,13 @@ self.postMessage({ type: 'ready' });`;
     { const ls = inTxtImg.split('\n'); if (ls.length > 4 && ls.every((l) => l.length <= 14)) inTxtImg = ls.join('   '); }
     let inRows = opts.input !== false && inTxt.value.trim() ? rowsOf([['in', inTxtImg]], colsR) : [];
     if (inRows.length > 8) { const mas = inRows.length - 7; inRows = inRows.slice(0, 7); inRows.push([['dim', '… (' + mas + ' filas más de entrada)']]); }
-    const secH = 24, headH = 68, gap = 6, footH = 24, pad = 8;
+    // la segunda línea de la cabecera (DNI, curso, materia, ciclo) pasa a dos líneas si no entra junto a la fecha
+    const datosPartes = [user.dni && 'DNI ' + user.dni, user.curso, user.mat, user.ciclo && (/ciclo/i.test(user.ciclo) ? user.ciclo : 'Ciclo lectivo ' + user.ciclo)].filter(Boolean);
+    const stampTxt = (() => { const q = new Date(); return pad2(q.getDate()) + '/' + pad2(q.getMonth() + 1) + '/' + q.getFullYear() + ' ' + pad2(q.getHours()) + ':' + pad2(q.getMinutes()); })();
+    ctx.font = '13px ' + UI;
+    const maxDatos = W - 2 * padX - (user.name ? ctx.measureText(stampTxt).width + 24 : 0);
+    const datosLin = []; { let ln = ''; datosPartes.forEach((t) => { const c = ln ? ln + '  ·  ' + t : t; if (ln && ctx.measureText(c).width > maxDatos) { datosLin.push(ln); ln = t; } else ln = c; }); if (ln) datosLin.push(ln); }
+    const secH = 24, headH = 50 + Math.max(1, datosLin.length) * 18, gap = 6, footH = 24, pad = 8;
     const procRows = [];
     const procTxt = opts.proc === false ? '' : proc.linea();
     if (procTxt) {
@@ -1400,10 +1406,9 @@ self.postMessage({ type: 'ready' });`;
     ctx.textBaseline = 'middle';
     // cabecera: quién es y qué entrega; solo lo necesario, un filete fino abajo
     const nombre = (opts.nombre || (cur ? cur.name : '') || 'Programa');
-    const datos = [user.curso, user.mat, user.ciclo && (/ciclo/i.test(user.ciclo) ? user.ciclo : 'Ciclo lectivo ' + user.ciclo)].filter(Boolean).join('  ·  ');
     const d = new Date(), stamp = pad2(d.getDate()) + '/' + pad2(d.getMonth() + 1) + '/' + d.getFullYear() + ' ' + pad2(d.getHours()) + ':' + pad2(d.getMinutes());
     ctx.fillStyle = TXT; ctx.font = '700 19px ' + UI; ctx.fillText(user.name || nombre, padX, 22);
-    if (datos) { ctx.font = '13px ' + UI; ctx.fillStyle = SUB; ctx.fillText(datos, padX, 44); }
+    ctx.font = '13px ' + UI; ctx.fillStyle = SUB; datosLin.forEach((t, i) => ctx.fillText(t, padX, 44 + i * 18));
     ctx.textAlign = 'right';
     ctx.font = '700 14px ' + UI; ctx.fillStyle = TXT; ctx.fillText(user.name ? nombre : stamp, W - padX, 22);
     if (user.name) { ctx.font = '12px ' + UI; ctx.fillStyle = SUB; ctx.fillText(stamp, W - padX, 44); }
@@ -1576,11 +1581,11 @@ self.postMessage({ type: 'ready' });`;
     d.addEventListener('close', () => { $('more').open = matchMedia('(min-width: 900px)').matches; });
   });
   $('settings').addEventListener('click', () => {
-    $('uName').value = user.name; $('uCurso').value = user.curso; $('uMat').value = user.mat; $('uCiclo').value = user.ciclo;
+    $('uName').value = user.name; $('uDni').value = user.dni; $('uCurso').value = user.curso; $('uMat').value = user.mat; $('uCiclo').value = user.ciclo;
     segSet($('theme'), store.get('theme', 'auto')); sincronizarAjustesNuevos(); $('dSet').showModal();
   });
   let lastHeader = headerText();
-  [['uName', 'name'], ['uCurso', 'curso'], ['uMat', 'mat'], ['uCiclo', 'ciclo']].forEach(([id, key]) => {
+  [['uName', 'name'], ['uDni', 'dni'], ['uCurso', 'curso'], ['uMat', 'mat'], ['uCiclo', 'ciclo']].forEach(([id, key]) => {
     $(id).addEventListener('input', () => {
       user[key] = $(id).value.trim(); store.set('user', JSON.stringify(user));
       const nh = headerText();
