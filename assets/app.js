@@ -1366,8 +1366,10 @@ self.postMessage({ type: 'ready' });`;
       else if (!(n.classList.contains('stdin') || n.classList.contains('eofbtn')) && !/^—\s*Programa terminado · código de salida 0\s*—\s*$/.test(n.textContent.trim())) outSegs.push([n.className, n.textContent]);
     });
     const colsR = opts.lado ? 46 : cols + 3;
-    const outRows = rowsOf(outSegs, colsR);
+    let outRows = rowsOf(outSegs, colsR);
     while (outRows.length > 1 && !outRows[outRows.length - 1].length) outRows.pop();
+    // salidas muy largas (por ejemplo cuando se leen 150 valores y cada uno se repite en pantalla): se deja el principio y el final, que es donde está el resultado
+    if (outRows.length > 32) { const om = outRows.length - 30; outRows = outRows.slice(0, 20).concat([[['dim', '… (' + om + ' líneas omitidas) …']]], outRows.slice(-10)); }
     // si la entrada son muchas líneas cortas (números), se muestra en pocas filas y no una por renglón; si es muy larga se recorta
     let inTxtImg = inTxt.value.replace(/\n+$/, '');
     { const ls = inTxtImg.split('\n'); if (ls.length > 4 && ls.every((l) => l.length <= 14)) inTxtImg = ls.join('   '); }
