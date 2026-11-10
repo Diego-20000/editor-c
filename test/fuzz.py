@@ -41,13 +41,16 @@ def gen(d):
         l=gen(d-1); r=gen(d-1)
         return ('(%s %s %s)'%(l[0],random.choice(['&&','||']),r[0]),'int')
     if k<0.88:
-        e=gen(d-1); return ('(-%s)'%e[0], 'int' if e[1]=='char' else e[1])
+        e=gen(d-1)
+        if e[1] in ('float','double'): return ('(%s + 0)'%e[0], e[1])   # el signo de un NaN negado no se reproduce igual (ver docs/COMPATIBILIDAD.md)
+        return ('(-%s)'%e[0], 'int' if e[1]=='char' else e[1])
     if k<0.93:
         e=gen(d-1); return ('(!%s)'%e[0],'int')
     if k<0.97:
         c=gen(d-1); a=gen(d-1); b=gen(d-1)
         return ('(%s ? %s : %s)'%(c[0],a[0],b[0]), arith(a[1],b[1]))
     e=gen(d-1); t=random.choice(['int','float','double','long'])
+    if e[1] in ('float','double') and t in ('int','long'): t='double'   # decimal fuera de rango a entero es comportamiento indefinido (docs/COMPATIBILIDAD.md): no se genera
     return ('((%s)%s)'%(t,e[0]), t)
 
 N=int(sys.argv[2]) if len(sys.argv)>2 else 200
