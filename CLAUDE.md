@@ -48,6 +48,12 @@ ANSI C básico: `char`, `int`, `float`, `double`, operadores, `printf`/`scanf` (
 - Nunca ejecutar código descargado de terceros (paquetes npm, etc.) sin que Diego lo autorice: el sistema de permisos lo bloquea.
 - Antes de fusionar: tests de motor, diagnósticos e interfaz en verde, y un control final con agentes de prueba (programas estilo TP contra gcc, errores de alumnos, revisión del motor y prueba de punta a punta del sitio).
 
+## Ideas futuras y descartadas (para que nada quede colgado)
+- **Descartadas por las reglas del proyecto:** compilar con gcc real en WebAssembly/WebVM (necesita cabeceras que GitHub Pages no da, el disco se baja de la red y hay licencia para organizaciones), cuentas, servidor, IA, estadísticas de visitas, sincronizar en la nube.
+- **Futuras, sin fecha:** código QR del enlace para pasar un programa; paso a paso con el valor de las variables (apagado por defecto); formateador de código; tercera tanda de ejercicios de ChatGPT con casos más exóticos (entradas con acentos, `scanf` raros, recursión, matrices); soporte de punteros/`struct` solo si algún profe lo pide.
+- **Dominio propio y servidor:** recién cuando lo usen muchos profes. El sitio puede tener dominio propio sin servidor (GitHub Pages lo permite).
+- Guía para profes: `docs/PARA_DOCENTES.md`.
+
 ## Preguntas abiertas
 1. Fuente propia (monoespaciada libre) para el código: necesita aprobación de Diego; hoy se usan las del sistema.
 2. Si las explicaciones y pistas por error de `kb/` se muestran de alguna forma (hoy no, por decisión pedagógica).
