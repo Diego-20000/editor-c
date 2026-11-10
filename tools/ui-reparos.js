@@ -145,6 +145,20 @@ const check = (c, m) => { if (c) { ok++; console.log('  ok   ' + m); } else { fa
     check(!(await p8.inputValue('#code')).includes('12345678'), 'DNI: no se agrega a la cabecera del código');
   }
 
+  // 9) Ejemplos: botón + diálogo por temas; al elegir uno se abre el programa con su entrada de muestra, en escritorio y en celular
+  for (const [lab, o] of [['escritorio', { viewport: { width: 1280, height: 800 } }], ['celular', { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true }]]) {
+    const p9 = await (await br.newContext(o)).newPage();
+    await p9.goto(url); await p9.waitForSelector('#code');
+    if (lab === 'celular') await p9.click('#more summary');
+    await p9.click('#exBtn'); await p9.waitForSelector('#dEj[open]');
+    check((await p9.$$('#exList h3')).length >= 8, 'ejemplos (' + lab + '): se listan los temas');
+    await p9.click('.chipbtn:has-text("Repetitivas")');
+    check((await p9.$$('#exList h3')).length === 1, 'ejemplos (' + lab + '): filtrar por tema muestra solo ese tema');
+    await p9.click('.exrow:has-text("Suma de los dígitos")'); await p9.waitForTimeout(300);
+    check(!(await p9.$('#dEj[open]')), 'ejemplos (' + lab + '): el diálogo se cierra al elegir');
+    check((await p9.inputValue('#inTxt')) === '4825\n', 'ejemplos (' + lab + '): la entrada de muestra queda cargada');
+  }
+
   await br.close();
   console.log(ok + ' ok, ' + fallas + ' fallas');
   process.exit(fallas ? 1 : 0);

@@ -20,7 +20,7 @@
     <details class="more" id="more"><summary class="btn" aria-label="Más opciones"><svg class="i" aria-hidden="true"><use href="#i-mas-menu"/></svg><span>Más</span></summary>
     <div class="menu">
       <button id="progs" class="btn" title="Mis programas guardados en este dispositivo" aria-label="Programas"><svg class="i" aria-hidden="true"><use href="#i-programas"/></svg><span class="l">Programas</span></button>
-      <select id="examples" class="btn sel" aria-label="Ejemplos"><option value="">Ejemplos…</option></select>
+      <button id="exBtn" class="btn" title="Programas de ejemplo ordenados por tema" aria-label="Ejemplos"><svg class="i" aria-hidden="true"><use href="#i-abrir"/></svg><span class="l">Ejemplos</span></button>
       <button id="shot" class="btn" title="Descargar una imagen PNG con el código y la salida" aria-label="Captura"><svg class="i" aria-hidden="true"><use href="#i-captura"/></svg><span class="l">Captura</span></button>
       <button id="save" class="btn" title="Descargar como archivo .c (Ctrl+S)" aria-label="Guardar .c"><svg class="i" aria-hidden="true"><use href="#i-descargar"/></svg><span class="l">Guardar .c</span></button>
       <button id="enlace" class="btn" title="Armar un enlace para abrir este programa en otro dispositivo" aria-label="Pasar a otro dispositivo"><svg class="i" aria-hidden="true"><use href="#i-compartir"/></svg><span class="l">Pasar a otro dispositivo</span></button>
@@ -160,6 +160,14 @@
   </div>
   <div class="shotbox" id="shotBox"><div class="carga" aria-live="polite">Armando la imagen…</div><img id="shotImg" decoding="async" alt="Vista previa de la captura: cabecera, código, entrada y salida"></div>
   <div class="drow"><button id="shotDl" class="btn primary" type="button"><svg class="i" aria-hidden="true"><use href="#i-descargar"/></svg>Descargar PNG</button><button id="shotShare" class="btn" type="button" hidden><svg class="i" aria-hidden="true"><use href="#i-compartir"/></svg>Compartir</button><button class="btn" type="button" data-close>Cancelar</button></div>
+</dialog>
+
+<dialog id="dEj" aria-labelledby="tEj" class="wide">
+  <h2 id="tEj">Ejemplos</h2>
+  <p>Programas resueltos para ver cómo se hace cada tema. Se abren con datos de entrada de muestra, listos para ejecutar.</p>
+  <div class="exchips" id="exChips" role="group" aria-label="Tema"></div>
+  <div class="exlist" id="exList"></div>
+  <div class="drow"><button class="btn primary" type="button" data-close>Cerrar</button></div>
 </dialog>
 
 <dialog id="dEnlace" aria-labelledby="tEnlace">

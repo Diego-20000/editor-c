@@ -22,7 +22,7 @@ Editor de C **sin anuncios** que corre en tu navegador. Escribís, ejecutás y p
 - **Celular**: pestañas Editor / Consola que conservan el scroll y el foco, objetivos táctiles de 44 px y el diseño sigue al teclado virtual (`visualViewport`) para que la línea de entrada quede siempre a la vista.
 - **Instalable y sin conexión** (PWA): por `http(s)` (por ejemplo GitHub Pages) se puede instalar como app y, después de la primera visita, funciona sin internet. Cuando hay una versión nueva avisa y recarga al aceptar. Con `file://` y en el archivo único no se registra nada.
 - Cabecera editable (`// Apellido, Nombre`, curso, materia, ciclo) que se recuerda para los programas nuevos.
-- Buscar y reemplazar, ejemplos por tema, tema claro/oscuro (sigue al dispositivo), tamaño de letra.
+- Buscar y reemplazar, ejemplos por tema (30 programas con datos de muestra; ninguno repite un ejercicio de la materia), tema claro/oscuro (sigue al dispositivo), tamaño de letra.
 - Atajos: `F1` o `Alt`+clic «¿Qué es esto?», `Ctrl+Enter` o `F5` ejecuta, `Ctrl+S` guarda, `Ctrl+/` comenta, `Tab`/`Shift+Tab` sangra, `Ctrl+F`/`Ctrl+H` busca/reemplaza.
 - Avisos útiles: `%d` con una variable `float`, `scanf` sin `&`, variable usada sin valor inicial, `=` dentro de un `if`, `;` sobrante después de un `while`.
 - Acepta `main()` sin tipo, `int main()` y `void main()`.

@@ -8,7 +8,7 @@
     sv.setAttribute('class', 'i'); sv.setAttribute('aria-hidden', 'true'); u.setAttribute('href', '#i-' + nombre); sv.appendChild(u); return sv;
   }
   const ta = $('code'), hl = $('hl'), ul = $('ul'), fm = $('fm'), gut = $('gut'), out = $('out'), cons = $('console'),
-    diag = $('diag'), diagList = $('diagList'), statusEl = $('status'), runBtn = $('run'), stopBtn = $('stop'), exSel = $('examples'),
+    diag = $('diag'), diagList = $('diagList'), statusEl = $('status'), runBtn = $('run'), stopBtn = $('stop'),
     inTxt = $('inTxt'), layers = [hl, ul, fm];
   const coarse = !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
 
@@ -1509,21 +1509,35 @@ self.postMessage({ type: 'ready' });`;
   });
 
   /* ---------- ejemplos ---------- */
-  (function () {
-    const groups = {};
-    EXAMPLES.forEach((e, i) => {
-      if (!groups[e.g]) { groups[e.g] = document.createElement('optgroup'); groups[e.g].label = e.g; exSel.appendChild(groups[e.g]); }
-      const o = document.createElement('option'); o.value = String(i); o.textContent = e.t; groups[e.g].appendChild(o);
+  const dEj = $('dEj');
+  let exTema = 'Todos';
+  function pintarEjemplos() {
+    const temas = []; EXAMPLES.forEach((e) => { if (temas.indexOf(e.g) < 0) temas.push(e.g); });
+    const chips = $('exChips'); chips.textContent = '';
+    ['Todos'].concat(temas).forEach((t) => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'chipbtn'; b.textContent = t; b.setAttribute('aria-pressed', t === exTema ? 'true' : 'false');
+      b.addEventListener('click', () => { exTema = t; pintarEjemplos(); });
+      chips.appendChild(b);
     });
-  })();
-  exSel.addEventListener('change', () => {
-    const i = exSel.value; exSel.value = '';
-    if (i === '') return;
-    const ex = EXAMPLES[+i];
-    if (isPristine(ta.value)) { cur.name = nextName(ex.t); cur.code = ex.c; cur.input = ''; cur.proc = undefined; showProgram(cur, 'c'); }
-    else { newProgram(ex.t, ex.c); toast('Ejemplo abierto como programa nuevo; el anterior sigue en "Programas".'); }
-    $('more').open = matchMedia('(min-width: 900px)').matches;
-  });
+    const lista = $('exList'); lista.textContent = '';
+    temas.forEach((t) => {
+      if (exTema !== 'Todos' && exTema !== t) return;
+      const h = document.createElement('h3'); h.textContent = t; lista.appendChild(h);
+      EXAMPLES.forEach((e, i) => {
+        if (e.g !== t) return;
+        const b = document.createElement('button'); b.type = 'button'; b.className = 'exrow';
+        const a = document.createElement('b'); a.textContent = e.t; const s = document.createElement('span'); s.textContent = e.d || '';
+        b.appendChild(a); b.appendChild(s); b.addEventListener('click', () => abrirEjemplo(i)); lista.appendChild(b);
+      });
+    });
+  }
+  function abrirEjemplo(i) {
+    const ex = EXAMPLES[i]; if (!ex) return;
+    if (isPristine(ta.value)) { cur.name = nextName(ex.t); cur.code = ex.c; cur.input = ex.e || ''; cur.proc = undefined; showProgram(cur, 'c'); }
+    else { newProgram(ex.t, ex.c, ex.e || ''); toast('Ejemplo abierto como programa nuevo; el anterior sigue en "Programas".'); }
+    dEj.close();
+  }
+  $('exBtn').addEventListener('click', () => { $('more').open = matchMedia('(min-width: 900px)').matches; pintarEjemplos(); dEj.showModal(); });
 
   /* ---------- lista de programas ---------- */
   const dProgs = $('dProgs');
