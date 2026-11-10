@@ -1088,9 +1088,13 @@
   }
 
   let worker = null, waiting = false;
+  // tiempo de ejecución: desde que se aprieta Ejecutar hasta que termina, sin contar lo que el alumno tarda en tipear datos
+  let tRun0 = 0, tEspera = 0, tEsperaIni = 0;
+  const finEspera = () => { if (tEsperaIni) { tEspera += performance.now() - tEsperaIni; tEsperaIni = 0; } };
+  const fmtSeg = (ms) => (ms < 10 ? 'menos de 0,01 s' : ((ms / 1000 < 10 ? (ms / 1000).toFixed(2) : (ms / 1000).toFixed(1)).replace('.', ',') + ' s'));
   function removeInput() { const w = out.querySelector('.stdin'); if (w) w.remove(); const b = out.querySelector('.eofbtn'); if (b) b.remove(); }
   function showInput() {
-    flushOut(); removeInput(); waiting = true;
+    flushOut(); removeInput(); waiting = true; tEsperaIni = performance.now();
     const wrap = document.createElement('span'); wrap.className = 'stdin';
     const inp = document.createElement('input');
     inp.type = 'text'; inp.autocomplete = 'off'; inp.spellcheck = false; inp.setAttribute('autocapitalize', 'off'); inp.setAttribute('autocorrect', 'off');
@@ -1101,14 +1105,14 @@
     const fit = () => { inp.style.width = Math.max(1, inp.value.length + 1) + 'ch'; };
     inp.addEventListener('input', fit);
     inp.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') { e.preventDefault(); const s = inp.value; removeInput(); waiting = false; appendText(s + '\n', 'in'); setStatus('Ejecutando…', 'run'); send({ type: 'line', s }); }
+      if (e.key === 'Enter') { e.preventDefault(); const s = inp.value; removeInput(); waiting = false; finEspera(); appendText(s + '\n', 'in'); setStatus('Ejecutando…', 'run'); send({ type: 'line', s }); }
       else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'd') { e.preventDefault(); sendEOF(); }
     });
     fit(); setStatus('Esperando datos…', 'wait');
     inp.focus({ preventScroll: true });
     ensureInputVisible();
   }
-  function sendEOF() { removeInput(); waiting = false; appendText('^D\n', 'dim'); setStatus('Ejecutando…', 'run'); send({ type: 'eof' }); }
+  function sendEOF() { removeInput(); waiting = false; finEspera(); appendText('^D\n', 'dim'); setStatus('Ejecutando…', 'run'); send({ type: 'eof' }); }
   cons.addEventListener('click', () => { const i = out.querySelector('.stdin input'); if (i && !window.getSelection().toString()) i.focus({ preventScroll: true }); });
 
   /* ---------- ejecución ---------- */
@@ -1203,8 +1207,10 @@ self.postMessage({ type: 'ready' });`;
       setStatus('Error al ejecutar', 'err');
     } else {
       const c = r.code === undefined || r.code === null ? 0 : r.code;
-      appendText('— Programa terminado · código de salida ' + c + ' —\n', c === 0 ? 'ok' : 'er');
-      setStatus('Terminó (código ' + c + ')', c === 0 ? '' : 'err');
+      finEspera();
+      const seg = fmtSeg(Math.max(0, performance.now() - tRun0 - tEspera));
+      appendText('— Programa terminado · código de salida ' + c + ' · ' + seg + ' —\n', c === 0 ? 'ok' : 'er');
+      setStatus('Terminó (código ' + c + ') · ' + seg, c === 0 ? '' : 'err');
     }
   }
   function capped() {
@@ -1259,6 +1265,7 @@ self.postMessage({ type: 'ready' });`;
   }
 
   function run() {
+    tRun0 = performance.now(); tEspera = 0; tEsperaIni = 0;
     resetRun();
     removeInput(); clearConsole(); clearProblems();
     flushSave();
@@ -1362,7 +1369,7 @@ self.postMessage({ type: 'ready' });`;
     const outSegs = [];
     out.childNodes.forEach((n) => {
       if (n.nodeType === 3) outSegs.push([null, n.textContent]);
-      else if (!(n.classList.contains('stdin') || n.classList.contains('eofbtn')) && !/^—\s*Programa terminado · código de salida 0\s*—\s*$/.test(n.textContent.trim())) outSegs.push([n.className, n.textContent]);
+      else if (!(n.classList.contains('stdin') || n.classList.contains('eofbtn')) && !/^—\s*Programa terminado · código de salida 0( · [^—]*)?\s*—\s*$/.test(n.textContent.trim())) outSegs.push([n.className, n.textContent]);
     });
     const colsR = opts.lado ? 46 : cols + 3;
     let outRows = rowsOf(outSegs, colsR);
