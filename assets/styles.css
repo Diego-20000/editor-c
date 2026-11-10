@@ -352,6 +352,17 @@ dialog.wide { width: min(760px, calc(100vw - 32px)); }
 .symbar button { flex: 0 0 auto; min-width: 44px; min-height: 44px; padding: 0 10px; border-radius: 10px; border: 1px solid var(--line); background: var(--fill); color: var(--text); font: 600 18px var(--mono); }
 .symbar button:active { background: var(--accent); color: var(--accent-fg, #fff); }
 #shotName { width: 100%; min-height: 44px; padding: 0 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel); color: var(--text); font: 15px var(--ui); margin-bottom: 10px; }
+/* ejemplos: temas como fichas y una lista con título y descripción */
+.exchips { display: flex; gap: 8px; overflow-x: auto; padding: 4px 0 10px; scrollbar-width: none; }
+.exchips::-webkit-scrollbar { display: none; }
+.chipbtn { flex: 0 0 auto; min-height: 36px; padding: 0 14px; border-radius: 99px; border: 1px solid var(--line); background: var(--panel); color: var(--text); font: 600 14px var(--ui); cursor: pointer; }
+.chipbtn[aria-pressed="true"] { background: var(--accent); color: var(--accent-fg, #fff); border-color: transparent; }
+.exlist { max-height: min(52dvh, 460px); overflow-y: auto; border-radius: 12px; }
+.exlist h3 { position: sticky; top: 0; z-index: 1; margin: 0; padding: 10px 14px 6px; background: var(--bg); font: 700 12px var(--ui); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.exrow { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; width: 100%; min-height: 56px; padding: 10px 14px; border: 0; border-bottom: 1px solid var(--line); background: var(--panel); color: var(--text); text-align: left; cursor: pointer; }
+.exrow:hover { background: var(--fill); }
+.exrow b { font: 600 16px var(--ui); }
+.exrow span { font: 13px/1.35 var(--ui); color: var(--muted); }
 .fld { display: block; margin: 12px 0 6px; }
 #cNota2 { width: 100%; resize: vertical; min-height: 76px; max-height: 30vh; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel); color: var(--text); font: 15px/1.4 var(--ui); }
 @media (prefers-reduced-motion: reduce) { .shotbox img { transition: none; } }
