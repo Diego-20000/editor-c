@@ -120,6 +120,20 @@ const check = (c, m) => { if (c) { ok++; console.log('  ok   ' + m); } else { fa
     check(h6 > 0 && h6 < 3400, 'captura con 150 valores: la imagen no se vuelve gigante (' + h6 + ' px de alto)');
   }
 
+  // 7) tiempo de ejecución: se muestra en segundos al terminar y no cuenta lo que se tarda en tipear los datos
+  {
+    const p7 = await (await br.newContext({ viewport: { width: 1280, height: 800 } })).newPage();
+    await p7.goto(url); await p7.waitForSelector('#code');
+    await p7.evaluate(() => { const t = document.getElementById('code'); t.value = '#include <stdio.h>\nint main() {\n  int A;\n  scanf("%d", &A);\n  printf("%d\\n", A * 2);\n  return 0;\n}\n'; t.dispatchEvent(new Event('input')); });
+    await p7.keyboard.press('F5'); await p7.waitForSelector('.stdin input'); await p7.waitForTimeout(2500);
+    await p7.keyboard.type('21'); await p7.keyboard.press('Enter'); await p7.waitForTimeout(900);
+    const o7 = await p7.$eval('#out', (o) => o.textContent);
+    const m7 = /código de salida 0 · (menos de 0,01 s|(\d+),(\d+) s) —/.exec(o7);
+    check(!!m7, 'tiempo de ejecución: la consola lo muestra en segundos (' + (m7 ? m7[1] : 'no aparece') + ')');
+    check(!m7 || m7[1].startsWith('menos') || +(m7[2] + '.' + m7[3]) < 2, 'tiempo de ejecución: no cuenta los 2,5 s que se tardó en tipear el dato');
+    check(/Terminó \(código 0\) · /.test(await p7.textContent('#status')), 'tiempo de ejecución: también figura en el estado');
+  }
+
   await br.close();
   console.log(ok + ' ok, ' + fallas + ' fallas');
   process.exit(fallas ? 1 : 0);
