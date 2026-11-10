@@ -21,7 +21,8 @@ const PREF = ['SIN', 'DEC', 'TIP', 'OPE', 'PRF', 'SCN', 'CTL', 'FUN', 'ARR', 'PR
 const gccVer = (cp.spawnSync('gcc', ['--version'], { encoding: 'utf8' }).stdout || '').split('\n')[0];
 // la base promete «verificado con gcc 13»: con otra versión no se certifica nada
 const gccMayor = (/(\d+)\.\d+\.\d+/.exec(gccVer) || [])[1];
-if (gccMayor !== '13' && !process.env.KB_SIN_GCC13) { console.error('gcc no es de la versión 13 (' + (gccVer || 'no se encontró') + '): no se puede validar ni marcar verificado_gcc13.'); process.exit(2); }
+const certificable = gccMayor === '13';   // con KB_SIN_GCC13 se puede correr para pruebas locales, pero nunca se certifica verificado_gcc13
+if (!certificable && !process.env.KB_SIN_GCC13) { console.error('gcc no es de la versión 13 (' + (gccVer || 'no se encontró') + '): no se puede validar ni marcar verificado_gcc13.'); process.exit(2); }
 
 function gcc(codigo, args) { // compila con gcc; devuelve { exe, diag, ok }
   const f = path.join(T, 'p' + Math.random().toString(36).slice(2) + '.c');
@@ -31,9 +32,12 @@ function gcc(codigo, args) { // compila con gcc; devuelve { exe, diag, ok }
   const lineas = String(p.stderr || '').split('\n').filter((l) => /(error|warning):/.test(l)).map((l) => l.replace(f, 'archivo.c').replace(/^archivo\.c:(\d+):\d+: /, 'archivo.c:$1: ').replace(/\s+/g, ' ').trim());
   return { exe, diag: lineas, ok: p.status === 0 };
 }
+// resultado de un proceso: se distingue terminar normal, timeout, señal y error al lanzarlo (no se comparan como si fueran un código de salida)
+function estadoProc(p) { return { out: String(p.stdout || ''), code: p.status, timedOut: !!(p.error && p.error.code === 'ETIMEDOUT'), signal: p.signal || null, error: p.error && p.error.code !== 'ETIMEDOUT' ? String(p.error.message || p.error) : null }; }
+const normal = (r) => !!r && !r.timedOut && !r.signal && !r.error && typeof r.code === 'number';
+const motivo = (r) => (r.timedOut ? 'se pasó del tiempo' : r.signal ? 'terminó por la señal ' + r.signal : r.error ? 'no se pudo ejecutar (' + r.error + ')' : 'terminó con código ' + r.code);
 function correr(exe, entrada) {
-  const p = cp.spawnSync(exe, [], { input: entrada || '', encoding: 'utf8', timeout: 5000, maxBuffer: 1 << 24 });
-  return { out: String(p.stdout || ''), code: p.status === null ? 'señal' : p.status };
+  return estadoProc(cp.spawnSync(exe, [], { input: entrada || '', encoding: 'utf8', timeout: 5000, maxBuffer: 1 << 24 }));
 }
 function editor(codigo, entrada) { // compila con el editor y, si compila, lo ejecuta (en otro proceso, con tiempo límite)
   const r = compile(codigo);
@@ -43,7 +47,7 @@ function editor(codigo, entrada) { // compila con el editor y, si compila, lo ej
     const f = path.join(T, 'e' + Math.random().toString(36).slice(2) + '.c');
     fs.writeFileSync(f, codigo);
     const p = cp.spawnSync('node', [path.join(raiz, 'test', 'run1.js'), f], { input: entrada || '', encoding: 'utf8', timeout: 8000, maxBuffer: 1 << 24 });
-    res.out = String(p.stdout || ''); res.code = p.status === null ? 'señal' : p.status;
+    res.out = String(p.stdout || ''); res.proc = estadoProc(p); res.code = res.proc.code;
     const m = /RUNTIME ERR l(\d+|undefined): (.*)/.exec(String(p.stderr || ''));
     if (m) res.runtime = m[2];
   }
@@ -84,6 +88,8 @@ if (esAyuda) {
     const gr = correr(g.exe, l.entrada);
     const ed = editor(l.ejemplo, l.entrada);
     if (ed.errores.length) mal(id, 'el ejemplo no compila en el editor: ' + ed.errores[0].msg);
+    else if (!normal(gr)) mal(id, 'el ejemplo en gcc no terminó normalmente: ' + motivo(gr));
+    else if (!normal(ed.proc)) mal(id, 'el ejemplo en el editor no terminó normalmente: ' + motivo(ed.proc));
     else if (ed.out !== gr.out) mal(id, 'el editor da otra salida que gcc');
     else if (ed.code !== gr.code) mal(id, 'el editor termina con otro código de salida que gcc (' + ed.code + ' contra ' + gr.code + ')');
     if (arreglar) l.resultado = gr.out;
@@ -130,12 +136,14 @@ if (esAyuda) {
       const edb = editor(e.codigo_bien, e.entrada);
       if (edb.errores.length) mal(id, 'codigo_bien no compila en el editor: ' + edb.errores[0].msg);
       else if (edb.avisos.length) mal(id, 'codigo_bien da avisos en el editor: ' + edb.avisos[0].msg);
+      else if (!normal(grb)) mal(id, 'codigo_bien: en gcc no terminó normalmente: ' + motivo(grb));
+      else if (!normal(edb.proc)) mal(id, 'codigo_bien: en el editor no terminó normalmente: ' + motivo(edb.proc));
       else if (edb.out !== grb.out) mal(id, 'codigo_bien: el editor da otra salida que gcc');
       else if (edb.code !== grb.code) mal(id, 'codigo_bien: el editor termina con otro código de salida que gcc (' + edb.code + ' contra ' + grb.code + ')');
       else corrige = true;
     }
     if (arreglar) {
-      e.que_dice_gcc = dgcc; e.verificado_gcc13 = true;
+      e.que_dice_gcc = dgcc; e.verificado_gcc13 = certificable;
       e.detectado_editor = !!actual; e.mensaje_editor_actual = actual; e.codigo_editor_actual = codigoActual;
       e.verificado_editor_corrige = corrige;
     } else {
