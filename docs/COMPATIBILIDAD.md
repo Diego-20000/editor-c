@@ -16,7 +16,8 @@ Estos casos no tienen resultado garantizado en C, así que el editor no promete 
 - conversión de un decimal fuera de rango a entero (gcc da distinto según optimice o no);
 - leer una variable local sin inicializar (el editor la inicia en 0 y avisa);
 - orden de evaluación de los argumentos de una llamada (gcc evalúa de derecha a izquierda; el editor lo imita cuando hay efectos, pero no está garantizado por el estándar);
-- índices fuera de un arreglo (el editor se detiene con un error y el número de línea).
+- índices fuera de un arreglo (el editor se detiene con un error y el número de línea);
+- el signo de un cero o de un NaN en cuentas decimales extremas (por ejemplo negar un NaN o dividir por un cero con signo): el editor imprime `-nan` para el `0/0` típico como gcc, pero no sigue el signo en cadenas largas de operaciones. Lo encontró la prueba con programas aleatorios (`test/fuzz_run.sh`), que ya no genera esos casos.
 
 ## Límites propios del editor
 - Arreglos de hasta 20 millones de elementos; ancho y precisión de formato hasta 100000.
