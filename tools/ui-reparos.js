@@ -134,6 +134,17 @@ const check = (c, m) => { if (c) { ok++; console.log('  ok   ' + m); } else { fa
     check(/Terminó \(código 0\) · /.test(await p7.textContent('#status')), 'tiempo de ejecución: también figura en el estado');
   }
 
+  // 8) DNI opcional en Ajustes: se guarda en el dispositivo y no se agrega a la cabecera del código
+  {
+    const p8 = await (await br.newContext({ viewport: { width: 1280, height: 800 } })).newPage();
+    await p8.goto(url); await p8.waitForSelector('#code');
+    await p8.click('#settings').catch(() => {}); await p8.waitForSelector('#dSet[open]');
+    await p8.fill('#uDni', '12345678'); await p8.waitForTimeout(200);
+    await p8.reload(); await p8.waitForSelector('#code'); await p8.click('#settings'); await p8.waitForSelector('#dSet[open]');
+    check((await p8.inputValue('#uDni')) === '12345678', 'DNI: queda guardado en el dispositivo');
+    check(!(await p8.inputValue('#code')).includes('12345678'), 'DNI: no se agrega a la cabecera del código');
+  }
+
   await br.close();
   console.log(ok + ' ok, ' + fallas + ' fallas');
   process.exit(fallas ? 1 : 0);
