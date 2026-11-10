@@ -39,6 +39,7 @@ ANSI C básico: `char`, `int`, `float`, `double`, operadores, `printf`/`scanf` (
 ## Cómo se trabaja
 - Ramas: `main` es lo que se publica. Se trabaja en ramas y se integra con PR. No crear un PR si no lo pidió Diego.
 - Comandos (necesitan `node` y `gcc`; la interfaz necesita `playwright`):
+  - **`bash test/todo.sh`** corre todas las pruebas y muestra un resumen de una pantalla (`--rapido` sin interfaz, `--kb` valida también la base contra gcc, `--fuzz N` cantidad de programas aleatorios). Sale con 1 si algo falla y deja el detalle en `test/informes/ultimo.txt`.
   - `node build.js` genera el sitio desde `src/`.
   - `bash test/run_all.sh` compara cada programa de `test/cases` contra gcc (salida y código de salida).
   - `node test/diag.js` verifica los diagnósticos esperados de `test/diag`.
