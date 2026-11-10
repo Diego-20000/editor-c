@@ -95,6 +95,18 @@ const check = (c, m) => { if (c) { ok++; console.log('  ok   ' + m); } else { fa
     check(r.p <= r.w + 1, 'barra de símbolos: no ensancha la página en celular');
   }
 
+  // 5) captura: el alumno le pone el nombre a la imagen (por ejemplo «Ejercicio 20 b, prueba 2») y ese nombre es el del archivo
+  {
+    const cx5 = await br.newContext({ viewport: { width: 1280, height: 800 }, acceptDownloads: true });
+    const p5 = await cx5.newPage(); await p5.goto(url); await p5.waitForSelector('#code');
+    await p5.click('#shot'); await p5.waitForSelector('#dShot[open]');
+    check((await p5.inputValue('#shotName')) === (await p5.textContent('#pnameTxt')), 'captura: el nombre de la imagen arranca con el del programa');
+    await p5.fill('#shotName', 'Ejercicio 20 b: "prueba" 2/3'); await p5.waitForTimeout(700);
+    const [dl] = await Promise.all([p5.waitForEvent('download'), p5.click('#shotDl')]);
+    check(dl.suggestedFilename() === 'Ejercicio 20 b prueba 2 3.png', 'captura: el archivo se llama como lo escribió el alumno, sin los caracteres que no se aceptan (' + dl.suggestedFilename() + ')');
+    await cx5.close();
+  }
+
   await br.close();
   console.log(ok + ' ok, ' + fallas + ' fallas');
   process.exit(fallas ? 1 : 0);

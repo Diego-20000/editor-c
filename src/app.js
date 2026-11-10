@@ -1299,6 +1299,9 @@ self.postMessage({ type: 'ready' });`;
   runBtn.addEventListener('click', run);
 
   /* ---------- archivos ---------- */
+  // nombre de la imagen: lo elige el alumno (por ejemplo «Ejercicio 20 b, prueba 2»); se limpian solo los caracteres que los sistemas no aceptan
+  const nombreCaptura = () => { const t = ($('shotName') ? $('shotName').value : '').replace(/[\u0000-\u001f\u007f\\/:*?"<>|]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 60); return t || (cur && cur.name) || 'Programa'; };
+  const archivoCaptura = () => nombreCaptura().replace(/^[. ]+|[. ]+$/g, '') || 'captura';
   const slug = () => ((cur && cur.name) || 'programa').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^A-Za-z0-9_-]+/g, '_').replace(/^_+|_+$/g, '') || 'programa';
   function download(blob, name) {
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name;
@@ -1359,7 +1362,7 @@ self.postMessage({ type: 'ready' });`;
     const outSegs = [];
     out.childNodes.forEach((n) => {
       if (n.nodeType === 3) outSegs.push([null, n.textContent]);
-      else if (!(n.classList.contains('stdin') || n.classList.contains('eofbtn'))) outSegs.push([n.className, n.textContent]);
+      else if (!(n.classList.contains('stdin') || n.classList.contains('eofbtn')) && !/^—\s*Programa terminado · código de salida 0\s*—\s*$/.test(n.textContent.trim())) outSegs.push([n.className, n.textContent]);
     });
     const colsR = opts.lado ? 46 : cols + 3;
     const outRows = rowsOf(outSegs, colsR);
@@ -1369,49 +1372,49 @@ self.postMessage({ type: 'ready' });`;
     { const ls = inTxtImg.split('\n'); if (ls.length > 4 && ls.every((l) => l.length <= 14)) inTxtImg = ls.join('   '); }
     let inRows = opts.input !== false && inTxt.value.trim() ? rowsOf([['in', inTxtImg]], colsR) : [];
     if (inRows.length > 8) { const mas = inRows.length - 7; inRows = inRows.slice(0, 7); inRows.push([['dim', '… (' + mas + ' filas más de entrada)']]); }
-    const secH = 38, headH = 88, gap = 6, footH = 46;
+    const secH = 24, headH = 68, gap = 6, footH = 24, pad = 8;
     const procRows = [];
     const procTxt = opts.proc === false ? '' : proc.linea();
     if (procTxt) {
-      ctx.font = '13px ' + UI;
+      ctx.font = '12px ' + UI;
       let ln = '';
-      procTxt.split(' ').forEach((w) => { const t = ln ? ln + ' ' + w : w; if (ln && ctx.measureText(t).width > W - 2 * padX) { procRows.push(ln); ln = w; } else ln = t; });
+      procTxt.split(' ').forEach((w) => { const t = ln ? ln + ' ' + w : w; if (ln && ctx.measureText(t).width > W - 2 * padX - 70) { procRows.push(ln); ln = w; } else ln = t; });
       if (ln) procRows.push(ln);
     }
-    const blockH = (n) => n * lh + 20;
+    const blockH = (n) => n * lh + 2 * pad;
     const hCode = secH + blockH(codeRows.length), hIn = inRows.length ? secH + blockH(inRows.length) + gap : 0, hOut = secH + blockH(Math.max(1, outRows.length));
     const bodyH = opts.lado ? Math.max(hCode, hIn + hOut) : hCode + gap + hIn + hOut;
-    const barH = procRows.length ? 18 : 0;
-    const H = headH + gap + bodyH + (procRows.length ? 14 + procRows.length * 19 + barH : 0) + footH;
+    const H = headH + gap + bodyH + (procRows.length ? 10 + procRows.length * 17 : 0) + footH;
     let S = 2; while (W * S * H * S > 14e6 && S > 1) S -= 0.5;
     cv.width = Math.round(W * S); cv.height = Math.round(H * S); ctx.scale(S, S);
     ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, W, H);
     ctx.textBaseline = 'middle';
-    // cabecera: nombre y datos a la izquierda, programa y fecha a la derecha, un filete fino abajo
-    ctx.fillStyle = TXT; ctx.font = '700 21px ' + UI;
-    ctx.fillText(user.name || 'Editor C', padX, 32);
-    ctx.font = '14px ' + UI; ctx.fillStyle = SUB;
-    ctx.fillText([user.curso, user.mat, user.ciclo && (/ciclo/i.test(user.ciclo) ? user.ciclo : 'Ciclo lectivo ' + user.ciclo)].filter(Boolean).join('  ·  ') || 'Captura del programa', padX, 58);
+    // cabecera: quién es y qué entrega; solo lo necesario, un filete fino abajo
+    const nombre = (opts.nombre || (cur ? cur.name : '') || 'Programa');
+    const datos = [user.curso, user.mat, user.ciclo && (/ciclo/i.test(user.ciclo) ? user.ciclo : 'Ciclo lectivo ' + user.ciclo)].filter(Boolean).join('  ·  ');
     const d = new Date(), stamp = pad2(d.getDate()) + '/' + pad2(d.getMonth() + 1) + '/' + d.getFullYear() + ' ' + pad2(d.getHours()) + ':' + pad2(d.getMinutes());
-    ctx.textAlign = 'right'; ctx.font = '700 15px ' + UI; ctx.fillStyle = TXT; ctx.fillText((cur ? cur.name : 'Programa') + '.c', W - padX, 32);
-    ctx.font = '13px ' + UI; ctx.fillStyle = SUB; ctx.fillText(stamp, W - padX, 58); ctx.textAlign = 'left';
-    ctx.fillStyle = TXT; ctx.fillRect(padX, headH - 12, W - 2 * padX, 1.5);
+    ctx.fillStyle = TXT; ctx.font = '700 19px ' + UI; ctx.fillText(user.name || nombre, padX, 22);
+    if (datos) { ctx.font = '13px ' + UI; ctx.fillStyle = SUB; ctx.fillText(datos, padX, 44); }
+    ctx.textAlign = 'right';
+    ctx.font = '700 14px ' + UI; ctx.fillStyle = TXT; ctx.fillText(user.name ? nombre : stamp, W - padX, 22);
+    if (user.name) { ctx.font = '12px ' + UI; ctx.fillStyle = SUB; ctx.fillText(stamp, W - padX, 44); }
+    ctx.textAlign = 'left';
+    ctx.fillStyle = TXT; ctx.fillRect(padX, headH - 10, W - 2 * padX, 1);
     let y = headH + gap;
     let xb = padX, wb = leftW;
     const section = (title) => {
-      ctx.font = '700 12px ' + UI; ctx.fillStyle = SUB;
-      if ('letterSpacing' in ctx) ctx.letterSpacing = '1.2px';
-      ctx.fillText(title.toUpperCase(), xb, y + secH / 2 + 6);
+      ctx.font = '700 11px ' + UI; ctx.fillStyle = SUB;
+      if ('letterSpacing' in ctx) ctx.letterSpacing = '1px';
+      ctx.fillText(title.toUpperCase(), xb, y + secH / 2 + 2);
       if ('letterSpacing' in ctx) ctx.letterSpacing = '0px';
       y += secH;
     };
     const drawRows = (rows, x0, numbers) => {
-      const h = blockH(rows.length), bx = xb, bw = wb, rr = 10;
-      ctx.beginPath(); ctx.roundRect ? ctx.roundRect(bx + .5, y + .5, bw - 1, h - 1, rr) : ctx.rect(bx + .5, y + .5, bw - 1, h - 1);
-      ctx.fillStyle = numbers ? '#ffffff' : PANEL; ctx.fill(); ctx.strokeStyle = HAIR; ctx.lineWidth = 1; ctx.stroke();
-      if (numbers) { ctx.fillStyle = HAIR; ctx.fillRect(xb + gutW - 6, y + 1, 1, h - 2); }
+      const h = blockH(rows.length);
+      if (numbers) { ctx.fillStyle = HAIR; ctx.fillRect(xb + gutW - 6, y, 1, h); }
+      else { ctx.beginPath(); ctx.roundRect ? ctx.roundRect(xb, y, wb, h, 8) : ctx.rect(xb, y, wb, h); ctx.fillStyle = PANEL; ctx.fill(); }
       rows.forEach((row, i) => {
-        const r = numbers ? row.r : row, yy = y + 10 + i * lh + lh / 2;
+        const r = numbers ? row.r : row, yy = y + pad + i * lh + lh / 2;
         if (numbers) { ctx.font = (fs - 1) + 'px ' + MONO; ctx.fillStyle = GUT; ctx.textAlign = 'right'; ctx.fillText(String(row.n), xb + gutW - 14, yy); ctx.textAlign = 'left'; }
         let x = x0;
         r.forEach(([cls, text]) => {
@@ -1427,37 +1430,14 @@ self.postMessage({ type: 'ready' });`;
     section('Código');
     drawRows(codeRows, xb + gutW, true);
     if (opts.lado) { y = y0; xb = padX + leftW + gapX; wb = rightW; } else y += gap;
-    if (inRows.length) { section('Datos de entrada'); drawRows(inRows, xb + 12, false); y += gap; }
+    if (inRows.length) { section('Entrada'); drawRows(inRows, xb + 12, false); y += gap; }
     section('Salida');
     drawRows(outRows.length && (outRows.length > 1 || outRows[0].length) ? outRows : [[['dim', '(sin salida: ejecutá el programa antes de sacar la captura)']]], xb + 12, false);
     if (opts.lado) { y = y0 + bodyH; xb = padX; wb = leftW; }
-    if (procRows.length) {
-      // barra de cómo se escribió: sólido = tipeado, rayado = pegado, gris = automático (se distingue también en blanco y negro)
-      const rs = proc.resumen(), bw = Math.min(W - 2 * padX, 440), by = y + 12, bh = 8;
-      const tr = [[rs.tipeado, 'solid'], [rs.pegado, 'hatch'], [rs.automatico, 'gray'], [(rs.cargado || 0) + (rs.desconocido || 0), 'light']].filter((q) => q[0] > 0);
-      ctx.save(); ctx.beginPath(); ctx.roundRect ? ctx.roundRect(padX, by, bw, bh, 4) : ctx.rect(padX, by, bw, bh); ctx.clip();
-      ctx.fillStyle = '#ffffff'; ctx.fillRect(padX, by, bw, bh);
-      let bx0 = padX;
-      tr.forEach(([pc, kind]) => {
-        const w = bw * pc / 100;
-        if (kind === 'solid') { ctx.fillStyle = TXT; ctx.fillRect(bx0, by, w, bh); }
-        else if (kind === 'gray') { ctx.fillStyle = '#9a9aa0'; ctx.fillRect(bx0, by, w, bh); }
-        else if (kind === 'light') { ctx.fillStyle = HAIR; ctx.fillRect(bx0, by, w, bh); }
-        else { ctx.save(); ctx.beginPath(); ctx.rect(bx0, by, w, bh); ctx.clip(); ctx.strokeStyle = TXT; ctx.lineWidth = 1.5; for (let hx = bx0 - bh; hx < bx0 + w + bh; hx += 4) { ctx.beginPath(); ctx.moveTo(hx, by + bh); ctx.lineTo(hx + bh, by); ctx.stroke(); } ctx.restore(); }
-        bx0 += w;
-      });
-      ctx.restore();
-      ctx.strokeStyle = TXT; ctx.lineWidth = 1; ctx.beginPath(); ctx.roundRect ? ctx.roundRect(padX + .5, by + .5, bw - 1, bh - 1, 4) : ctx.rect(padX + .5, by + .5, bw - 1, bh - 1); ctx.stroke();
-      ctx.font = '13px ' + UI; ctx.fillStyle = SUB;
-      procRows.forEach((t, i) => ctx.fillText(t, padX, y + 18 + barH + i * 19));
-      y += 14 + barH + procRows.length * 19;
-    }
-    // pie: la marca (mismo trazo que el logo: C de eje 19,5 y cursor) y el nombre, discretos
-    const k = 0.34, mx = padX, my = y + 14;
-    ctx.save(); ctx.translate(mx - 6 * k, my - 9 * k + 4); ctx.scale(k, k); ctx.lineWidth = 7; ctx.lineCap = 'round';
-    ctx.strokeStyle = TXT; ctx.beginPath(); ctx.arc(29, 32, 19.5, -Math.PI / 4, Math.PI / 4, true); ctx.stroke();
-    ctx.strokeStyle = ACC; ctx.beginPath(); ctx.moveTo(54, 18.21); ctx.lineTo(54, 45.79); ctx.stroke(); ctx.restore();
-    ctx.font = '600 13px ' + UI; ctx.fillStyle = SUB; ctx.fillText('Editor C', mx + 56 * k + 8, my + 12);
+    // pie: cómo se escribió (si se incluye) y la marca, en letra chica
+    ctx.font = '12px ' + UI; ctx.fillStyle = SUB;
+    procRows.forEach((t, i) => ctx.fillText(t, padX, y + 14 + i * 17));
+    ctx.textAlign = 'right'; ctx.font = '600 11px ' + UI; ctx.fillText('Editor C', W - padX, y + (procRows.length ? 14 : 12)); ctx.textAlign = 'left';
     return cv;
   }
   // Vista previa antes de descargar: se puede incluir u omitir la entrada
@@ -1467,7 +1447,7 @@ self.postMessage({ type: 'ready' });`;
     const seq = ++shotSeq;
     $('shotBox').classList.add('cargando');
     let cv;
-    try { cv = makePng({ input: $('shotIn').checked, proc: $('shotProc').checked, lado: $('shotLay').value === 'lado' }); } catch (e) { toast('No se pudo armar la imagen: ' + e.message); dShot.close(); return; }
+    try { cv = makePng({ input: $('shotIn').checked, proc: $('shotProc').checked, lado: $('shotLay').value === 'lado', nombre: nombreCaptura() }); } catch (e) { toast('No se pudo armar la imagen: ' + e.message); dShot.close(); return; }
     cv.toBlob((blob) => {
       if (seq !== shotSeq) return;
       if (!blob) { toast('No se pudo generar la imagen.'); dShot.close(); return; }
@@ -1494,22 +1474,23 @@ self.postMessage({ type: 'ready' });`;
     const hayProc = !!proc.linea(); $('shotProcRow').hidden = !hayProc; $('shotProc').checked = hayProc && store.get('proccap', '1') !== '0';
     const canShare = !!(coarse && typeof File === 'function' && navigator.canShare && navigator.canShare({ files: [new File([new Blob(['x'])], 'a.png', { type: 'image/png' })] }));
     $('shotShare').hidden = !canShare;
+    $('shotName').value = (cur && cur.name) || '';
     $('shotLay').value = !coarse && window.innerWidth >= 1000 ? 'lado' : 'abajo';
     shotBlob = null; $('shotImg').removeAttribute('src');
     dShot.showModal(); $('shotBox').classList.add('cargando'); setTimeout(shotRender, 40);   // primero se ve el cuadro, después se arma la imagen
   });
   $('shotIn').addEventListener('change', shotRender);
   $('shotLay').addEventListener('change', shotRender);
-  $('shotLay').addEventListener('change', () => shotRender());
+  { let tN = 0; $('shotName').addEventListener('input', () => { clearTimeout(tN); tN = setTimeout(shotRender, 250); }); }
   $('shotProc').addEventListener('change', shotRender);
   dShot.addEventListener('close', () => { shotSeq++; shotBlob = null; if (shotUrl) { URL.revokeObjectURL(shotUrl); shotUrl = ''; } $('shotImg').removeAttribute('src'); });
   $('shotDl').addEventListener('click', () => {
     if (!shotBlob) { toast('La imagen todavía se está preparando.'); return; }
-    const name = slug() + '.png'; download(shotBlob, name); toast('Imagen descargada: ' + name); dShot.close();
+    const name = archivoCaptura() + '.png'; download(shotBlob, name); toast('Imagen descargada: ' + name); dShot.close();
   });
   $('shotShare').addEventListener('click', () => {
     if (!shotBlob) return;
-    const name = slug() + '.png', file = new File([shotBlob], name, { type: 'image/png' });
+    const name = archivoCaptura() + '.png', file = new File([shotBlob], name, { type: 'image/png' });
     navigator.share({ files: [file], title: name }).then(() => dShot.close(), (err) => { if (err && err.name !== 'AbortError') { download(shotBlob, name); toast('Imagen descargada.'); dShot.close(); } });
   });
 

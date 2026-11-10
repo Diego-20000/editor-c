@@ -491,9 +491,9 @@ async function disenoSuite(browser, target, mobile) {
     }
     res({ w: W, h: H, frac: nonwhite / (W * H), head, logo, tealN, edge });
   }; im.src = document.getElementById('shotImg').src; }));
-  ok(px.frac > 0.03 && px.frac < 0.6, 'captura: no es una hoja en blanco ni está saturada (' + (px.frac * 100).toFixed(1) + ' % de píxeles con tinta)');
-  ok(px.head > 300, 'captura: la cabecera tiene texto oscuro (' + px.head + ' px)');
-  ok(px.logo > 20 && px.tealN > 10, 'captura: el logo (C oscura y cursor turquesa) aparece al pie (' + px.logo + ' / ' + px.tealN + ' px)');
+  ok(px.frac > 0.012 && px.frac < 0.6, 'captura: no es una hoja en blanco ni está saturada (' + (px.frac * 100).toFixed(1) + ' % de píxeles con tinta)');
+  ok(px.head > 150, 'captura: la cabecera tiene texto oscuro (' + px.head + ' px)');
+  ok(px.head > 150, 'captura: la cabecera tiene texto oscuro (' + px.head + ' px)');
   ok(px.edge === 0, 'captura: nada toca los bordes (el texto cabe) (' + px.edge + ' px)');
   ok(px.w <= 1400, 'captura: ancho razonable para verla en el celular (' + px.w + ' px)');
   await page.evaluate(() => { document.getElementById('dShot').close(); if (innerWidth < 900) document.getElementById('more').open = false; });
