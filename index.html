@@ -75,6 +75,7 @@
         <textarea id="code" wrap="off" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" aria-label="Código en C"></textarea>
       </div>
     </div>
+    <div class="symbar" id="symbar" role="toolbar" aria-label="Símbolos de C" hidden></div>
   </section>
   <div class="divider" id="divider" role="separator" tabindex="0" aria-orientation="vertical" aria-label="Tamaño del editor y de la consola" title="Arrastrá o usá las flechas (Inicio y Fin: extremos, Enter: restablecer)" aria-valuemin="20" aria-valuemax="80" aria-valuenow="55"></div>
   <section class="pane term" id="paneCo" aria-label="Consola">
@@ -141,6 +142,8 @@
   <fieldset><legend>Escritura</legend>
     <div class="group"><label class="chk"><input type="checkbox" id="autoCierre" role="switch"> Cerrar solo llaves, paréntesis y comillas</label></div>
     <p class="foot">Apagado: practicás tipeando todo. La sangría automática no cambia.</p>
+    <div class="group"><label class="chk"><input type="checkbox" id="symChk" role="switch"> Barra de símbolos en el celular</label></div>
+    <p class="foot">Una fila sobre el teclado con { } ( ) [ ] ; &amp; * y otros símbolos de C. Cada toque escribe un solo símbolo: no completa nada por vos.</p>
   </fieldset>
   <fieldset><legend>Cómo se escribió el programa</legend>
     <p class="lead">El editor mide, solo en este dispositivo, cuántos caracteres tipeaste, cuántos pegaste o abriste desde un archivo, cuánto tiempo trabajaste y cuántas veces ejecutaste. No guarda lo que escribís aparte del programa y no se envía a ningún lado. Si querés, aparece como una línea al pie de la captura que entregás. Es un dato del proceso, no una prueba.</p>

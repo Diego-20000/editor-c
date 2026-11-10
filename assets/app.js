@@ -246,6 +246,25 @@
     updatePos();
   });
 
+  /* ---------- barra de símbolos (solo celular): un toque escribe un símbolo, igual que tipearlo ---------- */
+  const SIMBOLOS = ['{', '}', '(', ')', '[', ']', ';', '"', "'", '&', '*', '%', '#', '<', '>', '=', '!', '|', '\\', '/', '+', '-', ','];
+  let simbolos = store.get('simbolos', '1') !== '0';
+  function armarBarraSimbolos() {
+    const bar = $('symbar'); if (!bar || bar.childNodes.length) return;
+    const mk = (txt, aria, fn) => {
+      const b = document.createElement('button'); b.type = 'button'; b.textContent = txt; b.setAttribute('aria-label', aria);
+      b.addEventListener('pointerdown', (e) => e.preventDefault());   // no le saca el foco al código: el teclado se queda abierto
+      b.addEventListener('click', fn); bar.appendChild(b); return b;
+    };
+    mk('←', 'Mover el cursor a la izquierda', () => { ta.focus({ preventScroll: true }); const p = Math.max(0, ta.selectionStart - 1); ta.setSelectionRange(p, p); });
+    mk('→', 'Mover el cursor a la derecha', () => { ta.focus({ preventScroll: true }); const p = Math.min(ta.value.length, ta.selectionEnd + 1); ta.setSelectionRange(p, p); });
+    mk('⇥', 'Sangría (Tab)', () => insert(' '.repeat(SANG)));
+    SIMBOLOS.forEach((c) => mk(c, 'Símbolo ' + c, () => insert(c)));
+  }
+  function mostrarBarraSimbolos() { const bar = $('symbar'); if (!bar) return; bar.hidden = !(coarse && simbolos && document.activeElement === ta && !ta.readOnly); }
+  armarBarraSimbolos();
+  ta.addEventListener('focus', mostrarBarraSimbolos);
+  ta.addEventListener('blur', () => { setTimeout(mostrarBarraSimbolos, 0); });
   function insert(text) {
     if (ta.readOnly) return;
     ta.focus({ preventScroll: true });
@@ -976,6 +995,8 @@
     nivelAyuda = +v === 2 ? 2 : 1; store.set('ayuda', String(nivelAyuda)); $('ayudaDesc').textContent = NIVELES_TXT[nivelAyuda];
     if (lastRes && problems.length) renderDiag(lastRes, lastRt, true);
   });
+  $('symChk').checked = simbolos;
+  $('symChk').addEventListener('change', () => { simbolos = $('symChk').checked; store.set('simbolos', simbolos ? '1' : '0'); mostrarBarraSimbolos(); });
   $('autoCierre').addEventListener('change', () => { autoCierre = $('autoCierre').checked; store.set('autocierre', autoCierre ? '1' : '0'); });
   $('tabSel').addEventListener('change', () => { SANG = +$('tabSel').value; store.set('sang', String(SANG)); aplicarVista(); refresh(); });
   $('wsChk').addEventListener('change', () => { verEsp = $('wsChk').checked; store.set('ws', verEsp ? '1' : '0'); refresh(); });

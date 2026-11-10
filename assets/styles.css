@@ -347,6 +347,10 @@ dialog.wide { width: min(760px, calc(100vw - 32px)); }
 .shotbox .carga { display: none; position: absolute; inset: 0; align-items: center; justify-content: center; font: 600 14px var(--ui); color: var(--muted); }
 .shotbox.cargando .carga { display: flex; }
 .shotbox.cargando img { opacity: .25; }
+.symbar { display: flex; gap: 6px; padding: 6px 8px; overflow-x: auto; border-top: 1px solid var(--line); background: var(--panel); scrollbar-width: none; flex: 0 0 auto; }
+.symbar::-webkit-scrollbar { display: none; }
+.symbar button { flex: 0 0 auto; min-width: 44px; min-height: 44px; padding: 0 10px; border-radius: 10px; border: 1px solid var(--line); background: var(--fill); color: var(--text); font: 600 18px var(--mono); }
+.symbar button:active { background: var(--accent); color: var(--accent-fg, #fff); }
 .fld { display: block; margin: 12px 0 6px; }
 #cNota2 { width: 100%; resize: vertical; min-height: 76px; max-height: 30vh; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel); color: var(--text); font: 15px/1.4 var(--ui); }
 @media (prefers-reduced-motion: reduce) { .shotbox img { transition: none; } }
