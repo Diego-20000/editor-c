@@ -56,5 +56,5 @@ ANSI C básico: `char`, `int`, `float`, `double`, operadores, `printf`/`scanf` (
 
 ## Preguntas abiertas
 1. Fuente propia (monoespaciada libre) para el código: necesita aprobación de Diego; hoy se usan las del sistema.
-2. Si las explicaciones y pistas por error de `kb/` se muestran de alguna forma (hoy no, por decisión pedagógica).
+2. Pistas por error (`?ayuda=3`): **descartado por Diego el 10/11/2026** («medio al pedo»). No se hace por ahora. Las explicaciones y pistas de `kb/` siguen sin mostrarse.
 3. Revisión de ChatGPT (`docs/REVISION_ESTADO_2026-11-10.md`, rama `chatgpt`): lo vigente ya está corregido o documentado.
