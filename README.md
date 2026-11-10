@@ -10,7 +10,7 @@ Editor de C **sin anuncios** que corre en tu navegador. Escribís, ejecutás y p
 - Consola donde escribís los datos como en una terminal (`scanf`, `getchar`), código de salida y botón **Detener** para cortar bucles infinitos (también durante la compilación). Si el programa lleva más de ~5 s sin pedir datos ni escribir, aparece un aviso ("puede haber un bucle infinito") que no bloquea nada.
 - La compilación y la ejecución corren en un Worker: un código patológico (bucle infinito, fuente enorme, arreglo gigante) no congela la página. La salida tiene un tope (~400 000 caracteres).
 - **Problemas**: errores y avisos con número de línea; clic para saltar a esa línea, que queda subrayada y marcada en el margen. Si el motor informa un código estable por aviso (`scanf-sin-amp`, …) se muestra discretamente y ese tipo de aviso se puede **silenciar** (se guarda en el dispositivo; se restaura desde el mismo panel o desde Ajustes).
-- **Ayuda cuando algo no compila («el entrenador»)**, con reglas fijas y una base escrita a mano (`kb/`), sin IA y sin red. Tres niveles (Ajustes o `?ayuda=0|1|2` en el enlace, que se recuerda en el dispositivo; por defecto 1): **0** el mensaje del compilador tal cual; **1** mensaje corto y un botón **Pista** que revela de a una (la tercera se llama «Mostrar la solución» y pide confirmación); **2** además la explicación del concepto. Nada se despliega solo y la solución nunca aparece sola; al corregir la línea la ayuda se esconde sin ruido. Si no hay explicación en la base, lo dice («Todavía no tengo una explicación para esto») y guarda el caso en el dispositivo.
+- **Ayuda en dos niveles** (Ajustes o `?ayuda=1|2` en el enlace; se recuerda en el dispositivo). **Nivel 1 (por defecto): apagada.** Al ejecutar solo se dice que el programa no compiló o falló y de qué tipo general, sin línea ni mensaje: el alumno tiene que encontrar el error mirando el código, como con el profe. **Nivel 2: indica la línea y nada más** (sin sugerencias ni explicaciones). Todo sin IA y sin servidor. La base de conocimiento (`kb/`, escrita a mano y validada contra gcc 13) alimenta el buscador interno, el «¿qué es esto?» sobre cualquier palabra de C y el botón «Avisar a Diego»; las explicaciones y pistas por error están en la base pero la interfaz no las muestra por decisión pedagógica.
 - **Panel «Ayuda»** (botón en la barra): buscador interno (sin modelo ni red) que mezcla errores, ayuda de cada elemento de C y lecciones; detalle con pistas por demanda, ejemplo en un programa nuevo («Abrir en el editor», «Probar») y navegación entre temas relacionados. Teclado: foco en la búsqueda al abrir, flechas para los resultados, `Esc` cierra.
 - **«¿Qué es esto?»**: botón `?` del editor (o `Alt`+clic, o `F1` sobre lo que está bajo el cursor): tocar una palabra, un operador o un `%d` abre una burbuja con su explicación, sin mover el cursor ni modificar el código.
 - **Casos para enviar** (Ajustes): los casos sin explicación quedan solo en el dispositivo; el alumno ve la vista previa exacta y **elige** mandarlos por WhatsApp (`src/config.js`, `WHATSAPP_NUMERO`), copiarlos o descargarlos como `.json`. Sin nombre ni datos personales y nunca de forma automática.
@@ -26,7 +26,7 @@ Editor de C **sin anuncios** que corre en tu navegador. Escribís, ejecutás y p
 - Atajos: `F1` o `Alt`+clic «¿Qué es esto?», `Ctrl+Enter` o `F5` ejecuta, `Ctrl+S` guarda, `Ctrl+/` comenta, `Tab`/`Shift+Tab` sangra, `Ctrl+F`/`Ctrl+H` busca/reemplaza.
 - Avisos útiles: `%d` con una variable `float`, `scanf` sin `&`, variable usada sin valor inicial, `=` dentro de un `if`, `;` sobrante después de un `while`.
 - Acepta `main()` sin tipo, `int main()` y `void main()`.
-- Todo local: tu código no sale de tu navegador, no hay analítica ni pedidos de red.
+- Todo local: tu código se procesa en tu navegador y no se envía a ningún servidor; no hay analítica ni servicios de terceros. La web solo descarga los archivos del propio sitio (y consulta si hay una versión nueva); compartir un caso con Diego es siempre una acción voluntaria tuya.
 
 ## Qué soporta
 
@@ -72,10 +72,6 @@ Fuentes en `src/`:
 - `test/`: `diff.sh` compara la salida contra gcc (`./test/diff.sh test/cases/fmt.c`) y `fuzz.py` genera expresiones aleatorias.
 
 Después de tocar algo en `src/`, corré `node build.js` y subí también los archivos generados.
-
-## Licencia
-
-MIT © 2026 ArtPrograms Studio
 
 ## Licencia
 Editor C es de Diego Segurotti (ArtPrograms Studio). Uso libre y gratuito **dentro de este sitio**, para estudiar y con fines no comerciales. No se puede copiar, modificar, redistribuir ni vender sin permiso. Texto completo: [PolyForm Strict License 1.0.0](LICENSE).

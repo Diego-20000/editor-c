@@ -8,7 +8,7 @@ Un editor de C que corre en el navegador, para alumnos de 5.º año de la E.E.S.
 ## Restricción de arquitectura que no se negocia: es un sitio ESTÁTICO en GitHub Pages
 - **No hay servidor, ni backend, ni base de datos, ni cuentas, ni API.** Solo archivos que el navegador descarga y ejecuta. (`index.html` + `assets/`, y `dist/editor-c.html` en un solo archivo.)
 - Por eso el compilador es propio (C → JavaScript, en un Web Worker) y no se puede llamar a gcc ni a clang en un servidor. Un compilador real en WebAssembly existe, pero pesa unos 100 MB, y no cumple las demás reglas.
-- **Todo funciona sin conexión** y también abriendo el archivo con doble clic (`file://`). Sin CDNs externos, sin fuentes de Google, sin analítica, sin pedidos de red.
+- **Todo funciona sin conexión** y también abriendo el archivo con doble clic (`file://`). Sin CDNs externos, sin fuentes de Google, sin analítica, sin servicios de terceros: el navegador solo descarga los archivos del propio sitio (y el service worker consulta si hay una versión nueva).
 - **Nada del código del alumno sale de su dispositivo.** Los programas se guardan en el navegador (localStorage). No hay forma de que el profesor reciba datos del editor: la entrega es una **captura/imagen** que el alumno sube a Classroom.
 - **No hay IA dentro del editor.** Es decisión de Diego. Ninguna función puede depender de un modelo ni de una API. ChatGPT o Claude se usan solo afuera, para generar ideas y textos que después se validan contra gcc y se guardan como datos fijos.
 - Cualquier idea que necesite un servidor (ranking, cuentas, tablero del profesor, corrección en línea, detectores) está fuera, salvo que se resuelva con archivos estáticos o con datos que el alumno lleva.
@@ -19,7 +19,7 @@ Un editor de C que corre en el navegador, para alumnos de 5.º año de la E.E.S.
 - Además hay un **buscador interno** («¿por qué 7/2 da 3?», «¿qué es un prototipo?») que busca palabras en la base, sin modelo, y ayuda al tocar cualquier palabra de C.
 - **Casos sin respuesta:** si el editor no sabe explicar algo, lo dice con honestidad (mensaje de gcc + «todavía no tengo una explicación») y guarda el caso en el dispositivo. El alumno **elige** mandárselo a Diego por **WhatsApp** (enlace `wa.me` con el texto armado; Diego lo agrega a la base) o exportarlo como archivo. Es la única salida de datos: **siempre por decisión del alumno, con vista previa, sin nombre ni datos personales, nunca automática.** El número de WhatsApp se configura en `src/config.js` (`WHATSAPP_NUMERO`).
 - Valores por defecto decididos (el profesor los puede cambiar con `?ayuda=1|2` en el enlace o en Ajustes; todo se guarda en el dispositivo, no hay servidor): **ayuda nivel 1 = apagada (por defecto)**, como el profe, que no dice dónde está el error. **Nivel 2 = encendida: indica la línea y nada más** (sin sugerencias tipo «¿quisiste decir…?», sin señalar el elemento puntual). Solo hay esos dos niveles. Cierre automático de llaves y comillas **apagado** (que tipee todo).
-- Decisión de Diego (08/11/2026): el alumno tiene que **encontrar** el error mirando el código; el editor no se lo entrega por defecto. Falta implementar este esquema en la interfaz (junto con el diseño nuevo).
+- Decisión de Diego (08/11/2026, ya implementada): el alumno tiene que **encontrar** el error mirando el código; el editor no se lo entrega por defecto. Por eso la interfaz no muestra explicaciones ni pistas por error: esos textos viven en `kb/` y alimentan el buscador, el «¿qué es esto?» y «Avisar a Diego». Si algún día se quieren mostrar, es una decisión nueva de Diego.
 - Medida local de cuánto código se tipeó y cuánto se pegó («evidencia de proceso»): se muestra en la captura de entrega, nunca como «detector de IA» (no existe una marca confiable en el código pegado). Todo se queda en el dispositivo.
 
 ## Lo que enseña la materia (alcance del lenguaje)
@@ -34,7 +34,7 @@ ANSI C básico: `char`, `int`, `float`, `double`, operadores, `printf`/`scanf` (
 ## Estado
 - Soporta: tipos con `long` de 64 bits exactos, `short`, `unsigned`, `bool`; control de flujo; funciones con recursión y prototipos; arreglos 1D/2D (también como parámetro); textos (`char[]`, `%s`, `fgets`, `sprintf`, `string.h` básico); `#define` con parámetros y `#if`; `rand` igual que glibc; `printf`/`scanf` con todos los formatos.
 - No soporta todavía: punteros en general, `struct`, `enum`, `typedef`, archivos, `long double`, `sscanf`, `strchr`/`strstr`/`strtok`.
-- Interfaz: panel de problemas, atajos, buscar y reemplazar, programas guardados, captura PNG, PWA con service worker (solo en http/https), exportar/importar.
+- Interfaz: diseño estilo iOS con tema claro, oscuro y automático, panel de problemas según el nivel de ayuda, atajos, buscar y reemplazar, programas guardados, captura PNG (código, entrada y salida, abajo o lado a lado, con la línea de proceso), «Avisar a Diego» por WhatsApp, pasar un programa a otro dispositivo por enlace, PWA con service worker (solo en http/https), exportar/importar. Licencia: PolyForm Strict 1.0.0 (`LICENSE`).
 
 ## Cómo se trabaja
 - Ramas: `main` es lo que se publica. Se trabaja en ramas y se integra con PR. No crear un PR si no lo pidió Diego.
@@ -49,5 +49,7 @@ ANSI C básico: `char`, `int`, `float`, `double`, operadores, `printf`/`scanf` (
 - Antes de fusionar: tests de motor, diagnósticos e interfaz en verde, y un control final con agentes de prueba (programas estilo TP contra gcc, errores de alumnos, revisión del motor y prueba de punta a punta del sitio).
 
 ## Preguntas abiertas
-1. Número de WhatsApp de Diego para `src/config.js` (`WHATSAPP_NUMERO`); mientras falte, el botón abre WhatsApp sin destinatario.
-2. Dirección de diseño para pulir la interfaz (Diego quiere «más lindo», sin estilo genérico de IA, pensando en funciones útiles y que el alumno piense y tipee).
+1. Fuente propia (monoespaciada libre) para el código: necesita aprobación de Diego; hoy se usan las del sistema.
+2. Si las explicaciones y pistas por error de `kb/` se muestran de alguna forma (hoy no, por decisión pedagógica).
+3. Entrada de texto como bytes UTF-8 en `scanf`/`fgets` (hoy cuenta unidades UTF-16; ver `docs/COMPATIBILIDAD.md`).
+4. Revisión de ChatGPT pendiente de lectura completa: `docs/REVISION_ESTADO_2026-11-10.md` en la rama `chatgpt`.
