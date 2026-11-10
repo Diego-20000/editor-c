@@ -76,6 +76,25 @@ const check = (c, m) => { if (c) { ok++; console.log('  ok   ' + m); } else { fa
     await pg.close();
   }
 
+  // 4) barra de símbolos: solo en pantallas táctiles, un toque escribe un solo símbolo (y cuenta como tipeado) y el código conserva el foco
+  {
+    const pc = await (await br.newContext({ viewport: { width: 1280, height: 800 } })).newPage();
+    await pc.goto(url); await pc.waitForSelector('#code'); await pc.focus('#code');
+    check(!(await pc.isVisible('#symbar')), 'barra de símbolos: no aparece en escritorio');
+    const pm = await (await br.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true })).newPage();
+    await pm.goto(url); await pm.waitForSelector('#code');
+    await pm.evaluate(() => { const t = document.getElementById('code'); t.value = ''; t.dispatchEvent(new Event('input')); });
+    check(!(await pm.isVisible('#symbar')), 'barra de símbolos: oculta mientras el código no tiene el foco');
+    await pm.focus('#code');
+    check(await pm.isVisible('#symbar'), 'barra de símbolos: aparece en el celular al tocar el código');
+    await pm.click('#symbar button[aria-label="Símbolo {"]'); await pm.click('#symbar button[aria-label="Símbolo ;"]');
+    check((await pm.inputValue('#code')) === '{;', 'barra de símbolos: cada toque escribe un solo símbolo, sin completar nada');
+    check((await pm.evaluate(() => document.activeElement.id)) === 'code', 'barra de símbolos: el código no pierde el foco (el teclado sigue abierto)');
+    check(/100 % tipeado/.test(await pm.evaluate(() => window.__editorc.procLinea())), 'barra de símbolos: lo escrito con la barra cuenta como tipeado');
+    const r = await pm.evaluate(() => ({ p: document.documentElement.scrollWidth, w: innerWidth }));
+    check(r.p <= r.w + 1, 'barra de símbolos: no ensancha la página en celular');
+  }
+
   await br.close();
   console.log(ok + ' ok, ' + fallas + ' fallas');
   process.exit(fallas ? 1 : 0);

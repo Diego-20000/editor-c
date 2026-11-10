@@ -359,6 +359,10 @@ dialog.wide { width: min(760px, calc(100vw - 32px)); }
 .shotbox .carga { display: none; position: absolute; inset: 0; align-items: center; justify-content: center; font: 600 14px var(--ui); color: var(--muted); }
 .shotbox.cargando .carga { display: flex; }
 .shotbox.cargando img { opacity: .25; }
+.symbar { display: flex; gap: 6px; padding: 6px 8px; overflow-x: auto; border-top: 1px solid var(--line); background: var(--panel); scrollbar-width: none; flex: 0 0 auto; }
+.symbar::-webkit-scrollbar { display: none; }
+.symbar button { flex: 0 0 auto; min-width: 44px; min-height: 44px; padding: 0 10px; border-radius: 10px; border: 1px solid var(--line); background: var(--fill); color: var(--text); font: 600 18px var(--mono); }
+.symbar button:active { background: var(--accent); color: var(--accent-fg, #fff); }
 .fld { display: block; margin: 12px 0 6px; }
 #cNota2 { width: 100%; resize: vertical; min-height: 76px; max-height: 30vh; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel); color: var(--text); font: 15px/1.4 var(--ui); }
 @media (prefers-reduced-motion: reduce) { .shotbox img { transition: none; } }
@@ -549,6 +553,7 @@ html.lectura .pane-head .hint { margin-right: 8px; }
         <textarea id="code" wrap="off" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" aria-label="Código en C"></textarea>
       </div>
     </div>
+    <div class="symbar" id="symbar" role="toolbar" aria-label="Símbolos de C" hidden></div>
   </section>
   <div class="divider" id="divider" role="separator" tabindex="0" aria-orientation="vertical" aria-label="Tamaño del editor y de la consola" title="Arrastrá o usá las flechas (Inicio y Fin: extremos, Enter: restablecer)" aria-valuemin="20" aria-valuemax="80" aria-valuenow="55"></div>
   <section class="pane term" id="paneCo" aria-label="Consola">
@@ -615,6 +620,8 @@ html.lectura .pane-head .hint { margin-right: 8px; }
   <fieldset><legend>Escritura</legend>
     <div class="group"><label class="chk"><input type="checkbox" id="autoCierre" role="switch"> Cerrar solo llaves, paréntesis y comillas</label></div>
     <p class="foot">Apagado: practicás tipeando todo. La sangría automática no cambia.</p>
+    <div class="group"><label class="chk"><input type="checkbox" id="symChk" role="switch"> Barra de símbolos en el celular</label></div>
+    <p class="foot">Una fila sobre el teclado con { } ( ) [ ] ; &amp; * y otros símbolos de C. Cada toque escribe un solo símbolo: no completa nada por vos.</p>
   </fieldset>
   <fieldset><legend>Cómo se escribió el programa</legend>
     <p class="lead">El editor mide, solo en este dispositivo, cuántos caracteres tipeaste, cuántos pegaste o abriste desde un archivo, cuánto tiempo trabajaste y cuántas veces ejecutaste. No guarda lo que escribís aparte del programa y no se envía a ningún lado. Si querés, aparece como una línea al pie de la captura que entregás. Es un dato del proceso, no una prueba.</p>
@@ -5036,6 +5043,25 @@ int main() {
     updatePos();
   });
 
+  /* ---------- barra de símbolos (solo celular): un toque escribe un símbolo, igual que tipearlo ---------- */
+  const SIMBOLOS = ['{', '}', '(', ')', '[', ']', ';', '"', "'", '&', '*', '%', '#', '<', '>', '=', '!', '|', '\\', '/', '+', '-', ','];
+  let simbolos = store.get('simbolos', '1') !== '0';
+  function armarBarraSimbolos() {
+    const bar = $('symbar'); if (!bar || bar.childNodes.length) return;
+    const mk = (txt, aria, fn) => {
+      const b = document.createElement('button'); b.type = 'button'; b.textContent = txt; b.setAttribute('aria-label', aria);
+      b.addEventListener('pointerdown', (e) => e.preventDefault());   // no le saca el foco al código: el teclado se queda abierto
+      b.addEventListener('click', fn); bar.appendChild(b); return b;
+    };
+    mk('←', 'Mover el cursor a la izquierda', () => { ta.focus({ preventScroll: true }); const p = Math.max(0, ta.selectionStart - 1); ta.setSelectionRange(p, p); });
+    mk('→', 'Mover el cursor a la derecha', () => { ta.focus({ preventScroll: true }); const p = Math.min(ta.value.length, ta.selectionEnd + 1); ta.setSelectionRange(p, p); });
+    mk('⇥', 'Sangría (Tab)', () => insert(' '.repeat(SANG)));
+    SIMBOLOS.forEach((c) => mk(c, 'Símbolo ' + c, () => insert(c)));
+  }
+  function mostrarBarraSimbolos() { const bar = $('symbar'); if (!bar) return; bar.hidden = !(coarse && simbolos && document.activeElement === ta && !ta.readOnly); }
+  armarBarraSimbolos();
+  ta.addEventListener('focus', mostrarBarraSimbolos);
+  ta.addEventListener('blur', () => { setTimeout(mostrarBarraSimbolos, 0); });
   function insert(text) {
     if (ta.readOnly) return;
     ta.focus({ preventScroll: true });
@@ -5766,6 +5792,8 @@ int main() {
     nivelAyuda = +v === 2 ? 2 : 1; store.set('ayuda', String(nivelAyuda)); $('ayudaDesc').textContent = NIVELES_TXT[nivelAyuda];
     if (lastRes && problems.length) renderDiag(lastRes, lastRt, true);
   });
+  $('symChk').checked = simbolos;
+  $('symChk').addEventListener('change', () => { simbolos = $('symChk').checked; store.set('simbolos', simbolos ? '1' : '0'); mostrarBarraSimbolos(); });
   $('autoCierre').addEventListener('change', () => { autoCierre = $('autoCierre').checked; store.set('autocierre', autoCierre ? '1' : '0'); });
   $('tabSel').addEventListener('change', () => { SANG = +$('tabSel').value; store.set('sang', String(SANG)); aplicarVista(); refresh(); });
   $('wsChk').addEventListener('change', () => { verEsp = $('wsChk').checked; store.set('ws', verEsp ? '1' : '0'); refresh(); });
@@ -6675,7 +6703,7 @@ window.KB_DATA={"errores":[{"id":"ARR-001","categoria":"arreglos y textos","nomb
    (por ejemplo '5491112345678'). Vacío = el botón abre WhatsApp sin destinatario. */
 (function (root) {
   'use strict';
-  var CONFIG = { WHATSAPP_NUMERO: '5491137781528', VERSION: '8340fa3b05b8' };
+  var CONFIG = { WHATSAPP_NUMERO: '5491137781528', VERSION: 'fd62c5e6b17c' };
   if (typeof module !== 'undefined' && module.exports) module.exports = CONFIG;
   else root.CONFIG = CONFIG;
 })(typeof self !== 'undefined' ? self : this);
