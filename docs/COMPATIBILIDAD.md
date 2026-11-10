@@ -20,7 +20,7 @@ Estos casos no tienen resultado garantizado en C, así que el editor no promete 
 - el signo de un cero o de un NaN en cuentas decimales extremas (por ejemplo negar un NaN o dividir por un cero con signo): el editor imprime `-nan` para el `0/0` típico como gcc, pero no sigue el signo en cadenas largas de operaciones. Lo encontró la prueba con programas aleatorios (`test/fuzz_run.sh`), que ya no genera esos casos.
 
 ## Límites propios del editor
-- La entrada estándar se recorre como texto (unidades UTF-16 de JavaScript) y no como bytes UTF-8: con letras acentuadas, `ñ` o emoji, los anchos de `%s` y `%c` y el límite de `fgets` pueden contar distinto que glibc. Con texto ASCII coincide. (Detectado por la revisión de ChatGPT; falta decidir si se implementa.)
+- Los textos y la entrada son **bytes UTF-8**, como en glibc: `strlen`, los anchos de `%s`, `%c`, `getchar`, `fgets` y `%[...]` cuentan bytes, y lo que se imprime de a un byte (`%c`, `putchar`) se junta como UTF-8 (dos llamadas con los bytes de una `é` muestran una `é`). Lo único que no se reproduce igual: una secuencia UTF-8 incompleta o inválida (por ejemplo cortar una `é` por la mitad con un ancho) se muestra como «�» en lugar de imprimir el byte suelto, porque la salida del editor es texto.
 - Arreglos de hasta 20 millones de elementos; ancho y precisión de formato hasta 100000.
 - La recursión se corta antes que en gcc (el límite depende del navegador).
 - `%e`/`%g` con 15 o más cifras cerca de potencias de 10 y funciones de `math.h` pueden diferir en 1 ulp de glibc.

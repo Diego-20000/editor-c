@@ -51,5 +51,4 @@ ANSI C básico: `char`, `int`, `float`, `double`, operadores, `printf`/`scanf` (
 ## Preguntas abiertas
 1. Fuente propia (monoespaciada libre) para el código: necesita aprobación de Diego; hoy se usan las del sistema.
 2. Si las explicaciones y pistas por error de `kb/` se muestran de alguna forma (hoy no, por decisión pedagógica).
-3. Entrada de texto como bytes UTF-8 en `scanf`/`fgets` (hoy cuenta unidades UTF-16; ver `docs/COMPATIBILIDAD.md`).
-4. Revisión de ChatGPT pendiente de lectura completa: `docs/REVISION_ESTADO_2026-11-10.md` en la rama `chatgpt`.
+3. Revisión de ChatGPT (`docs/REVISION_ESTADO_2026-11-10.md`, rama `chatgpt`): lo vigente ya está corregido o documentado.

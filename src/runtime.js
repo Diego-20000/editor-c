@@ -103,6 +103,12 @@
   }
   const ENC = typeof TextEncoder !== 'undefined' ? new TextEncoder() : null;
   const DEC = typeof TextDecoder !== 'undefined' ? new TextDecoder() : null;
+  // La entrada y los textos de C son BYTES (UTF-8). La entrada se guarda como «texto binario»: cada carácter JS vale un byte (0..255).
+  function aBin(s) { if (!ENC) return s; for (let i = 0; i < s.length; i++) if (s.charCodeAt(i) > 127) { const b = ENC.encode(s); let o = ''; for (let k = 0; k < b.length; k++) o += String.fromCharCode(b[k]); return o; } return s; }
+  const binBytes = (t) => { const o = []; for (let i = 0; i < t.length; i++) o.push(t.charCodeAt(i) & 255); return o; };
+  // Lo que se imprime de a un byte (%c, putchar) se decodifica como UTF-8 en continuo: dos llamadas con 0xC3 y 0xA9 muestran una «é», como la terminal con gcc
+  let outDec = DEC ? new TextDecoder() : null;
+  function byteOut(b) { b &= 255; if (b < 128 || !outDec) return String.fromCharCode(b); return outDec.decode(Uint8Array.of(b), { stream: true }); }
   function ulen(s) { if (!ENC) return s.length; for (let i = 0; i < s.length; i++) if (s.charCodeAt(i) > 127) return ENC.encode(s).length; return s.length; }
   function cformat(fmt, args) {
     if (fmt.indexOf('\0') >= 0) fmt = fmt.slice(0, fmt.indexOf('\0'));
@@ -153,7 +159,7 @@
         if (isSpecial) zero = false;
       } else if (conv === 'c') {
         numeric = false; zero = false;
-        body = String.fromCharCode(typeof arg === 'number' ? (arg & 255) : (typeof arg === 'bigint' ? Number(BigInt.asUintN(8, arg)) : 63));
+        body = byteOut(typeof arg === 'number' ? arg : (typeof arg === 'bigint' ? Number(BigInt.asUintN(8, arg)) : 63));
       } else if (conv === 's') {
         numeric = false; zero = false;
         body = typeof arg === 'string' ? arg : String(arg === undefined ? '(null)' : arg);
@@ -208,13 +214,14 @@
 
   function createRuntime(io) {
     // io.write(s)  io.readLine() -> Promise<string|null>   (null = fin de entrada)
+    outDec = DEC ? new TextDecoder() : null;
     let buf = '', pos = 0, eof = false;
 
     async function fill() {
       if (eof) return false;
       const line = await io.readLine();
       if (line === null || line === undefined) { eof = true; return false; }
-      buf = buf.slice(pos) + line + '\n';
+      buf = buf.slice(pos) + aBin(line + '\n');   // la línea tipeada pasa a bytes UTF-8 una sola vez
       pos = 0;
       return true;
     }
@@ -259,6 +266,7 @@
 
     // refs: [[get,set],...]  types: ['int','float',...]
     async function scanf(fmt, refs, types, line) {
+      fmt = aBin(fmt);   // el formato también son bytes: los literales y los %[...] con letras acentuadas se comparan byte a byte
       let count = 0, ri = 0, i = 0;
       const n = fmt.length;
       let first = true;
@@ -299,7 +307,7 @@
               txt += String.fromCharCode(c); pos++;
             }
             if (sp === '[' && txt.length === 0) return count;
-            if (!suppress) { const dst = refs[ri][0](); ri++; escribir(dst, aBytes(txt), true, 'scanf("%s") guarda el texto y su terminador y', line); count++; }
+            if (!suppress) { const dst = refs[ri][0](); ri++; escribir(dst, binBytes(txt), true, 'scanf("%s") guarda el texto y su terminador y', line); count++; }
             first = false; continue;
           }
           if (sp === 'c') {
@@ -407,7 +415,7 @@
         n = Number(n); const bytes = [];
         while (bytes.length < n - 1) {
           const c = await peek(); if (c < 0) break; pos++;
-          const bs = aBytes(String.fromCharCode(c)); for (const x of bs) bytes.push(x);
+          bytes.push(c);
           if (c === 10) break;
         }
         if (!bytes.length) return 0;
@@ -415,11 +423,11 @@
       },
       async gets(dst, line) {
         const bytes = []; let leyo = false;
-        for (;;) { const c = await peek(); if (c < 0) break; pos++; leyo = true; if (c === 10) break; for (const x of aBytes(String.fromCharCode(c))) bytes.push(x); }
+        for (;;) { const c = await peek(); if (c < 0) break; pos++; leyo = true; if (c === 10) break; bytes.push(c); }
         if (!leyo) return 0;
         escribir(dst, bytes, true, 'gets', line); return 1;
       },
-      putchar(c) { io.write(String.fromCharCode(c & 255)); return c; },
+      putchar(c) { io.write(byteOut(c)); return c; },
       scanf, getchar,
       idiv(a, b, line) { if (b === 0) throw new CRuntimeError('división entera por cero (en C el programa se cierra con "Floating point exception")', line); return Math.trunc(a / b); },
       imod(a, b, line) { if (b === 0) throw new CRuntimeError('resto (%) con divisor cero (en C el programa se cierra con "Floating point exception")', line); return a % b; },
