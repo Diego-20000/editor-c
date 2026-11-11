@@ -395,7 +395,7 @@
         let type = this.typeSpec();
         if (type === null) {
           // función sin tipo (ej. main() ) = int implícito
-          if (this.peek().t === 'id' && this.isOp('(', 1)) { const a2 = this.peek(2); if (a2.t === 'str' || a2.t === 'num') throw new CErr('esta instrucción está fuera de una función: va adentro de main() { ... }', this.peek().line); type = 'int'; }
+          if (this.peek().t === 'id' && this.isOp('(', 1)) { const a2 = this.peek(2); if (a2.t === 'str' || a2.t === 'num') throw new CErr('esta instrucción está fuera de una función: va adentro de main() { ... }', this.peek().line); throw new CErr("falta el tipo de la función '" + this.peek().v + "': se escribe con el tipo adelante (int " + this.peek().v + '() { ... })', this.peek().line); }
           else {
             const t = this.peek();
             const ult = items[items.length - 1];
@@ -1496,7 +1496,7 @@
         const r = this.expr(n.r);
         this.autoAcum = pa; this.autoAcumUno = pu; this.copiaNode = pc;
         if (r.t === 'str' && lv.arrayElem && (lv.t === 'char' || lv.t === 'uchar')) { this.err("un elemento de un arreglo de char guarda una sola letra: se escribe con comillas simples ('A'), no con comillas dobles", n.line, 'ARR-058'); return { c: '0', t: 'int' }; }
-        if (r.t === 'str' && (lv.t === 'char' || lv.t === 'uchar' || INTLIKE.has(lv.t)) && !lv.arrayElem) { (lv.t === 'char' || lv.t === 'uchar' ? this.warn : this.err).call(this, lv.t === 'char' || lv.t === 'uchar' ? "a un char le asignás un texto entre comillas dobles: ¿es lo que querías guardar ahí? Pensá qué guarda cada tipo" : 'un ' + TNAME[lv.t] + ' guarda un número, no un texto', n.line, lv.t === 'char' || lv.t === 'uchar' ? 'ARR-047' : 'ARR-045'); return { c: '0', t: 'int' }; }
+        if (r.t === 'str' && (lv.t === 'char' || lv.t === 'uchar' || INTLIKE.has(lv.t)) && !lv.arrayElem) { (lv.t === 'char' || lv.t === 'uchar' ? this.warn : this.err).call(this, lv.t === 'char' || lv.t === 'uchar' ? "a un char le asignás un texto entre comillas dobles: ¿es lo que querías guardar ahí? Pensá qué guarda cada tipo" : 'un ' + TNAME[lv.t] + ' guarda un número, no un texto', n.line, lv.t === 'char' || lv.t === 'uchar' ? 'ARR-047' : 'ARR-045'); this.markAssigned(lv); return { c: '0', t: 'int' }; }
         if (r.t === 'str') { this.err('los textos (char arrays) todavía no están soportados: solo se usan dentro de printf', n.line); return { c: '0', t: 'int' }; }
         if (r.t === 'void') { this.err('esa función no devuelve ningún valor', n.line, 'FUN-013'); return { c: '0', t: 'int' }; }
         this.checkIntDiv(r, lv.t, n.line);
@@ -1530,14 +1530,14 @@
       const H = { 'stdio.h': ['printf', 'scanf', 'getchar', 'putchar', 'puts', 'fprintf', 'fputs', 'putc', 'fputc', 'sprintf', 'snprintf', 'fgets', 'gets'], 'string.h': ['strlen', 'strcpy', 'strncpy', 'strcat', 'strncat', 'strcmp', 'strncmp'], 'math.h': ['sqrt', 'pow', 'fabs', 'floor', 'ceil', 'round', 'trunc', 'sin', 'cos', 'tan', 'asin', 'acos', 'atan', 'atan2', 'exp', 'log', 'log10', 'log2', 'cbrt', 'sinh', 'cosh', 'tanh', 'asinh', 'acosh', 'atanh', 'exp2', 'expm1', 'log1p', 'isnan', 'isinf', 'isfinite', 'signbit', 'rint', 'nearbyint', 'lround', 'llround', 'copysign', 'fdim', 'fmod', 'fmax', 'fmin', 'hypot'], 'stdlib.h': ['rand', 'srand', 'abs', 'labs', 'exit', 'system', 'atoi', 'atol', 'atof'], 'ctype.h': ['isdigit', 'isalpha', 'isalnum', 'isspace', 'isupper', 'islower', 'ispunct', 'isprint', 'isgraph', 'iscntrl', 'isxdigit', 'isblank', 'toupper', 'tolower'], 'time.h': ['time', 'clock'], 'conio.h': ['getch', 'getche'] };
       for (const h in H) if (H[h].indexOf(name) >= 0 && !this.incl.has(h)) {
         const k = 'inc|' + h; if (this.undeclared.has(k)) return; this.undeclared.add(k);
-        this.warn('usás ' + name + ' pero falta #include <' + h + '> al principio del programa', line, INC_KB[name]);
+        this.err('usás ' + name + ' pero falta #include <' + h + '> al principio del programa', line, INC_KB[name]);
       }
     }
     needIncludeConst(nm, line) {
       const h = /^M_/.test(nm) || nm === 'INFINITY' || nm === 'NAN' || nm === 'HUGE_VAL' ? 'math.h' : /^(RAND_MAX|EXIT_SUCCESS|EXIT_FAILURE)$/.test(nm) ? 'stdlib.h' : /^(INT_|UINT_|LONG_|ULONG_|LLONG_|ULLONG_|SHRT_|USHRT_|CHAR_|UCHAR_)/.test(nm) ? 'limits.h' : /^(DBL_|FLT_)/.test(nm) ? 'float.h' : nm === 'CLOCKS_PER_SEC' ? 'time.h' : null;
       if (!h || this.incl.has(h)) return;
       const k = 'inc|' + h; if (this.undeclared.has(k)) return; this.undeclared.add(k);
-      this.warn('usás ' + nm + ' pero falta #include <' + h + '> al principio del programa', line, INC_KB[nm]);
+      this.err('usás ' + nm + ' pero falta #include <' + h + '> al principio del programa', line, INC_KB[nm]);
     }
     call(n) {
       const name = n.name;
@@ -1648,10 +1648,11 @@
         if (own(FUNC_KB, name)) { kb = FUNC_KB[name][0]; msg = FUNC_KB[name][1]; }
         else if (v && v.scalar) { kb = 'OPE-041'; msg = "'" + name + "' es una variable, no una función: si querías multiplicar, la multiplicación siempre lleva el operador *"; }
         else if (sg && sg.toLowerCase() === name.toLowerCase() && this.funcs.has(sg)) { kb = 'FUN-045'; msg = "la función '" + name + "' no está declarada: C distingue mayúsculas de minúsculas, la función se llama '" + sg + "'"; }
-        this.err(msg || "la función '" + name + "' no está declarada" + (sg ? ". ¿Quisiste decir '" + sg + "'? (en C todo va en minúscula y se escribe igual)" : ''), n.line, kb);
+        const kFn = 'fn|' + name; if (!this.undeclared.has(kFn)) { this.undeclared.add(kFn);
+        this.err(msg || "la función '" + name + "' no está declarada" + (sg ? ". ¿Quisiste decir '" + sg + "'? (en C todo va en minúscula y se escribe igual)" : ''), n.line, kb); }
         if (!own(FUNC_KB, name)) args.forEach((a) => { if (a.k !== 'str') this.expr(a); }); return { c: '0', t: 'int' };
       }
-      if (f.node && !f.hasProto && f.node.line > n.line) this.warn("'" + name + "' se usa antes de estar definida: falta el prototipo arriba de main (por ejemplo: " + TNAME[f.ret] + ' ' + name + '(' + (f.params.map((p) => TNAME[p.type]).join(', ') || 'void') + ');)', n.line, 'FUN-001');
+      if (f.node && !f.hasProto && f.node.line > n.line) this.err("'" + name + "' se usa antes de estar definida: falta el prototipo arriba de main (por ejemplo: " + TNAME[f.ret] + ' ' + name + '(' + (f.params.map((p) => TNAME[p.type]).join(', ') || 'void') + ');)', n.line, 'FUN-001');
       if (args.length !== f.params.length && !(f.unspec && !f.node)) {
         if (!this.protoMal.has(name)) this.err("la función '" + name + "' recibe " + f.params.length + ' argumento(s) y se la llamó con ' + args.length, n.line, args.length > f.params.length ? 'FUN-007' : 'FUN-008');
         return { c: '0', t: f.ret === 'void' ? 'void' : f.ret };
@@ -2621,6 +2622,7 @@
   function reglasKB(g, items) { new Reglas(g, items).run(); }
 
   const CODIGOS = [
+    [/falta el tipo de la función/, 'sin-tipo-retorno'],
     [/comparar un decimal|a < b < c|XOR|operación de bits/, 'comparacion'], [/sin condición de corte|nunca termina|no termina nunca|probable que nunca/, 'bucle-infinito'],
     [/falta un ';'/, 'falta-punto-coma'], [/falta cerrar la llave/, 'llave-sin-cerrar'],
     [/a scanf le falta el '&'|scanf necesita '&'/, 'scanf-sin-amp'], [/scanf pide leer/, 'scanf-faltan-variables'], [/scanf lee|scanf:|texto del scanf|al final del scanf/, 'scanf-formato'], [/printf:|printf pide|printf recibe/, 'printf-formato'],
