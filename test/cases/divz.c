@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <math.h>
+#include <stdlib.h>
 int main() {
   float a = 0, b = 0, p = 5; int z = 0; double neg = -1;
   float r = a / b;

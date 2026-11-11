@@ -6,6 +6,8 @@
 - Linux x86-64, gcc 13 (`-std=gnu99`), glibc.
 - Modelo LP64: `char` 8 bits con signo, `short` 16, `int` 32, `long` y `long long` 64 (BigInt), versiones `unsigned` de cada uno, `float` binary32, `double` binary64, `bool` de `<stdbool.h>`.
 - `printf`/`scanf`, `rand`/`srand` y `ctype.h` imitan a glibc (valores de retorno incluidos).
+- **Qué es error y qué es aviso** sigue a Programiz (comprobado el 10/11/2026 con 20 programas de errores comunes), que usa un gcc más nuevo y estricto que el 13: son **error** (no se ejecuta) escribir `main()` sin `int`, usar `printf`/`scanf`/otras funciones o constantes sin su `#include`, y llamar a una función antes de definirla sin prototipo. Con gcc 13 esos casos solo dan aviso.
+- Diferencias conocidas con Programiz, a propósito: `scanf("%d", A)` (sin `&`) es error en el editor y en Programiz compila y se rompe al ejecutar; un `;` que falta se marca en su línea y gcc lo marca en la línea de abajo; una función mal escrita se marca solo la primera vez, como gcc.
 
 ## Subconjunto soportado
 Ver la sección «Qué soporta» del README. Textos: `char[]`, `char *` inicializado con un texto o con otro arreglo, arreglos de textos (`char n[3][20]`, `char *n[]`), `%s` y `%[...]` en `printf`/`scanf`, `fgets`/`gets`, `sprintf`/`snprintf`, `strlen`, `strcpy`, `strncpy`, `strcat`, `strncat`, `strcmp`, `strncmp`, `atoi`, `atol`, `atof`; los textos son bytes UTF-8 como en gcc. Todavía no: punteros en general (aritmética de punteros, `&x`, `malloc`), `strchr`/`strstr`/`strtok` y otras funciones que devuelven punteros, funciones que devuelven `char *`, `sscanf`, `struct`, `union`, `enum`, `typedef`, archivos.

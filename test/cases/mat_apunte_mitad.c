@@ -2,7 +2,7 @@
 float MITAD (int);
 int A;
 float B;
-main () {
+int main () {
      printf("\nPrograma ejemplo\n");
      printf("\nIngrese un numero entero: ");
      scanf("%d", &A);
