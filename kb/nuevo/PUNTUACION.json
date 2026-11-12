@@ -521,7 +521,7 @@
     "tipo": "símbolo",
     "que_es": "Las comillas simples delimitan una constante de carácter, que representa un carácter individual como una letra, un dígito o una secuencia de escape.",
     "como_se_usa": "char LETRA='A';\nprintf(\"%c\\n\",LETRA);",
-    "error_tipico": "Usar comillas dobles para un carácter o escribir varios caracteres ordinarios entre comillas simples; una constante de carácter no es una cadena.",
+    "error_tipico": "Usar comillas dobles cuando se necesita una constante de carácter, o escribir una palabra entre comillas simples y esperar que sea una cadena; varios caracteres forman una constante multicaracter de valor no portable.",
     "en_la_materia": "Tipos char y caracteres",
     "errores_ids": [
       "ARR-046",
@@ -583,7 +583,7 @@
         "error_tipico": "Confundir el carácter '5' con el número 5 produce comparaciones o cuentas distintas de las esperadas."
       }
     ],
-    "detalle": "Las comillas simples se usan para constantes de carácter; las dobles se usan para cadenas.\nUna constante como 'A' representa el código del carácter, no una palabra.\nLa constante '5' es distinta del número 5 aunque se vean parecidos.\nTambién se pueden escribir caracteres especiales mediante escapes, por ejemplo '\\n'.\nSi el propio carácter es una comilla simple, se escribe escapada como '\\''.\nUna constante de carácter ordinaria debe representar un solo carácter; no se escriben palabras entre comillas simples.\nPara guardar una frase completa se usa una cadena, normalmente en un arreglo char[].",
+    "detalle": "Las comillas simples se usan para constantes de carácter; las dobles se usan para cadenas.\nUna constante como 'A' representa el código del carácter, no una palabra.\nLa constante '5' es distinta del número 5 aunque se vean parecidos.\nTambién se pueden escribir caracteres especiales mediante escapes, por ejemplo '\\n'.\nSi el propio carácter es una comilla simple, se escribe escapada como '\\''.\nUna constante de carácter común representa un solo carácter; 'AB' es una constante multicaracter de valor dependiente de la implementación, no un texto.\nPara guardar una frase completa se usa una cadena, normalmente en un arreglo char[].",
     "relacionados": [
       "\" \"",
       "\\",
