@@ -938,3 +938,102 @@
     "verificado_gcc13": false
   },
   {
+    "elemento": "//",
+    "tipo": "símbolo",
+    "que_es": "La doble barra inicia un comentario de una línea: el compilador ignora el texto que aparece desde ella hasta el final de esa línea física.",
+    "como_se_usa": "// Inicialización de los datos\nint A=5; // valor inicial",
+    "error_tipico": "Confundirlo con una división o pensar que el comentario continúa en la línea siguiente; para un comentario de varias líneas se usa /* */.",
+    "en_la_materia": "Comentarios y legibilidad del código",
+    "errores_ids": [
+      "SIN-059"
+    ],
+    "buscar": [
+      "//",
+      "comentario",
+      "comentario de línea",
+      "comentario de linea",
+      "anotación",
+      "anotacion",
+      "doble barra"
+    ],
+    "amplia": true,
+    "ocasiones": [
+      {
+        "cuando": "En una línea dedicada a explicar una parte del algoritmo o del código.",
+        "que_es": "Todo el texto posterior a las dos barras, hasta el salto de línea, se trata como comentario.",
+        "ejemplo": "// Calcular el total de los datos",
+        "error_tipico": "Escribir una sola barra / no inicia un comentario: representa el operador de división."
+      },
+      {
+        "cuando": "Al final de una línea que contiene código.",
+        "que_es": "Permite agregar una aclaración sin cambiar la instrucción que aparece antes del comentario.",
+        "ejemplo": "int A=5; // valor inicial",
+        "error_tipico": "Colocar el comentario antes de terminar una instrucción puede ocultar el punto y coma si este queda después de //."
+      },
+      {
+        "cuando": "Cuando se quiere escribir // como texto y no como comentario.",
+        "que_es": "Dentro de un literal de cadena, las dos barras son caracteres normales y no comienzan un comentario.",
+        "ejemplo": "printf(\"// no es un comentario\\n\");",
+        "error_tipico": "Creer que las barras dentro de una cadena cortan el texto; los comentarios no se reconocen dentro de literales."
+      }
+    ],
+    "detalle": "El comentario // comienza en la doble barra y termina en el siguiente salto físico de línea.\nTodo lo que aparece después de // en esa línea se ignora al compilar.\nPuede ocupar una línea completa o aparecer después de una instrucción.\nSi colocas // antes del punto y coma, ese punto y coma también queda dentro del comentario.\nPara continuar un comentario en otra línea debes escribir // nuevamente.\nLas dos barras dentro de comillas son caracteres de texto y no empiezan un comentario.\nEste tipo de comentario ayuda a explicar el código, pero no cambia lo que ejecuta el programa.",
+    "relacionados": [
+      "/* */",
+      "#",
+      "espacios y saltos de línea",
+      ";",
+      "/"
+    ],
+    "verificado_gcc13": false
+  },
+  {
+    "elemento": "/* */",
+    "tipo": "símbolo",
+    "que_es": "La pareja /* y */ delimita un comentario de bloque; todo lo que queda entre ambas marcas se ignora, incluso si ocupa varias líneas.",
+    "como_se_usa": "/* Comentario de varias líneas\n   sobre el cálculo */\nA=A+1;",
+    "error_tipico": "Abrir /* y olvidar */ hace que el compilador trate el resto del archivo como comentario; los comentarios de bloque no se anidan.",
+    "en_la_materia": "Comentarios y legibilidad del código",
+    "errores_ids": [
+      "SIN-014"
+    ],
+    "buscar": [
+      "/* */",
+      "comentario de bloque",
+      "comentario largo",
+      "comentario de varias líneas",
+      "comentario multilinea",
+      "cerrar comentario",
+      "comentario sin cerrar"
+    ],
+    "amplia": true,
+    "ocasiones": [
+      {
+        "cuando": "Para escribir una explicación que ocupa varias líneas.",
+        "que_es": "El comentario comienza con /* y termina en la primera aparición posterior de */.",
+        "ejemplo": "/* Datos de entrada\n   del programa */",
+        "error_tipico": "Olvidar la marca de cierre deja comentado todo el código que sigue."
+      },
+      {
+        "cuando": "Dentro de una línea de código para ocultar temporalmente una parte del texto fuente.",
+        "que_es": "El comentario puede comenzar y terminar en la misma línea, incluso entre dos partes de código.",
+        "ejemplo": "A=A+1; /* actualizar contador */",
+        "error_tipico": "Poner el cierre antes de tiempo deja una parte del comentario convertida otra vez en código."
+      },
+      {
+        "cuando": "Al comparar la sintaxis de comentarios con texto encerrado entre comillas.",
+        "que_es": "Las marcas /* y */ dentro de un literal son caracteres del texto y no delimitan comentarios.",
+        "ejemplo": "printf(\"/* texto, no comentario */\\n\");",
+        "error_tipico": "Pensar que las marcas dentro de una cadena ocultan el resto del programa; dentro de comillas son texto común."
+      }
+    ],
+    "detalle": "El comentario de bloque comienza con dos caracteres: barra y asterisco.\nTermina con asterisco y barra, en ese orden.\nPuede ocupar una parte de una línea o varias líneas completas.\nTodo lo que queda entre las marcas se ignora durante la compilación.\nSi falta */, el compilador puede interpretar como comentario el resto del archivo.\nLos comentarios de bloque no se anidan: otro /* dentro no abre un comentario independiente.\nLas mismas marcas escritas dentro de comillas forman parte del texto y no comienzan un comentario.",
+    "relacionados": [
+      "//",
+      "#",
+      "\" \"",
+      "espacios y saltos de línea"
+    ],
+    "verificado_gcc13": false
+  },
+  {
