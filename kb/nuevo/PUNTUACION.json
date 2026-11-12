@@ -670,3 +670,144 @@
     ],
     "verificado_gcc13": false
   },
+
+    "elemento": ":",
+    "tipo": "símbolo",
+    "que_es": "Los dos puntos introducen una etiqueta case o default dentro de switch y separan las dos alternativas del operador condicional ?:.",
+    "como_se_usa": "switch (A) { case 1: B=2; break; default: B=0; }",
+    "error_tipico": "Olvidar los dos puntos después de case/default o intercambiarlos con el punto y coma; también puede faltar en una expresión ?:.",
+    "en_la_materia": "Switch y operadores",
+    "errores_ids": [],
+    "buscar": [
+      ":",
+      "dos puntos",
+      "case",
+      "default",
+      "switch",
+      "ternario",
+      "operador condicional",
+      "?:"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "Después de una etiqueta case dentro de switch.",
+        "que_es": "Los dos puntos separan el valor constante que se compara del conjunto de instrucciones de ese caso.",
+        "ejemplo": "case 1: B=2; break;",
+        "error_tipico": "Usar punto y coma en lugar de dos puntos impide que la etiqueta case tenga la sintaxis correcta."
+      },
+      {
+        "cuando": "Después de la etiqueta default dentro de switch.",
+        "que_es": "Los dos puntos indican dónde comienzan las instrucciones que se ejecutan cuando ningún case coincide.",
+        "ejemplo": "default: B=0; break;",
+        "error_tipico": "Olvidar los dos puntos deja la etiqueta default incompleta."
+      },
+      {
+        "cuando": "Entre la alternativa verdadera y la alternativa falsa del operador ?:.",
+        "que_es": "Los dos puntos separan el valor elegido cuando la condición es verdadera del valor elegido cuando es falsa.",
+        "ejemplo": "MAYOR=(A>B) ? A : B;",
+        "error_tipico": "Omitir los dos puntos deja incompleta la expresión condicional."
+      }
+    ],
+    "detalle": "En switch, case y default son etiquetas y terminan con dos puntos.\nLas instrucciones de cada caso comienzan después de esos dos puntos.\nLos dos puntos no reemplazan al punto y coma que termina las instrucciones del caso.\nEn el operador ?:, separan la expresión que se usa si la condición es verdadera de la que se usa si es falsa.\nCada ? de una expresión condicional necesita su correspondiente :.\nNo confundas el signo con el punto y coma: tienen funciones distintas.\nSi aparece un error en switch, revisa especialmente los dos puntos de cada etiqueta.",
+    "relacionados": [
+      "?",
+      "?:",
+      "switch",
+      "case",
+      "default",
+      ";"
+    ],
+    "verificado_gcc13": false
+  },
+  {
+    "elemento": "?",
+    "tipo": "símbolo",
+    "que_es": "El signo de interrogación abre la expresión condicional ?:, que elige uno de dos valores según una condición.",
+    "como_se_usa": "MAYOR=(A>B) ? A : B;",
+    "error_tipico": "Usarlo sin la parte que sigue a los dos puntos o confundirlo con una condición de if; el operador ?: forma parte de una expresión.",
+    "en_la_materia": "Operadores y condiciones",
+    "errores_ids": [],
+    "buscar": [
+      "?",
+      "signo de interrogación",
+      "interrogacion",
+      "ternario",
+      "operador condicional",
+      "?:",
+      "if en una expresión"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "Después de una condición en el operador condicional ?:.",
+        "que_es": "Marca el comienzo de la expresión que se toma cuando la condición es verdadera.",
+        "ejemplo": "MAYOR=(A>B) ? A : B;",
+        "error_tipico": "Olvidar la alternativa verdadera o los dos puntos que separan la alternativa falsa."
+      },
+      {
+        "cuando": "En una expresión condicional anidada.",
+        "que_es": "Puede aparecer otro operador ?: dentro de una de las alternativas, aunque los paréntesis ayudan a leer qué condición corresponde a cada alternativa.",
+        "ejemplo": "R=(A>0) ? ((A>B)?A:B) : 0;",
+        "error_tipico": "Anidar varios operadores sin agruparlos hace difícil identificar qué alternativa pertenece a cada condición."
+      }
+    ],
+    "detalle": "El signo ? no funciona solo: forma parte del operador condicional ?: junto con los dos puntos.\nPrimero se evalúa la condición que aparece antes del signo.\nSi la condición es verdadera, se elige la expresión que está entre ? y :.\nSi es falsa, se elige la expresión que aparece después de :.\nEl resultado de toda la construcción es un valor y puede formar parte de una asignación o de otra expresión.\nNo es lo mismo que if: if controla instrucciones y ?: produce un valor dentro de una expresión.\nSi se anidan operadores condicionales, usa paréntesis para que la relación entre las partes sea clara.",
+    "relacionados": [
+      ":",
+      "?:",
+      "()",
+      "condición",
+      "precedencia",
+      "operador"
+    ],
+    "verificado_gcc13": false
+  },
+  {
+    "elemento": "?:",
+    "tipo": "operador",
+    "que_es": "El operador condicional ?: evalúa una condición y produce el valor de una de dos expresiones según sea verdadera o falsa.",
+    "como_se_usa": "MAYOR=(A>B)?A:B;\nprintf(\"%d\\n\",MAYOR);",
+    "error_tipico": "Dejar fuera una de las alternativas o el signo :; cuando hay varias condiciones, no agruparlas puede hacer difícil entender qué parte se evalúa.",
+    "en_la_materia": "Operadores y condiciones",
+    "errores_ids": [],
+    "buscar": [
+      "?:",
+      "operador ternario",
+      "operador condicional",
+      "interrogación",
+      "dos puntos",
+      "if en una expresión",
+      "elegir un valor"
+    ],
+    "amplia": true,
+    "ocasiones": [
+      {
+        "cuando": "Para elegir entre dos valores y guardar el resultado en una variable.",
+        "que_es": "Si la condición es verdadera se usa la expresión entre ? y :; si es falsa se usa la expresión posterior a :.",
+        "ejemplo": "MAYOR=(A>B)?A:B;",
+        "error_tipico": "Escribir solo una alternativa o intercambiar el orden de los valores cambia el resultado o deja la expresión incompleta."
+      },
+      {
+        "cuando": "Como parte de otra expresión o argumento de una función.",
+        "que_es": "El operador condicional produce un valor que puede imprimirse o combinarse con otras expresiones.",
+        "ejemplo": "printf(\"%d\\n\",(A>0)?A:0);",
+        "error_tipico": "Olvidar los paréntesis en una expresión larga puede dificultar la lectura y provocar que se asocie con otros operadores de forma inesperada."
+      },
+      {
+        "cuando": "Dentro de otra expresión condicional, cuando se anidan decisiones.",
+        "que_es": "Una de las alternativas puede contener otro operador ?: para hacer una segunda elección.",
+        "ejemplo": "R=(A>0)?((A>B)?A:B):0;",
+        "error_tipico": "No agrupar una expresión anidada vuelve difícil reconocer qué : corresponde a cada ?."
+      }
+    ],
+    "detalle": "El operador condicional necesita tres partes: una condición, una alternativa verdadera y una alternativa falsa.\nEl signo ? separa la condición de la alternativa verdadera.\nLos dos puntos : separan la alternativa verdadera de la alternativa falsa.\nLa condición se evalúa primero y solo se evalúa la alternativa elegida.\nA diferencia de if, el operador ?: produce un valor que puede asignarse o pasarse a una función.\nEs útil para elecciones cortas, pero no reemplaza un bloque if-else con varias instrucciones.\nCuando se anida, utiliza paréntesis para ver claramente qué partes pertenecen a cada operador.",
+    "relacionados": [
+      "?",
+      ":",
+      "()",
+      "condición",
+      "precedencia",
+      "operador"
+    ],
+    "verificado_gcc13": false
+  },
+  {
