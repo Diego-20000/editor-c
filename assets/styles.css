@@ -1,16 +1,17 @@
 /* Editor C, de Diego Segurotti (ArtPrograms Studio). Uso libre dentro de este sitio, sin fines comerciales. Prohibido copiar, redistribuir o vender sin permiso. PolyForm Strict License 1.0.0. */
-/* Editor C: interfaz neutra, lenguaje de iOS. Ver docs/DISENO.md (paleta, contrastes, íconos, qué no se hace). Solo fuentes del sistema. */
+/* Editor C: interfaz neutra, lenguaje de iOS. Ver docs/DISENO.md (paleta, contrastes, íconos, qué no se hace). Interfaz con fuentes del sistema; el código usa Source Code Pro (viaja con el sitio, licencia OFL en src/fuentes/). */
+@font-face { font-family: "Source Code Pro"; src: url(SourceCodePro.ttf) format("truetype"); font-weight: 200 900; font-style: normal; font-display: swap; }
 
 /* ---------- colores: claro (base), oscuro y automático. Los valores y sus contrastes están en docs/DISENO.md ---------- */
 :root {
   --bg: #f2f2f4; --panel: #ffffff; --panel2: #f7f7f8; --fill: rgba(60, 60, 67, .08); --line: rgba(60, 60, 67, .16); --lineS: #8a8a91;
   --text: #1c1c1e; --muted: #66666d; --accent: #0a7580; --accent-ink: #ffffff; --danger: #c2261b; --warn: #8a5200; --ok: #1c7a3a; --input: #0a6e78;
-  --kw: #a8390c; --ty: #0a6e78; --st: #2c7339; --nu: #8a5200; --co: #6a6c74; --fn: #2a5fa3; --pp: #7a6420;
+  --kw: #af00db; --ty: #0000ff; --st: #a31515; --nu: #08805a; --co: #008000; --fn: #795e26; --pp: #af00db;
   --gut: #6c6d74; --guide: rgba(60, 60, 67, .16); --ws: rgba(60, 60, 67, .4);
   --cur: rgba(60, 60, 67, .06); --pair: rgba(10, 117, 128, .18); --sel: rgba(10, 117, 128, .22); --caret: #0a7580;
   --find: rgba(255, 196, 0, .38); --findcur: rgba(255, 150, 0, .55);
   --segon: #ffffff; --toast: #2b2c30; --toast-text: #f5f5f7; --toast-acc: #6ad8e0; --scrim: rgba(20, 21, 23, .32); --pop: 0 10px 32px rgba(0, 0, 0, .14);
-  --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  --mono: "Source Code Pro", ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
   --ui: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --fs: 15px; --tab: 4; --r: 10px; --rl: 14px;
 }
@@ -18,7 +19,7 @@
   :root:not([data-theme]) {
     --bg: #141517; --panel: #1c1d20; --panel2: #232428; --fill: rgba(235, 235, 245, .12); --line: rgba(235, 235, 245, .14); --lineS: #6f7077;
     --text: #f2f2f4; --muted: #a3a4ab; --accent: #3cc4cd; --accent-ink: #06191b; --danger: #ff8b80; --warn: #f0b556; --ok: #70d08c; --input: #4fd0d8;
-    --kw: #f09a6c; --ty: #4fd0d8; --st: #8fd19a; --nu: #e8b86a; --co: #8e9099; --fn: #8fb4ee; --pp: #c9b36f;
+    --kw: #c586c0; --ty: #569cd6; --st: #ce9178; --nu: #b5cea8; --co: #6a9955; --fn: #dcdcaa; --pp: #c586c0;
     --gut: #85868e; --guide: rgba(235, 235, 245, .16); --ws: rgba(235, 235, 245, .4);
     --cur: rgba(235, 235, 245, .06); --pair: rgba(60, 196, 205, .24); --sel: rgba(60, 196, 205, .3); --caret: #3cc4cd;
     --find: rgba(240, 181, 86, .3); --findcur: rgba(240, 181, 86, .6);
@@ -28,7 +29,7 @@
 :root[data-theme="dark"] {
   --bg: #141517; --panel: #1c1d20; --panel2: #232428; --fill: rgba(235, 235, 245, .12); --line: rgba(235, 235, 245, .14); --lineS: #6f7077;
   --text: #f2f2f4; --muted: #a3a4ab; --accent: #3cc4cd; --accent-ink: #06191b; --danger: #ff8b80; --warn: #f0b556; --ok: #70d08c; --input: #4fd0d8;
-  --kw: #f09a6c; --ty: #4fd0d8; --st: #8fd19a; --nu: #e8b86a; --co: #8e9099; --fn: #8fb4ee; --pp: #c9b36f;
+  --kw: #c586c0; --ty: #569cd6; --st: #ce9178; --nu: #b5cea8; --co: #6a9955; --fn: #dcdcaa; --pp: #c586c0;
   --gut: #85868e; --guide: rgba(235, 235, 245, .16); --ws: rgba(235, 235, 245, .4);
   --cur: rgba(235, 235, 245, .06); --pair: rgba(60, 196, 205, .24); --sel: rgba(60, 196, 205, .3); --caret: #3cc4cd;
   --find: rgba(240, 181, 86, .3); --findcur: rgba(240, 181, 86, .6);

@@ -55,6 +55,6 @@ ANSI C básico: `char`, `int`, `float`, `double`, operadores, `printf`/`scanf` (
 - Guía para profes: `docs/PARA_DOCENTES.md`.
 
 ## Preguntas abiertas
-1. Fuente propia (monoespaciada libre) para el código: necesita aprobación de Diego; hoy se usan las del sistema.
+1. ~~Fuente propia para el código~~: **resuelto el 13/11/2026**, Diego eligió Source Code Pro (SIL OFL 1.1, archivo y licencia en `src/fuentes/`, viaja con el sitio y en `dist/`). Los colores del código siguen los de VS Code (Light+ y Dark+).
 2. Pistas por error (`?ayuda=3`): **descartado por Diego el 10/11/2026** («medio al pedo»). No se hace por ahora. Las explicaciones y pistas de `kb/` siguen sin mostrarse.
 3. Revisión de ChatGPT (`docs/REVISION_ESTADO_2026-11-10.md`, rama `chatgpt`): lo vigente ya está corregido o documentado.

@@ -1353,9 +1353,9 @@ self.postMessage({ type: 'ready' });`;
     opts = opts || {};
     // Hoja neutra para entregar: fondo blanco, texto casi negro, filetes finos. Se lee en el celular y al imprimir en blanco y negro:
     // lo tipeado va en negrita, los títulos de sección en mayúscula con filete, y la marca se dibuja con el mismo trazo que el logo.
-    const COL = { k: '#a8390c', t: '#0a6e78', s: '#2c7339', n: '#8a5200', c: '#5c5e66', f: '#2a5fa3', p: '#7a6420', in: '#0a6e78', er: '#c2261b', dim: '#55565d', ok: '#1c7a3a' };
+    const COL = { k: '#af00db', t: '#0000ff', s: '#a31515', n: '#08805a', c: '#008000', f: '#795e26', p: '#af00db', in: '#0a6e78', er: '#c2261b', dim: '#55565d', ok: '#1c7a3a' };
     const TXT = '#1c1c1e', SUB = '#4a4a50', HAIR = '#d4d4d9', GUT = '#6c6d74', ACC = '#0a7580', PANEL = '#f7f7f8';
-    const MONO = '"Liberation Mono", Menlo, Consolas, ui-monospace, monospace', UI = '-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, Roboto, Arial, sans-serif';
+    const MONO = '"Source Code Pro", "Liberation Mono", Menlo, Consolas, ui-monospace, monospace', UI = '-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, Roboto, Arial, sans-serif';
     const fs = 15, lh = 22, padX = 28, cv = document.createElement('canvas'), ctx = cv.getContext('2d');
     ctx.font = fs + 'px ' + MONO; const cw = ctx.measureText('M').width;
     const codeLines = ta.value.replace(/\n$/, '').split('\n');

@@ -77,3 +77,6 @@ Después de tocar algo en `src/`, corré `node build.js` y subí también los ar
 
 ## Licencia
 Editor C es de Diego Segurotti (ArtPrograms Studio). Uso libre y gratuito **dentro de este sitio**, para estudiar y con fines no comerciales. No se puede copiar, modificar, redistribuir ni vender sin permiso. Texto completo: [PolyForm Strict License 1.0.0](LICENSE).
+
+## Créditos
+El código se muestra con [Source Code Pro](https://github.com/adobe-fonts/source-code-pro) (© Adobe, licencia SIL Open Font License 1.1; el texto está en `src/fuentes/OFL-SourceCodePro.txt`). Los colores del código siguen los temas Light+ y Dark+ de VS Code.

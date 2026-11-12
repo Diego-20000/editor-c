@@ -39,13 +39,13 @@ Superficies claro: página `#f2f2f4`, hojas `#ffffff`, secundaria `#f7f7f8`. Osc
 | Error `--danger` | `#c2261b` | 5,9:1 |
 | Aviso `--warn` | `#8a5200` | 6,4:1 |
 | Correcto `--ok` | `#1c7a3a` | 5,4:1 |
-| Código: control `--kw` | `#a8390c` | 6,5:1 |
-| Código: tipos `--ty` | `#0a6e78` | 6,0:1 |
-| Código: cadenas `--st` | `#2c7339` | 5,8:1 |
-| Código: números `--nu` | `#8a5200` | 6,4:1 |
-| Código: funciones `--fn` | `#2a5fa3` | 6,4:1 |
-| Código: #include `--pp` | `#7a6420` | 5,7:1 |
-| Código: comentarios `--co` | `#6a6c74` | 5,2:1 |
+| Código: control `--kw` (colores de VS Code: Light+ y Dark+) | `#af00db` | 5,5:1 |
+| Código: tipos `--ty` | `#0000ff` | 8,6:1 |
+| Código: cadenas `--st` | `#a31515` | 7,8:1 |
+| Código: números `--nu` | `#08805a` | 4,6:1 |
+| Código: funciones `--fn` | `#795e26` | 6,1:1 |
+| Código: #include `--pp` | `#af00db` | 5,5:1 |
+| Código: comentarios `--co` | `#008000` | 5,1:1 |
 | Números de línea `--gut` | `#6c6d74` | 5,2:1 |
 | Borde de campos `--lineS` | `#8a8a91` | 3,4:1 (mínimo 3) |
 | Texto del botón primario sobre `--accent` | `#ffffff` | 5,4:1 |
@@ -60,13 +60,13 @@ Superficies claro: página `#f2f2f4`, hojas `#ffffff`, secundaria `#f7f7f8`. Osc
 | Error `--danger` | `#ff8b80` | 7,4:1 |
 | Aviso `--warn` | `#f0b556` | 9,2:1 |
 | Correcto `--ok` | `#70d08c` | 8,9:1 |
-| Código: control `--kw` | `#f09a6c` | 7,7:1 |
-| Código: tipos `--ty` | `#4fd0d8` | 9,1:1 |
-| Código: cadenas `--st` | `#8fd19a` | 9,4:1 |
-| Código: números `--nu` | `#e8b86a` | 9,2:1 |
-| Código: funciones `--fn` | `#8fb4ee` | 8,0:1 |
-| Código: #include `--pp` | `#c9b36f` | 8,2:1 |
-| Código: comentarios `--co` | `#8e9099` | 5,3:1 |
+| Código: control `--kw` | `#c586c0` | 6,1:1 |
+| Código: tipos `--ty` | `#569cd6` | 5,7:1 |
+| Código: cadenas `--st` | `#ce9178` | 6,4:1 |
+| Código: números `--nu` | `#b5cea8` | 9,9:1 |
+| Código: funciones `--fn` | `#dcdcaa` | 11,9:1 |
+| Código: #include `--pp` | `#c586c0` | 6,1:1 |
+| Código: comentarios `--co` | `#6a9955` | 5,1:1 |
 | Números de línea `--gut` | `#85868e` | 4,7:1 |
 | Borde de campos `--lineS` | `#6f7077` | 3,4:1 (mínimo 3) |
 | Texto del botón primario sobre `--accent` | `#06191b` | 8,6:1 |
