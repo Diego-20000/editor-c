@@ -194,7 +194,7 @@
     }
 
     // en qué función cae cada token
-    function fnEn(idx) { for (var f = 0; f < funcs.length; f++) if (funcs[f].def && idx >= funcs[f].range[0] && idx <= funcs[f].range[1]) return funcs[f]; return null; }
+    function fnEn(idx) { for (var f = 0; f < funcs.length; f++) if ((funcs[f].def || funcs[f].proto) && idx >= funcs[f].range[0] && idx <= funcs[f].range[1]) return funcs[f]; return null; }
     decls.forEach(function (d) { if (!d.fn) d.fn = fnEn(d.tokIdx); });
 
     // función que se está llamando en cada token (la llamada más interna)
