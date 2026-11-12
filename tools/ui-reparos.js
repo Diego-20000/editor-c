@@ -174,6 +174,21 @@ const check = (c, m) => { if (c) { ok++; console.log('  ok   ' + m); } else { fa
     check(!/se cierren solas/.test(await p10.evaluate(() => (document.getElementById('toast') || {}).textContent || '')), 'aviso del cierre automático: no se repite');
   }
 
+  // 11) «¿Qué es esto?» con un nombre propio: explica qué papel cumple la variable leyendo el código
+  {
+    const p11 = await (await br.newContext({ viewport: { width: 1100, height: 720 } })).newPage();
+    await p11.goto(url); await p11.waitForSelector('#code');
+    const prog = '#include <stdio.h>\nint main() {\n    int CP = 0, NOTA;\n    scanf("%d", &NOTA);\n    while (NOTA != 0) {\n        CP++;\n        scanf("%d", &NOTA);\n    }\n    return 0;\n}\n';
+    await p11.evaluate((sx) => { const t = document.getElementById('code'); t.value = sx; t.dispatchEvent(new Event('input', { bubbles: true })); }, prog);
+    await p11.evaluate((off) => { const t = document.getElementById('code'); t.focus(); t.setSelectionRange(off, off); }, prog.indexOf('CP++') + 1);
+    await p11.keyboard.press('F1'); await p11.waitForTimeout(300);
+    const tx = await p11.textContent('#bubble');
+    check(/Contador CP/.test(tx) && /línea 3/.test(tx), 'nombre propio: explica que CP es un contador y dónde se declara');
+    check(!/\{[A-Z_]+\}/.test(tx), 'nombre propio: no quedan marcadores sin completar');
+    await p11.click('#bubble button:has-text("Ver más")');
+    check(await p11.isVisible('#bubble .nbmas'), 'nombre propio: «Ver más» muestra el detalle');
+  }
+
   await br.close();
   console.log(ok + ' ok, ' + fallas + ' fallas');
   process.exit(fallas ? 1 : 0);

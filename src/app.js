@@ -562,7 +562,7 @@
   const el = (tag, cls, txt) => { const n = document.createElement(tag); if (cls) n.className = cls; if (txt !== undefined && txt !== null) n.textContent = txt; return n; };
   const btnEl = (txt, cls, fn, aria) => { const b = el('button', 'btn ' + (cls || ''), txt); b.type = 'button'; if (aria) b.setAttribute('aria-label', aria); if (fn) b.addEventListener('click', fn); return b; };
   const KBx = () => (window.KB && window.KB.cargado ? window.KB : null);
-  const kbDatos = () => (window.KB_DATA && typeof window.KB_DATA === 'object' ? window.KB_DATA : { errores: [], ayuda: [], lecciones: [] });
+  const kbDatos = () => (window.KB_DATA && typeof window.KB_DATA === 'object' ? window.KB_DATA : { errores: [], ayuda: [], lecciones: [], nombres: [] });
   const asLista = (v) => (Array.isArray(v) ? v.filter((x) => typeof x === 'string') : typeof v === 'string' && v ? [v] : []);
   const NIVELES_TXT = { 1: 'Apagada: al ejecutar con un error solo se dice que no compiló y de qué tipo es. Encontrarlo es tu trabajo.', 2: 'Línea: además se marca el número de línea donde hay un problema. Nada más: sin mensaje, sin sugerencias y sin pistas.' };
   // nivel de ayuda: ?ayuda=1|2 en el enlace (se recuerda en el dispositivo) > lo guardado > 1 (apagada). Solo hay dos niveles.
@@ -841,8 +841,9 @@
   function mostrarBurbuja(off, cx, cy) {
     const K = KBx();
     bubble.innerHTML = '';
-    let clave = null, a = null;
+    let clave = null, a = null, nb = null;
     if (K && off !== null) { try { clave = K.elementoEnPosicion(ta.value, off); a = clave ? K.ayudaDe(clave) : null; } catch (e) { a = null; } }
+    if (!a && K && off !== null && window.Nombres) { try { nb = Nombres.explicar(ta.value, off, kbDatos().nombres || []); } catch (e) { nb = null; } }
     const cierre = btnEl('', 'mini ico', () => cerrarBurbuja(), 'Cerrar la explicación'); cierre.appendChild(ico('cerrar'));
     if (a) {
       const h = el('h4'); h.appendChild(el('code', '', a.elemento)); h.appendChild(cierre); bubble.appendChild(h);
@@ -851,9 +852,20 @@
       if (a.como_se_usa) bubble.appendChild(el('pre', '', a.como_se_usa));
       if (a.error_tipico) bubble.appendChild(el('p', 'muted', 'Error típico: ' + a.error_tipico));
       const r = el('div', 'row'); r.appendChild(btnEl('Más ayuda', 'mini', () => abrirAyuda({ ver: { tipo: 'ayuda', entrada: a } }))); bubble.appendChild(r);
+    } else if (nb) {
+      const h = el('h4'); h.appendChild(el('code', '', nb.nombre)); h.appendChild(cierre); bubble.appendChild(h);
+      bubble.appendChild(el('div', 'muted', nb.titulo));
+      bubble.appendChild(el('p', '', nb.que_es));
+      if (nb.como_se_usa) bubble.appendChild(el('p', '', nb.como_se_usa));
+      if (nb.error_tipico) bubble.appendChild(el('p', 'muted', 'Error típico: ' + nb.error_tipico));
+      const mas = el('div', 'nbmas'); mas.hidden = true;
+      if (nb.detalle) mas.appendChild(el('p', 'nbdet', nb.detalle));
+      if (nb.ejemplo) mas.appendChild(el('pre', '', nb.ejemplo));
+      bubble.appendChild(mas);
+      if (nb.detalle || nb.ejemplo) { const r = el('div', 'row'); const b = btnEl('Ver más', 'mini', () => { mas.hidden = !mas.hidden; b.textContent = mas.hidden ? 'Ver más' : 'Ver menos'; }); r.appendChild(b); bubble.appendChild(r); }
     } else {
       const h = el('h4'); h.appendChild(el('span', '', '¿Qué es esto?')); h.appendChild(cierre); bubble.appendChild(h);
-      bubble.appendChild(el('p', 'muted', K ? 'No tengo una explicación para eso: puede ser un nombre tuyo, un número o un comentario. Probá tocando una palabra de C, un operador o un %d.' : 'La ayuda no está disponible en este momento.'));
+      bubble.appendChild(el('p', 'muted', K ? 'No tengo una explicación para eso: puede ser un número o un comentario. Probá tocando una palabra de C, un operador o un %d.' : 'La ayuda no está disponible en este momento.'));
     }
     bubble.hidden = false;
     if (!coarse && window.innerWidth >= 700) {
