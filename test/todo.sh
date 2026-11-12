@@ -31,6 +31,7 @@ paso "Base de conocimiento (módulos)" 300 node test/kb.test.js
 paso "Evidencia de proceso"           300 node test/proceso.test.js
 paso "Ejemplos del editor"            300 node test/ejemplos.js
 paso "Nombres del alumno (¿qué es?)"   300 node test/nombres.test.js
+paso "Ayuda completa (¿qué es?)"       300 node test/ayuda-completa.test.js
 if [ "$KB" = 1 ]; then
   for f in kb/errores/*.json kb/lecciones.json; do paso "Base contra gcc: $(basename "$f" .json)" 900 bash -c "cd \"$T\" && node \"$OLDPWD/tools/kb-validar.js\" \"$OLDPWD/$f\" --silencio"; done
 fi

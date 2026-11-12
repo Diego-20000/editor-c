@@ -858,10 +858,9 @@
       const masA = el('div', 'nbmas'); masA.hidden = true;
       if (a.detalle) masA.appendChild(el('p', 'nbdet', a.detalle));
       (a.ocasiones || []).forEach((o) => { const bx = el('div', 'nbocas'); bx.appendChild(el('b', '', o.cuando)); bx.appendChild(el('p', '', o.que_es)); if (o.ejemplo) bx.appendChild(el('pre', '', o.ejemplo)); masA.appendChild(bx); });
-      bubble.appendChild(masA);
       const r = el('div', 'row');
       if (a.detalle || (a.ocasiones && a.ocasiones.length)) { const vm = btnEl('Ver más', 'mini', () => { masA.hidden = !masA.hidden; vm.textContent = masA.hidden ? 'Ver más' : 'Ver menos'; }); r.appendChild(vm); }
-      r.appendChild(btnEl('Más ayuda', 'mini', () => abrirAyuda({ ver: { tipo: 'ayuda', entrada: a } }))); bubble.appendChild(r);
+      r.appendChild(btnEl('Más ayuda', 'mini', () => abrirAyuda({ ver: { tipo: 'ayuda', entrada: a } }))); bubble.appendChild(r); bubble.appendChild(masA);
     } else if (nb) {
       const h = el('h4'); h.appendChild(el('code', '', nb.nombre)); h.appendChild(cierre); bubble.appendChild(h);
       bubble.appendChild(el('div', 'muted', nb.titulo));
@@ -871,8 +870,8 @@
       const mas = el('div', 'nbmas'); mas.hidden = true;
       if (nb.detalle) mas.appendChild(el('p', 'nbdet', nb.detalle));
       if (nb.ejemplo) mas.appendChild(el('pre', '', nb.ejemplo));
-      bubble.appendChild(mas);
       if (nb.detalle || nb.ejemplo) { const r = el('div', 'row'); const b = btnEl('Ver más', 'mini', () => { mas.hidden = !mas.hidden; b.textContent = mas.hidden ? 'Ver más' : 'Ver menos'; }); r.appendChild(b); bubble.appendChild(r); }
+      bubble.appendChild(mas);
     } else {
       const h = el('h4'); h.appendChild(el('span', '', '¿Qué es esto?')); h.appendChild(cierre); bubble.appendChild(h);
       bubble.appendChild(el('p', 'muted', K ? 'No tengo una explicación para eso: puede ser un número o un comentario. Probá tocando una palabra de C, un operador o un %d.' : 'La ayuda no está disponible en este momento.'));
