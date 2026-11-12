@@ -349,3 +349,170 @@
     ],
     "verificado_gcc13": false
   },
+  {
+    "elemento": "[]",
+    "tipo": "símbolo",
+    "que_es": "Los corchetes declaran el tamaño de un arreglo y permiten acceder a sus posiciones; también aparecen al declarar parámetros que reciben arreglos.",
+    "como_se_usa": "int V[3];\nV[0]=10;",
+    "error_tipico": "Usar un índice negativo o igual al tamaño del arreglo; declarar un arreglo de tres elementos no crea la posición V[3].",
+    "en_la_materia": "Arreglos y matrices",
+    "errores_ids": [
+      "ARR-001",
+      "ARR-004",
+      "ARR-005",
+      "ARR-008",
+      "ARR-010",
+      "ARR-017",
+      "SIN-010"
+    ],
+    "buscar": [
+      "[]",
+      "corchetes",
+      "índice",
+      "indice",
+      "posición",
+      "posicion",
+      "arreglo",
+      "vector",
+      "matriz",
+      "subíndice",
+      "arreglo como parámetro"
+    ],
+    "amplia": true,
+    "ocasiones": [
+      {
+        "cuando": "Al declarar un arreglo de una dimensión.",
+        "que_es": "El número entre corchetes indica cuántos elementos puede almacenar el arreglo.",
+        "ejemplo": "int V[5];",
+        "error_tipico": "Confundir la cantidad de elementos con el último índice: si el tamaño es 5, los índices válidos van de 0 a 4."
+      },
+      {
+        "cuando": "Al acceder o modificar una posición de un arreglo.",
+        "que_es": "El valor dentro de los corchetes es el índice que selecciona un elemento.",
+        "ejemplo": "int V[3]={0};\nV[0]=10;\nprintf(\"%d\\n\",V[0]);",
+        "error_tipico": "Usar un índice fuera del rango válido produce comportamiento indefinido en C."
+      },
+      {
+        "cuando": "Al declarar una matriz de dos dimensiones.",
+        "que_es": "Dos pares de corchetes indican la cantidad de filas y columnas de la matriz.",
+        "ejemplo": "int M[2][3];",
+        "error_tipico": "Invertir filas y columnas o declarar un tamaño distinto del que después se recorre."
+      },
+      {
+        "cuando": "Al seleccionar una celda de una matriz.",
+        "que_es": "El primer índice elige la fila y el segundo índice elige la columna.",
+        "ejemplo": "int M[2][3]={{0}};\nM[1][2]=7;\nprintf(\"%d\\n\",M[1][2]);",
+        "error_tipico": "Olvidar uno de los dos pares de corchetes o usar una fila o columna fuera de rango."
+      },
+      {
+        "cuando": "Al declarar un parámetro que recibe un arreglo de una dimensión.",
+        "que_es": "En un parámetro de función se puede escribir el nombre del arreglo seguido de corchetes vacíos.",
+        "ejemplo": "int SUMAR(int V[], int N);",
+        "error_tipico": "Olvidar los corchetes y declarar un parámetro escalar cuando la función necesita recibir el arreglo."
+      },
+      {
+        "cuando": "Al declarar un parámetro que recibe una matriz.",
+        "que_es": "Se puede omitir el tamaño de la primera dimensión, pero las dimensiones posteriores deben estar indicadas.",
+        "ejemplo": "int SUMAR(int M[][3], int FILAS);",
+        "error_tipico": "Omitir también el tamaño de las columnas impide que la función sepa cómo avanzar entre filas."
+      },
+      {
+        "cuando": "Al declarar o recorrer un texto almacenado como arreglo de char.",
+        "que_es": "Cada posición del arreglo contiene un carácter y la última posición de una cadena debe poder guardar el terminador '\\0'.",
+        "ejemplo": "char TEXTO[6]=\"Hola\";\nTEXTO[0]='h';",
+        "error_tipico": "Reservar menos posiciones que las necesarias para los caracteres y el terminador del texto."
+      }
+    ],
+    "detalle": "En C, los índices de los arreglos comienzan en cero, no en uno.\nEl tamaño indica cuántos elementos existen; no es un índice válido.\nEn una matriz, el primer índice representa la fila y el segundo la columna.\nLos corchetes también se usan en los parámetros de funciones que reciben arreglos.\nPara una matriz como parámetro, se debe indicar el tamaño de las columnas.\nUn texto char[] es un arreglo de caracteres y necesita espacio para el terminador '\\0'.\nC no comprueba automáticamente que un índice esté dentro del arreglo: revisa siempre sus límites.",
+    "relacionados": [
+      "{}",
+      ";",
+      ",",
+      "()",
+      "índice",
+      "texto",
+      "terminador"
+    ],
+    "verificado_gcc13": false
+  },
+  {
+    "elemento": "\" \"",
+    "tipo": "símbolo",
+    "que_es": "Las comillas dobles delimitan un literal de texto, es decir, una secuencia de caracteres que termina con un carácter nulo agregado por el compilador.",
+    "como_se_usa": "printf(\"Hola\\n\");\nchar TEXTO[]=\"Hola\";",
+    "error_tipico": "Dejar una comilla sin cerrar o escribir comillas dobles dentro del texto sin escaparlas; el compilador puede interpretar el resto de la línea como parte de la cadena.",
+    "en_la_materia": "Texto, printf y scanf",
+    "errores_ids": [
+      "PRF-019",
+      "PRF-020",
+      "PRF-034",
+      "SIN-011",
+      "SIN-042",
+      "SIN-052",
+      "SIN-061"
+    ],
+    "buscar": [
+      "\" \"",
+      "comillas dobles",
+      "comilla doble",
+      "cadena",
+      "texto",
+      "string",
+      "printf",
+      "scanf",
+      "comilla sin cerrar",
+      "texto con espacios"
+    ],
+    "amplia": true,
+    "ocasiones": [
+      {
+        "cuando": "Al escribir el texto que printf debe mostrar.",
+        "que_es": "Las comillas encierran el mensaje y los especificadores de formato que printf interpretará.",
+        "ejemplo": "printf(\"Hola mundo\\n\");",
+        "error_tipico": "Olvidar la comilla de cierre hace que el compilador no encuentre el final del literal."
+      },
+      {
+        "cuando": "Al escribir el formato de una llamada a scanf.",
+        "que_es": "El texto entre comillas indica qué tipo de dato se leerá y qué separadores se esperan en la entrada.",
+        "ejemplo": "scanf(\"%d\", &A);",
+        "error_tipico": "Poner el especificador fuera de las comillas o dejar el literal sin cerrar produce un formato inválido o un error de sintaxis."
+      },
+      {
+        "cuando": "Al inicializar un arreglo de caracteres con una cadena.",
+        "que_es": "El literal aporta sus caracteres y el compilador reserva además un lugar para el terminador '\\0'.",
+        "ejemplo": "char TEXTO[]=\"Hola\";",
+        "error_tipico": "Reservar un arreglo demasiado pequeño al copiar después la cadena en él puede dejar fuera el terminador."
+      },
+      {
+        "cuando": "Al incluir espacios dentro de un texto.",
+        "que_es": "Los espacios que están entre las comillas forman parte del contenido y se conservan al mostrar la cadena.",
+        "ejemplo": "printf(\"Hola   mundo\\n\");",
+        "error_tipico": "Creer que varios espacios dentro de las comillas se eliminan como la sangría del código; no se eliminan."
+      },
+      {
+        "cuando": "Al mostrar comillas dobles como parte del propio texto.",
+        "que_es": "La barra invertida permite incluir una comilla doble sin cerrar el literal.",
+        "ejemplo": "printf(\"Dijo \\\"Hola\\\"\\n\");",
+        "error_tipico": "Escribir una comilla doble sin la barra invertida cierra la cadena antes de tiempo."
+      },
+      {
+        "cuando": "Al unir dos literales de texto escritos uno junto al otro.",
+        "que_es": "El compilador concatena los literales de cadena adyacentes en un único texto.",
+        "ejemplo": "printf(\"Hola \" \"mundo\\n\");",
+        "error_tipico": "Dejar un operador + entre dos literales como si fueran cadenas de otro lenguaje: en C se pueden escribir adyacentes."
+      }
+    ],
+    "detalle": "Un literal de cadena comienza y termina con comillas dobles.\nPuede contener letras, números, espacios, signos y secuencias de escape.\nLos espacios dentro de las comillas son datos y no se eliminan al imprimir.\nUna cadena no puede contener un salto físico de línea sin una continuación válida; para mostrar una nueva línea se usa \\n.\nPara incluir una comilla doble dentro del texto, se escribe precedida por la barra invertida.\nLas cadenas terminan con un carácter '\\0' que el compilador agrega al literal.\nSi abres una comilla y no la cierras, el error puede parecer estar varias líneas después.",
+    "relacionados": [
+      "' '",
+      "\\",
+      "\\n",
+      "\\\"",
+      "texto",
+      "terminador",
+      "%d",
+      "%f",
+      "%c"
+    ],
+    "verificado_gcc13": false
+  },
