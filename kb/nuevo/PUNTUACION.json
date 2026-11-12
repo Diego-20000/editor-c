@@ -811,3 +811,130 @@
     "verificado_gcc13": false
   },
   {
+    "elemento": ".",
+    "tipo": "símbolo",
+    "que_es": "El punto representa la separación decimal en los literales de punto flotante y también indica la precisión solicitada en formatos como %.2f.",
+    "como_se_usa": "float A=3.5f;\nprintf(\"%.2f\\n\",A);",
+    "error_tipico": "Escribir una coma en vez de punto para un número decimal o usar más de un punto en el mismo literal numérico.",
+    "en_la_materia": "Tipos float/double y printf",
+    "errores_ids": [
+      "OPE-025",
+      "POR-020",
+      "SCN-022",
+      "SIN-037",
+      "SIN-041"
+    ],
+    "buscar": [
+      ".",
+      "punto decimal",
+      "decimales",
+      "coma decimal",
+      "float",
+      "double",
+      "3.5",
+      "%.2f",
+      "precisión",
+      "precision"
+    ],
+    "amplia": true,
+    "ocasiones": [
+      {
+        "cuando": "Entre la parte entera y la parte decimal de un literal numérico.",
+        "que_es": "El punto separa las cifras enteras de las cifras fraccionarias de un número decimal.",
+        "ejemplo": "float NOTA=8.5f;",
+        "error_tipico": "Escribir 8,5: la coma no es el separador decimal de un literal numérico en C."
+      },
+      {
+        "cuando": "Al escribir un literal decimal sin cifras antes del punto.",
+        "que_es": "Un literal puede comenzar con el punto si tiene cifras decimales a continuación.",
+        "ejemplo": "double MITAD=.5;",
+        "error_tipico": "Confundir el punto inicial con un operador aislado; debe haber cifras formando un literal válido."
+      },
+      {
+        "cuando": "Al escribir un literal decimal sin cifras después del punto.",
+        "que_es": "También se puede escribir un número con punto final y sin cifras fraccionarias, como 5.",
+        "ejemplo": "double ENTERO=5.;",
+        "error_tipico": "Agregar un segundo punto o dejar el punto separado del número puede producir un error de sintaxis."
+      },
+      {
+        "cuando": "En la parte decimal de un literal que también utiliza exponente.",
+        "que_es": "El punto puede aparecer en la mantisa de un literal con exponente decimal.",
+        "ejemplo": "double FACTOR=1.5e-2;",
+        "error_tipico": "Confundir la letra e del exponente con una variable o escribir mal el signo o las cifras del exponente."
+      },
+      {
+        "cuando": "En la precisión de un especificador de formato de printf.",
+        "que_es": "En formatos como %.2f, el punto introduce la cantidad de cifras que se mostrarán después del separador decimal.",
+        "ejemplo": "printf(\"%.2f\\n\",A);",
+        "error_tipico": "Olvidar el número de precisión o colocar el punto fuera de las comillas del formato."
+      }
+    ],
+    "detalle": "En un literal decimal de C se usa punto, no coma.\nPor ejemplo, 3.5 es un número decimal; 3,5 no significa tres coma cinco.\nLos literales con punto son de tipo double salvo que se agregue el sufijo f o F.\nSe puede escribir .5 y también 5. si hay cifras que permiten reconocer el literal.\nLa notación con exponente, como 1.5e-2, también puede incluir punto en la mantisa.\nEn printf, el punto de %.2f indica cuántas cifras decimales se muestran.\nNo confundas ese punto de formato con un carácter que debas escribir fuera de las comillas.",
+    "relacionados": [
+      ",",
+      "float",
+      "double",
+      "%.2f",
+      "printf",
+      "literal",
+      "precisión"
+    ],
+    "verificado_gcc13": false
+  },
+  {
+    "elemento": "#",
+    "tipo": "símbolo",
+    "que_es": "El numeral inicia una directiva del preprocesador, como include, define o una condición de compilación.",
+    "como_se_usa": "#include <stdio.h>\n#define LIMITE 10",
+    "error_tipico": "Usarlo como comentario o escribirlo en medio de una instrucción; las directivas empiezan con # como primer carácter no blanco de una línea de preprocesamiento.",
+    "en_la_materia": "Preprocesador y bibliotecas",
+    "errores_ids": [
+      "PRE-015",
+      "PRE-016",
+      "PRE-032",
+      "SIN-059"
+    ],
+    "buscar": [
+      "#",
+      "numeral",
+      "gato",
+      "hashtag",
+      "preprocesador",
+      "directiva",
+      "include",
+      "define",
+      "if"
+    ],
+    "amplia": true,
+    "ocasiones": [
+      {
+        "cuando": "Al incluir una cabecera de biblioteca.",
+        "que_es": "La directiva include pide al preprocesador incorporar el contenido de una cabecera antes de compilar.",
+        "ejemplo": "#include <stdio.h>",
+        "error_tipico": "Olvidar el numeral o escribir include como si fuera una instrucción común hace que no se incluya la cabecera."
+      },
+      {
+        "cuando": "Al definir una constante simbólica o una macro.",
+        "que_es": "La directiva define asocia un nombre con un texto que el preprocesador reemplaza antes de compilar.",
+        "ejemplo": "#define LIMITE 10",
+        "error_tipico": "Agregar punto y coma al final de la directiva puede hacer que ese punto y coma también forme parte del reemplazo."
+      },
+      {
+        "cuando": "Al compilar condicionalmente una parte del código.",
+        "que_es": "Directivas como #if y #endif permiten incluir o excluir texto fuente según una condición del preprocesador.",
+        "ejemplo": "#if 1\nint LIMITE_POSITIVO=10;\n#endif",
+        "error_tipico": "Olvidar #endif deja abierta la condición de preprocesamiento y puede excluir más código del esperado."
+      }
+    ],
+    "detalle": "El numeral no es una instrucción de C: marca una directiva para el preprocesador.\nDebe aparecer como primer carácter no blanco de la línea de directiva.\n#include incorpora una cabecera, por ejemplo stdio.h para printf y scanf.\n#define permite crear macros o nombres simbólicos que se reemplazan antes de compilar.\n#if, #else y #endif permiten decidir qué parte del código llega al compilador.\nLas directivas terminan con el salto de línea, no con un punto y coma.\nNo uses # para comentar: los comentarios de C se escriben con // o /* */.",
+    "relacionados": [
+      "#include",
+      "#define",
+      "#if",
+      "//",
+      "/* */",
+      "\\"
+    ],
+    "verificado_gcc13": false
+  },
+  {
