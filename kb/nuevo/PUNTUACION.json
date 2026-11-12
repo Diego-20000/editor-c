@@ -866,7 +866,7 @@
       {
         "cuando": "En la precisión de un especificador de formato de printf.",
         "que_es": "En formatos como %.2f, el punto introduce la cantidad de cifras que se mostrarán después del separador decimal.",
-        "ejemplo": "printf(\"%.2f\\n\",A);",
+        "ejemplo": "printf(\"%.2f\\n\",3.5);",
         "error_tipico": "Olvidar el número de precisión o colocar el punto fuera de las comillas del formato."
       }
     ],
