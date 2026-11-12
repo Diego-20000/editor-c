@@ -101,7 +101,7 @@ Línea actual resaltada · pareja de llave/paréntesis del cursor (y aviso si no
 
 ## Imagen de la captura de entrega
 
-PNG (2×) con fondo blanco: cabecera con nombre, curso, materia y ciclo a la izquierda y programa y fecha a la derecha, filete fino, secciones CÓDIGO / DATOS DE ENTRADA / SALIDA en mayúscula, código con números de línea en un recuadro de radio 10, salida sobre gris muy claro, línea de evidencia de proceso (si el alumno la activó) y, al pie, la marca discreta (C y cursor, mismo trazo) con «Editor C». Se lee impresa en blanco y negro: texto casi negro, lo tipeado y los tipos en negrita, nada depende solo del color.
+PNG (2×) con fondo blanco: cabecera con nombre, curso, materia y ciclo a la izquierda y programa y fecha a la derecha, filete fino, secciones CÓDIGO / DATOS DE ENTRADA / SALIDA en mayúscula, código con números de línea en un recuadro de radio 10, salida sobre gris muy claro y, al pie, la marca discreta (C y cursor, mismo trazo) con «Editor C». Se lee impresa en blanco y negro: texto casi negro, lo tipeado y los tipos en negrita, nada depende solo del color.
 
 ## Movimiento
 
