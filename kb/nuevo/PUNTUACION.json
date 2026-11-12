@@ -516,6 +516,7 @@
     ],
     "verificado_gcc13": false
   },
+  {
     "elemento": "' '",
     "tipo": "símbolo",
     "que_es": "Las comillas simples delimitan una constante de carácter, que representa un carácter individual como una letra, un dígito o una secuencia de escape.",
@@ -670,7 +671,7 @@
     ],
     "verificado_gcc13": false
   },
-
+  {
     "elemento": ":",
     "tipo": "símbolo",
     "que_es": "Los dos puntos introducen una etiqueta case o default dentro de switch y separan las dos alternativas del operador condicional ?:.",
