@@ -1264,12 +1264,21 @@ self.postMessage({ type: 'ready' });`;
     CRT.runProgram(res.js, io).then((r) => { flush(); if (main === me) finish(r); });
   }
 
+  /* aviso único: a la tercera ejecución se cuenta que el cierre automático de llaves se puede encender en Ajustes (sigue apagado por defecto) */
+  function avisoCierre() {
+    if (store.get('avisoCierre', '') === '1' || store.get('autocierre', '') !== '') return;
+    const n = (+store.get('nEjec', '0') || 0) + 1; store.set('nEjec', String(n));
+    if (n < 3) return;
+    store.set('avisoCierre', '1');
+    setTimeout(() => toast('¿Querés que las llaves, paréntesis y comillas se cierren solas? Se enciende en Ajustes.', 'Ajustes', () => $('settings').click()), 2500);
+  }
   function run() {
     tRun0 = performance.now(); tEspera = 0; tEsperaIni = 0;
     resetRun();
     removeInput(); clearConsole(); clearProblems();
     flushSave();
     proc.ejecutar();
+    avisoCierre();
     const src = ta.value;
     if (tabMode()) setTab('co');
     preparePreset();
