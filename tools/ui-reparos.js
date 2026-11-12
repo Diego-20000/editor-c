@@ -159,6 +159,21 @@ const check = (c, m) => { if (c) { ok++; console.log('  ok   ' + m); } else { fa
     check((await p9.inputValue('#inTxt')) === '4825\n', 'ejemplos (' + lab + '): la entrada de muestra queda cargada');
   }
 
+  // 10) aviso del cierre automático: una sola vez, a la tercera ejecución, y no cambia el valor por defecto
+  {
+    const p10 = await (await br.newContext({ viewport: { width: 1280, height: 800 } })).newPage();
+    await p10.goto(url); await p10.waitForSelector('#code');
+    for (let i = 0; i < 3; i++) { await p10.click('#run'); await p10.waitForTimeout(700); }
+    await p10.waitForTimeout(3200);
+    check(/se cierren solas/.test(await p10.evaluate(() => (document.getElementById('toast') || {}).textContent || '')), 'aviso del cierre automático: aparece a la tercera ejecución');
+    await p10.click('#toast .btn'); await p10.waitForSelector('#dSet[open]');
+    check(!(await p10.isChecked('#autoCierre')), 'aviso del cierre automático: sigue apagado por defecto');
+    await p10.reload(); await p10.waitForSelector('#code');
+    for (let i = 0; i < 3; i++) { await p10.click('#run'); await p10.waitForTimeout(700); }
+    await p10.waitForTimeout(3200);
+    check(!/se cierren solas/.test(await p10.evaluate(() => (document.getElementById('toast') || {}).textContent || '')), 'aviso del cierre automático: no se repite');
+  }
+
   await br.close();
   console.log(ok + ' ok, ' + fallas + ' fallas');
   process.exit(fallas ? 1 : 0);

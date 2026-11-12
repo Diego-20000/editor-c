@@ -42,7 +42,7 @@ Avisos y errores en español con el número de línea, entre ellos: variable sin
 
 Qué se promete y qué no: ver [docs/COMPATIBILIDAD.md](docs/COMPATIBILIDAD.md).
 
-Para docentes (cómo usarlo en clase, la ayuda por enlace y qué mide la línea de proceso): [docs/PARA_DOCENTES.md](docs/PARA_DOCENTES.md).
+Para docentes (cómo usarlo en clase, la ayuda por enlace y el modo práctica): [docs/PARA_DOCENTES.md](docs/PARA_DOCENTES.md).
 
 Contexto y reglas del proyecto (sitio estático en GitHub Pages, sin servidor, sin IA, sin conexión): ver [CLAUDE.md](CLAUDE.md).
 

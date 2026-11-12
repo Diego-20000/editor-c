@@ -146,11 +146,6 @@
     <div class="group"><label class="chk"><input type="checkbox" id="symChk" role="switch"> Barra de símbolos en el celular</label></div>
     <p class="foot">Una fila sobre el teclado con { } ( ) [ ] ; &amp; * y otros símbolos de C. Cada toque escribe un solo símbolo: no completa nada por vos.</p>
   </fieldset>
-  <fieldset><legend>Cómo se escribió el programa</legend>
-    <p class="lead">El editor mide, solo en este dispositivo, cuántos caracteres tipeaste, cuántos pegaste o abriste desde un archivo, cuánto tiempo trabajaste y cuántas veces ejecutaste. No guarda lo que escribís aparte del programa y no se envía a ningún lado. Si querés, aparece como una línea al pie de la captura que entregás. Es un dato del proceso, no una prueba.</p>
-    <div class="group"><label class="chk"><input type="checkbox" id="procCap" role="switch"> Mostrar esa línea en las capturas</label></div>
-    <p class="foot" id="procAhora"></p>
-  </fieldset>
   <fieldset><legend>Casos para enviar</legend>
     <p class="lead">Cuando el editor no sabe explicar algo, guarda el caso solo en este dispositivo. Nada se envía solo: vos mirás qué se manda y elegís si se lo mandás a Diego.</p>
     <div class="group"><button id="casosBtn" class="btn" type="button">Casos para enviar</button></div>
@@ -167,7 +162,6 @@
   <div class="group">
     <label class="chk" id="shotInRow"><input type="checkbox" id="shotIn" role="switch" checked> Incluir los datos de entrada</label>
     <label class="chk" id="shotLayRow">Disposición <select id="shotLay" class="btn sel" aria-label="Disposición de la imagen"><option value="abajo">Código arriba, salida abajo</option><option value="lado">Código y salida lado a lado</option></select></label>
-    <label class="chk" id="shotProcRow"><input type="checkbox" id="shotProc" role="switch" checked> Incluir cómo se escribió (tipeado, pegado, tiempo)</label>
     <p class="fine">Esa línea también queda guardada dentro del archivo PNG, como dato de la imagen que no se ve a simple vista. Si la desactivás, no se incluye en ningún lado.</p>
   </div>
   <div class="shotbox" id="shotBox"><div class="carga" aria-live="polite">Armando la imagen…</div><img id="shotImg" decoding="async" alt="Vista previa de la captura: cabecera, código, entrada y salida"></div>

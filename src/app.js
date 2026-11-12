@@ -985,8 +985,6 @@
     segSet($('ayudaSel'), String(nivelAyuda)); $('ayudaDesc').textContent = NIVELES_TXT[nivelAyuda];
     $('autoCierre').checked = autoCierre;
     $('tabSel').value = String(SANG); $('wsChk').checked = verEsp;
-    $('procCap').checked = store.get('proccap', '1') !== '0';
-    const l = proc.linea(); $('procAhora').textContent = l ? 'Este programa, ahora: ' + l.replace(/^Escrito en el editor: /, '') + '.' : '';
     const n = casosLista().length;
     $('casosBtn').textContent = 'Casos para enviar' + (n ? ' (' + n + ')' : '');
   }
@@ -1013,7 +1011,6 @@
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && document.documentElement.classList.contains('lectura') && $('bubble').hidden && !document.querySelector('dialog[open]')) { e.preventDefault(); setLectura(false); }
   });
-  $('procCap').addEventListener('change', () => store.set('proccap', $('procCap').checked ? '1' : '0'));
 
   /* ---------- consola ---------- */
   let total = 0; const CAP = 400000;
@@ -1264,12 +1261,21 @@ self.postMessage({ type: 'ready' });`;
     CRT.runProgram(res.js, io).then((r) => { flush(); if (main === me) finish(r); });
   }
 
+  /* aviso único: a la tercera ejecución se cuenta que el cierre automático de llaves se puede encender en Ajustes (sigue apagado por defecto) */
+  function avisoCierre() {
+    if (store.get('avisoCierre', '') === '1' || store.get('autocierre', '') !== '') return;
+    const n = (+store.get('nEjec', '0') || 0) + 1; store.set('nEjec', String(n));
+    if (n < 3) return;
+    store.set('avisoCierre', '1');
+    setTimeout(() => toast('¿Querés que las llaves, paréntesis y comillas se cierren solas? Se enciende en Ajustes.', 'Ajustes', () => $('settings').click()), 2500);
+  }
   function run() {
     tRun0 = performance.now(); tEspera = 0; tEsperaIni = 0;
     resetRun();
     removeInput(); clearConsole(); clearProblems();
     flushSave();
     proc.ejecutar();
+    avisoCierre();
     const src = ta.value;
     if (tabMode()) setTab('co');
     preparePreset();
@@ -1388,18 +1394,10 @@ self.postMessage({ type: 'ready' });`;
     const maxDatos = W - 2 * padX - (user.name ? ctx.measureText(stampTxt).width + 24 : 0);
     const datosLin = []; { let ln = ''; datosPartes.forEach((t) => { const c = ln ? ln + '  ·  ' + t : t; if (ln && ctx.measureText(c).width > maxDatos) { datosLin.push(ln); ln = t; } else ln = c; }); if (ln) datosLin.push(ln); }
     const secH = 24, headH = 50 + Math.max(1, datosLin.length) * 18, gap = 6, footH = 24, pad = 8;
-    const procRows = [];
-    const procTxt = opts.proc === false ? '' : proc.linea();
-    if (procTxt) {
-      ctx.font = '12px ' + UI;
-      let ln = '';
-      procTxt.split(' ').forEach((w) => { const t = ln ? ln + ' ' + w : w; if (ln && ctx.measureText(t).width > W - 2 * padX - 70) { procRows.push(ln); ln = w; } else ln = t; });
-      if (ln) procRows.push(ln);
-    }
     const blockH = (n) => n * lh + 2 * pad;
     const hCode = secH + blockH(codeRows.length), hIn = inRows.length ? secH + blockH(inRows.length) + gap : 0, hOut = secH + blockH(Math.max(1, outRows.length));
     const bodyH = opts.lado ? Math.max(hCode, hIn + hOut) : hCode + gap + hIn + hOut;
-    const H = headH + gap + bodyH + (procRows.length ? 10 + procRows.length * 17 : 0) + footH;
+    const H = headH + gap + bodyH + footH;
     let S = 2; while (W * S * H * S > 14e6 && S > 1) S -= 0.5;
     cv.width = Math.round(W * S); cv.height = Math.round(H * S); ctx.scale(S, S);
     ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, W, H);
@@ -1450,8 +1448,7 @@ self.postMessage({ type: 'ready' });`;
     if (opts.lado) { y = y0 + bodyH; xb = padX; wb = leftW; }
     // pie: cómo se escribió (si se incluye) y la marca, en letra chica
     ctx.font = '12px ' + UI; ctx.fillStyle = SUB;
-    procRows.forEach((t, i) => ctx.fillText(t, padX, y + 14 + i * 17));
-    ctx.textAlign = 'right'; ctx.font = '600 11px ' + UI; ctx.fillText('Editor C', W - padX, y + (procRows.length ? 14 : 12)); ctx.textAlign = 'left';
+    ctx.textAlign = 'right'; ctx.font = '600 11px ' + UI; ctx.fillText('Editor C', W - padX, y + 12); ctx.textAlign = 'left';
     return cv;
   }
   // Vista previa antes de descargar: se puede incluir u omitir la entrada
@@ -1461,7 +1458,7 @@ self.postMessage({ type: 'ready' });`;
     const seq = ++shotSeq;
     $('shotBox').classList.add('cargando');
     let cv;
-    try { cv = makePng({ input: $('shotIn').checked, proc: $('shotProc').checked, lado: $('shotLay').value === 'lado', nombre: nombreCaptura() }); } catch (e) { toast('No se pudo armar la imagen: ' + e.message); dShot.close(); return; }
+    try { cv = makePng({ input: $('shotIn').checked, lado: $('shotLay').value === 'lado', nombre: nombreCaptura() }); } catch (e) { toast('No se pudo armar la imagen: ' + e.message); dShot.close(); return; }
     cv.toBlob((blob) => {
       if (seq !== shotSeq) return;
       if (!blob) { toast('No se pudo generar la imagen.'); dShot.close(); return; }
@@ -1472,20 +1469,12 @@ self.postMessage({ type: 'ready' });`;
         shotUrl = URL.createObjectURL(b); $('shotImg').src = shotUrl;
         $('shotImg').dataset.w = cv.width; $('shotImg').dataset.h = cv.height;
       };
-      // el mismo resumen que se ve escrito en la imagen va también dentro del archivo (se avisa en Ajustes)
-      if ($('shotProc').checked && window.Proceso && Proceso.pngConTexto && blob.arrayBuffer) {
-        blob.arrayBuffer().then((ab) => {
-          let b = blob;
-          try { b = new Blob([Proceso.pngConTexto(new Uint8Array(ab), proc.datosCaptura ? proc.datosCaptura(ta.value, cur ? cur.name : '', (window.CONFIG && CONFIG.VERSION) || '') : {})], { type: 'image/png' }); } catch (e) { b = blob; }
-          listo(b);
-        }, () => listo(blob));
-      } else listo(blob);
+      listo(blob);
     }, 'image/png');
   }
   $('shot').addEventListener('click', () => {
     const hasIn = !!inTxt.value.trim();
     $('shotInRow').hidden = !hasIn; $('shotIn').checked = hasIn;
-    const hayProc = !!proc.linea(); $('shotProcRow').hidden = !hayProc; $('shotProc').checked = hayProc && store.get('proccap', '1') !== '0';
     const canShare = !!(coarse && typeof File === 'function' && navigator.canShare && navigator.canShare({ files: [new File([new Blob(['x'])], 'a.png', { type: 'image/png' })] }));
     $('shotShare').hidden = !canShare;
     $('shotName').value = (cur && cur.name) || '';
@@ -1496,7 +1485,6 @@ self.postMessage({ type: 'ready' });`;
   $('shotIn').addEventListener('change', shotRender);
   $('shotLay').addEventListener('change', shotRender);
   { let tN = 0; $('shotName').addEventListener('input', () => { clearTimeout(tN); tN = setTimeout(shotRender, 250); }); }
-  $('shotProc').addEventListener('change', shotRender);
   dShot.addEventListener('close', () => { shotSeq++; shotBlob = null; if (shotUrl) { URL.revokeObjectURL(shotUrl); shotUrl = ''; } $('shotImg').removeAttribute('src'); });
   $('shotDl').addEventListener('click', () => {
     if (!shotBlob) { toast('La imagen todavía se está preparando.'); return; }

@@ -21,13 +21,6 @@ El alumno también puede cambiar la ayuda en Ajustes, y queda guardado en su dis
 ## Qué entrega el alumno
 El botón **Captura** arma una imagen PNG con su nombre, curso y materia (los carga una vez en Ajustes), el código, los datos de entrada y la salida. La sube a Classroom o la manda por donde prefieras. Se puede elegir la disposición (código y salida lado a lado o uno abajo del otro).
 
-### La línea «Escrito en el editor: …»
-Debajo de la salida figura cuánto del código se **tipeó**, cuánto se **pegó** y cuánto lo completó el editor solo (sangría y llaves), más el tiempo de trabajo y la cantidad de ejecuciones. Para que la uses bien:
-- **Sirve para conversar con el alumno**, por ejemplo ante una entrega que se ve idéntica a otra.
-- **No prueba que copió.** Puede haber pegado código propio, o haber tipeado algo que le dictaron. Y quien sepa cómo, la puede esquivar.
-- **No es un detector de IA.** No existe una marca confiable en el código pegado, y el editor no pretende tenerla.
-- El mismo resumen va como dato dentro del archivo PNG, y Ajustes lo avisa. Si el alumno desactiva la opción «Incluir cómo se escribió», no aparece en ningún lado. Classroom o WhatsApp pueden borrar los datos internos de la imagen: lo que cuenta es la línea escrita.
-
 ## Pasar un programa a los alumnos
 En el menú «Más» → **«Pasar a otro dispositivo»** se arma un enlace con el programa adentro. Lo mandás por WhatsApp o Classroom y al abrirlo, el alumno ve una vista previa y decide si lo abre como programa nuevo. El programa viaja dentro del enlace: no se sube a ningún servidor. Sirve para dar un código inicial para completar.
 

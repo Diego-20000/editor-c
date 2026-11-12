@@ -271,7 +271,7 @@ async function suite(browser, target, mobile) {
   ok(await page.$eval('#shotLay', (e) => e.value) === 'abajo' && wDef > 0, 'vista previa: hay selector de disposición');
   const hWith = +(await page.getAttribute('#shotImg', 'data-h'));
   const txt = await page.evaluate(async () => { const b = new Uint8Array(await (await fetch(document.getElementById('shotImg').src)).arrayBuffer()); let t = ''; for (let i = 0; i < b.length; i++) t += String.fromCharCode(b[i]); return t; });
-  ok((txt.match(/iTXt/g) || []).length >= 2 && txt.includes('EditorC-Resumen') && txt.includes('EditorC-Proceso'), 'la imagen lleva el resumen de proceso dentro del archivo (iTXt)');
+  ok(!txt.includes('iTXt') && !txt.includes('EditorC-Proceso'), 'la imagen no lleva datos de proceso dentro del archivo');
   ok(await page.isVisible('#shotInRow'), 'vista previa: opción de incluir la entrada');
   await shot('6-vista-previa');
   await page.uncheck('#shotIn');
@@ -1083,17 +1083,12 @@ async function procesoSuite(browser, target) {
   await page.keyboard.press('Control+End');
   await H.tap('#shot');
   await page.waitForFunction(() => { const i = document.getElementById('shotImg'); return i.complete && i.naturalWidth > 0; });
-  ok(await page.isChecked('#shotProc') && await page.isVisible('#shotProcRow'), 'captura: opción para incluir la línea de proceso, marcada por defecto');
-  const h1 = await page.evaluate(() => +document.getElementById('shotImg').dataset.h);
-  await page.uncheck('#shotProc');
-  await page.waitForFunction((h) => +document.getElementById('shotImg').dataset.h !== h, h1);
-  const h2 = await page.evaluate(() => +document.getElementById('shotImg').dataset.h);
-  ok(h1 > h2, 'captura: con la línea la imagen es más alta que sin ella (' + h1 + ' > ' + h2 + ')');
+  ok(!(await page.$('#shotProc')) && !(await page.$('#shotProcRow')), 'captura: ya no hay opción de línea de proceso');
   await page.screenshot({ path: path.join(STEP, 'd-proceso-captura-' + target.label.replace(/\W+/g, '') + '.png') });
   await page.keyboard.press('Escape');
   // transparencia: el texto de Ajustes, sin la palabra IA en ningún lado
   await H.menu(); await H.tap('#settings'); await page.waitForSelector('#dSet[open]');
-  ok(/tipeaste/.test(await page.textContent('#dSet')) && /este dispositivo/.test(await page.textContent('#dSet')), 'Ajustes explica qué se mide y que queda en el dispositivo');
+  ok(!/tipeaste|Cómo se escribió/.test(await page.textContent('#dSet')), 'Ajustes ya no muestra nada del tipeado');
   await page.keyboard.press('Escape');
   const visible = await page.evaluate(() => Array.from(document.body.children).filter((e) => e.tagName !== 'SCRIPT').map((e) => e.textContent).join(' '));
   ok(!/\bIA\b|inteligencia artificial/i.test(visible), 'la palabra «IA» no aparece en la interfaz');
