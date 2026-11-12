@@ -364,6 +364,9 @@ dialog.wide { width: min(760px, calc(100vw - 32px)); }
 .exrow b { font: 600 16px var(--ui); }
 .exrow span { font: 13px/1.35 var(--ui); color: var(--muted); }
 .nbdet { white-space: pre-line; }
+.nbaqui { margin: 6px 0; padding: 6px 10px; border-radius: 8px; background: var(--fill); }
+.nbocas { margin: 8px 0; }
+.nbocas p { margin: 2px 0 4px; }
 .fld { display: block; margin: 12px 0 6px; }
 #cNota2 { width: 100%; resize: vertical; min-height: 76px; max-height: 30vh; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel); color: var(--text); font: 15px/1.4 var(--ui); }
 @media (prefers-reduced-motion: reduce) { .shotbox img { transition: none; } }

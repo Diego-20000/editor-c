@@ -1,0 +1,1168 @@
+[
+  {
+    "elemento": ";",
+    "tipo": "símbolo",
+    "que_es": "El punto y coma marca el final de una declaración o de una instrucción; en la cabecera de for separa sus tres partes.",
+    "como_se_usa": "int A=3;\nA=A+1;\nprintf(\"%d\\n\",A);",
+    "error_tipico": "Olvidarlo al terminar una declaración o instrucción produce un error de sintaxis; colocarlo inmediatamente después de if, while o for crea un cuerpo vacío y puede cambiar por completo lo que se ejecuta.",
+    "en_la_materia": "Sintaxis, declaraciones y estructuras de control",
+    "errores_ids": [
+      "CTL-001",
+      "CTL-016",
+      "CTL-022",
+      "CTL-023",
+      "FUN-032",
+      "FUN-033",
+      "PRE-018",
+      "PRF-022",
+      "SIN-001",
+      "SIN-002",
+      "SIN-003",
+      "SIN-004",
+      "SIN-005",
+      "SIN-025",
+      "SIN-033"
+    ],
+    "buscar": [
+      ";",
+      "punto y coma",
+      "fin de instrucción",
+      "terminar una sentencia",
+      "falta el punto y coma",
+      "punto y coma de más",
+      "for",
+      "if vacío",
+      "while vacío"
+    ],
+    "amplia": true,
+    "ocasiones": [
+      {
+        "cuando": "Al final de una declaración de variable.",
+        "que_es": "Cierra la declaración después del nombre y, si existe, del inicializador.",
+        "ejemplo": "int A=5;",
+        "error_tipico": "Si falta el signo, el compilador puede señalar la declaración siguiente aunque el problema esté en esta línea."
+      },
+      {
+        "cuando": "Al final de una instrucción ejecutable, como una asignación, una llamada o return.",
+        "que_es": "Marca dónde termina esa instrucción antes de que comience la siguiente.",
+        "ejemplo": "A=A+1;\nprintf(\"%d\\n\",A);",
+        "error_tipico": "Olvidarlo entre dos instrucciones hace que el compilador intente interpretarlas como una sola."
+      },
+      {
+        "cuando": "En la cabecera de un for, entre inicialización, condición y actualización.",
+        "que_es": "Los dos puntos y coma separan las tres partes del encabezado; no son instrucciones independientes.",
+        "ejemplo": "for (I=0; I<3; I++) {\n    A=A+1;\n}",
+        "error_tipico": "Poner una coma en lugar de uno de los dos puntos y coma o dejar uno fuera desordena la cabecera."
+      },
+      {
+        "cuando": "Después de la llave que cierra una declaración con inicializador de arreglo.",
+        "que_es": "La llave cierra la lista de valores y el punto y coma termina la declaración completa.",
+        "ejemplo": "int V[3]={1,2,3};",
+        "error_tipico": "Cerrar la llave y olvidar el punto y coma deja incompleta la declaración del arreglo."
+      },
+      {
+        "cuando": "Inmediatamente después de la condición de un if.",
+        "que_es": "En esa posición el punto y coma es una instrucción vacía: el if no controla la instrucción que viene después.",
+        "ejemplo": "if (A>0);\n    A=A+1;",
+        "error_tipico": "El incremento se ejecuta siempre, aunque la condición sea falsa, porque el cuerpo del if quedó vacío."
+      },
+      {
+        "cuando": "Inmediatamente después de la condición de un while.",
+        "que_es": "El punto y coma forma un cuerpo vacío para el ciclo; la instrucción siguiente queda fuera del while.",
+        "ejemplo": "while (A<0);\nprintf(\"Fin\\n\");",
+        "error_tipico": "Si la condición nunca cambia y es verdadera, el ciclo vacío puede repetirse sin terminar."
+      },
+      {
+        "cuando": "Inmediatamente después de la cabecera de un for.",
+        "que_es": "El punto y coma es el cuerpo vacío del for; las instrucciones siguientes no forman parte del ciclo.",
+        "ejemplo": "for (I=0; I<3; I++);\nA=A+1;",
+        "error_tipico": "El ciclo realiza sus iteraciones sin ejecutar la instrucción que se pensaba repetir."
+      },
+      {
+        "cuando": "Al cerrar el bloque de una función o de una estructura de control.",
+        "que_es": "La llave final ya termina el bloque; después de ella no se escribe un punto y coma para cerrar una función, un if o un ciclo.",
+        "ejemplo": "if (A>0) {\n    A=A+1;\n}",
+        "error_tipico": "Poner un punto y coma después de la llave no termina el if: agrega una instrucción vacía y puede impedir que un else se asocie correctamente."
+      }
+    ],
+    "detalle": "Una declaración y una instrucción común terminan con punto y coma.\nLa llave de cierre no reemplaza ese signo cuando se declara un arreglo inicializado.\nEn cambio, los bloques de funciones, if, while, for y switch terminan con su llave, sin punto y coma añadido.\nLa cabecera de for es especial: tiene dos puntos y coma dentro de los paréntesis.\nUn punto y coma aislado también es una instrucción válida, pero no hace nada.\nPor eso, escribirlo justo después de if, while o for puede dejar el cuerpo vacío.\nCuando aparece un error de sintaxis, revisa también la instrucción anterior: el compilador puede señalar la línea siguiente.",
+    "relacionados": [
+      ",",
+      "()",
+      "{}",
+      "[]",
+      "instrucción",
+      "bloque"
+    ],
+    "verificado_gcc13": false
+  },
+  {
+    "elemento": ",",
+    "tipo": "símbolo",
+    "que_es": "La coma separa elementos de una misma lista y también puede ser el operador coma, que evalúa varias expresiones de izquierda a derecha y entrega el valor de la última.",
+    "como_se_usa": "int A=1,B=2;\nprintf(\"%d %d\\n\",A,B);",
+    "error_tipico": "Usarla como separador decimal (3,5) o creer que siempre separa instrucciones; en C el decimal lleva punto y la coma no reemplaza al punto y coma.",
+    "en_la_materia": "Sintaxis, funciones, arreglos y operadores",
+    "errores_ids": [
+      "CTL-019",
+      "DEC-015",
+      "OPE-025",
+      "OPE-026",
+      "SCN-022",
+      "SIN-031",
+      "SIN-041",
+      "SIN-055"
+    ],
+    "buscar": [
+      ",",
+      "coma",
+      "separador",
+      "separar variables",
+      "separar argumentos",
+      "parámetros",
+      "operador coma",
+      "coma en for",
+      "decimal con coma"
+    ],
+    "amplia": true,
+    "ocasiones": [
+      {
+        "cuando": "Entre declaradores de una misma declaración.",
+        "que_es": "Permite declarar varias variables del mismo tipo en una sola instrucción.",
+        "ejemplo": "int A=1, B=2;",
+        "error_tipico": "Creer que la coma termina la declaración: el punto y coma se escribe al final de toda la lista."
+      },
+      {
+        "cuando": "Entre los argumentos de una llamada a función.",
+        "que_es": "Separa cada valor que se envía a la función, en el mismo orden en que se esperan sus parámetros.",
+        "ejemplo": "printf(\"%d %d\\n\", A, B);",
+        "error_tipico": "Olvidar una coma puede unir argumentos de forma incorrecta o producir un error de sintaxis."
+      },
+      {
+        "cuando": "Entre los parámetros de una definición o un prototipo de función.",
+        "que_es": "Separa las declaraciones de los datos que la función recibirá.",
+        "ejemplo": "int SUMAR(int A, int B);",
+        "error_tipico": "Separar parámetros con punto y coma: dentro de los paréntesis de una función se usa coma."
+      },
+      {
+        "cuando": "Entre los valores de una lista de inicialización de un arreglo.",
+        "que_es": "Separa cada valor que se asigna a una posición del arreglo.",
+        "ejemplo": "int V[3]={4,5,6};",
+        "error_tipico": "Omitir una coma entre dos valores hace que la lista no tenga la separación esperada."
+      },
+      {
+        "cuando": "En la inicialización y la actualización de un for cuando se escriben varias expresiones.",
+        "que_es": "El operador coma permite ejecutar más de una expresión en la primera o en la tercera parte del for.",
+        "ejemplo": "for (I=0, J=0; I<3; I++, J++) {\n    A=A+1;\n}",
+        "error_tipico": "Confundir las comas internas con los dos puntos y coma que separan las tres partes del for."
+      },
+      {
+        "cuando": "Como operador coma dentro de una expresión entre paréntesis.",
+        "que_es": "Evalúa primero la expresión de la izquierda, después la de la derecha y produce el valor de la última.",
+        "ejemplo": "A=(B=1, B+2);",
+        "error_tipico": "Pensar que la coma suma o separa dos instrucciones: aquí es un operador y la expresión completa produce el valor de la derecha."
+      }
+    ],
+    "detalle": "La coma separa elementos de una lista; por sí sola no termina una declaración.\nAparece en declaraciones múltiples, argumentos, parámetros y listas de inicialización.\nEn una llamada, cada argumento corresponde a un parámetro según su posición.\nDentro de for también puede separar expresiones en la inicialización o la actualización.\nEn ese contexto actúa como operador coma y evalúa de izquierda a derecha.\nEl valor de toda la expresión con coma es el de su última expresión.\nNo escribas 3,5 para representar tres y medio: en C se escribe 3.5.",
+    "relacionados": [
+      ";",
+      "()",
+      "{}",
+      "[]",
+      "?:",
+      "operador"
+    ],
+    "verificado_gcc13": false
+  },
+  {
+    "elemento": "()",
+    "tipo": "símbolo",
+    "que_es": "Los paréntesis delimitan condiciones, argumentos y parámetros, agrupan expresiones y permiten indicar una conversión explícita de tipo.",
+    "como_se_usa": "R=(A+B)*2;\nprintf(\"%d\\n\",R);",
+    "error_tipico": "Dejar un paréntesis sin pareja, cerrar antes de tiempo o colocarlo en una posición incorrecta; el diagnóstico puede aparecer en la línea siguiente.",
+    "en_la_materia": "Sintaxis, operadores, control de flujo y funciones",
+    "errores_ids": [
+      "CTL-041",
+      "FUN-037",
+      "SIN-006",
+      "SIN-007",
+      "SIN-027",
+      "SIN-028",
+      "SIN-047"
+    ],
+    "buscar": [
+      "()",
+      "paréntesis",
+      "parentesis",
+      "abrir paréntesis",
+      "cerrar paréntesis",
+      "condición",
+      "argumentos",
+      "parámetros",
+      "cast",
+      "agrupar una cuenta",
+      "prototipo"
+    ],
+    "amplia": true,
+    "ocasiones": [
+      {
+        "cuando": "Al llamar a una función, después de su nombre.",
+        "que_es": "Encierran los argumentos enviados a la función; si no recibe argumentos, se escriben vacíos.",
+        "ejemplo": "printf(\"%d\\n\", A);",
+        "error_tipico": "Olvidar el paréntesis de cierre o dejar un argumento fuera de los paréntesis."
+      },
+      {
+        "cuando": "En la condición de un if.",
+        "que_es": "Delimitan la expresión que decide si se ejecuta el bloque del if.",
+        "ejemplo": "if (A>0) {\n    A=A+1;\n}",
+        "error_tipico": "No cerrar la condición antes de abrir el bloque o escribir un punto y coma dentro de los paréntesis."
+      },
+      {
+        "cuando": "En la condición de un while.",
+        "que_es": "Encierran la expresión que se vuelve a evaluar antes de cada repetición.",
+        "ejemplo": "while (A<3) {\n    A++;\n}",
+        "error_tipico": "Dejar la condición sin cerrar hace que el compilador no pueda reconocer dónde empieza el cuerpo."
+      },
+      {
+        "cuando": "En la cabecera de un for.",
+        "que_es": "Encierran inicialización, condición y actualización, separadas por dos puntos y coma.",
+        "ejemplo": "for (I=0; I<3; I++) {\n    A=A+1;\n}",
+        "error_tipico": "Desbalancear los paréntesis o colocar uno antes de terminar las tres partes del encabezado."
+      },
+      {
+        "cuando": "Para agrupar una expresión y cambiar el orden de evaluación.",
+        "que_es": "Hacen que la expresión entre ellos se resuelva como una unidad antes de continuar con otros operadores.",
+        "ejemplo": "R=(A+B)*2;",
+        "error_tipico": "Dejar los paréntesis fuera de la cuenta que se quería agrupar cambia el resultado por la precedencia normal de los operadores."
+      },
+      {
+        "cuando": "En una conversión explícita de tipo (cast).",
+        "que_es": "El tipo escrito entre paréntesis indica cómo convertir el valor que aparece a continuación.",
+        "ejemplo": "int N=2; PROM=(float)SUMA/N;",
+        "error_tipico": "Poner el tipo sin paréntesis o convertir después de una división entera que ya perdió los decimales."
+      },
+      {
+        "cuando": "En la lista de parámetros de una definición de función.",
+        "que_es": "Encierran los parámetros que la función recibe, cada uno con su tipo y nombre.",
+        "ejemplo": "int SUMAR(int A, int B) {\n    return A+B;\n}",
+        "error_tipico": "Olvidar el paréntesis de cierre antes de abrir la llave del cuerpo de la función."
+      },
+      {
+        "cuando": "En un prototipo que anuncia una función antes de su definición.",
+        "que_es": "Delimitan los parámetros declarados en la firma de la función; el prototipo termina además con punto y coma.",
+        "ejemplo": "int SUMAR(int A, int B);",
+        "error_tipico": "Confundir el prototipo con una definición y olvidar el punto y coma final, o dejar sin cerrar los paréntesis."
+      }
+    ],
+    "detalle": "Cada paréntesis de apertura debe tener un paréntesis de cierre correspondiente.\nEn las llamadas, los paréntesis contienen los argumentos; en las definiciones y prototipos contienen los parámetros.\nLas condiciones de if, while y for también se escriben entre paréntesis.\nCuando se agrupa una cuenta, se puede cambiar el orden normal de las operaciones.\nUn cast como (float) convierte explícitamente un valor antes de continuar la expresión.\nLos paréntesis pueden anidarse, por ejemplo en una llamada que recibe otra llamada.\nSi el error aparece después de una línea, revisa también los paréntesis abiertos antes de ella.",
+    "relacionados": [
+      ";",
+      ",",
+      "{}",
+      "[]",
+      "?:",
+      "precedencia",
+      "conversión de tipos",
+      "prototipo"
+    ],
+    "verificado_gcc13": false
+  },
+  {
+    "elemento": "{}",
+    "tipo": "símbolo",
+    "que_es": "Las llaves delimitan un bloque de instrucciones o una lista de inicialización de un arreglo.",
+    "como_se_usa": "if(A>0){\n    A=A+1;\n}",
+    "error_tipico": "Abrir una llave y no cerrarla, cerrar antes de tiempo o agregar una llave de más puede cambiar qué instrucciones pertenecen a cada bloque.",
+    "en_la_materia": "Sintaxis, estructuras de control, funciones y arreglos",
+    "errores_ids": [
+      "CTL-002",
+      "LOG-032",
+      "LOG-034",
+      "SIN-008",
+      "SIN-009",
+      "SIN-035"
+    ],
+    "buscar": [
+      "{}",
+      "llaves",
+      "abrir llave",
+      "cerrar llave",
+      "bloque",
+      "cuerpo de función",
+      "arreglo inicializado",
+      "matriz"
+    ],
+    "amplia": true,
+    "ocasiones": [
+      {
+        "cuando": "Para delimitar el cuerpo de una función.",
+        "que_es": "La llave de apertura inicia el cuerpo y la llave de cierre marca dónde termina la definición.",
+        "ejemplo": "int DOBLE(int A) {\n    return A*2;\n}",
+        "error_tipico": "Olvidar la llave final hace que el compilador interprete el resto del archivo como parte de la función."
+      },
+      {
+        "cuando": "Para agrupar las instrucciones de un if o un else.",
+        "que_es": "Hacen que varias instrucciones pertenezcan al mismo camino de la decisión.",
+        "ejemplo": "if (A>0) { A++; B++; }",
+        "error_tipico": "Cerrar el bloque antes de tiempo deja una instrucción fuera del if aunque visualmente parezca dentro."
+      },
+      {
+        "cuando": "Para agrupar el cuerpo de un while o un for.",
+        "que_es": "Delimitan todas las instrucciones que se repetirán en cada vuelta del ciclo.",
+        "ejemplo": "while (A<3) { A++; B=B+A; }",
+        "error_tipico": "Dejar una instrucción después de la llave de cierre hace que se ejecute una sola vez, fuera del ciclo."
+      },
+      {
+        "cuando": "Para delimitar el cuerpo de un switch.",
+        "que_es": "Encierran las etiquetas case/default y las instrucciones asociadas a ellas.",
+        "ejemplo": "switch (A) { case 1: B=2; break; default: B=0; }",
+        "error_tipico": "No cerrar el bloque del switch puede hacer que las llaves posteriores queden desbalanceadas."
+      },
+      {
+        "cuando": "Para inicializar un arreglo de una dimensión.",
+        "que_es": "Encierran la lista de valores iniciales; cada valor se separa con coma.",
+        "ejemplo": "int V[3]={4,5,6};",
+        "error_tipico": "Dejar una llave sin cerrar o poner el punto y coma antes de la llave final deja incompleta la declaración."
+      },
+      {
+        "cuando": "Para inicializar una matriz con listas anidadas.",
+        "que_es": "Una pareja de llaves puede agrupar los valores de cada fila dentro de la lista exterior.",
+        "ejemplo": "int M[2][2]={{1,2},{3,4}};",
+        "error_tipico": "Omitir o desordenar una llave puede asignar los valores a filas distintas de las esperadas o producir un error de sintaxis."
+      },
+      {
+        "cuando": "Para crear un bloque local dentro de otra función o estructura.",
+        "que_es": "Un bloque independiente agrupa instrucciones y limita el alcance de las variables locales declaradas dentro de él.",
+        "ejemplo": "{ int TEMP=5; A=TEMP; }",
+        "error_tipico": "Intentar usar TEMP fuera de las llaves donde fue declarada produce un identificador no declarado."
+      }
+    ],
+    "detalle": "Las llaves siempre se consideran en pareja: una abre y otra cierra el mismo bloque o lista.\nEn una función, delimitan todo el cuerpo entre la cabecera y la llave final.\nEn if, else, while, for y switch permiten agrupar varias instrucciones.\nUn bloque puede contener otros bloques, por eso conviene alinear la sangría.\nEn un arreglo, las llaves no forman un bloque: encierran los valores iniciales.\nEn matrices se pueden anidar para mostrar qué valores pertenecen a cada fila.\nDespués de cerrar un bloque de función o control no se agrega punto y coma; una declaración de arreglo inicializado sí termina con él.",
+    "relacionados": [
+      ";",
+      ",",
+      "()",
+      "[]",
+      "bloque",
+      "switch",
+      "arreglo"
+    ],
+    "verificado_gcc13": false
+  },
+  {
+    "elemento": "[]",
+    "tipo": "símbolo",
+    "que_es": "Los corchetes declaran el tamaño de un arreglo y permiten acceder a sus posiciones; también aparecen al declarar parámetros que reciben arreglos.",
+    "como_se_usa": "int V[3];\nV[0]=10;",
+    "error_tipico": "Usar un índice negativo o igual al tamaño del arreglo; declarar un arreglo de tres elementos no crea la posición V[3].",
+    "en_la_materia": "Arreglos y matrices",
+    "errores_ids": [
+      "ARR-001",
+      "ARR-004",
+      "ARR-005",
+      "ARR-008",
+      "ARR-010",
+      "ARR-017",
+      "SIN-010"
+    ],
+    "buscar": [
+      "[]",
+      "corchetes",
+      "índice",
+      "indice",
+      "posición",
+      "posicion",
+      "arreglo",
+      "vector",
+      "matriz",
+      "subíndice",
+      "arreglo como parámetro"
+    ],
+    "amplia": true,
+    "ocasiones": [
+      {
+        "cuando": "Al declarar un arreglo de una dimensión.",
+        "que_es": "El número entre corchetes indica cuántos elementos puede almacenar el arreglo.",
+        "ejemplo": "int V[5];",
+        "error_tipico": "Confundir la cantidad de elementos con el último índice: si el tamaño es 5, los índices válidos van de 0 a 4."
+      },
+      {
+        "cuando": "Al acceder o modificar una posición de un arreglo.",
+        "que_es": "El valor dentro de los corchetes es el índice que selecciona un elemento.",
+        "ejemplo": "int V[3]={0};\nV[0]=10;\nprintf(\"%d\\n\",V[0]);",
+        "error_tipico": "Usar un índice fuera del rango válido produce comportamiento indefinido en C."
+      },
+      {
+        "cuando": "Al declarar una matriz de dos dimensiones.",
+        "que_es": "Dos pares de corchetes indican la cantidad de filas y columnas de la matriz.",
+        "ejemplo": "int M[2][3];",
+        "error_tipico": "Invertir filas y columnas o declarar un tamaño distinto del que después se recorre."
+      },
+      {
+        "cuando": "Al seleccionar una celda de una matriz.",
+        "que_es": "El primer índice elige la fila y el segundo índice elige la columna.",
+        "ejemplo": "int M[2][3]={{0}};\nM[1][2]=7;\nprintf(\"%d\\n\",M[1][2]);",
+        "error_tipico": "Olvidar uno de los dos pares de corchetes o usar una fila o columna fuera de rango."
+      },
+      {
+        "cuando": "Al declarar un parámetro que recibe un arreglo de una dimensión.",
+        "que_es": "En un parámetro de función se puede escribir el nombre del arreglo seguido de corchetes vacíos.",
+        "ejemplo": "int SUMAR(int V[], int N);",
+        "error_tipico": "Olvidar los corchetes y declarar un parámetro escalar cuando la función necesita recibir el arreglo."
+      },
+      {
+        "cuando": "Al declarar un parámetro que recibe una matriz.",
+        "que_es": "Se puede omitir el tamaño de la primera dimensión, pero las dimensiones posteriores deben estar indicadas.",
+        "ejemplo": "int SUMAR(int M[][3], int FILAS);",
+        "error_tipico": "Omitir también el tamaño de las columnas impide que la función sepa cómo avanzar entre filas."
+      },
+      {
+        "cuando": "Al declarar o recorrer un texto almacenado como arreglo de char.",
+        "que_es": "Cada posición del arreglo contiene un carácter y la última posición de una cadena debe poder guardar el terminador '\\0'.",
+        "ejemplo": "char TEXTO[6]=\"Hola\";\nTEXTO[0]='h';",
+        "error_tipico": "Reservar menos posiciones que las necesarias para los caracteres y el terminador del texto."
+      }
+    ],
+    "detalle": "En C, los índices de los arreglos comienzan en cero, no en uno.\nEl tamaño indica cuántos elementos existen; no es un índice válido.\nEn una matriz, el primer índice representa la fila y el segundo la columna.\nLos corchetes también se usan en los parámetros de funciones que reciben arreglos.\nPara una matriz como parámetro, se debe indicar el tamaño de las columnas.\nUn texto char[] es un arreglo de caracteres y necesita espacio para el terminador '\\0'.\nC no comprueba automáticamente que un índice esté dentro del arreglo: revisa siempre sus límites.",
+    "relacionados": [
+      "{}",
+      ";",
+      ",",
+      "()",
+      "índice",
+      "texto",
+      "terminador"
+    ],
+    "verificado_gcc13": false
+  },
+  {
+    "elemento": "\" \"",
+    "tipo": "símbolo",
+    "que_es": "Las comillas dobles delimitan un literal de texto, es decir, una secuencia de caracteres que termina con un carácter nulo agregado por el compilador.",
+    "como_se_usa": "printf(\"Hola\\n\");\nchar TEXTO[]=\"Hola\";",
+    "error_tipico": "Dejar una comilla sin cerrar o escribir comillas dobles dentro del texto sin escaparlas; el compilador puede interpretar el resto de la línea como parte de la cadena.",
+    "en_la_materia": "Texto, printf y scanf",
+    "errores_ids": [
+      "PRF-019",
+      "PRF-020",
+      "PRF-034",
+      "SIN-011",
+      "SIN-042",
+      "SIN-052",
+      "SIN-061"
+    ],
+    "buscar": [
+      "\" \"",
+      "comillas dobles",
+      "comilla doble",
+      "cadena",
+      "texto",
+      "string",
+      "printf",
+      "scanf",
+      "comilla sin cerrar",
+      "texto con espacios"
+    ],
+    "amplia": true,
+    "ocasiones": [
+      {
+        "cuando": "Al escribir el texto que printf debe mostrar.",
+        "que_es": "Las comillas encierran el mensaje y los especificadores de formato que printf interpretará.",
+        "ejemplo": "printf(\"Hola mundo\\n\");",
+        "error_tipico": "Olvidar la comilla de cierre hace que el compilador no encuentre el final del literal."
+      },
+      {
+        "cuando": "Al escribir el formato de una llamada a scanf.",
+        "que_es": "El texto entre comillas indica qué tipo de dato se leerá y qué separadores se esperan en la entrada.",
+        "ejemplo": "scanf(\"%d\", &A);",
+        "error_tipico": "Poner el especificador fuera de las comillas o dejar el literal sin cerrar produce un formato inválido o un error de sintaxis."
+      },
+      {
+        "cuando": "Al inicializar un arreglo de caracteres con una cadena.",
+        "que_es": "El literal aporta sus caracteres y el compilador reserva además un lugar para el terminador '\\0'.",
+        "ejemplo": "char TEXTO[]=\"Hola\";",
+        "error_tipico": "Reservar un arreglo demasiado pequeño al copiar después la cadena en él puede dejar fuera el terminador."
+      },
+      {
+        "cuando": "Al incluir espacios dentro de un texto.",
+        "que_es": "Los espacios que están entre las comillas forman parte del contenido y se conservan al mostrar la cadena.",
+        "ejemplo": "printf(\"Hola   mundo\\n\");",
+        "error_tipico": "Creer que varios espacios dentro de las comillas se eliminan como la sangría del código; no se eliminan."
+      },
+      {
+        "cuando": "Al mostrar comillas dobles como parte del propio texto.",
+        "que_es": "La barra invertida permite incluir una comilla doble sin cerrar el literal.",
+        "ejemplo": "printf(\"Dijo \\\"Hola\\\"\\n\");",
+        "error_tipico": "Escribir una comilla doble sin la barra invertida cierra la cadena antes de tiempo."
+      },
+      {
+        "cuando": "Al unir dos literales de texto escritos uno junto al otro.",
+        "que_es": "El compilador concatena los literales de cadena adyacentes en un único texto.",
+        "ejemplo": "printf(\"Hola \" \"mundo\\n\");",
+        "error_tipico": "Dejar un operador + entre dos literales como si fueran cadenas de otro lenguaje: en C se pueden escribir adyacentes."
+      }
+    ],
+    "detalle": "Un literal de cadena comienza y termina con comillas dobles.\nPuede contener letras, números, espacios, signos y secuencias de escape.\nLos espacios dentro de las comillas son datos y no se eliminan al imprimir.\nUna cadena no puede contener un salto físico de línea sin una continuación válida; para mostrar una nueva línea se usa \\n.\nPara incluir una comilla doble dentro del texto, se escribe precedida por la barra invertida.\nLas cadenas terminan con un carácter '\\0' que el compilador agrega al literal.\nSi abres una comilla y no la cierras, el error puede parecer estar varias líneas después.",
+    "relacionados": [
+      "' '",
+      "\\",
+      "\\n",
+      "\\\"",
+      "texto",
+      "terminador",
+      "%d",
+      "%f",
+      "%c"
+    ],
+    "verificado_gcc13": false
+  },
+  {
+    "elemento": "' '",
+    "tipo": "símbolo",
+    "que_es": "Las comillas simples delimitan una constante de carácter, que representa un carácter individual como una letra, un dígito o una secuencia de escape.",
+    "como_se_usa": "char LETRA='A';\nprintf(\"%c\\n\",LETRA);",
+    "error_tipico": "Usar comillas dobles cuando se necesita una constante de carácter, o escribir una palabra entre comillas simples y esperar que sea una cadena; varios caracteres forman una constante multicaracter de valor no portable.",
+    "en_la_materia": "Tipos char y caracteres",
+    "errores_ids": [
+      "ARR-046",
+      "ARR-047",
+      "PRF-020",
+      "PRF-044",
+      "SIN-012",
+      "SIN-013",
+      "SIN-050",
+      "SIN-053"
+    ],
+    "buscar": [
+      "' '",
+      "comillas simples",
+      "comilla simple",
+      "apóstrofe",
+      "apostrofe",
+      "carácter",
+      "caracter",
+      "char",
+      "constante de carácter"
+    ],
+    "amplia": true,
+    "ocasiones": [
+      {
+        "cuando": "Al asignar una letra o símbolo a una variable char.",
+        "que_es": "Las comillas simples indican que se trata de una constante de carácter y no de una cadena.",
+        "ejemplo": "char LETRA='A';",
+        "error_tipico": "Escribir \"A\" en lugar de 'A': las comillas dobles producen una cadena, no una constante de carácter."
+      },
+      {
+        "cuando": "Al comparar una variable char con un carácter.",
+        "que_es": "La comparación usa la constante de carácter entre comillas simples.",
+        "ejemplo": "if (LETRA=='A') {\n    A=1;\n}",
+        "error_tipico": "Comparar con \"A\" en vez de 'A' mezcla una cadena con un valor de carácter."
+      },
+      {
+        "cuando": "En una etiqueta case que compara un valor de tipo carácter.",
+        "que_es": "El valor constante de case puede ser un carácter escrito entre comillas simples.",
+        "ejemplo": "switch (LETRA) {\n    case 'S': A=1; break;\n}",
+        "error_tipico": "Escribir el carácter entre comillas dobles no representa una constante de carácter válida para case."
+      },
+      {
+        "cuando": "Al representar un carácter especial mediante una secuencia de escape.",
+        "que_es": "La secuencia de escape queda dentro de las comillas simples y representa un solo carácter, como el salto de línea.",
+        "ejemplo": "char FIN_LINEA='\\n';",
+        "error_tipico": "Escribir una barra invertida sin una secuencia válida o no cerrar las comillas deja una constante mal formada."
+      },
+      {
+        "cuando": "Al representar una comilla simple como el propio carácter.",
+        "que_es": "La comilla se escapa para que no se confunda con el delimitador que cierra la constante.",
+        "ejemplo": "char COMILLA='\\'';",
+        "error_tipico": "Escribir tres comillas simples seguidas hace que el compilador no pueda reconocer correctamente el carácter."
+      },
+      {
+        "cuando": "Al escribir un dígito como carácter y no como número.",
+        "que_es": "'5' representa el código del carácter cinco, mientras que 5 representa el valor numérico cinco.",
+        "ejemplo": "int CODIGO='5';",
+        "error_tipico": "Confundir el carácter '5' con el número 5 produce comparaciones o cuentas distintas de las esperadas."
+      }
+    ],
+    "detalle": "Las comillas simples se usan para constantes de carácter; las dobles se usan para cadenas.\nUna constante como 'A' representa el código del carácter, no una palabra.\nLa constante '5' es distinta del número 5 aunque se vean parecidos.\nTambién se pueden escribir caracteres especiales mediante escapes, por ejemplo '\\n'.\nSi el propio carácter es una comilla simple, se escribe escapada como '\\''.\nUna constante de carácter común representa un solo carácter; 'AB' es una constante multicaracter de valor dependiente de la implementación, no un texto.\nPara guardar una frase completa se usa una cadena, normalmente en un arreglo char[].",
+    "relacionados": [
+      "\" \"",
+      "\\",
+      "\\n",
+      "char",
+      "ASCII",
+      "literal",
+      "switch"
+    ],
+    "verificado_gcc13": false
+  },
+  {
+    "elemento": "\\",
+    "tipo": "símbolo",
+    "que_es": "La barra invertida introduce secuencias de escape dentro de literales de texto y de carácter, y también puede continuar una línea del código fuente cuando está inmediatamente antes del salto de línea.",
+    "como_se_usa": "printf(\"Hola\\n\");\nchar BARRA='\\\\';",
+    "error_tipico": "Escribir la barra invertida como si fuera una barra común, olvidar la letra que completa el escape o confundir \\n con un salto físico de línea del código.",
+    "en_la_materia": "Caracteres, texto, printf y preprocesador",
+    "errores_ids": [],
+    "buscar": [
+      "\\",
+      "barra invertida",
+      "barra al revés",
+      "escape",
+      "secuencia de escape",
+      "backslash",
+      "\\n",
+      "\\t",
+      "\\\\",
+      "continuación de línea"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "Dentro de una cadena para representar un salto de línea.",
+        "que_es": "La secuencia \\n representa un salto de línea en el texto que se imprime.",
+        "ejemplo": "printf(\"Hola\\nMundo\\n\");",
+        "error_tipico": "Escribir una n sin la barra muestra la letra n; pulsar Enter dentro de las comillas deja el literal mal formado."
+      },
+      {
+        "cuando": "Dentro de una cadena para representar un tabulador.",
+        "que_es": "La secuencia \\t inserta un carácter de tabulación en el texto.",
+        "ejemplo": "printf(\"A\\tB\\n\");",
+        "error_tipico": "Escribir una t sin la barra muestra una letra t en lugar de un tabulador."
+      },
+      {
+        "cuando": "Dentro de una cadena para incluir una comilla doble.",
+        "que_es": "La barra evita que la comilla se interprete como el final del literal.",
+        "ejemplo": "printf(\"Dijo \\\"Hola\\\"\\n\");",
+        "error_tipico": "Omitir la barra hace que la comilla cierre la cadena antes de tiempo."
+      },
+      {
+        "cuando": "Dentro de una cadena para mostrar una barra invertida.",
+        "que_es": "Dos barras invertidas escritas en el código representan una sola barra en el texto resultante.",
+        "ejemplo": "printf(\"C: trabajos\\\\final\\n\");",
+        "error_tipico": "Una sola barra puede iniciar una secuencia de escape distinta de la que se quería mostrar."
+      },
+      {
+        "cuando": "Dentro de una constante char para representar una barra invertida.",
+        "que_es": "La constante de carácter '\\\\' representa una única barra invertida.",
+        "ejemplo": "char BARRA='\\\\';",
+        "error_tipico": "Una barra sin escapar puede dejar sin cerrar la constante de carácter."
+      },
+      {
+        "cuando": "Dentro de una constante char para representar un carácter especial.",
+        "que_es": "La barra introduce escapes como '\\n' para salto de línea o '\\0' para el carácter nulo.",
+        "ejemplo": "char FIN='\\0';",
+        "error_tipico": "Confundir '\\0' con '0': el primero es el carácter nulo y el segundo es el dígito cero."
+      },
+      {
+        "cuando": "Al continuar una directiva de preprocesador en la línea física siguiente.",
+        "que_es": "Una barra invertida inmediatamente seguida del salto de línea une las dos líneas fuente antes de procesar la directiva.",
+        "ejemplo": "#define DOBLE(A) \\\n    ((A)*2)",
+        "error_tipico": "Dejar espacios u otros caracteres después de la barra puede impedir la continuación y separar la directiva."
+      }
+    ],
+    "detalle": "La barra invertida no suele imprimirse por sí misma: inicia una secuencia especial.\nEn cadenas y constantes char introduce escapes como \\n, \\t, \\0, comilla doble escapada y doble barra.\nEl escape se interpreta dentro del literal; fuera de él, la barra no cumple esa función.\nPara obtener una barra visible en una cadena se escriben dos barras en el código.\nPara representar una barra como char se usa la constante '\\\\'.\nUna barra inmediatamente antes del salto físico de línea puede unir líneas del código fuente.\nEn macros, esa continuación permite repartir una directiva larga en varias líneas sin terminarla.",
+    "relacionados": [
+      "\" \"",
+      "' '",
+      "\\n",
+      "\\t",
+      "\\\\",
+      "#",
+      "#define"
+    ],
+    "verificado_gcc13": false
+  },
+  {
+    "elemento": ":",
+    "tipo": "símbolo",
+    "que_es": "Los dos puntos introducen una etiqueta case o default dentro de switch y separan las dos alternativas del operador condicional ?:.",
+    "como_se_usa": "switch (A) { case 1: B=2; break; default: B=0; }",
+    "error_tipico": "Olvidar los dos puntos después de case/default o intercambiarlos con el punto y coma; también puede faltar en una expresión ?:.",
+    "en_la_materia": "Switch y operadores",
+    "errores_ids": [],
+    "buscar": [
+      ":",
+      "dos puntos",
+      "case",
+      "default",
+      "switch",
+      "ternario",
+      "operador condicional",
+      "?:"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "Después de una etiqueta case dentro de switch.",
+        "que_es": "Los dos puntos separan el valor constante que se compara del conjunto de instrucciones de ese caso.",
+        "ejemplo": "case 1: B=2; break;",
+        "error_tipico": "Usar punto y coma en lugar de dos puntos impide que la etiqueta case tenga la sintaxis correcta."
+      },
+      {
+        "cuando": "Después de la etiqueta default dentro de switch.",
+        "que_es": "Los dos puntos indican dónde comienzan las instrucciones que se ejecutan cuando ningún case coincide.",
+        "ejemplo": "default: B=0; break;",
+        "error_tipico": "Olvidar los dos puntos deja la etiqueta default incompleta."
+      },
+      {
+        "cuando": "Entre la alternativa verdadera y la alternativa falsa del operador ?:.",
+        "que_es": "Los dos puntos separan el valor elegido cuando la condición es verdadera del valor elegido cuando es falsa.",
+        "ejemplo": "MAYOR=(A>B) ? A : B;",
+        "error_tipico": "Omitir los dos puntos deja incompleta la expresión condicional."
+      }
+    ],
+    "detalle": "En switch, case y default son etiquetas y terminan con dos puntos.\nLas instrucciones de cada caso comienzan después de esos dos puntos.\nLos dos puntos no reemplazan al punto y coma que termina las instrucciones del caso.\nEn el operador ?:, separan la expresión que se usa si la condición es verdadera de la que se usa si es falsa.\nCada ? de una expresión condicional necesita su correspondiente :.\nNo confundas el signo con el punto y coma: tienen funciones distintas.\nSi aparece un error en switch, revisa especialmente los dos puntos de cada etiqueta.",
+    "relacionados": [
+      "?",
+      "?:",
+      "switch",
+      "case",
+      "default",
+      ";"
+    ],
+    "verificado_gcc13": false
+  },
+  {
+    "elemento": "?",
+    "tipo": "símbolo",
+    "que_es": "El signo de interrogación abre la expresión condicional ?:, que elige uno de dos valores según una condición.",
+    "como_se_usa": "MAYOR=(A>B) ? A : B;",
+    "error_tipico": "Usarlo sin la parte que sigue a los dos puntos o confundirlo con una condición de if; el operador ?: forma parte de una expresión.",
+    "en_la_materia": "Operadores y condiciones",
+    "errores_ids": [],
+    "buscar": [
+      "?",
+      "signo de interrogación",
+      "interrogacion",
+      "ternario",
+      "operador condicional",
+      "?:",
+      "if en una expresión"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "Después de una condición en el operador condicional ?:.",
+        "que_es": "Marca el comienzo de la expresión que se toma cuando la condición es verdadera.",
+        "ejemplo": "MAYOR=(A>B) ? A : B;",
+        "error_tipico": "Olvidar la alternativa verdadera o los dos puntos que separan la alternativa falsa."
+      },
+      {
+        "cuando": "En una expresión condicional anidada.",
+        "que_es": "Puede aparecer otro operador ?: dentro de una de las alternativas, aunque los paréntesis ayudan a leer qué condición corresponde a cada alternativa.",
+        "ejemplo": "R=(A>0) ? ((A>B)?A:B) : 0;",
+        "error_tipico": "Anidar varios operadores sin agruparlos hace difícil identificar qué alternativa pertenece a cada condición."
+      }
+    ],
+    "detalle": "El signo ? no funciona solo: forma parte del operador condicional ?: junto con los dos puntos.\nPrimero se evalúa la condición que aparece antes del signo.\nSi la condición es verdadera, se elige la expresión que está entre ? y :.\nSi es falsa, se elige la expresión que aparece después de :.\nEl resultado de toda la construcción es un valor y puede formar parte de una asignación o de otra expresión.\nNo es lo mismo que if: if controla instrucciones y ?: produce un valor dentro de una expresión.\nSi se anidan operadores condicionales, usa paréntesis para que la relación entre las partes sea clara.",
+    "relacionados": [
+      ":",
+      "?:",
+      "()",
+      "condición",
+      "precedencia",
+      "operador"
+    ],
+    "verificado_gcc13": false
+  },
+  {
+    "elemento": "?:",
+    "tipo": "operador",
+    "que_es": "El operador condicional ?: evalúa una condición y produce el valor de una de dos expresiones según sea verdadera o falsa.",
+    "como_se_usa": "MAYOR=(A>B)?A:B;\nprintf(\"%d\\n\",MAYOR);",
+    "error_tipico": "Dejar fuera una de las alternativas o el signo :; cuando hay varias condiciones, no agruparlas puede hacer difícil entender qué parte se evalúa.",
+    "en_la_materia": "Operadores y condiciones",
+    "errores_ids": [],
+    "buscar": [
+      "?:",
+      "operador ternario",
+      "operador condicional",
+      "interrogación",
+      "dos puntos",
+      "if en una expresión",
+      "elegir un valor"
+    ],
+    "amplia": true,
+    "ocasiones": [
+      {
+        "cuando": "Para elegir entre dos valores y guardar el resultado en una variable.",
+        "que_es": "Si la condición es verdadera se usa la expresión entre ? y :; si es falsa se usa la expresión posterior a :.",
+        "ejemplo": "MAYOR=(A>B)?A:B;",
+        "error_tipico": "Escribir solo una alternativa o intercambiar el orden de los valores cambia el resultado o deja la expresión incompleta."
+      },
+      {
+        "cuando": "Como parte de otra expresión o argumento de una función.",
+        "que_es": "El operador condicional produce un valor que puede imprimirse o combinarse con otras expresiones.",
+        "ejemplo": "printf(\"%d\\n\",(A>0)?A:0);",
+        "error_tipico": "Olvidar los paréntesis en una expresión larga puede dificultar la lectura y provocar que se asocie con otros operadores de forma inesperada."
+      },
+      {
+        "cuando": "Dentro de otra expresión condicional, cuando se anidan decisiones.",
+        "que_es": "Una de las alternativas puede contener otro operador ?: para hacer una segunda elección.",
+        "ejemplo": "R=(A>0)?((A>B)?A:B):0;",
+        "error_tipico": "No agrupar una expresión anidada vuelve difícil reconocer qué : corresponde a cada ?."
+      }
+    ],
+    "detalle": "El operador condicional necesita tres partes: una condición, una alternativa verdadera y una alternativa falsa.\nEl signo ? separa la condición de la alternativa verdadera.\nLos dos puntos : separan la alternativa verdadera de la alternativa falsa.\nLa condición se evalúa primero y solo se evalúa la alternativa elegida.\nA diferencia de if, el operador ?: produce un valor que puede asignarse o pasarse a una función.\nEs útil para elecciones cortas, pero no reemplaza un bloque if-else con varias instrucciones.\nCuando se anida, utiliza paréntesis para ver claramente qué partes pertenecen a cada operador.",
+    "relacionados": [
+      "?",
+      ":",
+      "()",
+      "condición",
+      "precedencia",
+      "operador"
+    ],
+    "verificado_gcc13": false
+  },
+  {
+    "elemento": ".",
+    "tipo": "símbolo",
+    "que_es": "El punto representa la separación decimal en los literales de punto flotante y también indica la precisión solicitada en formatos como %.2f.",
+    "como_se_usa": "float A=3.5f;\nprintf(\"%.2f\\n\",A);",
+    "error_tipico": "Escribir una coma en vez de punto para un número decimal o usar más de un punto en el mismo literal numérico.",
+    "en_la_materia": "Tipos float/double y printf",
+    "errores_ids": [
+      "OPE-025",
+      "POR-020",
+      "SCN-022",
+      "SIN-037",
+      "SIN-041"
+    ],
+    "buscar": [
+      ".",
+      "punto decimal",
+      "decimales",
+      "coma decimal",
+      "float",
+      "double",
+      "3.5",
+      "%.2f",
+      "precisión",
+      "precision"
+    ],
+    "amplia": true,
+    "ocasiones": [
+      {
+        "cuando": "Entre la parte entera y la parte decimal de un literal numérico.",
+        "que_es": "El punto separa las cifras enteras de las cifras fraccionarias de un número decimal.",
+        "ejemplo": "float NOTA=8.5f;",
+        "error_tipico": "Escribir 8,5: la coma no es el separador decimal de un literal numérico en C."
+      },
+      {
+        "cuando": "Al escribir un literal decimal sin cifras antes del punto.",
+        "que_es": "Un literal puede comenzar con el punto si tiene cifras decimales a continuación.",
+        "ejemplo": "double MITAD=.5;",
+        "error_tipico": "Confundir el punto inicial con un operador aislado; debe haber cifras formando un literal válido."
+      },
+      {
+        "cuando": "Al escribir un literal decimal sin cifras después del punto.",
+        "que_es": "También se puede escribir un número con punto final y sin cifras fraccionarias, como 5.",
+        "ejemplo": "double ENTERO=5.;",
+        "error_tipico": "Agregar un segundo punto o dejar el punto separado del número puede producir un error de sintaxis."
+      },
+      {
+        "cuando": "En la parte decimal de un literal que también utiliza exponente.",
+        "que_es": "El punto puede aparecer en la mantisa de un literal con exponente decimal.",
+        "ejemplo": "double FACTOR=1.5e-2;",
+        "error_tipico": "Confundir la letra e del exponente con una variable o escribir mal el signo o las cifras del exponente."
+      },
+      {
+        "cuando": "En la precisión de un especificador de formato de printf.",
+        "que_es": "En formatos como %.2f, el punto introduce la cantidad de cifras que se mostrarán después del separador decimal.",
+        "ejemplo": "printf(\"%.2f\\n\",3.5);",
+        "error_tipico": "Olvidar el número de precisión o colocar el punto fuera de las comillas del formato."
+      }
+    ],
+    "detalle": "En un literal decimal de C se usa punto, no coma.\nPor ejemplo, 3.5 es un número decimal; 3,5 no significa tres coma cinco.\nLos literales con punto son de tipo double salvo que se agregue el sufijo f o F.\nSe puede escribir .5 y también 5. si hay cifras que permiten reconocer el literal.\nLa notación con exponente, como 1.5e-2, también puede incluir punto en la mantisa.\nEn printf, el punto de %.2f indica cuántas cifras decimales se muestran.\nNo confundas ese punto de formato con un carácter que debas escribir fuera de las comillas.",
+    "relacionados": [
+      ",",
+      "float",
+      "double",
+      "%.2f",
+      "printf",
+      "literal",
+      "precisión"
+    ],
+    "verificado_gcc13": false
+  },
+  {
+    "elemento": "#",
+    "tipo": "símbolo",
+    "que_es": "El numeral inicia una directiva del preprocesador, como include, define o una condición de compilación.",
+    "como_se_usa": "#include <stdio.h>\n#define LIMITE 10",
+    "error_tipico": "Usarlo como comentario o escribirlo en medio de una instrucción; las directivas empiezan con # como primer carácter no blanco de una línea de preprocesamiento.",
+    "en_la_materia": "Preprocesador y bibliotecas",
+    "errores_ids": [
+      "PRE-015",
+      "PRE-016",
+      "PRE-032",
+      "SIN-059"
+    ],
+    "buscar": [
+      "#",
+      "numeral",
+      "gato",
+      "hashtag",
+      "preprocesador",
+      "directiva",
+      "include",
+      "define",
+      "if"
+    ],
+    "amplia": true,
+    "ocasiones": [
+      {
+        "cuando": "Al incluir una cabecera de biblioteca.",
+        "que_es": "La directiva include pide al preprocesador incorporar el contenido de una cabecera antes de compilar.",
+        "ejemplo": "#include <stdio.h>",
+        "error_tipico": "Olvidar el numeral o escribir include como si fuera una instrucción común hace que no se incluya la cabecera."
+      },
+      {
+        "cuando": "Al definir una constante simbólica o una macro.",
+        "que_es": "La directiva define asocia un nombre con un texto que el preprocesador reemplaza antes de compilar.",
+        "ejemplo": "#define LIMITE 10",
+        "error_tipico": "Agregar punto y coma al final de la directiva puede hacer que ese punto y coma también forme parte del reemplazo."
+      },
+      {
+        "cuando": "Al compilar condicionalmente una parte del código.",
+        "que_es": "Directivas como #if y #endif permiten incluir o excluir texto fuente según una condición del preprocesador.",
+        "ejemplo": "#if 1\nint LIMITE_POSITIVO=10;\n#endif",
+        "error_tipico": "Olvidar #endif deja abierta la condición de preprocesamiento y puede excluir más código del esperado."
+      }
+    ],
+    "detalle": "El numeral no es una instrucción de C: marca una directiva para el preprocesador.\nDebe aparecer como primer carácter no blanco de la línea de directiva.\n#include incorpora una cabecera, por ejemplo stdio.h para printf y scanf.\n#define permite crear macros o nombres simbólicos que se reemplazan antes de compilar.\n#if, #else y #endif permiten decidir qué parte del código llega al compilador.\nLas directivas terminan con el salto de línea, no con un punto y coma.\nNo uses # para comentar: los comentarios de C se escriben con // o /* */.",
+    "relacionados": [
+      "#include",
+      "#define",
+      "#if",
+      "//",
+      "/* */",
+      "\\"
+    ],
+    "verificado_gcc13": false
+  },
+  {
+    "elemento": "//",
+    "tipo": "símbolo",
+    "que_es": "La doble barra inicia un comentario de una línea: el compilador ignora el texto que aparece desde ella hasta el final de esa línea física.",
+    "como_se_usa": "// Inicialización de los datos\nint A=5; // valor inicial",
+    "error_tipico": "Confundirlo con una división o pensar que el comentario continúa en la línea siguiente; para un comentario de varias líneas se usa /* */.",
+    "en_la_materia": "Comentarios y legibilidad del código",
+    "errores_ids": [
+      "SIN-059"
+    ],
+    "buscar": [
+      "//",
+      "comentario",
+      "comentario de línea",
+      "comentario de linea",
+      "anotación",
+      "anotacion",
+      "doble barra"
+    ],
+    "amplia": true,
+    "ocasiones": [
+      {
+        "cuando": "En una línea dedicada a explicar una parte del algoritmo o del código.",
+        "que_es": "Todo el texto posterior a las dos barras, hasta el salto de línea, se trata como comentario.",
+        "ejemplo": "// Calcular el total de los datos",
+        "error_tipico": "Escribir una sola barra / no inicia un comentario: representa el operador de división."
+      },
+      {
+        "cuando": "Al final de una línea que contiene código.",
+        "que_es": "Permite agregar una aclaración sin cambiar la instrucción que aparece antes del comentario.",
+        "ejemplo": "int A=5; // valor inicial",
+        "error_tipico": "Colocar el comentario antes de terminar una instrucción puede ocultar el punto y coma si este queda después de //."
+      },
+      {
+        "cuando": "Cuando se quiere escribir // como texto y no como comentario.",
+        "que_es": "Dentro de un literal de cadena, las dos barras son caracteres normales y no comienzan un comentario.",
+        "ejemplo": "printf(\"// no es un comentario\\n\");",
+        "error_tipico": "Creer que las barras dentro de una cadena cortan el texto; los comentarios no se reconocen dentro de literales."
+      }
+    ],
+    "detalle": "El comentario // comienza en la doble barra y termina en el siguiente salto físico de línea.\nTodo lo que aparece después de // en esa línea se ignora al compilar.\nPuede ocupar una línea completa o aparecer después de una instrucción.\nSi colocas // antes del punto y coma, ese punto y coma también queda dentro del comentario.\nPara continuar un comentario en otra línea debes escribir // nuevamente.\nLas dos barras dentro de comillas son caracteres de texto y no empiezan un comentario.\nEste tipo de comentario ayuda a explicar el código, pero no cambia lo que ejecuta el programa.",
+    "relacionados": [
+      "/* */",
+      "#",
+      "espacios y saltos de línea",
+      ";",
+      "/"
+    ],
+    "verificado_gcc13": false
+  },
+  {
+    "elemento": "/* */",
+    "tipo": "símbolo",
+    "que_es": "La pareja /* y */ delimita un comentario de bloque; todo lo que queda entre ambas marcas se ignora, incluso si ocupa varias líneas.",
+    "como_se_usa": "/* Comentario de varias líneas\n   sobre el cálculo */\nA=A+1;",
+    "error_tipico": "Abrir /* y olvidar */ hace que el compilador trate el resto del archivo como comentario; los comentarios de bloque no se anidan.",
+    "en_la_materia": "Comentarios y legibilidad del código",
+    "errores_ids": [
+      "SIN-014"
+    ],
+    "buscar": [
+      "/* */",
+      "comentario de bloque",
+      "comentario largo",
+      "comentario de varias líneas",
+      "comentario multilinea",
+      "cerrar comentario",
+      "comentario sin cerrar"
+    ],
+    "amplia": true,
+    "ocasiones": [
+      {
+        "cuando": "Para escribir una explicación que ocupa varias líneas.",
+        "que_es": "El comentario comienza con /* y termina en la primera aparición posterior de */.",
+        "ejemplo": "/* Datos de entrada\n   del programa */",
+        "error_tipico": "Olvidar la marca de cierre deja comentado todo el código que sigue."
+      },
+      {
+        "cuando": "Dentro de una línea de código para ocultar temporalmente una parte del texto fuente.",
+        "que_es": "El comentario puede comenzar y terminar en la misma línea, incluso entre dos partes de código.",
+        "ejemplo": "A=A+1; /* actualizar contador */",
+        "error_tipico": "Poner el cierre antes de tiempo deja una parte del comentario convertida otra vez en código."
+      },
+      {
+        "cuando": "Al comparar la sintaxis de comentarios con texto encerrado entre comillas.",
+        "que_es": "Las marcas /* y */ dentro de un literal son caracteres del texto y no delimitan comentarios.",
+        "ejemplo": "printf(\"/* texto, no comentario */\\n\");",
+        "error_tipico": "Pensar que las marcas dentro de una cadena ocultan el resto del programa; dentro de comillas son texto común."
+      }
+    ],
+    "detalle": "El comentario de bloque comienza con dos caracteres: barra y asterisco.\nTermina con asterisco y barra, en ese orden.\nPuede ocupar una parte de una línea o varias líneas completas.\nTodo lo que queda entre las marcas se ignora durante la compilación.\nSi falta */, el compilador puede interpretar como comentario el resto del archivo.\nLos comentarios de bloque no se anidan: otro /* dentro no abre un comentario independiente.\nLas mismas marcas escritas dentro de comillas forman parte del texto y no comienzan un comentario.",
+    "relacionados": [
+      "//",
+      "#",
+      "\" \"",
+      "espacios y saltos de línea"
+    ],
+    "verificado_gcc13": false
+  },
+  {
+    "elemento": "\\n",
+    "tipo": "secuencia de escape",
+    "que_es": "La secuencia de escape \\n representa un carácter de salto de línea cuando se escribe dentro de un literal de cadena o de carácter.",
+    "como_se_usa": "printf(\"Hola\\nMundo\\n\");",
+    "error_tipico": "Escribir la letra n sin la barra invertida o pulsar Enter dentro de las comillas en lugar de representar el salto con \\n.",
+    "en_la_materia": "printf, texto y caracteres",
+    "errores_ids": [
+      "PRF-013",
+      "PRF-014",
+      "PRF-015",
+      "SIN-042"
+    ],
+    "buscar": [
+      "\\n",
+      "salto de línea",
+      "salto de linea",
+      "nueva línea",
+      "nueva linea",
+      "Enter",
+      "barra n",
+      "newline"
+    ],
+    "amplia": true,
+    "ocasiones": [
+      {
+        "cuando": "Dentro de un literal de cadena que se muestra con printf.",
+        "que_es": "Inserta un salto de línea en la salida, de modo que el texto siguiente aparece en el renglón siguiente.",
+        "ejemplo": "printf(\"Hola\\nMundo\\n\");",
+        "error_tipico": "Escribir \\n fuera de las comillas no genera un salto de línea en la salida."
+      },
+      {
+        "cuando": "Dentro de una constante de carácter.",
+        "que_es": "Representa el carácter de nueva línea como un valor char.",
+        "ejemplo": "char FIN_LINEA='\\n';",
+        "error_tipico": "Confundir la constante '\\n' con dos caracteres separados, barra y letra n."
+      },
+      {
+        "cuando": "Dentro de un texto que también contiene formato de printf.",
+        "que_es": "El escape puede aparecer después de un especificador como %d para terminar la línea al imprimir el dato.",
+        "ejemplo": "printf(\"Total: %d\\n\",A);",
+        "error_tipico": "Olvidar la barra y escribir %dn deja la letra n pegada al número en la salida."
+      }
+    ],
+    "detalle": "\\n está formado por dos caracteres escritos en el código: una barra invertida y la letra n.\nDentro de una cadena representa un único carácter de salto de línea.\nEn printf permite mostrar varias partes del mensaje en renglones distintos.\nTambién puede escribirse como constante de carácter: '\\n'.\nNo es lo mismo que pulsar Enter dentro de las comillas: el salto físico de línea no se puede insertar así en un literal común.\nLa barra invertida es importante; sin ella, n es solamente la letra n.\nEl salto de línea termina además los comentarios // y las directivas de preprocesador en el código fuente.",
+    "relacionados": [
+      "\\",
+      "\\t",
+      "\" \"",
+      "' '",
+      "espacios y saltos de línea",
+      "printf"
+    ],
+    "verificado_gcc13": false
+  },
+  {
+    "elemento": "espacios y saltos de línea",
+    "tipo": "concepto",
+    "que_es": "Los espacios, tabulaciones y saltos de línea separan tokens del código fuente, pero dentro de un literal de texto forman parte del contenido que se almacena o se muestra.",
+    "como_se_usa": "int A=5;\nA=A+1;\nprintf(\"Hola mundo\\n\");",
+    "error_tipico": "Creer que todos los espacios se ignoran: fuera de las comillas suelen separar el código, pero dentro de ellas se conservan; un salto físico de línea no puede partir un literal común.",
+    "en_la_materia": "Sintaxis, formato del código y textos",
+    "errores_ids": [],
+    "buscar": [
+      "espacio",
+      "espacios",
+      "espacio en blanco",
+      "tabulación",
+      "tabulacion",
+      "salto de línea",
+      "salto de linea",
+      "Enter",
+      "renglón",
+      "renglon",
+      "sangría",
+      "sangria",
+      "espacios dentro de texto"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "Entre palabras clave, tipos, identificadores y otros tokens del código.",
+        "que_es": "Los espacios separan tokens para que el compilador pueda reconocer dónde termina uno y empieza otro.",
+        "ejemplo": "int A=5;",
+        "error_tipico": "Escribir intA sin separación crea un único identificador y no equivale a escribir int A."
+      },
+      {
+        "cuando": "Como sangría al comienzo de una línea o antes de una instrucción dentro de un bloque.",
+        "que_es": "Los espacios y tabulaciones de sangría ayudan a leer qué instrucciones pertenecen a cada bloque, pero no cambian por sí mismos la ejecución.",
+        "ejemplo": "if (A>0) {\n    A=A+1;\n}",
+        "error_tipico": "Confiar en la sangría para abrir o cerrar un bloque: en C eso lo determinan las llaves, no la alineación visual."
+      },
+      {
+        "cuando": "Al dividir una expresión o instrucción en varias líneas del código fuente.",
+        "que_es": "Fuera de los literales, un salto de línea funciona como espacio en blanco y una instrucción puede continuar en la línea siguiente.",
+        "ejemplo": "A =\n    B + 1;",
+        "error_tipico": "Suponer que cada salto de línea termina una instrucción; el final normal de la instrucción lo marca el punto y coma."
+      },
+      {
+        "cuando": "Dentro de un literal de cadena, entre palabras o al comienzo o final del texto.",
+        "que_es": "Los espacios que están entre comillas se guardan como parte de la cadena y aparecen en la salida.",
+        "ejemplo": "printf(\"Hola   mundo\\n\");",
+        "error_tipico": "Agregar espacios dentro de las comillas pensando que son solo sangría: esos espacios sí se imprimen."
+      },
+      {
+        "cuando": "Cuando se necesita un salto de línea dentro de un texto.",
+        "que_es": "El salto se representa con la secuencia de escape \\n dentro del literal, no pulsando Enter para partir físicamente la cadena.",
+        "ejemplo": "printf(\"Primera línea\\nSegunda línea\\n\");",
+        "error_tipico": "Pulsar Enter antes de cerrar las comillas produce un literal de cadena sin terminar."
+      },
+      {
+        "cuando": "Al terminar un comentario // o una directiva del preprocesador.",
+        "que_es": "El salto físico de línea marca el final de un comentario de doble barra y, normalmente, de una directiva como #define.",
+        "ejemplo": "// Este comentario termina aquí\nint A=5;",
+        "error_tipico": "Creer que // sigue comentando la línea siguiente sin escribir otra doble barra."
+      }
+    ],
+    "detalle": "Fuera de las comillas, los espacios y saltos de línea normalmente separan tokens y ayudan a organizar el código.\nEl compilador no necesita que cada instrucción ocupe una sola línea: el punto y coma marca su final.\nLa sangría mejora la lectura, pero no reemplaza las llaves que delimitan los bloques.\nDentro de comillas dobles, los espacios son datos y se conservan exactamente.\nUn literal común no puede contener un salto físico de línea; para eso se escribe la secuencia \\n.\nEl salto físico también termina un comentario // y una directiva de preprocesador, salvo que la línea se continúe con barra invertida.\nDistingue siempre el espacio del código fuente del espacio que forma parte de un texto.",
+    "relacionados": [
+      "\\n",
+      "\\",
+      "\" \"",
+      "//",
+      "/* */",
+      ";",
+      "bloque"
+    ],
+    "verificado_gcc13": false
+  }
+]

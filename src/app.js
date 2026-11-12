@@ -768,6 +768,8 @@
       sec('Qué es', e.que_es);
       if (e.como_se_usa) aDet.appendChild(bloqueCodigo('Cómo se usa', e.como_se_usa));
       sec('Error típico', e.error_tipico);
+      if (e.detalle) sec('Con más detalle', e.detalle);
+      if (Array.isArray(e.ocasiones) && e.ocasiones.length) { aDet.appendChild(el('div', 'lbl', 'Según dónde aparece')); e.ocasiones.forEach((o) => { const bx = el('div', 'nbocas'); bx.appendChild(el('b', '', o.cuando)); bx.appendChild(el('p', '', o.que_es)); if (o.ejemplo) bx.appendChild(el('pre', '', o.ejemplo)); aDet.appendChild(bx); }); }
       if (e.en_la_materia) sec('En la materia', e.en_la_materia);
       aDet.appendChild(btnEl('Buscar más sobre «' + e.elemento.slice(0, 20) + '»', 'mini', () => { mostrarResultados(e.elemento); aQ.focus(); }));
     } else {
@@ -851,7 +853,15 @@
       bubble.appendChild(el('p', '', a.que_es || ''));
       if (a.como_se_usa) bubble.appendChild(el('pre', '', a.como_se_usa));
       if (a.error_tipico) bubble.appendChild(el('p', 'muted', 'Error típico: ' + a.error_tipico));
-      const r = el('div', 'row'); r.appendChild(btnEl('Más ayuda', 'mini', () => abrirAyuda({ ver: { tipo: 'ayuda', entrada: a } }))); bubble.appendChild(r);
+      let aqui = null; try { aqui = window.Nombres && off !== null ? Nombres.ocasionAqui(a, ta.value, off) : null; } catch (e) { aqui = null; }
+      if (aqui) { const q = el('p', 'nbaqui'); q.appendChild(el('b', '', 'En este lugar: ')); q.appendChild(document.createTextNode(aqui.que_es)); bubble.appendChild(q); }
+      const masA = el('div', 'nbmas'); masA.hidden = true;
+      if (a.detalle) masA.appendChild(el('p', 'nbdet', a.detalle));
+      (a.ocasiones || []).forEach((o) => { const bx = el('div', 'nbocas'); bx.appendChild(el('b', '', o.cuando)); bx.appendChild(el('p', '', o.que_es)); if (o.ejemplo) bx.appendChild(el('pre', '', o.ejemplo)); masA.appendChild(bx); });
+      bubble.appendChild(masA);
+      const r = el('div', 'row');
+      if (a.detalle || (a.ocasiones && a.ocasiones.length)) { const vm = btnEl('Ver más', 'mini', () => { masA.hidden = !masA.hidden; vm.textContent = masA.hidden ? 'Ver más' : 'Ver menos'; }); r.appendChild(vm); }
+      r.appendChild(btnEl('Más ayuda', 'mini', () => abrirAyuda({ ver: { tipo: 'ayuda', entrada: a } }))); bubble.appendChild(r);
     } else if (nb) {
       const h = el('h4'); h.appendChild(el('code', '', nb.nombre)); h.appendChild(cierre); bubble.appendChild(h);
       bubble.appendChild(el('div', 'muted', nb.titulo));

@@ -64,7 +64,7 @@ function kbDatos() {
   });
   const ayuda = leerJSON(path.join(KB_DIR, 'ayuda.json')).filter((a) => a && typeof a.elemento === 'string').map((a) => {
     const o = {};
-    for (const k of Object.keys(a)) o[k] = k === 'como_se_usa' ? a[k] : limDeep(a[k]);
+    for (const k of Object.keys(a)) o[k] = (k === 'como_se_usa' || k === 'detalle') ? a[k] : k === 'ocasiones' && Array.isArray(a[k]) ? a[k].map((oc) => { const r = {}; for (const kk of Object.keys(oc)) r[kk] = kk === 'ejemplo' ? oc[kk] : limDeep(oc[kk]); return r; }) : limDeep(a[k]);
     return o;
   });
   const lecciones = leerJSON(path.join(KB_DIR, 'lecciones.json')).filter((l) => l && typeof l === 'object').map((l) => {

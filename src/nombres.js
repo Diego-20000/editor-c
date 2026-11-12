@@ -205,7 +205,9 @@
       var nom = null; for (var s2 = pila.length - 1; s2 >= 0; s2--) if (pila[s2]) { nom = pila[s2]; break; }
       llamada[z] = nom;
     }
-    return { T: T, defines: tk.defines, decls: decls, funcs: funcs, loops: loops, fors: fors, whiles: whiles, ifs: ifs, fnEn: fnEn, llamada: llamada };
+    var switches = [];
+    for (var sw = 0; sw < T.length; sw++) if (T[sw].t === 'id' && T[sw].v === 'switch' && esOp(T[sw + 1], '(')) { var hs = cierre(T, sw + 1); if (hs > 0) switches.push({ a: sw, h: hs, bodyA: hs + 1, bodyB: finSentencia(T, hs + 1) }); }
+    return { T: T, defines: tk.defines, decls: decls, funcs: funcs, loops: loops, fors: fors, whiles: whiles, ifs: ifs, switches: switches, fnEn: fnEn, llamada: llamada };
   }
 
   /* ---------- usos de un nombre ---------- */
@@ -412,6 +414,47 @@
     };
   }
 
-  var api = { explicar: explicar, analizar: analizar, tokenizar: tokenizar, rolDe: rolDe };
+  /* ---------- «¿qué uso es este?»: de las ocasiones de una entrada de ayuda, la que corresponde al lugar tocado ---------- */
+
+  function sinAcentos(t) { return String(t).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase(); }
+  // etiquetas del lugar: dentro de un for / if / while / switch, argumentos de una llamada, declaración, índice de arreglo, encabezado de función…
+  function contexto(codigo, offset) {
+    var A; try { A = analizar(codigo); } catch (e) { return {}; }
+    var T = A.T, k = -1, i;
+    for (i = 0; i < T.length; i++) if (offset >= T[i].i && offset < T[i].e) { k = i; break; }
+    if (k < 0) for (i = 0; i < T.length; i++) if (offset === T[i].e) { k = i; break; }
+    var tags = {};
+    if (k < 0) return tags;
+    function dentro(lst, a, b) { return lst.some(function (x) { return k > x[a] && k <= x[b]; }); }
+    if (dentro(A.fors, 'a', 'h')) tags['for'] = 1;
+    if (dentro(A.ifs, 'a', 'h')) tags['if'] = 1;
+    if (dentro(A.whiles, 'a', 'h')) tags['while'] = 1;
+    if (dentro(A.switches, 'a', 'h')) tags['switch'] = 1;
+    if (A.switches.some(function (x) { return k >= x.bodyA && k <= x.bodyB; })) tags['switch'] = 1;
+    if (A.llamada[k]) { tags['llamada'] = 1; tags[A.llamada[k]] = 1; }
+    if (A.funcs.some(function (f) { return k > f.range[0] && f.params.length >= 0 && k < (f.bodyStart > 0 ? f.bodyStart : f.range[1]); })) tags['funcion'] = 1;
+    var d = 0; for (i = k - 1; i >= 0; i--) { var u = T[i]; if (u.t !== 'op') continue; if (u.v === ']') d++; else if (u.v === '[') { if (d === 0) { tags['arreglo'] = 1; break; } d--; } else if (u.v === ';' || u.v === '{' || u.v === '}') break; }
+    for (i = k - 1; i >= -1; i--) { if (i < 0 || (T[i].t === 'op' && (T[i].v === ';' || T[i].v === '{' || T[i].v === '}'))) { if (esTipo(T[i + 1])) tags['declaracion'] = 1; break; } }
+    if (T[k].t === 'str') tags['cadena'] = 1;
+    return tags;
+  }
+  var SINONIMOS = { 'for': ['for', 'repeticion'], 'if': ['if', 'condicion', 'condicional'], 'while': ['while', 'bucle', 'repeticion'], 'switch': ['switch', 'case'], llamada: ['llamada', 'argumento', 'printf', 'scanf'], funcion: ['funcion', 'parametro', 'prototipo', 'encabezado'],
+    arreglo: ['arreglo', 'indice', 'matriz', 'corchete', 'posicion'], declaracion: ['declaracion', 'declara', 'declarar', 'inicializ'], cadena: ['cadena', 'texto'] };
+  function ocasionAqui(ayuda, codigo, offset) {
+    if (!ayuda || !Array.isArray(ayuda.ocasiones) || !ayuda.ocasiones.length) return null;
+    var tags; try { tags = contexto(String(codigo || ''), offset); } catch (e) { return null; }
+    var mejor = null, mp = 0;
+    ayuda.ocasiones.forEach(function (o) {
+      var t = sinAcentos(o.cuando || ''), p = 0;
+      Object.keys(tags).forEach(function (g) {
+        var pal = SINONIMOS[g] || [g];
+        if (pal.some(function (w) { return new RegExp('\\b' + w).test(t); })) p += (g === 'llamada' || g === 'declaracion') ? 1 : 2;
+      });
+      if (p > mp) { mp = p; mejor = o; }
+    });
+    return mejor;
+  }
+
+  var api = { explicar: explicar, analizar: analizar, tokenizar: tokenizar, rolDe: rolDe, contexto: contexto, ocasionAqui: ocasionAqui };
   if (typeof module !== 'undefined' && module.exports) module.exports = api; else root.Nombres = api;
 })(typeof window !== 'undefined' ? window : this);
