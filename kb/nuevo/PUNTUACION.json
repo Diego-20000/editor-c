@@ -1037,3 +1037,131 @@
     "verificado_gcc13": false
   },
   {
+    "elemento": "\\n",
+    "tipo": "secuencia de escape",
+    "que_es": "La secuencia de escape \\n representa un carácter de salto de línea cuando se escribe dentro de un literal de cadena o de carácter.",
+    "como_se_usa": "printf(\"Hola\\nMundo\\n\");",
+    "error_tipico": "Escribir la letra n sin la barra invertida o pulsar Enter dentro de las comillas en lugar de representar el salto con \\n.",
+    "en_la_materia": "printf, texto y caracteres",
+    "errores_ids": [
+      "PRF-013",
+      "PRF-014",
+      "PRF-015",
+      "SIN-042"
+    ],
+    "buscar": [
+      "\\n",
+      "salto de línea",
+      "salto de linea",
+      "nueva línea",
+      "nueva linea",
+      "Enter",
+      "barra n",
+      "newline"
+    ],
+    "amplia": true,
+    "ocasiones": [
+      {
+        "cuando": "Dentro de un literal de cadena que se muestra con printf.",
+        "que_es": "Inserta un salto de línea en la salida, de modo que el texto siguiente aparece en el renglón siguiente.",
+        "ejemplo": "printf(\"Hola\\nMundo\\n\");",
+        "error_tipico": "Escribir \\n fuera de las comillas no genera un salto de línea en la salida."
+      },
+      {
+        "cuando": "Dentro de una constante de carácter.",
+        "que_es": "Representa el carácter de nueva línea como un valor char.",
+        "ejemplo": "char FIN_LINEA='\\n';",
+        "error_tipico": "Confundir la constante '\\n' con dos caracteres separados, barra y letra n."
+      },
+      {
+        "cuando": "Dentro de un texto que también contiene formato de printf.",
+        "que_es": "El escape puede aparecer después de un especificador como %d para terminar la línea al imprimir el dato.",
+        "ejemplo": "printf(\"Total: %d\\n\",A);",
+        "error_tipico": "Olvidar la barra y escribir %dn deja la letra n pegada al número en la salida."
+      }
+    ],
+    "detalle": "\\n está formado por dos caracteres escritos en el código: una barra invertida y la letra n.\nDentro de una cadena representa un único carácter de salto de línea.\nEn printf permite mostrar varias partes del mensaje en renglones distintos.\nTambién puede escribirse como constante de carácter: '\\n'.\nNo es lo mismo que pulsar Enter dentro de las comillas: el salto físico de línea no se puede insertar así en un literal común.\nLa barra invertida es importante; sin ella, n es solamente la letra n.\nEl salto de línea termina además los comentarios // y las directivas de preprocesador en el código fuente.",
+    "relacionados": [
+      "\\",
+      "\\t",
+      "\" \"",
+      "' '",
+      "espacios y saltos de línea",
+      "printf"
+    ],
+    "verificado_gcc13": false
+  },
+  {
+    "elemento": "espacios y saltos de línea",
+    "tipo": "concepto",
+    "que_es": "Los espacios, tabulaciones y saltos de línea separan tokens del código fuente, pero dentro de un literal de texto forman parte del contenido que se almacena o se muestra.",
+    "como_se_usa": "int A=5;\nA=A+1;\nprintf(\"Hola mundo\\n\");",
+    "error_tipico": "Creer que todos los espacios se ignoran: fuera de las comillas suelen separar el código, pero dentro de ellas se conservan; un salto físico de línea no puede partir un literal común.",
+    "en_la_materia": "Sintaxis, formato del código y textos",
+    "errores_ids": [],
+    "buscar": [
+      "espacio",
+      "espacios",
+      "espacio en blanco",
+      "tabulación",
+      "tabulacion",
+      "salto de línea",
+      "salto de linea",
+      "Enter",
+      "renglón",
+      "renglon",
+      "sangría",
+      "sangria",
+      "espacios dentro de texto"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "Entre palabras clave, tipos, identificadores y otros tokens del código.",
+        "que_es": "Los espacios separan tokens para que el compilador pueda reconocer dónde termina uno y empieza otro.",
+        "ejemplo": "int A=5;",
+        "error_tipico": "Escribir intA sin separación crea un único identificador y no equivale a escribir int A."
+      },
+      {
+        "cuando": "Como sangría al comienzo de una línea o antes de una instrucción dentro de un bloque.",
+        "que_es": "Los espacios y tabulaciones de sangría ayudan a leer qué instrucciones pertenecen a cada bloque, pero no cambian por sí mismos la ejecución.",
+        "ejemplo": "if (A>0) {\n    A=A+1;\n}",
+        "error_tipico": "Confiar en la sangría para abrir o cerrar un bloque: en C eso lo determinan las llaves, no la alineación visual."
+      },
+      {
+        "cuando": "Al dividir una expresión o instrucción en varias líneas del código fuente.",
+        "que_es": "Fuera de los literales, un salto de línea funciona como espacio en blanco y una instrucción puede continuar en la línea siguiente.",
+        "ejemplo": "A =\n    B + 1;",
+        "error_tipico": "Suponer que cada salto de línea termina una instrucción; el final normal de la instrucción lo marca el punto y coma."
+      },
+      {
+        "cuando": "Dentro de un literal de cadena, entre palabras o al comienzo o final del texto.",
+        "que_es": "Los espacios que están entre comillas se guardan como parte de la cadena y aparecen en la salida.",
+        "ejemplo": "printf(\"Hola   mundo\\n\");",
+        "error_tipico": "Agregar espacios dentro de las comillas pensando que son solo sangría: esos espacios sí se imprimen."
+      },
+      {
+        "cuando": "Cuando se necesita un salto de línea dentro de un texto.",
+        "que_es": "El salto se representa con la secuencia de escape \\n dentro del literal, no pulsando Enter para partir físicamente la cadena.",
+        "ejemplo": "printf(\"Primera línea\\nSegunda línea\\n\");",
+        "error_tipico": "Pulsar Enter antes de cerrar las comillas produce un literal de cadena sin terminar."
+      },
+      {
+        "cuando": "Al terminar un comentario // o una directiva del preprocesador.",
+        "que_es": "El salto físico de línea marca el final de un comentario de doble barra y, normalmente, de una directiva como #define.",
+        "ejemplo": "// Este comentario termina aquí\nint A=5;",
+        "error_tipico": "Creer que // sigue comentando la línea siguiente sin escribir otra doble barra."
+      }
+    ],
+    "detalle": "Fuera de las comillas, los espacios y saltos de línea normalmente separan tokens y ayudan a organizar el código.\nEl compilador no necesita que cada instrucción ocupe una sola línea: el punto y coma marca su final.\nLa sangría mejora la lectura, pero no reemplaza las llaves que delimitan los bloques.\nDentro de comillas dobles, los espacios son datos y se conservan exactamente.\nUn literal común no puede contener un salto físico de línea; para eso se escribe la secuencia \\n.\nEl salto físico también termina un comentario // y una directiva de preprocesador, salvo que la línea se continúe con barra invertida.\nDistingue siempre el espacio del código fuente del espacio que forma parte de un texto.",
+    "relacionados": [
+      "\\n",
+      "\\",
+      "\" \"",
+      "//",
+      "/* */",
+      ";",
+      "bloque"
+    ],
+    "verificado_gcc13": false
+  }
+]
