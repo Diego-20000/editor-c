@@ -298,7 +298,7 @@
       {
         "cuando": "En el lugar del programa donde se necesita esta construcción.",
         "que_es": "Selecciona una ruta según el valor de una expresión entera y las etiquetas case.",
-        "ejemplo": "switch(OPCION){\n case 1: puts(\"Uno\"); break;\n default: puts(\"Otro\");\n}",
+        "ejemplo": "switch(OPCION){case 1: break; default: break;}",
         "error_tipico": "Olvidar break cuando no se desea continuar ejecutando las instrucciones del siguiente case."
       }
     ],
@@ -442,7 +442,7 @@
       {
         "cuando": "En el lugar del programa donde se necesita esta construcción.",
         "que_es": "Interrumpe la vuelta actual de un lazo y continúa con la siguiente, sin salir del lazo.",
-        "ejemplo": "for(I=0;I<5;I++){\n    if(I==2) continue;\n    printf(\"%d\\n\",I);\n}",
+        "ejemplo": "for(I=0;I<5;I++) if(I==2) continue;",
         "error_tipico": "Usarlo como si terminara el lazo; para salir se utiliza break."
       }
     ],
@@ -1372,7 +1372,7 @@
       {
         "cuando": "En una línea de preprocesador al comienzo de una línea lógica.",
         "que_es": "Conserva el bloque si el nombre indicado ya fue definido por el preprocesador.",
-        "ejemplo": "#define MODO 1\n#ifdef MODO\nint VALOR=1;\n#endif",
+        "ejemplo": "#ifdef MODO\nint VALOR=1;\n#endif",
         "error_tipico": "Confundirlo con #if MODO: ifdef comprueba si existe una definición, no el valor de una variable."
       }
     ],
@@ -1434,7 +1434,7 @@
       {
         "cuando": "En una línea de preprocesador al comienzo de una línea lógica.",
         "que_es": "Añade una condición alternativa dentro de una cadena de directivas condicionales.",
-        "ejemplo": "#if MODO==1\nint N=1;\n#elif MODO==2\nint N=2;\n#endif",
+        "ejemplo": "#if 1\n#elif 0\n#endif",
         "error_tipico": "Usarlo sin un #if abierto o después de #else."
       }
     ],
@@ -1464,7 +1464,7 @@
       {
         "cuando": "En una línea de preprocesador al comienzo de una línea lógica.",
         "que_es": "Define la rama alternativa de un bloque condicional del preprocesador.",
-        "ejemplo": "#if MODO==1\nint N=1;\n#else\nint N=0;\n#endif",
+        "ejemplo": "#if 1\n#else\n#endif",
         "error_tipico": "Escribir dos ramas #else en el mismo bloque."
       }
     ],
