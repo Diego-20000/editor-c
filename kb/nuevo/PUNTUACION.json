@@ -516,3 +516,157 @@
     ],
     "verificado_gcc13": false
   },
+    "elemento": "' '",
+    "tipo": "símbolo",
+    "que_es": "Las comillas simples delimitan una constante de carácter, que representa un carácter individual como una letra, un dígito o una secuencia de escape.",
+    "como_se_usa": "char LETRA='A';\nprintf(\"%c\\n\",LETRA);",
+    "error_tipico": "Usar comillas dobles para un carácter o escribir varios caracteres ordinarios entre comillas simples; una constante de carácter no es una cadena.",
+    "en_la_materia": "Tipos char y caracteres",
+    "errores_ids": [
+      "ARR-046",
+      "ARR-047",
+      "PRF-020",
+      "PRF-044",
+      "SIN-012",
+      "SIN-013",
+      "SIN-050",
+      "SIN-053"
+    ],
+    "buscar": [
+      "' '",
+      "comillas simples",
+      "comilla simple",
+      "apóstrofe",
+      "apostrofe",
+      "carácter",
+      "caracter",
+      "char",
+      "constante de carácter"
+    ],
+    "amplia": true,
+    "ocasiones": [
+      {
+        "cuando": "Al asignar una letra o símbolo a una variable char.",
+        "que_es": "Las comillas simples indican que se trata de una constante de carácter y no de una cadena.",
+        "ejemplo": "char LETRA='A';",
+        "error_tipico": "Escribir \"A\" en lugar de 'A': las comillas dobles producen una cadena, no una constante de carácter."
+      },
+      {
+        "cuando": "Al comparar una variable char con un carácter.",
+        "que_es": "La comparación usa la constante de carácter entre comillas simples.",
+        "ejemplo": "if (LETRA=='A') {\n    A=1;\n}",
+        "error_tipico": "Comparar con \"A\" en vez de 'A' mezcla una cadena con un valor de carácter."
+      },
+      {
+        "cuando": "En una etiqueta case que compara un valor de tipo carácter.",
+        "que_es": "El valor constante de case puede ser un carácter escrito entre comillas simples.",
+        "ejemplo": "switch (LETRA) {\n    case 'S': A=1; break;\n}",
+        "error_tipico": "Escribir el carácter entre comillas dobles no representa una constante de carácter válida para case."
+      },
+      {
+        "cuando": "Al representar un carácter especial mediante una secuencia de escape.",
+        "que_es": "La secuencia de escape queda dentro de las comillas simples y representa un solo carácter, como el salto de línea.",
+        "ejemplo": "char FIN_LINEA='\\n';",
+        "error_tipico": "Escribir una barra invertida sin una secuencia válida o no cerrar las comillas deja una constante mal formada."
+      },
+      {
+        "cuando": "Al representar una comilla simple como el propio carácter.",
+        "que_es": "La comilla se escapa para que no se confunda con el delimitador que cierra la constante.",
+        "ejemplo": "char COMILLA='\\'';",
+        "error_tipico": "Escribir tres comillas simples seguidas hace que el compilador no pueda reconocer correctamente el carácter."
+      },
+      {
+        "cuando": "Al escribir un dígito como carácter y no como número.",
+        "que_es": "'5' representa el código del carácter cinco, mientras que 5 representa el valor numérico cinco.",
+        "ejemplo": "int CODIGO='5';",
+        "error_tipico": "Confundir el carácter '5' con el número 5 produce comparaciones o cuentas distintas de las esperadas."
+      }
+    ],
+    "detalle": "Las comillas simples se usan para constantes de carácter; las dobles se usan para cadenas.\nUna constante como 'A' representa el código del carácter, no una palabra.\nLa constante '5' es distinta del número 5 aunque se vean parecidos.\nTambién se pueden escribir caracteres especiales mediante escapes, por ejemplo '\\n'.\nSi el propio carácter es una comilla simple, se escribe escapada como '\\''.\nUna constante de carácter ordinaria debe representar un solo carácter; no se escriben palabras entre comillas simples.\nPara guardar una frase completa se usa una cadena, normalmente en un arreglo char[].",
+    "relacionados": [
+      "\" \"",
+      "\\",
+      "\\n",
+      "char",
+      "ASCII",
+      "literal",
+      "switch"
+    ],
+    "verificado_gcc13": false
+  },
+  {
+    "elemento": "\\",
+    "tipo": "símbolo",
+    "que_es": "La barra invertida introduce secuencias de escape dentro de literales de texto y de carácter, y también puede continuar una línea del código fuente cuando está inmediatamente antes del salto de línea.",
+    "como_se_usa": "printf(\"Hola\\n\");\nchar BARRA='\\\\';",
+    "error_tipico": "Escribir la barra invertida como si fuera una barra común, olvidar la letra que completa el escape o confundir \\n con un salto físico de línea del código.",
+    "en_la_materia": "Caracteres, texto, printf y preprocesador",
+    "errores_ids": [],
+    "buscar": [
+      "\\",
+      "barra invertida",
+      "barra al revés",
+      "escape",
+      "secuencia de escape",
+      "backslash",
+      "\\n",
+      "\\t",
+      "\\\\",
+      "continuación de línea"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "Dentro de una cadena para representar un salto de línea.",
+        "que_es": "La secuencia \\n representa un salto de línea en el texto que se imprime.",
+        "ejemplo": "printf(\"Hola\\nMundo\\n\");",
+        "error_tipico": "Escribir una n sin la barra muestra la letra n; pulsar Enter dentro de las comillas deja el literal mal formado."
+      },
+      {
+        "cuando": "Dentro de una cadena para representar un tabulador.",
+        "que_es": "La secuencia \\t inserta un carácter de tabulación en el texto.",
+        "ejemplo": "printf(\"A\\tB\\n\");",
+        "error_tipico": "Escribir una t sin la barra muestra una letra t en lugar de un tabulador."
+      },
+      {
+        "cuando": "Dentro de una cadena para incluir una comilla doble.",
+        "que_es": "La barra evita que la comilla se interprete como el final del literal.",
+        "ejemplo": "printf(\"Dijo \\\"Hola\\\"\\n\");",
+        "error_tipico": "Omitir la barra hace que la comilla cierre la cadena antes de tiempo."
+      },
+      {
+        "cuando": "Dentro de una cadena para mostrar una barra invertida.",
+        "que_es": "Dos barras invertidas escritas en el código representan una sola barra en el texto resultante.",
+        "ejemplo": "printf(\"C: trabajos\\\\final\\n\");",
+        "error_tipico": "Una sola barra puede iniciar una secuencia de escape distinta de la que se quería mostrar."
+      },
+      {
+        "cuando": "Dentro de una constante char para representar una barra invertida.",
+        "que_es": "La constante de carácter '\\\\' representa una única barra invertida.",
+        "ejemplo": "char BARRA='\\\\';",
+        "error_tipico": "Una barra sin escapar puede dejar sin cerrar la constante de carácter."
+      },
+      {
+        "cuando": "Dentro de una constante char para representar un carácter especial.",
+        "que_es": "La barra introduce escapes como '\\n' para salto de línea o '\\0' para el carácter nulo.",
+        "ejemplo": "char FIN='\\0';",
+        "error_tipico": "Confundir '\\0' con '0': el primero es el carácter nulo y el segundo es el dígito cero."
+      },
+      {
+        "cuando": "Al continuar una directiva de preprocesador en la línea física siguiente.",
+        "que_es": "Una barra invertida inmediatamente seguida del salto de línea une las dos líneas fuente antes de procesar la directiva.",
+        "ejemplo": "#define DOBLE(A) \\\n    ((A)*2)",
+        "error_tipico": "Dejar espacios u otros caracteres después de la barra puede impedir la continuación y separar la directiva."
+      }
+    ],
+    "detalle": "La barra invertida no suele imprimirse por sí misma: inicia una secuencia especial.\nEn cadenas y constantes char introduce escapes como \\n, \\t, \\0, comilla doble escapada y doble barra.\nEl escape se interpreta dentro del literal; fuera de él, la barra no cumple esa función.\nPara obtener una barra visible en una cadena se escriben dos barras en el código.\nPara representar una barra como char se usa la constante '\\\\'.\nUna barra inmediatamente antes del salto físico de línea puede unir líneas del código fuente.\nEn macros, esa continuación permite repartir una directiva larga en varias líneas sin terminarla.",
+    "relacionados": [
+      "\" \"",
+      "' '",
+      "\\n",
+      "\\t",
+      "\\\\",
+      "#",
+      "#define"
+    ],
+    "verificado_gcc13": false
+  },
