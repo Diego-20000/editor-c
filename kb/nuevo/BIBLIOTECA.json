@@ -1217,7 +1217,7 @@
       {
         "cuando": "Al escribir una ruta de cabecera entre comillas.",
         "que_es": "Las comillas dobles se usan habitualmente para archivos de cabecera del proyecto.",
-        "ejemplo": "#include \"mi_cabecera.h\"",
+        "ejemplo": "#include \"stdio.h\"",
         "error_tipico": "Editor C reconoce la sintaxis, pero no implementa un sistema general de archivos para cargar cabeceras personalizadas."
       }
     ],
