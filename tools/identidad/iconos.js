@@ -32,6 +32,8 @@ module.exports = [
   ['entrada', 'Entrada', 'datos para scanf', `<path d="M9 4.5h6M9 19.5h6M12 4.5v15"/>`],
   ['limpiar', 'Limpiar', 'vaciar la consola', `<path d="M4.5 15.2L12.7 7c.7-.7 1.8-.7 2.5 0l3.3 3.3c.7.7.7 1.8 0 2.5L12.4 19H8.2z"/><path d="M9.6 10.1l5.3 5.3M13 19h7"/>`],
   ['quees', '¿Qué es esto?', 'explica una palabra del código', `<path d="M6.2 4.6l11.6 5.2-4.9 1.7-1.7 4.9z"/><path d="M14.4 14.4l4.4 4.4"/>`],
+  ['avisar', 'Avisar a Diego', 'mandar un caso por WhatsApp', `<path d="M6.5 4h11A2.5 2.5 0 0 1 20 6.5v6a2.5 2.5 0 0 1-2.5 2.5h-6L7.5 19v-4h-1A2.5 2.5 0 0 1 4 12.5v-6A2.5 2.5 0 0 1 6.5 4z"/><path d="M8.6 8.2h6.8M8.6 11.4h4"/>`],
+  ['dispositivo', 'Otro dispositivo', 'pasar el programa a otro dispositivo', `<path d="M3.5 12h7M8 9.2l2.8 2.8L8 14.8"/><rect x="13.5" y="5.5" width="7" height="13" rx="2"/><path d="M17 15.6v.1"/>`],
   ['abrir', 'Abrir', 'abrir un archivo .c', `<path d="M3.5 7.5a2 2 0 0 1 2-2h3.7l2 2.2h7.3a2 2 0 0 1 2 2v7.3a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2z"/>`],
   ['check', 'Listo', 'marca de selección', `<path d="M5.5 12.5l4.2 4.2 8.8-8.9"/>`]
 ];

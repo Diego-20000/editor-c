@@ -33,7 +33,13 @@ const JS = [
   ['proceso.js', R('proceso.js')],   // evidencia de proceso: antes de app.js, que lo conecta al editor
   ['app.js', R('app.js')]
 ];
-const css = R('app.css');
+// fuente del código: Source Code Pro (Adobe, licencia SIL OFL 1.1; el texto está en src/fuentes/). Viaja con el sitio, sin pedidos a terceros.
+const FUENTE = fs.readFileSync(path.join(ROOT, 'src', 'fuentes', 'SourceCodePro.ttf'));
+const FUENTE_LIC = fs.readFileSync(path.join(ROOT, 'src', 'fuentes', 'OFL-SourceCodePro.txt'));
+const FACE = (url) => '@font-face { font-family: "Source Code Pro"; src: url(' + url + ') format("truetype"); font-weight: 200 900; font-style: normal; font-display: swap; }';
+const cssBase = R('app.css');
+const css = cssBase.replace('/*@@FONT@@*/', () => FACE('SourceCodePro.ttf'));
+const cssUno = cssBase.replace('/*@@FONT@@*/', () => FACE('data:font/ttf;base64,' + FUENTE.toString('base64')));
 
 // ---- base de conocimiento (kb/): se lee lo que haya; si falta algo, se sigue sin romper ----
 const KB_DIR = process.env.KB_DIR ? path.resolve(process.env.KB_DIR) : path.join(ROOT, 'kb');
@@ -82,6 +88,8 @@ const APP = ['icon-192.png', 'icon-512.png', 'icon-maskable-512.png', 'apple-tou
 
 // 1) sitio en varios archivos
 W('assets/styles.css', css);
+W('assets/SourceCodePro.ttf', FUENTE);
+W('assets/OFL-SourceCodePro.txt', FUENTE_LIC);
 JS.forEach(([n, s]) => W('assets/' + n, s));
 KB_JS.filter(([n]) => n !== 'config.js').forEach(([n, s]) => W('assets/' + n, s));   // config.js se escribe al final, con la versión
 APP.forEach((n) => W('assets/' + n, leerId('app/' + n)));
@@ -120,7 +128,7 @@ W('index.html', conIconos(tpl)
 
 // 2) service worker: la versión es el hash del contenido de todo lo que precachea
 const PRECACHE = ['./', 'index.html', 'manifest.webmanifest', 'assets/styles.css', 'assets/compiler.js', 'assets/runtime.js', 'assets/examples.js', 'assets/proceso.js', 'assets/app.js',
-  'assets/kb-data.js', 'assets/config.js', 'assets/kb.js', 'assets/compartir.js', 'assets/favicon.svg', 'assets/favicon-32.png', 'assets/favicon.ico'].concat(APP.filter((n) => !/^(favicon|splash)/.test(n)).map((n) => 'assets/' + n));
+  'assets/SourceCodePro.ttf', 'assets/kb-data.js', 'assets/config.js', 'assets/kb.js', 'assets/compartir.js', 'assets/favicon.svg', 'assets/favicon-32.png', 'assets/favicon.ico'].concat(APP.filter((n) => !/^(favicon|splash)/.test(n)).map((n) => 'assets/' + n));
 const hash = crypto.createHash('sha256');
 // config.js lleva la versión adentro: se calcula con su texto sin completar
 PRECACHE.filter((f) => f !== './').forEach((f) => { hash.update(f); hash.update(f === 'assets/config.js' ? R('config.js') : OUT[f]); });
@@ -135,6 +143,6 @@ W('sw.js', swSrc.replace('@@VERSION@@', VERSION).replace('@@FILES@@', () => JSON
 // 3) un solo archivo (sin manifest ni service worker)
 W('dist/editor-c.html', conIconos(tpl)
   .replace('<!--@@HEAD@@-->', () => HEAD_ONE)
-  .replace('<!--@@CSS@@-->', () => '<style>\n' + css + '</style>')
+  .replace('<!--@@CSS@@-->', () => '<style>\n' + cssUno + '</style>')
   .replace('<!--@@JS@@-->', () => JS.concat(KB_JS).map(([, s]) => '<script>\n' + safe(s) + '</script>').join('\n')));
 console.log('versión', VERSION);
