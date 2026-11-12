@@ -1,0 +1,1340 @@
+[
+  {
+    "elemento": "+",
+    "tipo": "operador",
+    "que_es": "Suma dos valores; delante de uno solo indica que conserva su signo.",
+    "como_se_usa": "int A=4, B=3;\nprintf(\"%d %d\\n\", A+B, +A);",
+    "error_tipico": "Creer que 2A significa 2 por A: en C se escribe 2*A.",
+    "en_la_materia": "Operadores y expresiones",
+    "errores_ids": [
+      "PRF-035"
+    ],
+    "buscar": [
+      "+",
+      "suma",
+      "sumar",
+      "más",
+      "mas",
+      "signo positivo",
+      "unario"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "Entre dos valores, como operador binario.",
+        "que_es": "Suma el valor izquierdo y el derecho: 4+3 da 7.",
+        "ejemplo": "int A=4, B=3;\nprintf(\"%d\\n\", A+B);",
+        "error_tipico": "Invertir los operandos o esperar que + se resuelva antes que *."
+      },
+      {
+        "cuando": "Delante de un solo valor, como signo unario.",
+        "que_es": "Indica un valor positivo y no cambia su magnitud: +4 vale 4.",
+        "ejemplo": "int A=4;\nprintf(\"%d\\n\", +A);",
+        "error_tipico": "Confundirlo con una suma: el + unario no necesita un segundo operando."
+      }
+    ],
+    "detalle": "Como operador binario, + suma dos valores: 4+3 produce 7.\nTiene la misma precedencia que la resta y se resuelve después de * / %.\nLas sumas y restas del mismo nivel se agrupan de izquierda a derecha.\nPor eso 10-3+2 significa (10-3)+2 y produce 9.\nComo operador unario, + aparece delante de un valor y conserva su signo.\nEl + unario tiene precedencia alta y se agrupa de derecha a izquierda; los paréntesis aclaran una cuenta.",
+    "relacionados": [
+      "-",
+      "*",
+      "/",
+      "precedencia"
+    ],
+    "verificado_gcc13": false,
+    "amplia": true
+  },
+  {
+    "elemento": "-",
+    "tipo": "operador",
+    "que_es": "Resta dos valores o, delante de uno solo, cambia su signo.",
+    "como_se_usa": "int A=9, B=4;\nprintf(\"%d %d\\n\", A-B, -A);",
+    "error_tipico": "Invertir A-B por B-A o confundir el signo negativo con una resta.",
+    "en_la_materia": "Operadores y expresiones",
+    "errores_ids": [
+      "SIN-063"
+    ],
+    "buscar": [
+      "-",
+      "resta",
+      "restar",
+      "menos",
+      "negativo",
+      "signo menos",
+      "unario"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "Entre dos valores, como operador binario.",
+        "que_es": "Resta el valor derecho al izquierdo: 9-4 da 5.",
+        "ejemplo": "int A=9, B=4;\nprintf(\"%d\\n\", A-B);",
+        "error_tipico": "Cambiar el orden: 4-9 da -5, no 5."
+      },
+      {
+        "cuando": "Delante de un solo valor, como signo unario.",
+        "que_es": "Cambia el signo: si A vale 4, -A vale -4.",
+        "ejemplo": "int A=4;\nprintf(\"%d\\n\", -A);",
+        "error_tipico": "Creer que el signo menos siempre necesita dos valores."
+      }
+    ],
+    "detalle": "La resta binaria necesita dos operandos y respeta su orden: A-B no es B-A.\nTiene la misma precedencia que +, por debajo de * / %.\nLas sumas y restas del mismo nivel se agrupan de izquierda a derecha.\nComo signo unario, -A produce el opuesto de A: si A vale 4, -A vale -4.\nEl menos unario tiene precedencia alta y se agrupa de derecha a izquierda.\nEvita negar el menor valor representable de un entero: su opuesto no cabe en el mismo tipo.",
+    "relacionados": [
+      "+",
+      "*",
+      "/",
+      "precedencia"
+    ],
+    "verificado_gcc13": false,
+    "amplia": true
+  },
+  {
+    "elemento": "*",
+    "tipo": "operador",
+    "que_es": "Multiplica dos valores; en una declaración también forma parte de la sintaxis de un puntero.",
+    "como_se_usa": "int A=4, B=3;\nint R=A*B;",
+    "error_tipico": "Omitir el signo de multiplicar (2A) o confundir el asterisco de un puntero con una multiplicación.",
+    "en_la_materia": "Operadores y expresiones",
+    "errores_ids": [
+      "OPE-032",
+      "OPE-041",
+      "SIN-057",
+      "SIN-064"
+    ],
+    "buscar": [
+      "*",
+      "multiplicación",
+      "multiplicacion",
+      "multiplicar",
+      "por",
+      "asterisco",
+      "producto",
+      "puntero",
+      "char *"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "Entre dos valores numéricos.",
+        "que_es": "Multiplica los operandos: 4*3 da 12.",
+        "ejemplo": "int A=4, B=3;\nprintf(\"%d\\n\", A*B);",
+        "error_tipico": "Escribir 4A en lugar de 4*A, o pensar que * tiene la prioridad de +."
+      },
+      {
+        "cuando": "En una declaración, junto al tipo y al nombre.",
+        "que_es": "En char *T, el asterisco declara un puntero a char; el editor contempla este uso limitado para textos.",
+        "ejemplo": "char *T=\"Hola\";\nprintf(\"%s\\n\", T);",
+        "error_tipico": "Confundirlo con una cuenta. Los punteros generales y su desreferencia no están soportados."
+      }
+    ],
+    "detalle": "Como multiplicación, * necesita un valor a cada lado: 4*3 da 12.\nTiene la misma precedencia que / y %, y se resuelve antes que + y -.\nLos operadores * / % del mismo nivel se agrupan de izquierda a derecha.\nEn char *T, el asterisco forma parte de la declaración: T es un puntero a char.\nEl editor contempla char * inicializado con un texto, como en el ejemplo.\nLa aritmética de punteros y la desreferencia general (*P para leer lo apuntado) no están soportadas.",
+    "relacionados": [
+      "/",
+      "%",
+      "+",
+      "&",
+      "texto"
+    ],
+    "verificado_gcc13": false,
+    "amplia": true
+  },
+  {
+    "elemento": "/",
+    "tipo": "operador",
+    "que_es": "Divide el valor izquierdo por el derecho; el tipo de los operandos determina si conserva decimales.",
+    "como_se_usa": "int C=7/2;\nfloat D=7/2.0f;",
+    "error_tipico": "Esperar 3.5 al dividir dos int: 7/2 produce 3 antes de guardarse en otra variable.",
+    "en_la_materia": "Operadores y expresiones",
+    "errores_ids": [
+      "EJE-001",
+      "OPE-022",
+      "OPE-023",
+      "OPE-024",
+      "OPE-037",
+      "OPE-040",
+      "SIN-030",
+      "TIP-001",
+      "TIP-002"
+    ],
+    "buscar": [
+      "/",
+      "división",
+      "division",
+      "dividir",
+      "barra",
+      "cociente",
+      "división entera",
+      "division entera",
+      "int con float"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "Entre dos enteros, como división entera.",
+        "que_es": "El resultado es entero y se descarta la parte fraccionaria: 7/2 da 3 y 1/2 da 0.",
+        "ejemplo": "printf(\"%d\\n\", 7/2);",
+        "error_tipico": "Esperar 3.5 o 0.5 cuando ambos operandos son int."
+      },
+      {
+        "cuando": "Cuando al menos un operando es float o double.",
+        "que_es": "La cuenta se hace en punto flotante: 7/2.0f da 3.5.",
+        "ejemplo": "printf(\"%.1f\\n\", 7/2.0f);",
+        "error_tipico": "Convertir el resultado después de dividir: (float)(7/2) ya perdió el decimal."
+      },
+      {
+        "cuando": "Cuando se mezclan variables int y float.",
+        "que_es": "El int se convierte para esa operación y el resultado puede conservar decimales.",
+        "ejemplo": "int A=7;\nfloat B=2.0f;\nprintf(\"%.1f\\n\", A/B);",
+        "error_tipico": "Creer que la variable donde se guarda el resultado cambia la división ya calculada."
+      }
+    ],
+    "detalle": "Si los dos operandos son int, la división es entera: 7/2 da 3 y 1/2 da 0.\nEn C99, el cociente entero se trunca hacia cero: -7/2 da -3.\nSi uno de los operandos es float o double, la cuenta se hace en punto flotante: 7/2.0f da 3.5.\nGuardar 7/2 en una variable float no recupera el decimal perdido: primero se obtuvo 3.\nPara forzar una división decimal, convierte un operando antes de dividir, por ejemplo (float)7/2.\nLa división por cero no tiene comportamiento definido y puede terminar el programa.",
+    "relacionados": [
+      "%",
+      "(float)",
+      "sizeof",
+      "precedencia"
+    ],
+    "verificado_gcc13": false,
+    "amplia": true
+  },
+  {
+    "elemento": "%",
+    "tipo": "operador",
+    "que_es": "Con dos enteros calcula el resto; dentro de una cadena de printf, % inicia una especificación de formato.",
+    "como_se_usa": "int R=7%2;\nprintf(\"Resto: %d\\n\", R);",
+    "error_tipico": "Aplicar % a float o confundir el resto con %d dentro de printf.",
+    "en_la_materia": "Operadores y expresiones",
+    "errores_ids": [
+      "EJE-002",
+      "LOG-014",
+      "LOG-015",
+      "OPE-015",
+      "OPE-021",
+      "OPE-033",
+      "OPE-037",
+      "OPE-044"
+    ],
+    "buscar": [
+      "%",
+      "resto",
+      "residuo",
+      "módulo",
+      "modulo",
+      "mod",
+      "divisible",
+      "par o impar",
+      "printf porcentaje",
+      "formato"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "Entre dos enteros, como operador de resto.",
+        "que_es": "Devuelve lo que sobra: 7%2 da 1.",
+        "ejemplo": "printf(\"%d\\n\", 7%2);",
+        "error_tipico": "Intentar calcular 7.5%2: el resto exige operandos enteros."
+      },
+      {
+        "cuando": "Dentro de la cadena de formato de printf.",
+        "que_es": "El signo inicia una conversión como %d o %f; no calcula un resto.",
+        "ejemplo": "int A=5;\nprintf(\"A=%d y 100%%\\n\", A);",
+        "error_tipico": "Para imprimir un porcentaje literal se escribe %% y no un % suelto."
+      }
+    ],
+    "detalle": "El operador de resto necesita dos enteros: 7%2 da 1.\nTiene la misma precedencia que * y /, por encima de + y -, y se agrupa de izquierda a derecha.\nEn C99, -7%3 da -1 porque el cociente se trunca hacia cero; 7%-3 da 1.\nNo se puede aplicar % directamente a valores float o double.\nDentro de printf, % inicia una conversión como %d, %f o %c: allí no se calcula un resto.\nPara imprimir un signo de porcentaje literal en printf, escribe %%.",
+    "relacionados": [
+      "/",
+      "printf",
+      "scanf",
+      "división entera"
+    ],
+    "verificado_gcc13": false,
+    "amplia": true
+  },
+  {
+    "elemento": "=",
+    "tipo": "operador",
+    "que_es": "Asigna: guarda en la variable izquierda el valor de la expresión derecha.",
+    "como_se_usa": "int A;\nA=5;",
+    "error_tipico": "Usar = cuando se quería comparar con ==, sobre todo dentro de if o while.",
+    "en_la_materia": "Operadores y expresiones",
+    "errores_ids": [
+      "CTL-029",
+      "CTL-043",
+      "DEC-027",
+      "OPE-001",
+      "OPE-002",
+      "OPE-003",
+      "OPE-027",
+      "OPE-036",
+      "SIN-029"
+    ],
+    "buscar": [
+      "=",
+      "asignación",
+      "asignacion",
+      "asignar",
+      "igual simple",
+      "guardar valor",
+      "pisa la variable",
+      "siempre entra al if"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "En una instrucción para guardar un valor.",
+        "que_es": "Calcula lo de la derecha y lo guarda en la variable izquierda.",
+        "ejemplo": "int A;\nA=5;",
+        "error_tipico": "Creer que A=5 pregunta si A ya vale 5."
+      },
+      {
+        "cuando": "Dentro de una expresión o asignación encadenada.",
+        "que_es": "La asignación produce el valor asignado y se asocia de derecha a izquierda: A=B=3 equivale a A=(B=3).",
+        "ejemplo": "int A, B;\nA=B=3;",
+        "error_tipico": "Confundir el valor asignado con una comparación."
+      }
+    ],
+    "detalle": "El signo = no pregunta si dos valores son iguales: guarda un valor en una variable.\nEn A=5, se calcula 5 y luego se guarda en A.\nLa asignación tiene precedencia baja y se asocia de derecha a izquierda: A=B=3 equivale a A=(B=3).\nEn if(A=5), A cambia y el valor asignado se interpreta como verdadero porque no es cero.\nPara comparar se escribe ==; con un solo = no se está comparando.\nLa parte izquierda debe ser una variable modificable; no se asigna a una constante.",
+    "relacionados": [
+      "==",
+      "+=",
+      "-=",
+      "condición",
+      "precedencia"
+    ],
+    "verificado_gcc13": false,
+    "amplia": true
+  },
+  {
+    "elemento": "+=",
+    "tipo": "operador",
+    "que_es": "Suma el valor derecho al contenido de la variable izquierda y guarda el resultado.",
+    "como_se_usa": "int SUMA=4;\nSUMA+=3;",
+    "error_tipico": "No inicializar SUMA antes de acumular, o usar += creyendo que reemplaza el valor.",
+    "en_la_materia": "Operadores y expresiones",
+    "errores_ids": [
+      "CTL-044",
+      "OPE-016"
+    ],
+    "buscar": [
+      "+=",
+      "sumar y guardar",
+      "acumular",
+      "acumulador",
+      "más igual",
+      "mas igual"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "En una instrucción de actualización.",
+        "que_es": "SUMA+=3 equivale a SUMA=SUMA+3; si SUMA vale 4, queda en 7.",
+        "ejemplo": "int SUMA=4;\nSUMA+=3;",
+        "error_tipico": "No dar un valor inicial al acumulador."
+      }
+    ],
+    "detalle": "+= lee el valor actual de la variable, le suma el operando derecho y guarda el resultado.\nSi SUMA vale 4, SUMA+=3 deja SUMA en 7.\nEquivale a SUMA=SUMA+3, pero el nombre de la variable se escribe una sola vez.\nTiene precedencia de asignación, muy baja, y se asocia de derecha a izquierda.\nLa suma respeta los tipos: con dos enteros, el resultado es entero.\nLa variable necesita tener un valor válido antes de usarla en la cuenta.",
+    "relacionados": [
+      "=",
+      "+",
+      "-=",
+      "acumulador"
+    ],
+    "verificado_gcc13": false,
+    "amplia": true
+  },
+  {
+    "elemento": "-=",
+    "tipo": "operador",
+    "que_es": "Resta el operando derecho al valor actual de la variable y guarda el resultado.",
+    "como_se_usa": "int SALDO=10;\nSALDO-=4;",
+    "error_tipico": "Invertir los operandos o pensar que SALDO-=4 equivale a guardar -4.",
+    "en_la_materia": "Operadores y expresiones",
+    "errores_ids": [],
+    "buscar": [
+      "-=",
+      "restar y guardar",
+      "menos igual",
+      "descontar",
+      "reducir variable"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "En una instrucción que actualiza una variable.",
+        "que_es": "SALDO-=4 equivale a SALDO=SALDO-4; si vale 10, queda en 6.",
+        "ejemplo": "int SALDO=10;\nSALDO-=4;",
+        "error_tipico": "Confundirlo con SALDO=4-SALDO: el orden importa."
+      }
+    ],
+    "detalle": "-= resta el valor derecho al valor actual de la variable izquierda y guarda el resultado.\nSi SALDO vale 10, SALDO-=4 deja SALDO en 6.\nEquivale a SALDO=SALDO-4 y escribe una sola vez la variable actualizada.\nTiene precedencia de asignación, baja, y se asocia de derecha a izquierda.\nEl orden de la resta no cambia: A-=B resta B a A, no A a B.\nLa variable debe estar inicializada antes de usar su valor.",
+    "relacionados": [
+      "=",
+      "-",
+      "+="
+    ],
+    "verificado_gcc13": false,
+    "amplia": true
+  },
+  {
+    "elemento": "*=",
+    "tipo": "operador",
+    "que_es": "Multiplica el valor actual de la variable por el operando derecho y guarda el producto.",
+    "como_se_usa": "int TOTAL=6;\nTOTAL*=4;",
+    "error_tipico": "Confundir *= con += o creer que multiplica sin modificar TOTAL.",
+    "en_la_materia": "Operadores y expresiones",
+    "errores_ids": [],
+    "buscar": [
+      "*=",
+      "multiplicar y guardar",
+      "por igual",
+      "producto acumulado"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "En una instrucción de actualización.",
+        "que_es": "TOTAL*=4 equivale a TOTAL=TOTAL*4; si vale 6, queda en 24.",
+        "ejemplo": "int TOTAL=6;\nTOTAL*=4;",
+        "error_tipico": "Pensar que TOTAL*=4 suma 4 en lugar de multiplicar."
+      }
+    ],
+    "detalle": "*= multiplica el valor que contiene la variable por el operando derecho y guarda el producto.\nSi TOTAL vale 6, TOTAL*=4 deja TOTAL en 24.\nEquivale a TOTAL=TOTAL*4 y evita repetir el nombre de la variable.\nTiene precedencia de asignación y se agrupa de derecha a izquierda.\nLa multiplicación sigue las reglas normales de tipos y puede desbordar el rango.\nLa variable debe tener un valor inicial antes de usarla.",
+    "relacionados": [
+      "=",
+      "*",
+      "/="
+    ],
+    "verificado_gcc13": false,
+    "amplia": true
+  },
+  {
+    "elemento": "/=",
+    "tipo": "operador",
+    "que_es": "Divide el valor actual de la variable por el operando derecho y guarda el cociente.",
+    "como_se_usa": "int CANT=7;\nCANT/=2;",
+    "error_tipico": "Esperar 3.5 si CANT es int: 7/=2 deja 3, no 3.5.",
+    "en_la_materia": "Operadores y expresiones",
+    "errores_ids": [],
+    "buscar": [
+      "/=",
+      "dividir y guardar",
+      "dividido igual",
+      "división compuesta",
+      "division compuesta"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "En una instrucción de actualización.",
+        "que_es": "CANT/=2 equivale a CANT=CANT/2; si ambos son int y CANT vale 7, queda 3.",
+        "ejemplo": "int CANT=7;\nCANT/=2;",
+        "error_tipico": "Olvidar que la división es entera cuando los operandos son enteros."
+      }
+    ],
+    "detalle": "/= divide el valor actual de la variable por el operando derecho y guarda el cociente.\nSi CANT es int y vale 7, CANT/=2 deja 3 por la división entera.\nSi la variable es float, la operación puede conservar decimales.\nEquivale a CANT=CANT/2 y tiene precedencia baja de asignación.\nLas asignaciones se agrupan de derecha a izquierda.\nEl divisor debe ser distinto de cero; dividir por cero no tiene comportamiento definido.",
+    "relacionados": [
+      "=",
+      "/",
+      "%=",
+      "(float)"
+    ],
+    "verificado_gcc13": false,
+    "amplia": true
+  },
+  {
+    "elemento": "%=",
+    "tipo": "operador",
+    "que_es": "Calcula el resto de dividir el valor actual de la variable por el operando derecho y guarda ese resto.",
+    "como_se_usa": "int N=17;\nN%=5;",
+    "error_tipico": "Usarlo con float o creer que N%=5 calcula el porcentaje de N.",
+    "en_la_materia": "Operadores y expresiones",
+    "errores_ids": [],
+    "buscar": [
+      "%=",
+      "resto y guardar",
+      "módulo igual",
+      "modulo igual",
+      "residuo"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "En una actualización de una variable entera.",
+        "que_es": "N%=5 equivale a N=N%5; si N vale 17, queda 2.",
+        "ejemplo": "int N=17;\nN%=5;",
+        "error_tipico": "El operando de % debe ser entero y el divisor no puede ser cero."
+      }
+    ],
+    "detalle": "%= calcula el resto de la división entera y lo guarda en la variable izquierda.\nSi N vale 17, N%=5 deja N en 2 porque 17 dividido 5 deja resto 2.\nEquivale a N=N%5 y tiene precedencia baja de asignación.\nLas asignaciones se agrupan de derecha a izquierda.\nLos operandos de % deben ser enteros; no se usa con float o double.\nEl divisor debe ser distinto de cero. No confundas resto con porcentaje.",
+    "relacionados": [
+      "=",
+      "%",
+      "/="
+    ],
+    "verificado_gcc13": false,
+    "amplia": true
+  },
+  {
+    "elemento": "==",
+    "tipo": "operador",
+    "que_es": "Compara dos valores y produce 1 si son iguales o 0 si son distintos.",
+    "como_se_usa": "int A=5;\nif(A==5) printf(\"Iguales\\n\");",
+    "error_tipico": "Escribir un solo =: eso asigna un valor en lugar de comparar.",
+    "en_la_materia": "Operadores y expresiones",
+    "errores_ids": [
+      "ARR-021",
+      "ARR-036",
+      "CTL-029",
+      "CTL-031",
+      "CTL-032",
+      "CTL-049",
+      "OPE-001",
+      "OPE-009",
+      "OPE-010",
+      "TIP-016"
+    ],
+    "buscar": [
+      "==",
+      "comparar",
+      "igual a",
+      "igualdad",
+      "doble igual",
+      "son iguales",
+      "comparación"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "Entre dos expresiones que se quieren comparar.",
+        "que_es": "Comprueba si los valores coinciden: 5==5 da 1 y 5==4 da 0.",
+        "ejemplo": "int A=5;\nprintf(\"%d\\n\", A==5);",
+        "error_tipico": "Usar = en lugar de == o comparar cadenas de texto con ==."
+      }
+    ],
+    "detalle": "== pregunta si los valores de ambos lados son iguales y devuelve 1 o 0.\nTiene menor precedencia que <, >, <= y >=, pero mayor que && y ||.\nLas comparaciones de igualdad del mismo nivel se agrupan de izquierda a derecha.\nEn if(A==5), el programa pregunta si A vale 5 sin modificarla.\nUn solo = asigna un valor; es un error frecuente confundir ambos símbolos en una condición.\nLas cadenas de texto no se comparan por contenido con ==; se usa strcmp.",
+    "relacionados": [
+      "=",
+      "!=",
+      "<",
+      ">",
+      "&&",
+      "condición"
+    ],
+    "verificado_gcc13": false,
+    "amplia": true
+  },
+  {
+    "elemento": "!=",
+    "tipo": "operador",
+    "que_es": "Compara dos valores y produce 1 si son distintos o 0 si son iguales.",
+    "como_se_usa": "int A=4;\nif(A!=0) printf(\"No es cero\\n\");",
+    "error_tipico": "Escribir =! o ! = separados: el operador se escribe junto, !=.",
+    "en_la_materia": "Operadores y expresiones",
+    "errores_ids": [
+      "CTL-037",
+      "CTL-039",
+      "CTL-040",
+      "OPE-011",
+      "OPE-028",
+      "OPE-029",
+      "SIN-017"
+    ],
+    "buscar": [
+      "!=",
+      "distinto",
+      "diferente",
+      "no igual",
+      "desigualdad"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "Entre dos expresiones que se quieren comparar.",
+        "que_es": "Comprueba que no sean iguales: 4!=0 da 1 y 4!=4 da 0.",
+        "ejemplo": "int A=4;\nprintf(\"%d\\n\", A!=0);",
+        "error_tipico": "Invertir el operador o separarlo con espacios."
+      }
+    ],
+    "detalle": "!= pregunta si los dos valores son distintos y devuelve 1 si lo son, o 0 si son iguales.\nTiene la misma precedencia que == y se evalúa por debajo de las comparaciones de orden.\nLas comparaciones de igualdad del mismo nivel se agrupan de izquierda a derecha.\nPor ejemplo, 4!=0 da 1 y 4!=4 da 0.\nNo modifica las variables: solamente produce un resultado lógico.\nPara comparar textos por su contenido se usa strcmp, no !=.",
+    "relacionados": [
+      "==",
+      "!",
+      "<",
+      ">",
+      "&&"
+    ],
+    "verificado_gcc13": false,
+    "amplia": true
+  },
+  {
+    "elemento": "<",
+    "tipo": "operador",
+    "que_es": "Compara si el valor izquierdo es menor que el derecho; en #include <...> delimita el nombre de una cabecera.",
+    "como_se_usa": "int EDAD=17;\nif(EDAD<18) printf(\"Menor\\n\");",
+    "error_tipico": "Leer los signos de #include como una comparación, o usar < cuando también se acepta el límite.",
+    "en_la_materia": "Operadores y expresiones",
+    "errores_ids": [
+      "CTL-034",
+      "LOG-016",
+      "OPE-008"
+    ],
+    "buscar": [
+      "<",
+      "menor",
+      "menor que",
+      "comparar menor",
+      "include con menor",
+      "cabecera"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "Entre dos expresiones numéricas.",
+        "que_es": "Da 1 si el valor izquierdo es estrictamente menor: 3<5 da 1 y 5<5 da 0.",
+        "ejemplo": "int A=3;\nprintf(\"%d\\n\", A<5);",
+        "error_tipico": "Usar < cuando también se quiere aceptar la igualdad; para eso está <=."
+      },
+      {
+        "cuando": "En #include <...>.",
+        "que_es": "Los signos angulares rodean el nombre de una cabecera del sistema; no comparan valores.",
+        "ejemplo": "#include <stdio.h>",
+        "error_tipico": "Mover la directiva dentro de una función o confundir el delimitador con una condición."
+      }
+    ],
+    "detalle": "Como comparación, < pregunta si el valor de la izquierda es estrictamente menor que el de la derecha.\n3<5 da 1, pero 5<5 da 0.\nTiene menor precedencia que las cuentas aritméticas y mayor que ==, && y ||.\nLas comparaciones <, >, <= y >= tienen la misma precedencia y se agrupan de izquierda a derecha.\nNo escribas 0<A<10 para probar un rango: une 0<A y A<10 con &&.\nEn #include <stdio.h>, < y > delimitan la cabecera; no son una comparación.",
+    "relacionados": [
+      ">",
+      "<=",
+      "==",
+      "&&",
+      "#include"
+    ],
+    "verificado_gcc13": false,
+    "amplia": true
+  },
+  {
+    "elemento": ">",
+    "tipo": "operador",
+    "que_es": "Compara si el valor izquierdo es mayor que el derecho; en #include <...> cierra el nombre de una cabecera.",
+    "como_se_usa": "int NOTA=8;\nif(NOTA>6) printf(\"Aprobado\\n\");",
+    "error_tipico": "Usar > cuando también se acepta el valor límite; para eso existe >=.",
+    "en_la_materia": "Operadores y expresiones",
+    "errores_ids": [
+      "LOG-038",
+      "LOG-043",
+      "OPE-008"
+    ],
+    "buscar": [
+      ">",
+      "mayor",
+      "mayor que",
+      "comparar mayor",
+      "include",
+      "cabecera"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "Entre dos expresiones numéricas.",
+        "que_es": "Da 1 si el valor izquierdo es estrictamente mayor: 8>5 da 1 y 5>5 da 0.",
+        "ejemplo": "int A=8;\nprintf(\"%d\\n\", A>5);",
+        "error_tipico": "Usar > cuando la igualdad también debería contar."
+      },
+      {
+        "cuando": "En #include <...>.",
+        "que_es": "Cierra el nombre de la cabecera que se incluye; no compara valores.",
+        "ejemplo": "#include <stdio.h>",
+        "error_tipico": "Creer que > forma parte de una condición o mover la directiva dentro de main."
+      }
+    ],
+    "detalle": "Como comparación, > pregunta si el valor de la izquierda es estrictamente mayor que el de la derecha.\n8>5 da 1, mientras que 5>5 da 0.\nTiene la misma precedencia que <, <= y >=, y se agrupa de izquierda a derecha con ellas.\nLas operaciones aritméticas se resuelven antes que una comparación.\nNo escribas A>B>C como si fuera un rango: el primer resultado es 0 o 1.\nEn #include <stdio.h>, > cierra el nombre de la cabecera y no es una comparación.",
+    "relacionados": [
+      "<",
+      ">=",
+      "==",
+      "&&",
+      "#include"
+    ],
+    "verificado_gcc13": false,
+    "amplia": true
+  },
+  {
+    "elemento": "<=",
+    "tipo": "operador",
+    "que_es": "Compara si el valor izquierdo es menor o igual que el derecho.",
+    "como_se_usa": "int EDAD=17;\nif(EDAD<=17) printf(\"Hasta 17\\n\");",
+    "error_tipico": "Escribir < = separado o usar < y dejar afuera el valor límite.",
+    "en_la_materia": "Operadores y expresiones",
+    "errores_ids": [
+      "ARR-001",
+      "ARR-002",
+      "CTL-017"
+    ],
+    "buscar": [
+      "<=",
+      "menor o igual",
+      "menor igual",
+      "como máximo",
+      "hasta inclusive"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "Entre dos valores que se comparan.",
+        "que_es": "Da 1 si el valor izquierdo es menor o igual: 5<=5 da 1.",
+        "ejemplo": "int A=5;\nprintf(\"%d\\n\", A<=5);",
+        "error_tipico": "Usar < y dejar afuera el caso A igual a 5."
+      }
+    ],
+    "detalle": "<= pregunta si el valor izquierdo es menor que el derecho o exactamente igual.\n4<=5 y 5<=5 dan 1; 6<=5 da 0.\nTiene la misma precedencia que <, > y >=.\nLas comparaciones relacionales se agrupan de izquierda a derecha y se resuelven después de las cuentas.\nEl operador se escribe con los dos caracteres juntos, sin espacios.\nNo encadenes 0<=A<=10 para expresar un rango: une las dos comparaciones con &&.",
+    "relacionados": [
+      "<",
+      ">=",
+      ">",
+      "&&",
+      "=="
+    ],
+    "verificado_gcc13": false,
+    "amplia": true
+  },
+  {
+    "elemento": ">=",
+    "tipo": "operador",
+    "que_es": "Compara si el valor izquierdo es mayor o igual que el derecho.",
+    "como_se_usa": "int NOTA=6;\nif(NOTA>=6) printf(\"Aprobado\\n\");",
+    "error_tipico": "Usar > y dejar afuera el valor exacto del límite.",
+    "en_la_materia": "Operadores y expresiones",
+    "errores_ids": [
+      "CTL-038",
+      "LOG-038",
+      "OPE-030",
+      "SIN-018"
+    ],
+    "buscar": [
+      ">=",
+      "mayor o igual",
+      "mayor igual",
+      "al menos",
+      "como mínimo"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "Entre dos valores que se comparan.",
+        "que_es": "Da 1 si el valor izquierdo es mayor o igual: 6>=6 da 1.",
+        "ejemplo": "int NOTA=6;\nprintf(\"%d\\n\", NOTA>=6);",
+        "error_tipico": "Usar > si el valor límite también debe contar como válido."
+      }
+    ],
+    "detalle": ">= pregunta si el valor izquierdo es mayor que el derecho o igual a él.\n7>=6 y 6>=6 dan 1; 5>=6 da 0.\nTiene la misma precedencia que <, > y <=.\nLas comparaciones relacionales se agrupan de izquierda a derecha y se resuelven después de la aritmética.\nSe escribe con > seguido de =, sin espacios.\nEs útil para un mínimo inclusivo; une dos límites de un rango con &&.",
+    "relacionados": [
+      "<=",
+      ">",
+      "<",
+      "&&",
+      "=="
+    ],
+    "verificado_gcc13": false,
+    "amplia": true
+  },
+  {
+    "elemento": "&&",
+    "tipo": "operador",
+    "que_es": "Realiza AND lógico: ambas condiciones deben ser verdaderas; la segunda solo se evalúa si hace falta.",
+    "como_se_usa": "int A=5;\nif(A>0 && A<10) printf(\"En rango\\n\");",
+    "error_tipico": "Usar & simple para unir condiciones o no proteger una división por cero.",
+    "en_la_materia": "Operadores y expresiones",
+    "errores_ids": [
+      "CTL-033",
+      "CTL-036",
+      "CTL-037",
+      "LOG-018",
+      "OPE-004",
+      "OPE-005",
+      "OPE-006",
+      "OPE-034",
+      "OPE-039",
+      "SIN-019"
+    ],
+    "buscar": [
+      "&&",
+      "y lógico",
+      "y logico",
+      "and",
+      "ambas condiciones",
+      "cortocircuito",
+      "short circuit"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "Entre dos condiciones que deben cumplirse a la vez.",
+        "que_es": "Devuelve verdadero solo si ambas partes son verdaderas.",
+        "ejemplo": "int A=5;\nif(A>0 && A<10) printf(\"En rango\\n\");",
+        "error_tipico": "Escribir una comparación encadenada como 0<A<10."
+      },
+      {
+        "cuando": "Cuando la primera condición protege la segunda.",
+        "que_es": "Si la primera es falsa, la segunda no se evalúa; B!=0 && A/B>2 evita dividir por cero.",
+        "ejemplo": "int A=10, B=0;\nif(B!=0 && A/B>2) printf(\"Mayor\\n\");",
+        "error_tipico": "Usar || en una protección que exige que B sea distinto de cero."
+      }
+    ],
+    "detalle": "&& es el AND lógico: devuelve 1 únicamente cuando ambas partes son verdaderas.\nEn C, 0 es falso y cualquier valor distinto de 0 es verdadero.\nTiene menor precedencia que las comparaciones y mayor que ||; se agrupa de izquierda a derecha.\nUsa && para expresar que deben cumplirse dos condiciones, por ejemplo A>0 && A<10.\nCon cortocircuito, si la primera parte es falsa, la segunda no se calcula.\nPor eso B!=0 && A/B>2 evita evaluar la división cuando B vale 0.",
+    "relacionados": [
+      "||",
+      "!",
+      "&",
+      "<",
+      ">",
+      "if"
+    ],
+    "verificado_gcc13": false,
+    "amplia": true
+  },
+  {
+    "elemento": "||",
+    "tipo": "operador",
+    "que_es": "Realiza OR lógico: basta con que una condición sea verdadera; deja de evaluar cuando conoce el resultado.",
+    "como_se_usa": "int A=2;\nif(A==1 || A==2) printf(\"Válido\\n\");",
+    "error_tipico": "Escribir A==1 || 2: el número 2 solo ya cuenta como verdadero.",
+    "en_la_materia": "Operadores y expresiones",
+    "errores_ids": [
+      "CTL-035",
+      "CTL-037",
+      "LOG-044",
+      "OPE-006",
+      "OPE-010",
+      "OPE-011"
+    ],
+    "buscar": [
+      "||",
+      "o lógico",
+      "o logico",
+      "or",
+      "alguna condición",
+      "al menos una",
+      "cortocircuito"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "Entre dos condiciones alternativas.",
+        "que_es": "Devuelve verdadero si al menos una parte es verdadera.",
+        "ejemplo": "int A=2;\nif(A==1 || A==2) printf(\"Válido\\n\");",
+        "error_tipico": "No repetir la comparación: A==1 || 2 no significa A igual a 1 o 2."
+      },
+      {
+        "cuando": "Cuando la primera parte puede bastar.",
+        "que_es": "Si la primera condición es verdadera, C no evalúa la segunda.",
+        "ejemplo": "int A=4;\nif(A>0 || 10/A>1) printf(\"Positivo\\n\");",
+        "error_tipico": "Suponer que la segunda parte siempre se ejecuta."
+      }
+    ],
+    "detalle": "|| es el OR lógico: devuelve 1 si por lo menos una de sus partes es verdadera.\nDevuelve 0 solamente cuando ambas partes son falsas.\nTiene menor precedencia que && y se agrupa de izquierda a derecha.\nSi A vale 2, A==1 || A==2 es verdadero; cada lado debe ser una condición completa.\nCon cortocircuito, si la primera parte ya es verdadera, la segunda no se evalúa.\nNo uses || para proteger una división que solo es válida si el divisor no es cero.",
+    "relacionados": [
+      "&&",
+      "!",
+      "==",
+      "if"
+    ],
+    "verificado_gcc13": false,
+    "amplia": true
+  },
+  {
+    "elemento": "!",
+    "tipo": "operador",
+    "que_es": "Niega una expresión lógica: convierte verdadero en falso y falso en verdadero.",
+    "como_se_usa": "int LISTO=0;\nif(!LISTO) printf(\"Falta terminar\\n\");",
+    "error_tipico": "Confundir ! con != o escribirlo después de la variable.",
+    "en_la_materia": "Operadores y expresiones",
+    "errores_ids": [
+      "OPE-014",
+      "OPE-015"
+    ],
+    "buscar": [
+      "!",
+      "no lógico",
+      "no logico",
+      "negación",
+      "negacion",
+      "not",
+      "invertir condición"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "Delante de una condición o expresión.",
+        "que_es": "Es un operador unario: !0 da 1 y !5 da 0.",
+        "ejemplo": "int A=0;\nprintf(\"%d\\n\", !A);",
+        "error_tipico": "Escribir A! en lugar de !A, o confundirlo con !=."
+      }
+    ],
+    "detalle": "! trabaja con un solo operando y se escribe delante de él.\nEn C, 0 representa falso y cualquier valor distinto de 0 representa verdadero.\nPor eso !0 da 1, mientras que !5 da 0.\nTiene precedencia alta, por encima de * / % y de las comparaciones, y se agrupa de derecha a izquierda.\n!(A>5) niega toda la comparación, no solo el valor A.\nNo es lo mismo que !=, que compara dos valores para saber si son distintos.",
+    "relacionados": [
+      "&&",
+      "||",
+      "!=",
+      "=="
+    ],
+    "verificado_gcc13": false,
+    "amplia": true
+  },
+  {
+    "elemento": "++",
+    "tipo": "operador",
+    "que_es": "Incrementa una variable en una unidad; en prefijo produce el valor nuevo y en sufijo el anterior.",
+    "como_se_usa": "int A=4;\nint B=++A;",
+    "error_tipico": "Confundir A++ con ++A dentro de una expresión, o modificar la misma variable varias veces sin secuencia clara.",
+    "en_la_materia": "Operadores y expresiones",
+    "errores_ids": [
+      "CTL-047",
+      "OPE-016",
+      "OPE-017",
+      "OPE-018",
+      "OPE-019"
+    ],
+    "buscar": [
+      "++",
+      "incremento",
+      "incrementar",
+      "sumar uno",
+      "mas mas",
+      "contador",
+      "prefijo",
+      "sufijo"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "En prefijo y como instrucción independiente.",
+        "que_es": "++A suma 1 a A; si valía 4, queda en 5.",
+        "ejemplo": "int A=4;\n++A;",
+        "error_tipico": "Pensar que el prefijo devuelve el valor anterior."
+      },
+      {
+        "cuando": "En sufijo y como instrucción independiente.",
+        "que_es": "A++ también suma 1; usado solo, deja el mismo valor final que ++A.",
+        "ejemplo": "int A=4;\nA++;",
+        "error_tipico": "Creer que el sufijo no incrementa porque la expresión conserva el valor anterior."
+      },
+      {
+        "cuando": "En prefijo dentro de otra expresión.",
+        "que_es": "Primero incrementa; B=++A deja A y B en 5 si A partía de 4.",
+        "ejemplo": "int A=4;\nint B=++A;",
+        "error_tipico": "Esperar que B reciba el valor anterior."
+      },
+      {
+        "cuando": "En sufijo dentro de otra expresión.",
+        "que_es": "La expresión usa el valor anterior y después A aumenta: B=4 y A=5.",
+        "ejemplo": "int A=4;\nint B=A++;",
+        "error_tipico": "Esperar que B reciba el valor nuevo."
+      }
+    ],
+    "detalle": "++ necesita una variable modificable y le suma exactamente 1.\nEn prefijo, ++A, la variable aumenta primero y la expresión produce el valor nuevo.\nEn sufijo, A++, la expresión produce el valor anterior y luego aumenta la variable.\nEl sufijo tiene precedencia mayor que el prefijo; los operadores prefijos se agrupan de derecha a izquierda.\nSi A vale 4, B=++A deja A=5 y B=5; B=A++ deja A=5 y B=4.\nCuando está solo en una instrucción, ++A y A++ dejan el mismo valor final; evita expresiones con efectos mezclados.",
+    "relacionados": [
+      "--",
+      "+=",
+      "for",
+      "while",
+      "asignación"
+    ],
+    "verificado_gcc13": false,
+    "amplia": true
+  },
+  {
+    "elemento": "--",
+    "tipo": "operador",
+    "que_es": "Decrementa una variable en una unidad; en prefijo produce el valor nuevo y en sufijo el anterior.",
+    "como_se_usa": "int A=4;\nint B=--A;",
+    "error_tipico": "Confundir el valor que devuelve el prefijo con el valor que devuelve el sufijo.",
+    "en_la_materia": "Operadores y expresiones",
+    "errores_ids": [
+      "OPE-046"
+    ],
+    "buscar": [
+      "--",
+      "decremento",
+      "decrementar",
+      "restar uno",
+      "menos menos",
+      "prefijo",
+      "sufijo",
+      "contador descendente"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "En prefijo y como instrucción independiente.",
+        "que_es": "--A resta 1 antes de producir el valor de la expresión.",
+        "ejemplo": "int A=4;\n--A;",
+        "error_tipico": "Pensar que el prefijo devuelve el valor anterior."
+      },
+      {
+        "cuando": "En sufijo y como instrucción independiente.",
+        "que_es": "A-- resta 1; usado solo, el valor final coincide con --A.",
+        "ejemplo": "int A=4;\nA--;",
+        "error_tipico": "Creer que A-- no modifica A porque produce el valor anterior."
+      },
+      {
+        "cuando": "En prefijo dentro de otra expresión.",
+        "que_es": "Primero resta 1; si A era 4, B=--A deja A y B en 3.",
+        "ejemplo": "int A=4;\nint B=--A;",
+        "error_tipico": "Esperar que B sea 4: recibe el valor nuevo."
+      },
+      {
+        "cuando": "En sufijo dentro de otra expresión.",
+        "que_es": "La expresión usa el valor anterior y después A disminuye: B=4 y A=3.",
+        "ejemplo": "int A=4;\nint B=A--;",
+        "error_tipico": "Esperar que B reciba el valor nuevo."
+      }
+    ],
+    "detalle": "-- necesita una variable modificable y le resta exactamente 1.\nEn prefijo, --A, la variable disminuye primero y la expresión produce el valor nuevo.\nEn sufijo, A--, la expresión produce el valor anterior y después disminuye la variable.\nEl sufijo tiene precedencia mayor que el prefijo; los operadores prefijos se agrupan de derecha a izquierda.\nSi A vale 4, B=--A deja A=3 y B=3; B=A-- deja A=3 y B=4.\nCuando está solo en una instrucción, el valor final coincide para prefijo y sufijo; evita efectos mezclados.",
+    "relacionados": [
+      "++",
+      "-=",
+      "for",
+      "while",
+      "asignación"
+    ],
+    "verificado_gcc13": false,
+    "amplia": true
+  },
+  {
+    "elemento": "?:",
+    "tipo": "operador",
+    "que_es": "Selecciona uno de dos valores según una condición; se llama operador condicional o ternario.",
+    "como_se_usa": "int A=-4;\nint ABS=(A<0)?-A:A;",
+    "error_tipico": "Olvidar los dos puntos o intercambiar el resultado verdadero con el falso.",
+    "en_la_materia": "Operadores y expresiones",
+    "errores_ids": [],
+    "buscar": [
+      "?:",
+      "ternario",
+      "operador ternario",
+      "condicional",
+      "if en una expresión",
+      "interrogación"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "En una expresión que elige entre dos resultados.",
+        "que_es": "La forma condición ? valor_si_verdadero : valor_si_falso selecciona una rama.",
+        "ejemplo": "int A=-4;\nint ABS=(A<0)?-A:A;",
+        "error_tipico": "Olvidar una de las dos expresiones o los dos puntos."
+      }
+    ],
+    "detalle": "?: combina una condición con dos resultados posibles.\nLa forma general es condición ? expresión_si_verdadera : expresión_si_falsa.\nSi la condición es distinta de 0 se elige la primera expresión; si es 0, se elige la segunda.\nEn (A<0)?-A:A, cuando A vale -4 el resultado es 4.\nTiene menor precedencia que || y mayor que la asignación; se asocia de derecha a izquierda.\nSolo se evalúa la rama elegida. A diferencia de if, el operador produce un valor.",
+    "relacionados": [
+      "if",
+      "else",
+      "==",
+      "<",
+      "asignación"
+    ],
+    "verificado_gcc13": false,
+    "amplia": true
+  },
+  {
+    "elemento": "sizeof",
+    "tipo": "operador",
+    "que_es": "Devuelve cuántos bytes ocupa un tipo o un objeto; su resultado tiene tipo size_t.",
+    "como_se_usa": "int V[5];\nint B=(int)sizeof(int);\nint T=(int)sizeof(V);",
+    "error_tipico": "Confundir bytes con cantidad de elementos o pensar que sizeof de un puntero mide todo el texto.",
+    "en_la_materia": "Operadores y expresiones",
+    "errores_ids": [
+      "ARR-024",
+      "ARR-044",
+      "FUN-030",
+      "POR-011",
+      "PRF-039"
+    ],
+    "buscar": [
+      "sizeof",
+      "tamaño",
+      "tamano",
+      "bytes",
+      "cuánto ocupa",
+      "memoria",
+      "size_t"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "Con el nombre de un tipo entre paréntesis.",
+        "que_es": "Devuelve el tamaño del tipo; en el objetivo Linux x86-64, sizeof(int) da 4.",
+        "ejemplo": "int N=(int)sizeof(int);\nprintf(\"%d\\n\", N);",
+        "error_tipico": "Olvidar los paréntesis cuando se escribe un nombre de tipo."
+      },
+      {
+        "cuando": "Con una variable o expresión.",
+        "que_es": "Devuelve el tamaño del objeto, no el valor que contiene.",
+        "ejemplo": "int A=5;\nint N=(int)sizeof(A);",
+        "error_tipico": "Creer que sizeof(A) devuelve el contenido de A."
+      },
+      {
+        "cuando": "Con un arreglo completo.",
+        "que_es": "Devuelve los bytes de todo el arreglo: cinco int de 4 bytes ocupan 20.",
+        "ejemplo": "int V[5];\nprintf(\"%d\\n\", (int)sizeof(V));",
+        "error_tipico": "Usar sizeof de un puntero como si midiera todos los caracteres."
+      }
+    ],
+    "detalle": "sizeof es un operador unario, no una función: puede escribirse sizeof(int) o sizeof A.\nCon un nombre de tipo se necesitan paréntesis; con una variable o expresión son opcionales.\nEn el objetivo Linux x86-64, sizeof(int) da 4 y sizeof(float) también da 4.\nCon un arreglo completo, sizeof(V) devuelve los bytes de todo el arreglo: cinco int ocupan 20 bytes.\nEl resultado es size_t; para imprimirlo directamente se usa %zu. En el ejemplo se convierte a int para %d.\nSi lo aplicas a un puntero, obtienes el tamaño del puntero, no el tamaño del texto apuntado.",
+    "relacionados": [
+      "int",
+      "float",
+      "char",
+      "arreglo",
+      "size_t",
+      "(float)"
+    ],
+    "verificado_gcc13": false,
+    "amplia": true
+  },
+  {
+    "elemento": "(float)",
+    "tipo": "operador",
+    "que_es": "Convierte explícitamente un valor a float antes de continuar con la expresión; es un cast.",
+    "como_se_usa": "float PROM=(float)7/2;\nprintf(\"%.1f\\n\", PROM);",
+    "error_tipico": "Convertir el resultado después de una división entera: (float)(7/2) ya es 3.0, no 3.5.",
+    "en_la_materia": "Operadores y expresiones",
+    "errores_ids": [
+      "TIP-003",
+      "TIP-035"
+    ],
+    "buscar": [
+      "(float)",
+      "cast",
+      "conversión",
+      "conversion",
+      "convertir a float",
+      "pasar a float",
+      "forzar decimal"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "Delante de un valor que se quiere convertir.",
+        "que_es": "(float)7 convierte 7 a float antes de dividir; (float)7/2 da 3.5.",
+        "ejemplo": "float R=(float)7/2;\nprintf(\"%.1f\\n\", R);",
+        "error_tipico": "Colocar el cast después de dividir y perder primero la parte decimal."
+      }
+    ],
+    "detalle": "Un cast indica de forma explícita que un valor debe convertirse a otro tipo.\n(float)7 convierte el entero 7 a float antes de resolver la división.\nPor eso (float)7/2 produce 3.5: uno de los operandos ya es float.\nEn cambio, (float)(7/2) primero calcula 7/2 como enteros, obtiene 3 y luego lo convierte a 3.0.\nEl cast tiene precedencia de operador unario y se aplica al valor que aparece inmediatamente después.\nNo cambia la declaración de A: (float)A convierte su valor solo dentro de esa expresión.",
+    "relacionados": [
+      "/",
+      "división entera",
+      "conversión de tipos",
+      "float"
+    ],
+    "verificado_gcc13": false
+  },
+  {
+    "elemento": "&",
+    "tipo": "operador",
+    "que_es": "Delante de una variable obtiene su dirección (por ejemplo, para scanf); entre dos enteros realiza AND bit a bit.",
+    "como_se_usa": "int A=0;\nscanf(\"%d\", &A);",
+    "error_tipico": "Quitar & de scanf o usar & simple para unir condiciones, cuando corresponde &&.",
+    "en_la_materia": "Operadores y expresiones",
+    "errores_ids": [
+      "OPE-004",
+      "OPE-005",
+      "PRF-024",
+      "SCN-001",
+      "SCN-002",
+      "SCN-003"
+    ],
+    "buscar": [
+      "&",
+      "ampersand",
+      "dirección",
+      "direccion",
+      "scanf sin &",
+      "y bit a bit",
+      "and de bits"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "Delante de una variable que se pasa a scanf.",
+        "que_es": "Obtiene la dirección de la variable para que scanf pueda guardar allí el dato.",
+        "ejemplo": "int A;\nscanf(\"%d\", &A);",
+        "error_tipico": "Quitar &: scanf necesita la dirección de A, no su valor."
+      },
+      {
+        "cuando": "Entre dos enteros, como operador binario.",
+        "que_es": "Hace AND bit a bit: 5&3 compara 0101 con 0011 y da 0001, es decir, 1.",
+        "ejemplo": "int A=5, B=3;\nprintf(\"%d\\n\", A&B);",
+        "error_tipico": "Usar & para el AND lógico de condiciones: para eso se escribe &&."
+      }
+    ],
+    "detalle": "& cambia de significado según su posición.\nDelante de una variable, como en scanf(\"%d\",&A), obtiene su dirección para que scanf pueda escribir en ella.\nEntre enteros, 5&3 hace AND bit a bit: 0101 & 0011 da 0001, es decir, 1.\nEl AND bit a bit tiene menor precedencia que == y mayor que ^ y |; se agrupa de izquierda a derecha.\nEl & unario tiene precedencia alta y se agrupa de derecha a izquierda.\nEl editor contempla &A en scanf, pero no implementa punteros generales ni aritmética de punteros.",
+    "relacionados": [
+      "&&",
+      "|",
+      "^",
+      "*",
+      "scanf",
+      "puntero"
+    ],
+    "verificado_gcc13": false,
+    "amplia": true
+  },
+  {
+    "elemento": "|",
+    "tipo": "operador",
+    "que_es": "Realiza OR bit a bit entre dos enteros: el bit del resultado vale 1 si alguno de los dos bits vale 1.",
+    "como_se_usa": "int R=5|3;\nprintf(\"%d\\n\", R);",
+    "error_tipico": "Confundir | con ||: uno combina bits y el otro combina condiciones.",
+    "en_la_materia": "Operadores y expresiones",
+    "errores_ids": [],
+    "buscar": [
+      "|",
+      "OR bit a bit",
+      "or bit a bit",
+      "barra vertical",
+      "pipe",
+      "bits"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "Entre dos valores enteros.",
+        "que_es": "Combina cada par de bits con OR: 5|3 produce 7.",
+        "ejemplo": "int A=5, B=3;\nprintf(\"%d\\n\", A|B);",
+        "error_tipico": "Usar | esperando el cortocircuito de ||."
+      }
+    ],
+    "detalle": "| compara cada posición de ambos números por separado.\nSi alguno de los bits vale 1, el bit correspondiente del resultado vale 1.\nCon 5 (0101) y 3 (0011), 5|3 produce 0111, que vale 7.\nTiene menor precedencia que ^ y &, pero mayor que && y ||.\nLos operadores | del mismo nivel se agrupan de izquierda a derecha.\nNo es ||: el operador lógico trabaja con verdadero o falso y puede cortar la evaluación.",
+    "relacionados": [
+      "&",
+      "^",
+      "||",
+      "<<",
+      ">>"
+    ],
+    "verificado_gcc13": false,
+    "amplia": true
+  },
+  {
+    "elemento": "^",
+    "tipo": "operador",
+    "que_es": "Realiza XOR bit a bit: el resultado vale 1 en las posiciones donde los bits son distintos.",
+    "como_se_usa": "int R=5^3;\nprintf(\"%d\\n\", R);",
+    "error_tipico": "Pensar que ^ eleva a una potencia: en C significa XOR, no exponenciación.",
+    "en_la_materia": "Operadores y expresiones",
+    "errores_ids": [
+      "OPE-031",
+      "PRE-044"
+    ],
+    "buscar": [
+      "^",
+      "xor",
+      "o exclusivo",
+      "circunflejo",
+      "potencia",
+      "elevado",
+      "exponente",
+      "bits"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "Entre dos valores enteros.",
+        "que_es": "Deja 1 donde los bits son diferentes: 5^3 produce 6.",
+        "ejemplo": "int A=5, B=3;\nprintf(\"%d\\n\", A^B);",
+        "error_tipico": "Usarlo como potencia; en C se necesita una función como pow de math.h."
+      }
+    ],
+    "detalle": "^ realiza OR exclusivo bit a bit: el resultado tiene 1 donde los bits son diferentes.\nCon 5 (0101) y 3 (0011), el resultado es 0110, que vale 6.\nTiene menor precedencia que & y mayor que |.\nLos operadores ^ del mismo nivel se agrupan de izquierda a derecha.\n^ no significa elevar a una potencia; para eso se puede usar pow de math.h.\nSolo se aplica a valores enteros y no es lo mismo que ||.",
+    "relacionados": [
+      "&",
+      "|",
+      "~",
+      "pow",
+      "<<",
+      ">>"
+    ],
+    "verificado_gcc13": false,
+    "amplia": true
+  },
+  {
+    "elemento": "~",
+    "tipo": "operador",
+    "que_es": "Invierte todos los bits de un entero: cada 0 pasa a 1 y cada 1 pasa a 0.",
+    "como_se_usa": "int A=5;\nprintf(\"%d\\n\", ~A);",
+    "error_tipico": "Confundir ~ con !: uno invierte bits y el otro niega un valor lógico.",
+    "en_la_materia": "Operadores y expresiones",
+    "errores_ids": [],
+    "buscar": [
+      "~",
+      "NOT bit a bit",
+      "complemento",
+      "tilde",
+      "invertir bits"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "Delante de un valor entero, como operador unario.",
+        "que_es": "Invierte cada bit; en un int de 32 bits del objetivo, ~5 produce -6.",
+        "ejemplo": "int A=5;\nprintf(\"%d\\n\", ~A);",
+        "error_tipico": "Confundir ~A con !A."
+      }
+    ],
+    "detalle": "~ es el complemento bit a bit y trabaja con un solo operando entero.\nInvierte cada posición: los bits 0 pasan a 1 y los bits 1 pasan a 0.\nEn el objetivo de referencia, int ocupa 32 bits; por complemento a dos, ~5 da -6.\nTiene precedencia de operador unario, por encima de * / % y las comparaciones, y se agrupa de derecha a izquierda.\nNo es lo mismo que !: !5 da 0 porque 5 es verdadero, mientras ~5 invierte todos los bits.\nSe usa con enteros y suele aparecer junto a &, | y ^.",
+    "relacionados": [
+      "!",
+      "&",
+      "|",
+      "^",
+      "<<",
+      ">>"
+    ],
+    "verificado_gcc13": false,
+    "amplia": true
+  },
+  {
+    "elemento": "<<",
+    "tipo": "operador",
+    "que_es": "Desplaza los bits de un entero hacia la izquierda; en casos seguros equivale a multiplicar por potencias de 2.",
+    "como_se_usa": "int A=5;\nprintf(\"%d\\n\", A<<1);",
+    "error_tipico": "Desplazar una cantidad negativa o demasiado grande, o producir un resultado que no cabe.",
+    "en_la_materia": "Operadores y expresiones",
+    "errores_ids": [],
+    "buscar": [
+      "<<",
+      "desplazamiento",
+      "corrimiento",
+      "shift izquierda",
+      "shift left",
+      "bits a la izquierda"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "Entre un entero y la cantidad de posiciones que se desplaza.",
+        "que_es": "Mueve los bits a la izquierda: 5<<1 produce 10 en un int de 32 bits.",
+        "ejemplo": "int A=5;\nprintf(\"%d\\n\", A<<1);",
+        "error_tipico": "Creer que siempre es seguro: importan el rango y la cantidad desplazada."
+      }
+    ],
+    "detalle": "<< desplaza los bits del operando izquierdo hacia posiciones más altas.\nEn un caso seguro, 5<<1 transforma 00000101 en 00001010 y produce 10.\nDesplazar una posición equivale a multiplicar por 2; dos posiciones, por 4, si el resultado cabe.\nTiene menor precedencia que + y - y mayor que <, <=, > y >=.\nLos desplazamientos del mismo nivel se agrupan de izquierda a derecha.\nLa cantidad desplazada debe ser no negativa y menor que la cantidad de bits del tipo; el desborde con signo no está definido.",
+    "relacionados": [
+      ">>",
+      "&",
+      "|",
+      "^",
+      "*"
+    ],
+    "verificado_gcc13": false,
+    "amplia": true
+  },
+  {
+    "elemento": ">>",
+    "tipo": "operador",
+    "que_es": "Desplaza los bits de un entero hacia la derecha; para valores positivos equivale a dividir por potencias de 2 y descartar fracciones.",
+    "como_se_usa": "int A=20;\nprintf(\"%d\\n\", A>>2);",
+    "error_tipico": "Confundir el desplazamiento con una división decimal o asumir que el resultado de negativos es portable.",
+    "en_la_materia": "Operadores y expresiones",
+    "errores_ids": [],
+    "buscar": [
+      ">>",
+      "corrimiento",
+      "shift derecha",
+      "shift right",
+      "bits a la derecha",
+      "desplazamiento"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "Entre un entero y la cantidad de posiciones que se desplaza.",
+        "que_es": "Mueve los bits a la derecha: 20 (10100)>>2 produce 5.",
+        "ejemplo": "int A=20;\nprintf(\"%d\\n\", A>>2);",
+        "error_tipico": "Esperar un decimal: el desplazamiento trabaja con bits y produce un entero."
+      }
+    ],
+    "detalle": ">> desplaza los bits del operando izquierdo hacia posiciones más bajas.\nCon un valor positivo, 20 (10100)>>2 produce 00101, que vale 5.\nEn esos casos equivale a dividir por 2 por cada posición y descartar la parte fraccionaria.\nTiene menor precedencia que + y - y mayor que las comparaciones relacionales.\nLos desplazamientos del mismo nivel se agrupan de izquierda a derecha.\nLa cantidad debe ser no negativa y menor que la cantidad de bits del tipo; el desplazamiento de negativos depende de la implementación.",
+    "relacionados": [
+      "<<",
+      "&",
+      "|",
+      "^",
+      "/"
+    ],
+    "verificado_gcc13": false,
+    "amplia": true
+  }
+]
