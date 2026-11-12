@@ -34,7 +34,7 @@ ANSI C básico: `char`, `int`, `float`, `double`, operadores, `printf`/`scanf` (
 ## Estado
 - Soporta: tipos con `long` de 64 bits exactos, `short`, `unsigned`, `bool`; control de flujo; funciones con recursión y prototipos; arreglos 1D/2D (también como parámetro); textos (`char[]`, `%s`, `fgets`, `sprintf`, `string.h` básico); `#define` con parámetros y `#if`; `rand` igual que glibc; `printf`/`scanf` con todos los formatos.
 - No soporta todavía: punteros en general, `struct`, `enum`, `typedef`, archivos, `long double`, `sscanf`, `strchr`/`strstr`/`strtok`.
-- Interfaz: diseño estilo iOS con tema claro, oscuro y automático, panel de problemas según el nivel de ayuda, atajos, buscar y reemplazar, programas guardados, captura PNG (código, entrada y salida, abajo o lado a lado, con la línea de proceso), «Avisar a Diego» por WhatsApp, pasar un programa a otro dispositivo por enlace, PWA con service worker (solo en http/https), exportar/importar. Licencia: PolyForm Strict 1.0.0 (`LICENSE`).
+- Interfaz: diseño estilo iOS con tema claro, oscuro y automático, panel de problemas según el nivel de ayuda, atajos, buscar y reemplazar, programas guardados, captura PNG (código, entrada y salida, abajo o lado a lado, con nombre a elección), «Avisar a Diego» por WhatsApp, pasar un programa a otro dispositivo por enlace, PWA con service worker (solo en http/https), exportar/importar. Licencia: PolyForm Strict 1.0.0 (`LICENSE`).
 
 ## Cómo se trabaja
 - Ramas: `main` es lo que se publica. Se trabaja en ramas y se integra con PR. No crear un PR si no lo pidió Diego.
