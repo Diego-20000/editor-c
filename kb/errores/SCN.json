@@ -102,7 +102,7 @@
   ],
   "relacion_con_la_materia": "scanf, tipos",
   "deteccion": "estatica",
-  "como_detectarlo": "Especificador de scanf distinto del tipo apuntado.",
+  "como_detectarlo": "Formato de scanf distinto del tipo apuntado.",
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
@@ -130,7 +130,7 @@
   ],
   "relacion_con_la_materia": "scanf, tipos",
   "deteccion": "estatica",
-  "como_detectarlo": "Especificador de scanf distinto del tipo apuntado.",
+  "como_detectarlo": "Formato de scanf distinto del tipo apuntado.",
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
@@ -1440,7 +1440,7 @@
   "explicacion": "scanf devuelve la cantidad de asignaciones realizadas. El número se cuenta por conversiones completadas, no por la cantidad de caracteres ingresados.",
   "como_arreglarlo": "Cuenta cuántas conversiones hay en el formato y compara el retorno con esa cantidad.",
   "pistas": [
-   "Mira cuántos especificadores de lectura hay.",
+   "Mira cuántos formatos de lectura hay.",
    "Solo hay un %d que asigna un valor.",
    "Para una lectura exitosa, compara el retorno con 1."
   ],

@@ -19,7 +19,7 @@ Estos casos no tienen resultado garantizado en C, así que el editor no promete 
 - leer una variable local sin inicializar (el editor la inicia en 0 y avisa);
 - orden de evaluación de los argumentos de una llamada (gcc evalúa de derecha a izquierda; el editor lo imita cuando hay efectos, pero no está garantizado por el estándar);
 - índices fuera de un arreglo (el editor se detiene con un error y el número de línea);
-- el signo de un cero o de un NaN en cuentas decimales extremas (por ejemplo negar un NaN o dividir por un cero con signo): el editor imprime `-nan` para el `0/0` típico como gcc, pero no sigue el signo en cadenas largas de operaciones. Lo encontró la prueba con programas aleatorios (`test/fuzz_run.sh`), que ya no genera esos casos.
+- el signo de un cero o de un NaN en cadenas largas de operaciones decimales: el editor imprime `-nan` para `0/0`, `sqrt(-1)` y similares, y `nan` para `NAN`, `atof("nan")` y `scanf` de `nan` (también al negar, `fabs`, `fmax`/`fmin`), como gcc; el signo se sigue con una marca interna que el navegador puede no conservar en cuentas raras.
 
 ## Límites propios del editor
 - Los textos y la entrada son **bytes UTF-8**, como en glibc: `strlen`, los anchos de `%s`, `%c`, `getchar`, `fgets` y `%[...]` cuentan bytes, y lo que se imprime de a un byte (`%c`, `putchar`) se junta como UTF-8 (dos llamadas con los bytes de una `é` muestran una `é`). Lo único que no se reproduce igual: una secuencia UTF-8 incompleta o inválida (por ejemplo cortar una `é` por la mitad con un ancho) se muestra como «�» en lugar de imprimir el byte suelto, porque la salida del editor es texto.

@@ -1,0 +1,681 @@
+[
+ {
+  "elemento": "desborde",
+  "detalle": "Cada tipo de número entero tiene un tamaño fijo, como una caja con lugar para pocos números. Un int llega hasta 2147483647.\nSi una cuenta da un número más grande, no entra en la caja y el resultado sale cambiado, como el cuentakilómetros de un auto que da la vuelta.\nEn un int con signo, C no promete ningún resultado para ese caso (se llama comportamiento indefinido); en la práctica suele salir un número negativo.\nCon unsigned la vuelta sí está definida: después del máximo sigue el 0.\nPasa sobre todo al multiplicar o al acumular muchas veces: factoriales, potencias, sumas de muchos datos.\nPara números más grandes usa long (64 bits en este entorno) o un tipo decimal como double.\nError típico: creer que el programa avisa. No avisa: muestra un número absurdo y sigue como si nada.",
+  "ocasiones": [
+   {
+    "cuando": "Al multiplicar dos int cuyo resultado no entra.",
+    "que_es": "100000*100000 es 10000000000, que no entra en un int; con long sí entra si conviertes antes de multiplicar.",
+    "ejemplo": "int P=100000;\nprintf(\"%d\\n\",P*P);  // muestra: 1410065408\nprintf(\"%ld\\n\",(long)P*P);  // muestra: 10000000000"
+   },
+   {
+    "cuando": "Con un tipo sin signo (unsigned).",
+    "que_es": "Al pasarse del máximo vuelve a 0, y eso sí está definido por C.",
+    "ejemplo": "unsigned int U=UINT_MAX;\nU=U+1;\nprintf(\"%u\\n\",U);  // muestra: 0"
+   }
+  ],
+  "relacionados": [
+   "int",
+   "long",
+   "unsigned",
+   "INT_MAX",
+   "comportamiento indefinido",
+   "limits.h"
+  ]
+ },
+ {
+  "elemento": "división entera",
+  "detalle": "Cuando los dos lados de / son enteros, C hace una división de enteros: da el cociente y descarta lo que sobra.\nNo redondea, corta: 7/2 da 3, 1/2 da 0 y -7/2 da -3 (se corta hacia el cero).\nLo que sobra lo da el operador %: 7%2 da 1.\nPara tener decimales alcanza con que UNO de los dos lados sea decimal: 7/2.0 o (float)7/2 dan 3.5.\nLo que confunde: el tipo de la variable donde guardas el resultado no cambia la cuenta. En float R=7/2; la división ya se hizo entera y R vale 3.000000.\nError típico: esperar 3.5 de 7/2, o escribir (float)(A/B), donde los decimales ya se perdieron dentro del paréntesis.",
+  "ocasiones": [
+   {
+    "cuando": "Con dos int.",
+    "que_es": "Cociente sin decimales, y % da lo que sobra.",
+    "ejemplo": "int A=9, B=4;\nprintf(\"%d %d\\n\",A/B,A%B);  // muestra: 2 1"
+   },
+   {
+    "cuando": "Cuando uno de los dos es decimal.",
+    "que_es": "La cuenta se hace con decimales.",
+    "ejemplo": "int A=9, B=4;\nprintf(\"%.2f\\n\",(float)A/B);  // muestra: 2.25"
+   }
+  ],
+  "relacionados": [
+   "/",
+   "%",
+   "conversión de tipos",
+   "(tipo)",
+   "float",
+   "promedio"
+  ]
+ },
+ {
+  "elemento": "precedencia",
+  "detalle": "Cuando una cuenta tiene varios operadores, C no los resuelve simplemente de izquierda a derecha: cada operador tiene una prioridad (también se llama precedencia).\nEn 2+3*4 primero se hace 3*4, porque * tiene más prioridad que +; el resultado es 14, no 20.\nDe mayor a menor prioridad: ! (no), * / %, + -, < <= > >=, == !=, && (y), || (o) y, por último, = (asignar).\nSi dos operadores tienen la misma prioridad, se resuelven de izquierda a derecha: 10-4-3 es (10-4)-3, o sea 3.\nLos paréntesis siempre ganan: lo de adentro se hace primero. Ponlos aunque no hagan falta si te ayudan a leer.\nLo que confunde: && tiene más prioridad que ||, así que A||B&&C significa A||(B&&C).\nError típico: 1<A<5 para preguntar si A está entre 1 y 5. Se hace (1<A)<5; eso da 0 o 1, y como 0 y 1 son menores que 5, siempre es verdadero. Se escribe 1<A && A<5.",
+  "ocasiones": [
+   {
+    "cuando": "En una cuenta con + y *.",
+    "que_es": "La multiplicación se hace antes; los paréntesis cambian el orden.",
+    "ejemplo": "printf(\"%d %d\\n\",2+3*4,(2+3)*4);  // muestra: 14 20"
+   },
+   {
+    "cuando": "Con restas seguidas.",
+    "que_es": "Misma prioridad: de izquierda a derecha.",
+    "ejemplo": "printf(\"%d\\n\",10-4-3);  // muestra: 3"
+   }
+  ],
+  "relacionados": [
+   "operador",
+   "expresión",
+   "&&",
+   "||",
+   "()"
+  ]
+ },
+ {
+  "elemento": "conversión de tipos",
+  "detalle": "Cuando una cuenta mezcla tipos, C hace la cuenta en el más «ancho» de los dos: un int con un double se calcula como double. Lo hace solo y sin avisar.\nDel más angosto al más ancho: char, short, int, long, float, double.\nTambién puedes forzarla tú con un cast: el tipo entre paréntesis delante del valor, como (float)A.\nEl cast afecta solo al valor que tiene pegado a la derecha: en (float)A/B se convierte A, y por eso la división sale con decimales.\nAl guardar un decimal en un int se pierde la parte decimal (se corta, no se redondea): int N=3.9; guarda 3.\nLo que confunde: convertir tarde. En (float)(A/B) la división de enteros ya se hizo y los decimales ya no vuelven.\nError típico: ese. Convierte los operandos antes de la cuenta, no el resultado.",
+  "ocasiones": [
+   {
+    "cuando": "Al convertir antes de dividir.",
+    "que_es": "Un operando decimal hace que toda la cuenta sea decimal.",
+    "ejemplo": "int A=7, B=2;\nprintf(\"%.2f\\n\",(float)A/B);  // muestra: 3.50"
+   },
+   {
+    "cuando": "Al convertir después de dividir.",
+    "que_es": "La división ya se hizo entera: convertir el resultado no recupera los decimales.",
+    "ejemplo": "int A=7, B=2;\nprintf(\"%.2f\\n\",(float)(A/B));  // muestra: 3.00"
+   }
+  ],
+  "relacionados": [
+   "(tipo)",
+   "(float)",
+   "división entera",
+   "int",
+   "float",
+   "double"
+  ]
+ },
+ {
+  "elemento": "expresión",
+  "detalle": "Una expresión es cualquier cosa que C puede calcular y que da un valor: un número, una variable, una cuenta, una comparación o la llamada a una función.\nSe usa dentro de las instrucciones: a la derecha de =, entre los paréntesis de printf, de un if o de un while.\nSe ve así: 5, A, A+B*2, A>3, sqrt(A).\nCada expresión tiene un valor y un tipo: A+1 es un int, A/2.0 es un double y A>3 es 1 (verdadero) o 0 (falso).\nUna expresión sola no hace nada hasta que la usas: o la guardas con =, o la muestras, o la usas como condición.\nLo que confunde: poner ; al final de una expresión la convierte en una instrucción válida, pero que calcula y tira el resultado. gcc avisa «statement with no effect».\nError típico: escribir TOTAL+PRECIO; esperando que TOTAL cambie. Para que cambie hay que escribir TOTAL=TOTAL+PRECIO;.",
+  "ocasiones": [
+   {
+    "cuando": "Como parte de una asignación.",
+    "que_es": "El valor de la cuenta se guarda en la variable.",
+    "ejemplo": "int PRECIO=20, CANT=3, TOTAL;\nTOTAL=PRECIO*CANT+5;\nprintf(\"%d\\n\",TOTAL);  // muestra: 65"
+   },
+   {
+    "cuando": "Como condición de un if.",
+    "que_es": "Una comparación es una expresión que da 1 o 0.",
+    "ejemplo": "int G=2;\nprintf(\"%d %d\\n\",G>3,G+1);  // muestra: 0 3"
+   }
+  ],
+  "relacionados": [
+   "operador",
+   "instrucción",
+   "condición",
+   "=",
+   "precedencia",
+   "()"
+  ]
+ },
+ {
+  "elemento": "instrucción",
+  "detalle": "Una instrucción es una orden completa que el programa ejecuta. En C casi todas terminan con ;.\nSon instrucciones una asignación (A=5;), una llamada a printf o scanf, una declaración (int A;) y un return.\nEl programa es una lista de instrucciones que se ejecutan de arriba hacia abajo, salvo que un if o un lazo cambie el camino.\nif, while y for también son instrucciones, pero contienen otras: se agrupan con llaves y no llevan ; después de ).\nLo que confunde: el ; no separa instrucciones, las termina. Va al final de cada una y no después del paréntesis de un if, un for o un while.\nError típico: if(A>5); con un ; de más. Ese ; es una instrucción vacía y es lo único que controla el if; la instrucción siguiente se ejecuta siempre. gcc avisa «suggest braces around empty body».",
+  "ocasiones": [
+   {
+    "cuando": "Una detrás de otra.",
+    "que_es": "Cada instrucción termina con ; y se ejecuta en orden.",
+    "ejemplo": "int A=1;\nA=A+1;\nprintf(\"%d\\n\",A);  // muestra: 2"
+   },
+   {
+    "cuando": "Con un ; de más después del if.",
+    "que_es": "El ; vacío es el cuerpo del if, y printf se ejecuta siempre.",
+    "ejemplo": "int A=1;\nif(A>5); printf(\"entra\\n\");  // muestra: entra"
+   }
+  ],
+  "relacionados": [
+   ";",
+   "bloque",
+   "expresión",
+   "{}",
+   "=",
+   "SS"
+  ]
+ },
+ {
+  "elemento": "bloque",
+  "detalle": "Un bloque agrupa varias instrucciones entre llaves { } para que C las trate como una sola.\nSe usa con if, else, for, while y switch, y también en las funciones: el cuerpo de main es un bloque.\nSin llaves, el if, el else o el lazo controlan solamente la instrucción que sigue.\nLas variables que declaras dentro de un bloque existen solo ahí adentro (son variables locales).\nNo lleva ; después de la llave de cierre.\nLo que confunde: los espacios al comienzo de cada línea (la sangría) no significan nada para C; sirven solo para que tú leas mejor.\nError típico: if(A>0) B++; C++; creer que C++ también depende del if. Solo B++ depende; C++ se ejecuta siempre. gcc avisa «this 'if' clause does not guard» cuando la sangría engaña.",
+  "ocasiones": [
+   {
+    "cuando": "Sin llaves.",
+    "que_es": "El if controla solo la primera instrucción; la segunda se ejecuta siempre.",
+    "ejemplo": "int A=-1, B=0, C=0;\nif(A>0) B++;\nC++;\nprintf(\"%d %d\\n\",B,C);  // muestra: 0 1"
+   },
+   {
+    "cuando": "Con llaves.",
+    "que_es": "Las dos instrucciones dependen del if.",
+    "ejemplo": "int A=-1, B=0, C=0;\nif(A>0){ B++; C++; }\nprintf(\"%d %d\\n\",B,C);  // muestra: 0 0"
+   }
+  ],
+  "relacionados": [
+   "{}",
+   "instrucción",
+   "if",
+   "else",
+   "for",
+   "while",
+   "variable local"
+  ]
+ },
+ {
+  "elemento": "condición",
+  "detalle": "Una condición es una expresión que C evalúa como verdadera o falsa para decidir qué camino sigue el programa. La usan if, while, for y ?:.\nEn C la regla es simple: el 0 es falso y cualquier otro valor es verdadero. Las comparaciones dan 1 si se cumplen y 0 si no.\nSe arman con comparaciones (== != < > <= >=) y se combinan con && (y), || (o) y ! (no).\nSe ve así: A>5, A==B, A>=1 && A<=9, !ENCONTRADO.\nLo que confunde: if(A) significa lo mismo que if(A!=0), aunque no haya comparación a la vista.\nError típico: escribir el rango como 1<=A<=9. C lo calcula como (1<=A)<=9, que siempre es verdadero. Se escribe A>=1 && A<=9.",
+  "ocasiones": [
+   {
+    "cuando": "Una comparación.",
+    "que_es": "Da 1 si se cumple y 0 si no.",
+    "ejemplo": "printf(\"%d %d\\n\",3>2,3==2);  // muestra: 1 0"
+   },
+   {
+    "cuando": "Un número como condición.",
+    "que_es": "Cualquier valor distinto de 0 cuenta como verdadero.",
+    "ejemplo": "int A=-4;\nif(A) puts(\"verdadero\");  // muestra: verdadero"
+   }
+  ],
+  "relacionados": [
+   "if",
+   "while",
+   "==",
+   "=",
+   "&&",
+   "||",
+   "!",
+   "bandera",
+   "precedencia"
+  ]
+ },
+ {
+  "elemento": "bandera",
+  "detalle": "Una bandera es una variable que vale solo 0 o 1 y sirve para recordar si algo ya pasó, como una luz que está apagada o encendida.\nSe usa cuando necesitas decidir algo al final con lo que ocurrió antes. También se llama flag o indicador.\nEl camino habitual tiene tres pasos: se inicia apagada (0), se enciende (1) cuando ocurre el hecho y se consulta después con un if.\nSe ve así: int LLOVIO=0; ... if(MM>0) LLOVIO=1; ... if(LLOVIO) ...\nLo que confunde: una bandera se enciende, pero no se apaga sola. Si la pones en 0 en un else, borras lo que había recordado.\nError típico: no iniciarla (arranca con basura y a veces dice que sí pasó sin haber pasado), o volver a ponerla en 0 en cada vuelta de un lazo.",
+  "ocasiones": [
+   {
+    "cuando": "Para recordar que algo pasó.",
+    "que_es": "Se enciende cuando ocurre el hecho.",
+    "ejemplo": "int LLOVIO=0;\nint MM=12;\nif(MM>0) LLOVIO=1;\nprintf(\"%d\\n\",LLOVIO);  // muestra: 1"
+   },
+   {
+    "cuando": "Para decidir al final.",
+    "que_es": "La bandera se consulta como condición.",
+    "ejemplo": "int LLOVIO=0;\nif(LLOVIO) puts(\"Hubo lluvia\");\nelse puts(\"Semana seca\");  // muestra: Semana seca"
+   }
+  ],
+  "relacionados": [
+   "variable",
+   "inicialización",
+   "condición",
+   "contador",
+   "centinela",
+   "lazo"
+  ]
+ },
+ {
+  "elemento": "promedio",
+  "detalle": "El promedio de unos datos es la suma de todos dividida por cuántos son. Por eso necesitas dos cosas: una suma y una cantidad.\nCon precios 10, 20, 25 y 30 la suma es 85, hay 4 datos y el promedio es 21.25.\nEn C la suma se guarda en una variable (acumulador) y la cantidad en otra (contador), y se divide recién al final.\nLo que confunde: la división entera. Con SUMA y N enteros, SUMA/N corta los decimales y da 21, no 21.25. Convierte uno de los dos: (float)SUMA/N.\nOtra trampa es no tener ningún dato: N vale 0. Con enteros, el programa se cierra con error; con decimales sale inf o nan.\nPor eso conviene preguntar if(N>0) antes de dividir.\nError típico: dividir dentro del lazo en cada vuelta, en vez de esperar a tener la suma completa.",
+  "ocasiones": [
+   {
+    "cuando": "Con enteros y con conversión.",
+    "que_es": "Sin la conversión se pierde la parte decimal.",
+    "ejemplo": "int SUMA=85, N=4;\nprintf(\"%d %.2f\\n\",SUMA/N,(float)SUMA/N);  // muestra: 21 21.25"
+   },
+   {
+    "cuando": "Cuando puede no haber datos.",
+    "que_es": "Se evita dividir por cero.",
+    "ejemplo": "int SUMA=0, N=0;\nif(N>0) printf(\"%.2f\\n\",(float)SUMA/N);\nelse puts(\"Sin datos\");  // muestra: Sin datos"
+   }
+  ],
+  "relacionados": [
+   "acumulador",
+   "contador",
+   "división entera",
+   "conversión de tipos",
+   "/",
+   "(float)"
+  ]
+ },
+ {
+  "elemento": "máximo y mínimo",
+  "detalle": "Para hallar el mayor de unos datos (el máximo) se guarda el mejor valor visto hasta ahora y se compara con cada dato nuevo. Para el menor (el mínimo) se hace lo mismo con la comparación al revés.\nLa comparación cambia la variable solo cuando el dato nuevo le gana: if(DATO>MAX) MAX=DATO;. Con el menor, if(DATO<MIN) MIN=DATO;.\nCon goles 2, 5, 1 y 4, MAX pasa por 2, luego 5, y ahí se queda.\nLo que confunde: con datos iguales, > deja el primero que apareció y >= deja el último. Elige según lo que pida el enunciado.\nError típico: iniciar MAX en 0. Si todos los datos son negativos (temperaturas bajo cero, por ejemplo), MAX se queda en 0, que no es ningún dato.\nLo seguro es iniciarlo con el primer dato; si el valor inicial es fijo, debe ser menor que cualquier dato posible.",
+  "ocasiones": [
+   {
+    "cuando": "Cada dato nuevo se compara con el mejor hasta ahora.",
+    "que_es": "Solo cambia si el nuevo es mayor.",
+    "ejemplo": "int MAX=3;\nint G=5;\nif(G>MAX) MAX=G;\nprintf(\"%d\\n\",MAX);  // muestra: 5"
+   },
+   {
+    "cuando": "Con temperaturas bajo cero.",
+    "que_es": "Si MAX arranca en 0, ningún dato negativo le gana.",
+    "ejemplo": "int MAX=0;\nint T=-3;\nif(T>MAX) MAX=T;\nprintf(\"%d\\n\",MAX);  // muestra: 0 (no es ningún dato)"
+   }
+  ],
+  "relacionados": [
+   "condición",
+   "if",
+   "variable",
+   "INT_MAX",
+   "INT_MIN",
+   "inicialización"
+  ]
+ },
+ {
+  "elemento": "SS",
+  "detalle": "SS significa secuencia simple. Es una de las estructuras de la materia: las instrucciones se ejecutan una detrás de otra, sin decidir y sin repetir.\nSirve para los pasos más comunes: leer los datos, hacer las cuentas y mostrar el resultado.\nEn el diagrama N-S son cajas apiladas; en C son instrucciones seguidas dentro de main, cada una ejecutada una sola vez.\nLo que confunde: que el programa sea corto no lo hace SS. Si aparece un if o un lazo, ya no es solo secuencia simple.\nEl orden importa: no puedes usar un dato antes de leerlo o de calcularlo.\nError típico: calcular el total antes de darle valor a las variables que usa la cuenta. El resultado sale con basura.",
+  "ocasiones": [
+   {
+    "cuando": "Con los datos ya cargados.",
+    "que_es": "Primero los datos, después la cuenta, al final el resultado.",
+    "ejemplo": "float PRECIO=80.5, TOTAL;\nint CANT=3;\nTOTAL=PRECIO*CANT;\nprintf(\"%.2f\\n\",TOTAL);  // muestra: 241.50"
+   }
+  ],
+  "relacionados": [
+   "BC",
+   "lazo repetitivo",
+   "instrucción",
+   "bloque",
+   "=",
+   "expresión"
+  ]
+ },
+ {
+  "elemento": "BC",
+  "detalle": "BC significa bifurcación condicional. Es una estructura de la materia: según una condición, el programa sigue un camino u otro.\nEn C se escribe con if, con if y else, con else if encadenados o con switch.\nEn el diagrama N-S se dibuja con una condición y dos columnas, V (verdadero) y F (falso). En la materia el lado V no se deja vacío: si queda vacío, se invierte la condición.\nCon if y else se ejecuta exactamente un camino; con if solo, se hace algo o no se hace nada.\nLo que confunde: la pregunta se hace una sola vez. Si hay que preguntar muchas veces, es un lazo.\nEn una cadena de else if se prueba de arriba hacia abajo y se ejecuta el primer camino verdadero; el orden importa.\nError típico: olvidar el caso que no cumple ninguna condición, o poner primero la condición más amplia, que se lleva todos los casos.",
+  "ocasiones": [
+   {
+    "cuando": "Con tres caminos.",
+    "que_es": "Se prueba de arriba hacia abajo y se ejecuta el primero que se cumple.",
+    "ejemplo": "int T=31;\nif(T>=30) puts(\"Calor\");\nelse if(T>=15) puts(\"Templado\");\nelse puts(\"Fresco\");  // muestra: Calor"
+   },
+   {
+    "cuando": "Con las condiciones en mal orden.",
+    "que_es": "La primera, más amplia, se lleva el caso y la segunda nunca se prueba.",
+    "ejemplo": "int T=31;\nif(T>=15) puts(\"Templado\");\nelse if(T>=30) puts(\"Calor\");  // muestra: Templado"
+   }
+  ],
+  "relacionados": [
+   "if",
+   "else",
+   "else if",
+   "switch",
+   "condición",
+   "SS",
+   "lazo condicional"
+  ]
+ },
+ {
+  "elemento": "compilar",
+  "detalle": "Compilar es traducir tu programa, que es texto en C, a un programa que la computadora puede ejecutar. Lo hace un programa llamado compilador (en la materia, gcc).\nDurante la traducción el compilador revisa que el programa esté bien escrito y te muestra errores y avisos.\nUn error impide el programa: no se genera hasta que lo corrijas. Un aviso (warning) no lo impide, pero señala algo sospechoso.\nEste editor hace ese trabajo antes de ejecutar: primero revisa y traduce, y recién después corre el programa.\nLo que confunde: compilar no es ejecutar. Compilar sin errores solo dice que el programa está bien escrito, no que haga lo que quieres.\nError típico: creer que si compila está bien, o ignorar los avisos, que muchas veces señalan un error de lógica.",
+  "ocasiones": [
+   {
+    "cuando": "En una consola con gcc.",
+    "que_es": "Genera el programa ejecutable a partir del archivo .c; con -Wall pide todos los avisos.",
+    "ejemplo": "gcc -Wall programa.c -o programa"
+   }
+  ],
+  "relacionados": [
+   "#include",
+   "biblioteca",
+   "identificador",
+   "comportamiento indefinido",
+   "main"
+  ]
+ },
+ {
+  "elemento": "identificador",
+  "detalle": "Un identificador es el nombre que eliges para una variable o una función.\nPuede tener letras, números y guion bajo (_). No puede empezar con un número y no puede ser una palabra reservada de C, como int, if o return.\nEn la materia las variables se escriben en MAYÚSCULAS, y para nombres de varias palabras se usa el guion bajo: TOTAL_FINAL.\nUn buen nombre dice qué guarda: PRECIO, CANT, TEMP. Con nombres como X1 o AUX2 es fácil perder el rastro de qué era cada uno.\nLo que confunde: C distingue mayúsculas de minúsculas, así que TOTAL y Total son dos nombres distintos. Tampoco puedes repetir un nombre dentro del mismo lugar.\nError típico: usar guion medio. TOTAL-FINAL no es un nombre: C lo lee como la resta de TOTAL menos FINAL. Otro error es empezar con un número, como 2DA_NOTA.",
+  "ocasiones": [
+   {
+    "cuando": "Un nombre válido.",
+    "que_es": "Letras mayúsculas y guion bajo.",
+    "ejemplo": "int TOTAL_FINAL=5;\nprintf(\"%d\\n\",TOTAL_FINAL);  // muestra: 5"
+   },
+   {
+    "cuando": "Un nombre con guion medio.",
+    "que_es": "C lo lee como una resta, no como un nombre.",
+    "ejemplo": "int TOTAL=9, FINAL=4;\nprintf(\"%d\\n\",TOTAL-FINAL);  // muestra: 5"
+   }
+  ],
+  "relacionados": [
+   "variable",
+   "mayúsculas y minúsculas",
+   "función",
+   "constante",
+   "int"
+  ]
+ },
+ {
+  "elemento": "mayúsculas y minúsculas",
+  "detalle": "C distingue las mayúsculas de las minúsculas: A y a son dos variables distintas, y printf no es lo mismo que Printf.\nLas palabras reservadas y las funciones de las bibliotecas van siempre en minúscula: int, if, while, printf, scanf.\nPor eso en la materia las variables van en MAYÚSCULAS: se distinguen a simple vista de las palabras de C.\nTambién cuenta dentro de los textos: al comparar textos, \"Si\" y \"si\" son distintos.\nLo que confunde: dentro de un texto entre comillas puedes escribir como quieras, porque se muestra tal cual; la regla vale para los nombres y las palabras de C.\nError típico: declarar TOTAL y escribir Total más abajo. C no se da cuenta de que querías la misma variable y avisa que Total no está declarada.",
+  "ocasiones": [
+   {
+    "cuando": "Dos variables con la misma letra.",
+    "que_es": "Una mayúscula y una minúscula son nombres distintos.",
+    "ejemplo": "int A=1;\nint a=2;\nprintf(\"%d %d\\n\",A,a);  // muestra: 1 2"
+   }
+  ],
+  "relacionados": [
+   "identificador",
+   "int",
+   "printf",
+   "variable",
+   "strcmp"
+  ]
+ },
+ {
+  "elemento": "recursión",
+  "detalle": "La recursión es cuando una función se llama a sí misma para resolver una versión más chica del mismo problema.\nToda función recursiva necesita dos partes: un caso base, donde ya no se llama a sí misma, y un paso recursivo que se acerca al caso base.\nPor ejemplo, la suma de 1 hasta N es N más la suma de 1 hasta N-1; el caso base es N igual a 0, que suma 0.\nCada llamada guarda sus propias variables en la memoria. Por eso un error en la recursión llena la memoria y el programa se cae.\nLo lees al revés de lo que parece: la función espera el resultado de la llamada de adentro y recién después calcula el suyo.\nTodo lo que se hace con recursión se puede hacer con un lazo; en la materia la recursión es una alternativa.\nError típico: no poner caso base, o poner un paso que no se acerca (SUMAR(N+1)). Las llamadas no terminan nunca.",
+  "ocasiones": [
+   {
+    "cuando": "Que devuelve un valor.",
+    "que_es": "La función espera el resultado de la llamada de adentro para sumarlo.",
+    "ejemplo": "int SUMAR(int N){\n if(N==0) return 0;\n return N+SUMAR(N-1);\n}  // SUMAR(4) vale 10"
+   },
+   {
+    "cuando": "Que no devuelve nada.",
+    "que_es": "Cuenta hacia atrás: muestra el número y se llama con uno menos.",
+    "ejemplo": "void CUENTA(int N){\n if(N>0){ printf(\"%d \",N); CUENTA(N-1); }\n}  // CUENTA(3) muestra: 3 2 1"
+   }
+  ],
+  "relacionados": [
+   "función",
+   "prototipo",
+   "return",
+   "lazo",
+   "parámetro",
+   "ámbito"
+  ]
+ },
+ {
+  "elemento": "buffer de entrada",
+  "detalle": "El buffer de entrada es una zona de memoria donde el sistema guarda las teclas que escribes hasta que el programa las lee.\nCuando escribes 25 y pulsas Enter, en el buffer entran tres cosas: el 2, el 5 y el salto de línea del Enter.\nscanf(\"%d\") lee el 25 y deja el Enter en el buffer, esperando a la próxima lectura.\n%d y %f saltan solos los espacios y los Enter antes de leer, así que no se nota. %c no los salta: toma el primer carácter que haya, aunque sea ese Enter.\nPor eso, para leer un char después de un número, se escribe un espacio antes del %c: \" %c\". Ese espacio le dice a scanf que salte lo que sobre.\nOtra consecuencia: si escribes letras donde se espera un número, scanf no las consume. Quedan en el buffer y la lectura vuelve a fallar con lo mismo.\nError típico: leer un char justo después de un int con \"%c\". La variable queda con el Enter (código 10) y el programa no espera la tecla.",
+  "ocasiones": [
+   {
+    "cuando": "Leer un char con %c después de un número.",
+    "que_es": "Toma el Enter que quedó pendiente: el char vale 10.",
+    "ejemplo": "int A;\nchar C;\nscanf(\"%d\",&A); scanf(\"%c\",&C);\nprintf(\"%d\\n\",C);  // con 25, Enter y x, muestra: 10"
+   },
+   {
+    "cuando": "Leer el char con un espacio antes de %c.",
+    "que_es": "El espacio salta el Enter pendiente y se lee la x.",
+    "ejemplo": "int A;\nchar C;\nscanf(\"%d\",&A); scanf(\" %c\",&C);\nprintf(\"%d\\n\",C);  // con 25, Enter y x, muestra: 120"
+   }
+  ],
+  "relacionados": [
+   "scanf",
+   "%c",
+   "%d",
+   "getchar",
+   "fgets",
+   "fflush"
+  ]
+ },
+ {
+  "elemento": "inicialización",
+  "detalle": "Inicializar una variable es darle un valor en el mismo momento en que la declaras: int A=0;.\nUna variable local que no inicializas no vale 0: contiene basura, o sea lo que haya quedado en esa memoria de antes.\nSirve para que cada variable arranque en un valor conocido: 0 para un contador, un acumulador o una bandera.\nDeclarar y dar valor pueden hacerse por separado: int A; A=5; es lo mismo en la práctica. La diferencia es el momento.\nLo que confunde: en una declaración con varias variables, cada una se inicializa por separado. En int A, B=0; solo B vale 0.\nError típico: int A, B, C=0; creyendo que las tres valen 0. Si usas A o B antes de darles valor, la cuenta sale con basura, y distinta en cada ejecución.",
+  "ocasiones": [
+   {
+    "cuando": "Con una variable por declaración.",
+    "que_es": "Cada una con su valor inicial.",
+    "ejemplo": "int SUMA=0, CANT=0;\nSUMA=SUMA+4;\nCANT=CANT+1;\nprintf(\"%d %d\\n\",SUMA,CANT);  // muestra: 4 1"
+   },
+   {
+    "cuando": "Con varias variables en una línea.",
+    "que_es": "Solo la que tiene = recibe el valor.",
+    "ejemplo": "int A, B=0;  // B vale 0; A tiene basura"
+   }
+  ],
+  "relacionados": [
+   "variable",
+   "contador",
+   "acumulador",
+   "bandera",
+   "=",
+   "variable global"
+  ]
+ },
+ {
+  "elemento": "operador",
+  "detalle": "Un operador es un símbolo que hace una operación con uno o más valores, que se llaman operandos.\nHay operadores de cuenta (+ - * / %), de comparación (== != < > <= >=), de lógica (&& || !) y de asignación (= += -=).\nLos hay con dos operandos (A+B), con uno (-A, !A, A++) y uno con tres (?:).\nCada operador da un valor, y por eso se pueden combinar en una sola expresión; la prioridad decide cuál se hace primero.\nLo que confunde: el mismo símbolo puede hacer cosas distintas. El - resta entre dos valores y cambia el signo delante de uno.\nError típico: usar los operadores de otros lenguajes: <> en vez de !=, and en vez de && y ^ para la potencia. En C, ^ es otra operación (o exclusivo bit a bit): 2^3 da 1. La potencia es pow(2,3), de math.h.",
+  "ocasiones": [
+   {
+    "cuando": "Operador con dos operandos.",
+    "que_es": "Suma los dos valores.",
+    "ejemplo": "int A=2, B=1;\nprintf(\"%d\\n\",A+B);  // muestra: 3"
+   },
+   {
+    "cuando": "^ no es la potencia.",
+    "que_es": "Es el o exclusivo; la potencia se hace con pow.",
+    "ejemplo": "int A=2, B=3;\nprintf(\"%d %.0f\\n\",A^B,pow(A,B));  // muestra: 1 8"
+   }
+  ],
+  "relacionados": [
+   "expresión",
+   "precedencia",
+   "=",
+   "==",
+   "&&",
+   "pow",
+   "?:"
+  ]
+ },
+ {
+  "elemento": "biblioteca",
+  "detalle": "Una biblioteca es un conjunto de funciones ya escritas que puedes usar sin programarlas: printf y scanf (stdio.h), sqrt y pow (math.h), rand (stdlib.h), strlen (string.h).\nPara usarla se escribe arriba del programa #include <nombre.h>. Ese archivo cabecera (.h) trae la lista de funciones, con el nombre, qué reciben y qué devuelven.\nAsí C comprueba que las llames bien: con la cantidad y el tipo de datos correctos.\nLo que confunde: el #include no copia el código de printf, solo la presentación de la función. El código ya hecho está aparte, en la biblioteca de C.\nCon <> se piden las cabeceras estándar; con comillas, como en \"mio.h\", se piden las que escribiste tú.\nEn gcc de consola, math.h suele pedir además -lm al final del comando. Este editor no lo necesita.\nError típico: usar sqrt sin #include <math.h>. gcc avisa «implicit declaration of function» y en versiones nuevas de gcc ya es un error.",
+  "ocasiones": [
+   {
+    "cuando": "Para usar sqrt.",
+    "que_es": "Se incluye math.h arriba del programa.",
+    "ejemplo": "#include <math.h>\ndouble R=sqrt(16.0);  // R vale 4"
+   }
+  ],
+  "relacionados": [
+   "#include",
+   "stdio.h",
+   "math.h",
+   "stdlib.h",
+   "string.h",
+   "función",
+   "prototipo"
+  ]
+ },
+ {
+  "elemento": "%5.2f",
+  "detalle": "Formato de printf para mostrar un float o double con ancho mínimo de 5 lugares y 2 decimales.\nSe lee por partes: % abre el formato, 5 es el ancho total, .2 son los decimales y f indica un número decimal.\nEl número se redondea a 2 decimales. Si ocupa menos de 5 lugares, se completa con espacios a la izquierda; si ocupa más, se muestra entero.\nEl ancho cuenta todo: las cifras, el punto y el signo. 3.14 ocupa 4, por eso queda un espacio delante.\nSirve para alinear columnas de números con decimales.\nLo que confunde: el 5 no son 5 decimales, y tampoco corta el número si es largo: 1234.5 sale 1234.50.\nError típico: escribirlo al revés (%2.5f), que da 5 decimales.",
+  "ocasiones": [
+   {
+    "cuando": "Número corto.",
+    "que_es": "Se completa con un espacio a la izquierda.",
+    "ejemplo": "printf(\"[%5.2f]\\n\",3.14159);  // muestra: [ 3.14]"
+   },
+   {
+    "cuando": "Número más largo que el ancho.",
+    "que_es": "No se corta: se muestra completo.",
+    "ejemplo": "printf(\"[%5.2f]\\n\",1234.5);  // muestra: [1234.50]"
+   }
+  ],
+  "relacionados": [
+   "%f",
+   "%.2f",
+   "%-8.2f",
+   "ancho de campo",
+   "precisión de printf",
+   "printf"
+  ]
+ },
+ {
+  "elemento": "%-8.2f",
+  "detalle": "Formato de printf para mostrar un float o double en un campo de 8 lugares, con 2 decimales y pegado a la izquierda.\nEl guion - justo después del % pide alinear a la izquierda: el número empieza al comienzo del campo y los espacios sobrantes quedan a la derecha.\nSin el guion (%8.2f) pasa al revés: los espacios quedan a la izquierda.\nSirve cuando hay algo escrito a la derecha y quieres que el texto siguiente empiece siempre en la misma columna.\nLo que confunde: los espacios que sobran no se ven. Solo notas la diferencia cuando después va otra cosa.\nError típico: poner el - en otro lugar, como %8-.2f. El guion va pegado al %; en otro lugar gcc avisa «unknown conversion type character».",
+  "ocasiones": [
+   {
+    "cuando": "Para que la columna siguiente quede alineada.",
+    "que_es": "Con la barra se ve el relleno de la derecha.",
+    "ejemplo": "printf(\"[%-8.2f]|\\n\",3.14159);  // muestra: [3.14    ]|"
+   },
+   {
+    "cuando": "Sin el guion.",
+    "que_es": "El relleno queda a la izquierda.",
+    "ejemplo": "printf(\"[%8.2f]|\\n\",3.14159);  // muestra: [    3.14]|"
+   }
+  ],
+  "relacionados": [
+   "%5.2f",
+   "%-5d",
+   "%10s",
+   "banderas de printf",
+   "ancho de campo",
+   "printf"
+  ]
+ },
+ {
+  "elemento": "%.0f",
+  "detalle": "Formato de printf para mostrar un decimal sin cifras después del punto: el valor sale redondeado a un número entero y sin el punto.\nEl .0 es la precisión: cantidad de decimales que se muestran. Con 0, ninguno.\nSolo cambia lo que se muestra: la variable sigue valiendo lo mismo, con sus decimales.\nSe sigue usando con un float o double. No convierte nada a int, así que no se lo puede reemplazar por %d.\nLo que confunde: cuando el valor cae justo a la mitad (0.5, 2.5, 3.5), se redondea al número par más cercano: 2.5 sale 2 y 3.5 sale 4.\nError típico: esperar el redondeo de la escuela, donde 2.5 pasa a 3. Para eso usa round(2.5), de math.h, que da 3.",
+  "ocasiones": [
+   {
+    "cuando": "Valores a la mitad.",
+    "que_es": "Se redondea al par más cercano.",
+    "ejemplo": "printf(\"%.0f %.0f %.0f\\n\",2.5,3.5,0.5);  // muestra: 2 4 0"
+   },
+   {
+    "cuando": "Valores que no están a la mitad.",
+    "que_es": "Se redondea al entero más cercano.",
+    "ejemplo": "printf(\"%.0f %.0f\\n\",2.4,2.6);  // muestra: 2 3"
+   }
+  ],
+  "relacionados": [
+   "%f",
+   "%.2f",
+   "round",
+   "precisión de printf",
+   "printf",
+   "%d"
+  ]
+ },
+ {
+  "elemento": "%10s",
+  "detalle": "Formato de printf para mostrar un texto en un campo de 10 lugares, alineado a la derecha.\nSi el texto tiene menos de 10 letras, se completa con espacios a la izquierda: \"Ana\" lleva 7 espacios delante.\nCon %-10s el texto queda pegado a la izquierda y los espacios van a la derecha. Es lo que se usa para los nombres de una tabla.\nEl ancho es un mínimo: un texto más largo no se corta, se muestra completo.\nPara cortar un texto se usa la precisión: %.3s muestra solo las primeras 3 letras.\nLo que confunde: %s espera un texto (un arreglo de char o algo entre comillas). Para un solo carácter se usa %c.\nError típico: pasar un char a %s. gcc avisa «format '%s' expects argument of type 'char *'» y el programa puede cerrarse al mostrarlo.",
+  "ocasiones": [
+   {
+    "cuando": "Texto a la derecha y a la izquierda.",
+    "que_es": "Mismo ancho, lados opuestos.",
+    "ejemplo": "printf(\"[%10s] [%-10s]\\n\",\"Ana\",\"Ana\");  // muestra: [       Ana] [Ana       ]"
+   },
+   {
+    "cuando": "En una tabla.",
+    "que_es": "El nombre a la izquierda y el número a la derecha.",
+    "ejemplo": "printf(\"%-8s%5d\\n\",\"Lapiz\",12);  // muestra: Lapiz      12"
+   }
+  ],
+  "relacionados": [
+   "%s",
+   "%c",
+   "%.3s",
+   "%-5d",
+   "ancho de campo",
+   "texto",
+   "printf"
+  ]
+ },
+ {
+  "elemento": "%+d",
+  "detalle": "Formato de printf para mostrar un int siempre con su signo. El + es una bandera: una letra suelta que cambia cómo se muestra.\nSin ella, %d solo muestra el signo en los negativos. Con %+d los positivos salen con +: 5 sale +5.\nEl 0 también lleva signo: sale +0.\nSirve para mostrar diferencias o variaciones, como un cambio de temperatura: +3 o -2.\nTambién funciona con decimales (%+.1f) y con ancho (%+6d). El + va justo después del %.\nLo que confunde: el + no cambia el número, solo cómo se muestra. Un negativo sigue siendo negativo.\nError típico: poner el + después del ancho, como %6+d. La bandera va primero: %+6d.",
+  "ocasiones": [
+   {
+    "cuando": "Con positivos, negativos y cero.",
+    "que_es": "Todos salen con signo.",
+    "ejemplo": "printf(\"%+d %+d %+d\\n\",5,-5,0);  // muestra: +5 -5 +0"
+   },
+   {
+    "cuando": "Con decimales y ancho.",
+    "que_es": "El signo cuenta dentro del ancho.",
+    "ejemplo": "printf(\"[%+6.1f]\\n\",2.5);  // muestra: [  +2.5]"
+   }
+  ],
+  "relacionados": [
+   "%d",
+   "% d",
+   "%5d",
+   "banderas de printf",
+   "ancho de campo",
+   "printf"
+  ]
+ },
+ {
+  "elemento": "% d",
+  "detalle": "Formato de printf para mostrar un int dejando un espacio en el lugar del signo cuando el número es positivo. Los negativos llevan su -.\nEl espacio después del % es una bandera, no un espacio común: forma parte del formato.\nAsí los positivos y los negativos quedan alineados: 12 sale ' 12' y -12 sale '-12'.\nSirve para tablas con números de los dos signos, donde quieres que las cifras queden en la misma columna.\nSi lo combinas con +, gana el +: el espacio ya no hace falta.\nLo que confunde: no agrega un espacio entre palabras. Solo ocupa el lugar donde iría el signo. No es lo mismo que \"%d \", con el espacio después.\nError típico: esperar que % d deje un espacio por cada número; con los negativos no se agrega nada, porque el - ocupa ese lugar.",
+  "ocasiones": [
+   {
+    "cuando": "Positivo y negativo.",
+    "que_es": "El positivo recibe un espacio delante.",
+    "ejemplo": "printf(\"[% d] [% d] [% d]\\n\",5,-5,0);  // muestra: [ 5] [-5] [ 0]"
+   },
+   {
+    "cuando": "Dos líneas alineadas.",
+    "que_es": "Las cifras quedan en la misma columna.",
+    "ejemplo": "printf(\"[% d]\\n[% d]\\n\",12,-12);  // muestra: [ 12]  y debajo  [-12]"
+   }
+  ],
+  "relacionados": [
+   "%d",
+   "%+d",
+   "%5d",
+   "banderas de printf",
+   "printf"
+  ]
+ },
+ {
+  "elemento": "%#x",
+  "detalle": "Formato de printf para mostrar un número en hexadecimal con el prefijo 0x. El # es una bandera que pide la forma alternativa.\nEl hexadecimal es un sistema de base 16: usa las cifras 0 a 9 y las letras a a f. El 255 se escribe ff.\nSin la bandera se muestra ff; con ella, 0xff. Con %#X sale 0XFF, con letras mayúsculas.\nCon %o (octal) la bandera # agrega un 0 delante: 8 sale 010.\nSirve para que quede claro que el número está en base 16, y para direcciones o valores de máscaras.\nLo que confunde: con el valor 0, %#x muestra solo 0, sin prefijo. Y si usas ancho con ceros, el 0x cuenta dentro del ancho: %#06x da 0x00ff.\nError típico: pensar que # convierte el valor. Convertir lo hace la x; el # solo agrega el prefijo.",
+  "ocasiones": [
+   {
+    "cuando": "Con y sin la bandera.",
+    "que_es": "El # agrega el prefijo.",
+    "ejemplo": "printf(\"%x %#x %#X\\n\",255,255,255);  // muestra: ff 0xff 0XFF"
+   },
+   {
+    "cuando": "Con ceros a la izquierda.",
+    "que_es": "El 0x cuenta dentro del ancho de 6.",
+    "ejemplo": "printf(\"%#06x\\n\",255);  // muestra: 0x00ff"
+   }
+  ],
+  "relacionados": [
+   "%x",
+   "%X",
+   "%o",
+   "banderas de printf",
+   "literal octal y hexadecimal",
+   "printf"
+  ]
+ },
+ {
+  "elemento": "%*d",
+  "detalle": "Formato de printf en el que el ancho no está escrito en el formato: se toma de un argumento. El * significa «el ancho viene aparte».\nEn printf(\"%*d\",6,42) el 6 es el ancho y el 42 es el número a mostrar. Sale con 4 espacios y después 42.\nSirve cuando el ancho se decide mientras corre el programa, por ejemplo con el valor de una variable.\nEl orden es siempre el mismo: primero el argumento del ancho y después el valor.\nSi el ancho es negativo, se toma como alineación a la izquierda: con -6 funciona como %-6d.\nLo que confunde: en scanf, %*d significa otra cosa: «lee un número y descártalo». Es otra entrada de la ayuda.\nError típico: no pasar el ancho. printf(\"%*d\",42) usa el 42 como ancho y no queda ningún valor para mostrar; gcc avisa «expects a matching 'int' argument».",
+  "ocasiones": [
+   {
+    "cuando": "Con el ancho en un argumento.",
+    "que_es": "El ancho se toma antes del número.",
+    "ejemplo": "printf(\"[%*d]\\n\",6,42);  // muestra: [    42]"
+   },
+   {
+    "cuando": "Con el ancho en una variable.",
+    "que_es": "El ancho puede cambiar en cada ejecución.",
+    "ejemplo": "int W=8;\nprintf(\"[%*d]\\n\",W,42);  // muestra: [      42]"
+   }
+  ],
+  "relacionados": [
+   "%d",
+   "%.*f",
+   "ancho y precisión dinámicos",
+   "%*d en scanf",
+   "ancho de campo",
+   "printf"
+  ]
+ }
+]

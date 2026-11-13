@@ -854,7 +854,7 @@
       while (ch) { ch = false; for (const f of this.funcs.values()) if (!f.async) for (const c of f.calls) { const g = this.funcs.get(c); if (g && g.async) { f.async = true; ch = true; break; } } }
       if (this.opts.yieldLoops) for (const f of this.funcs.values()) f.async = true;
       // 3) código
-      const out = ['const $={printf:$rt.printf,puts:$rt.puts,putchar:$rt.putchar,scanf:$rt.scanf,getchar:$rt.getchar,idiv:$rt.idiv,imod:$rt.imod,ix:$rt.ix,d2i:$rt.d2i,mk:$rt.mk,pad:$rt.pad,init:$rt.init,rand:$rt.rand,srand:$rt.srand,time:$rt.time,exit:$rt.exit,round:$rt.round,rint:$rt.rint,fmod:$rt.fmod,lop:$rt.lop,ldiv:$rt.ldiv,lmod:$rt.lmod,f2l:$rt.f2l,f2ul:$rt.f2ul,clock:$rt.clock,yield:$rt.yield,cstr:$rt.cstr,tostr:$rt.tostr,strlen:$rt.strlen,strcpy:$rt.strcpy,strncpy:$rt.strncpy,strcat:$rt.strcat,strncat:$rt.strncat,strcmp:$rt.strcmp,strncmp:$rt.strncmp,atoi:$rt.atoi,atol:$rt.atol,atof:$rt.atof,sprintf:$rt.sprintf,snprintf:$rt.snprintf,fgets:$rt.fgets,gets:$rt.gets};', 'let $t;let $y=0;'];
+      const out = ['const $={neg:$rt.neg,nn:$rt.nn,fabs:$rt.fabs,fmax:$rt.fmax,fmin:$rt.fmin,NANP:$rt.NANP,asin:$rt.asin,acos:$rt.acos,log10:$rt.log10,printf:$rt.printf,puts:$rt.puts,putchar:$rt.putchar,scanf:$rt.scanf,getchar:$rt.getchar,idiv:$rt.idiv,imod:$rt.imod,ix:$rt.ix,d2i:$rt.d2i,mk:$rt.mk,pad:$rt.pad,init:$rt.init,rand:$rt.rand,srand:$rt.srand,time:$rt.time,exit:$rt.exit,round:$rt.round,rint:$rt.rint,fmod:$rt.fmod,lop:$rt.lop,ldiv:$rt.ldiv,lmod:$rt.lmod,f2l:$rt.f2l,f2ul:$rt.f2ul,clock:$rt.clock,yield:$rt.yield,cstr:$rt.cstr,tostr:$rt.tostr,strlen:$rt.strlen,strcpy:$rt.strcpy,strncpy:$rt.strncpy,strcat:$rt.strcat,strncat:$rt.strncat,strcmp:$rt.strcmp,strncmp:$rt.strncmp,atoi:$rt.atoi,atol:$rt.atol,atof:$rt.atof,sprintf:$rt.sprintf,snprintf:$rt.snprintf,fgets:$rt.fgets,gets:$rt.gets};', 'let $t;let $y=0;'];
       for (const it of this.items) if (it.k === 'decl') out.push(this.declCode(it, true));
       const fcs = [];
       for (const it of this.items) if (it.k === 'func') fcs.push(this.funcCode(it));
@@ -1308,7 +1308,7 @@
       throw new Error('expr ' + n.k);
     }
     idRead(n) {
-      if (own(CONSTS, n.name) && !this.lookup(n.name)) { this.needIncludeConst(n.name, n.line); const c = CONSTS[n.name]; return { c: typeof c[0] === 'bigint' ? '(' + c[0] + 'n)' : String(c[0]), t: c[1] }; }
+      if (own(CONSTS, n.name) && !this.lookup(n.name)) { this.needIncludeConst(n.name, n.line); const c = CONSTS[n.name]; return { c: typeof c[0] === 'bigint' ? '(' + c[0] + 'n)' : (c[0] !== c[0] ? '$.NANP' : String(c[0])), t: c[1] }; }
       const info = this.lookup(n.name);
       if (!info) {
         if (this.funcs.has(n.name)) { this.err("'" + n.name + "' es una función: faltan los paréntesis para llamarla", n.line); return { c: '0', t: 'int' }; }
@@ -1421,6 +1421,7 @@
       const t = r.t === 'char' || r.t === 'uchar' || r.t === 'short' || r.t === 'ushort' || r.t === 'bool' || r.b ? 'int' : r.t;
       if (n.op === '-') {
         const v = this.val(r);
+        if (t === 'double' || t === 'float') return { c: '$.neg(' + v + ')', t };
         return { c: this.wrapInt(t, '-' + (/^[\d.]+$/.test(v) ? v : '(' + v + ')')), t };
       }
       if (n.op === '~') { if (!INTLIKE.has(t)) this.err("'~' necesita un entero", n.line); return { c: this.wrapInt(t, '~' + '(' + this.val(r) + ')'), t }; }
@@ -1547,9 +1548,9 @@
       if (vv && !vv.array && vv.scalar && usr) { this.err("'" + name + "' es una variable en este lugar y tapa a la función del mismo nombre: no se la puede llamar. Cambia el nombre de la variable", n.line, 'FUN-027'); args.forEach((a) => { if (a.k !== 'str') this.expr(a); }); return { c: '0', t: usr.ret === 'void' ? 'void' : usr.ret }; }
       if (usr && usr.node) return this.callUser(n, name, args);
       this.needInclude(name, n.line);
-      const MATH1 = { sqrt: 'Math.sqrt', fabs: 'Math.abs', floor: 'Math.floor', ceil: 'Math.ceil', round: '$.round', trunc: 'Math.trunc', sin: 'Math.sin', cos: 'Math.cos', tan: 'Math.tan', asin: 'Math.asin', acos: 'Math.acos', atan: 'Math.atan', exp: 'Math.exp', log: 'Math.log', log10: 'Math.log10', log2: 'Math.log2', cbrt: 'Math.cbrt', sinh: 'Math.sinh', cosh: 'Math.cosh', tanh: 'Math.tanh', asinh: 'Math.asinh', acosh: 'Math.acosh', atanh: 'Math.atanh', exp2: '((x)=>Math.pow(2,x))', expm1: 'Math.expm1', log1p: 'Math.log1p' };
+      const MATH1 = { sqrt: 'Math.sqrt', fabs: '$.fabs', floor: 'Math.floor', ceil: 'Math.ceil', round: '$.round', trunc: 'Math.trunc', sin: 'Math.sin', cos: 'Math.cos', tan: 'Math.tan', asin: '$.asin', acos: '$.acos', atan: 'Math.atan', exp: 'Math.exp', log: 'Math.log', log10: '$.log10', log2: 'Math.log2', cbrt: 'Math.cbrt', sinh: 'Math.sinh', cosh: 'Math.cosh', tanh: 'Math.tanh', asinh: 'Math.asinh', acosh: 'Math.acosh', atanh: 'Math.atanh', exp2: '((x)=>Math.pow(2,x))', expm1: 'Math.expm1', log1p: 'Math.log1p' };
       const mf = /^(sqrt|pow|fabs|sin|cos|tan|asin|acos|atan|atan2|floor|ceil|exp|log|log10|log2|fmod|round|trunc|cbrt|hypot|fmax|fmin)f$/.exec(name);
-      if (mf) { const r = this.call({ k: 'call', name: mf[1], args, line: n.line }); return { c: 'Math.fround(' + r.c + ')', t: 'float' }; }
+      if (mf) { const r = this.call({ k: 'call', name: mf[1], args, line: n.line }); return { c: '$.nn(Math.fround,' + r.c + ')', t: 'float' }; }
       if (name === 'fprintf' || name === 'fputs' || name === 'putc' || name === 'fputc') {
         const dest = name === 'fprintf' || name === 'fputs' ? (name === 'fprintf' ? args[0] : args[1]) : args[1];
         if (!dest || dest.k !== 'id' || (dest.name !== 'stdout' && dest.name !== 'stderr')) { this.err('los archivos todavía no están soportados: solo se puede escribir en stdout o stderr (la pantalla)', n.line, 'NOS-010'); return { c: '0', t: 'int' }; }
@@ -1569,9 +1570,11 @@
         const want = ['pow', 'fmod', 'atan2', 'fmax', 'fmin', 'hypot'].indexOf(name) >= 0 ? 2 : 1;
         if (args.length !== want) { this.err("'" + name + "' recibe " + want + ' argumento(s)', n.line, 'PRE-046'); return { c: '0', t: 'double' }; }
         const a = args.map((x) => { const r = this.expr(x); return this.conv(r, 'double'); });
-        const m = { pow: 'Math.pow', fmod: '$.fmod', atan2: 'Math.atan2', fmax: 'Math.max', fmin: 'Math.min', hypot: 'Math.hypot' };
+        const m = { pow: 'Math.pow', fmod: '$.fmod', atan2: 'Math.atan2', fmax: '$.fmax', fmin: '$.fmin', hypot: 'Math.hypot' };
         const fn = own(MATH1, name) ? MATH1[name] : m[name];
-        return { c: fn + '(' + a.join(',') + ')', t: 'double' };
+        // los que ya fabrican su propio NaN (asin, acos, log10, fabs, fmax, fmin) van directos; el resto, con el signo de glibc
+        if (['asin', 'acos', 'log10', 'fabs', 'fmax', 'fmin'].indexOf(name) >= 0) return { c: fn + '(' + a.join(',') + ')', t: 'double' };
+        return { c: '$.nn(' + fn + ',' + a.join(',') + ')', t: 'double' };
       }
       if (name === 'abs' || name === 'labs') {
         if (args.length !== 1) { this.err("'abs' recibe 1 argumento", n.line); return { c: '0', t: 'int' }; }

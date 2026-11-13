@@ -352,7 +352,7 @@
    "Se divide solo una de las variables.",
    "Agrega paréntesis alrededor de la suma."
   ],
-  "relacion_con_la_materia": "SS, precedencia",
+  "relacion_con_la_materia": "SS, prioridad",
   "deteccion": "heuristica",
   "como_detectarlo": "Expresión x + y / n asignada a una variable llamada PROM o promedio.",
   "riesgo_falso_positivo": "ninguno",
@@ -1202,7 +1202,7 @@
   "verificado_gcc13": true,
   "detectado_editor": true,
   "mensaje_editor_actual": "&& se calcula antes que ||, así que la condición se agrupa distinto a como la lees (A == 1 || A == 2 && B == 3). Usa paréntesis para dejarlo claro.",
-  "codigo_editor_actual": "W-precedencia-and-or",
+  "codigo_editor_actual": "W-prioridad-and-or",
   "verificado_editor_corrige": true
  },
  {
@@ -1250,7 +1250,7 @@
    "Primero se divide y después se multiplica.",
    "Escribe 2 * 3 entre paréntesis."
   ],
-  "relacion_con_la_materia": "SS, precedencia",
+  "relacion_con_la_materia": "SS, prioridad",
   "deteccion": "heuristica",
   "como_detectarlo": "Expresión a / b * c en una fórmula.",
   "riesgo_falso_positivo": "Fórmulas donde multiplicar al final es lo correcto, como A / B * 100.",

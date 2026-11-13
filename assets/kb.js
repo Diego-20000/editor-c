@@ -307,13 +307,15 @@
     for (var di in total) {
       var doc = S.docs[di];
       if (tipos && tipos.indexOf(doc.tipo) < 0) continue;
-      var sc = total[di] * (0.4 + 0.6 * cubiertos[di] / uniq.length);
+      var sc = total[di] * (0.4 + 0.6 * cubiertos[di] / uniq.length), exacto = false;
       for (j = 0; j < doc.frases.length; j++) {
         var f = doc.frases[j];
-        if (f === frase) { sc += 9; break; }
+        if (f === frase) { sc += 9; exacto = true; break; }
         if (f.indexOf(frase) >= 0) { sc += uniq.length > 1 ? 5 : 2.5; break; }
         if (f.split(' ').length > 3 && frase.indexOf(f) >= 0) { sc += 6; break; }
       }
+      // lo que está fuera del nivel de la materia (bits, volatile, constantes M_*, variantes sqrtf…) solo aparece si se lo busca por su nombre
+      if (doc.entrada && doc.entrada.nivel === 'avanzado' && !exacto) sc *= 0.15;
       res.push({ tipo: doc.tipo, id: doc.id, titulo: doc.titulo, resumen: doc.resumen, puntaje: Math.round(sc * 100) / 100, entrada: doc.entrada, _o: doc.idx });
     }
     res.sort(function (a, b) { return b.puntaje - a.puntaje || a.titulo.length - b.titulo.length || a._o - b._o; });
