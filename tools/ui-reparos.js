@@ -225,6 +225,21 @@ const check = (c, m) => { if (c) { ok++; console.log('  ok   ' + m); } else { fa
     check(/dañado o incompleto/.test(await p14.evaluate(() => (document.getElementById('toast') || {}).textContent || '')), 'enlace dañado: se avisa en vez de no hacer nada');
   }
 
+  // 3) «Mostrar cómo lo diría gcc»: apagado no muestra nada; encendido y con ayuda en «Línea» muestra el texto de gcc (comprobado con gcc 13)
+  {
+    const mal = '#include <stdio.h>\nint main() {\n    int A = 5\n    printf("x");\n}\n';
+    for (const on of [false, true]) {
+      const cx = await br.newContext({ viewport: { width: 1100, height: 720 } });
+      await cx.addInitScript((o) => { try { localStorage.setItem('editorc.gccingles', o ? '1' : '0'); } catch (e) { /* nada */ } }, on);
+      const pg = await cx.newPage();
+      await pg.goto(url + '?ayuda=2'); await pg.waitForSelector('#code');
+      await pg.fill('#code', mal); await pg.keyboard.press('F5'); await pg.waitForTimeout(1200);
+      const o = await pg.$eval('#out', (x) => x.textContent);
+      check(on ? /gcc: error: expected ',' or ';' before 'printf'/.test(o) : !/gcc:/.test(o), 'texto de gcc en inglés ' + (on ? 'encendido: aparece' : 'apagado: no aparece'));
+      await cx.close();
+    }
+  }
+
   await br.close();
   console.log(ok + ' ok, ' + fallas + ' fallas');
   process.exit(fallas ? 1 : 0);
