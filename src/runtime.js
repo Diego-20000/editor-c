@@ -75,10 +75,10 @@
       if (k > 0) den *= 10n ** BigInt(k); else if (k < 0) num *= 10n ** BigInt(-k);
       let q = num / den;
       const rem = num - q * den;
-      if (rem * 2n > den || (rem * 2n === den && (q & 1n) === 1n)) q += 1n;
       const lowB = 10n ** BigInt(p), highB = lowB * 10n;
-      if (q >= highB) { e10++; continue; }
-      if (q < lowB) { e10--; continue; }
+      if (q < lowB) { e10--; continue; }   // se mira antes de redondear: 9,99…e-201 no es 1e-200 aunque al redondear lo parezca
+      if (rem * 2n > den || (rem * 2n === den && (q & 1n) === 1n)) q += 1n;
+      if (q >= highB) { q = lowB; e10++; }   // el redondeo llegó a la potencia siguiente (99,995 con 1 dígito → 1e+02)
       return { d: q.toString(), e: e10 };
     }
     return { d: '0'.repeat(p + 1), e: 0 };
@@ -91,6 +91,27 @@
   function expForm(x, p, upper) {
     const r = expDigits(x, p);
     return r.d[0] + (p > 0 ? '.' + r.d.slice(1) : '') + expStr(r.e, upper);
+  }
+
+  // %a / %A: decimal en hexadecimal como glibc (0x1.8p+1); p = cantidad de dígitos hexadecimales (-1: los necesarios)
+  function aForm(x, p, upper) {
+    x = Math.abs(x);
+    const dv = new DataView(new ArrayBuffer(8)); dv.setFloat64(0, x);
+    const hi = dv.getUint32(0), lo = dv.getUint32(4), ex = (hi >>> 20) & 0x7ff;
+    let m = (BigInt(hi & 0xfffff) << 32n) | BigInt(lo), e;
+    if (x === 0) e = 0; else if (ex === 0) e = -1022; else { m |= 1n << 52n; e = ex - 1023; }
+    let digs;   // m tiene 53 bits: 1 + 52 de fracción (o 0 + 52 en los subnormales)
+    if (p < 0) { digs = m.toString(16).padStart(14, '0'); }
+    else if (p >= 13) { digs = m.toString(16).padStart(14, '0') + '0'.repeat(p - 13); }
+    else {
+      const sh = BigInt(4 * (13 - p)); let q = m >> sh; const rem = m - (q << sh), mid = 1n << (sh - 1n);
+      if (rem > mid || (rem === mid && (q & 1n) === 1n)) q += 1n;
+      digs = q.toString(16).padStart(p + 1, '0');
+    }
+    const lead = digs.slice(0, digs.length - (p < 0 ? 13 : (p >= 13 ? p : p))) , fr0 = digs.slice(lead.length);
+    let fr = p < 0 ? fr0.replace(/0+$/, '') : fr0;
+    const r = '0x' + lead + (fr ? '.' + fr : '') + 'p' + (e < 0 ? '-' : '+') + Math.abs(e);
+    return upper ? r.toUpperCase() : r;
   }
 
   function gForm(x, p, alt, upper) {
@@ -110,7 +131,7 @@
     return s;
   }
 
-  const SPEC = /%([-+ #0]*)(\*|\d+)?(?:\.(\*|\d*))?(hh|h|ll|l|L|z|j|t)?([diouxXfFeEgGcsp%])/g;
+  const SPEC = /%([-+ #0]*)(\*|\d+)?(?:\.(\*|\d*))?(hh|h|ll|l|L|z|j|t)?([diouxXfFeEgGaAcsp%])/g;
 
   function toBig(a) {
     if (typeof a === 'bigint') return a;
@@ -172,6 +193,14 @@
           else if (conv === 'e' || conv === 'E') { body = expForm(v, pp, upper); if (alt && pp === 0) body = body.replace(/^(-?\d)(e|E)/, '$1.$2'); }
           else body = gForm(v, pp, alt, upper);
         }
+        if (isSpecial) zero = false;
+      } else if (conv === 'a' || conv === 'A') {
+        const v = typeof arg === 'number' ? arg : (typeof arg === 'bigint' ? Number(arg) : 0);
+        const neg = Number.isNaN(v) ? nanNegativo(v) : signBit(v);
+        sign = neg ? '-' : (plus ? '+' : (space ? ' ' : ''));
+        if (Number.isNaN(v)) { body = conv === 'A' ? 'NAN' : 'nan'; isSpecial = true; }
+        else if (!isFinite(v)) { body = conv === 'A' ? 'INF' : 'inf'; isSpecial = true; }
+        else body = aForm(v, p, conv === 'A');
         if (isSpecial) zero = false;
       } else if (conv === 'c') {
         numeric = false; zero = false;

@@ -19,6 +19,7 @@ Estos casos no tienen resultado garantizado en C, así que el editor no promete 
 - leer una variable local sin inicializar (el editor la inicia en 0 y avisa);
 - orden de evaluación de los argumentos de una llamada (gcc evalúa de derecha a izquierda; el editor lo imita cuando hay efectos, pero no está garantizado por el estándar);
 - índices fuera de un arreglo (el editor se detiene con un error y el número de línea);
+- el final de la entrada: el editor agrega un salto de línea a la última línea del cuadro «Entrada» (como cuando se escribe en una consola y se pulsa Enter). Con un archivo que termina sin salto de línea, gcc lee `FIN` y el editor lee `FIN\n` (se nota con `fgets`).
 - el signo de un cero o de un NaN en cadenas largas de operaciones decimales: el editor imprime `-nan` para `0/0`, `sqrt(-1)` y similares, y `nan` para `NAN`, `atof("nan")` y `scanf` de `nan` (también al negar, `fabs`, `fmax`/`fmin`), como gcc; el signo se sigue con una marca interna que el navegador puede no conservar en cuentas raras.
 
 ## Límites propios del editor
