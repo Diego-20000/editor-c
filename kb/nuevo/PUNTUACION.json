@@ -68,19 +68,19 @@
    },
    {
     "cuando": "Inmediatamente después de la condición de un while.",
-    "que_es": "El punto y coma forma un cuerpo vacío para el ciclo; la instrucción siguiente queda fuera del while.",
+    "que_es": "El punto y coma forma un cuerpo vacío para el lazo; la instrucción siguiente queda fuera del while.",
     "ejemplo": "while (A<0);\nprintf(\"Fin\\n\");",
-    "error_tipico": "Si la condición nunca cambia y es verdadera, el ciclo vacío puede repetirse sin terminar."
+    "error_tipico": "Si la condición nunca cambia y es verdadera, el lazo vacío puede repetirse sin terminar."
    },
    {
     "cuando": "Inmediatamente después de la cabecera de un for.",
-    "que_es": "El punto y coma es el cuerpo vacío del for; las instrucciones siguientes no forman parte del ciclo.",
+    "que_es": "El punto y coma es el cuerpo vacío del for; las instrucciones siguientes no forman parte del lazo.",
     "ejemplo": "for (I=0; I<3; I++);\nA=A+1;",
-    "error_tipico": "El ciclo realiza sus iteraciones sin ejecutar la instrucción que se pensaba repetir."
+    "error_tipico": "El lazo realiza sus iteraciones sin ejecutar la instrucción que se pensaba repetir."
    },
    {
     "cuando": "Al cerrar el bloque de una función o de una estructura de control.",
-    "que_es": "La llave final ya termina el bloque; después de ella no se escribe un punto y coma para cerrar una función, un if o un ciclo.",
+    "que_es": "La llave final ya termina el bloque; después de ella no se escribe un punto y coma para cerrar una función, un if o un lazo.",
     "ejemplo": "if (A>0) {\n    A=A+1;\n}",
     "error_tipico": "Poner un punto y coma después de la llave no termina el if: agrega una instrucción vacía y puede impedir que un else se asocie correctamente."
    }
@@ -308,9 +308,9 @@
    },
    {
     "cuando": "Para agrupar el cuerpo de un while o un for.",
-    "que_es": "Delimitan todas las instrucciones que se repetirán en cada vuelta del ciclo.",
+    "que_es": "Delimitan todas las instrucciones que se repetirán en cada vuelta del lazo.",
     "ejemplo": "while (A<3) { A++; B=B+A; }",
-    "error_tipico": "Dejar una instrucción después de la llave de cierre hace que se ejecute una sola vez, fuera del ciclo."
+    "error_tipico": "Dejar una instrucción después de la llave de cierre hace que se ejecute una sola vez, fuera del lazo."
    },
    {
     "cuando": "Para delimitar el cuerpo de un switch.",

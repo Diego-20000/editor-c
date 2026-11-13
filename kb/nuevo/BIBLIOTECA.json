@@ -169,11 +169,11 @@
     "error_tipico": "No modificar una variable que permita que la condición llegue a ser falsa."
    }
   ],
-  "detalle": "Se utiliza dentro del lenguaje C y debe escribirse exactamente como aparece, respetando mayúsculas y minúsculas.\nAparece en control de flujo y cumple una función concreta dentro del programa.\nObserva el ejemplo para reconocer su posición en una instrucción o bloque.\nLa sintaxis del elemento determina cómo se interpreta la instrucción.\nError frecuente: No modificar una variable que permita que la condición llegue a ser falsa.\nSe relaciona con do, for, bucle infinito.",
+  "detalle": "Se utiliza dentro del lenguaje C y debe escribirse exactamente como aparece, respetando mayúsculas y minúsculas.\nAparece en control de flujo y cumple una función concreta dentro del programa.\nObserva el ejemplo para reconocer su posición en una instrucción o bloque.\nLa sintaxis del elemento determina cómo se interpreta la instrucción.\nError frecuente: No modificar una variable que permita que la condición llegue a ser falsa.\nSe relaciona con do, for, lazo infinito.",
   "relacionados": [
    "do",
    "for",
-   "bucle infinito"
+   "lazo infinito"
   ],
   "verificado_gcc13": false,
   "amplia": true
@@ -1632,7 +1632,7 @@
  {
   "elemento": "#warning",
   "tipo": "directiva",
-  "que_es": "Directiva de algunas implementaciones que emite una advertencia durante la compilación; no forma parte del estándar C99.",
+  "que_es": "Directiva de algunas implementaciones que emite una aviso durante la compilación; no forma parte del estándar C99.",
   "como_se_usa": "#warning \"Revisar este bloque\"\nint N=0;",
   "error_tipico": "Suponer que es estándar C99 o que Editor C muestra el mismo aviso que GCC.",
   "en_la_materia": "Preprocesador",
@@ -1644,12 +1644,12 @@
   "ocasiones": [
    {
     "cuando": "En una línea de preprocesador al comienzo de una línea lógica.",
-    "que_es": "Directiva de algunas implementaciones que emite una advertencia durante la compilación; no forma parte del estándar C99.",
+    "que_es": "Directiva de algunas implementaciones que emite una aviso durante la compilación; no forma parte del estándar C99.",
     "ejemplo": "#warning \"Revisar este bloque\"\nint N=0;",
     "error_tipico": "Suponer que es estándar C99 o que Editor C muestra el mismo aviso que GCC."
    }
   ],
-  "detalle": "El preprocesador interpreta esta directiva antes de compilar las instrucciones de C.\nDebe comenzar con el carácter # al inicio de una línea lógica.\nDirectiva de algunas implementaciones que emite una advertencia durante la compilación; no forma parte del estándar C99.\nLas directivas condicionales pueden anidarse, pero cada bloque debe cerrarse correctamente.\nEditor C implementa solo el comportamiento descrito y no equivale a un preprocesador completo de GCC.\nNo confundas una condición de preprocesador con una condición if que se evalúa durante la ejecución.",
+  "detalle": "El preprocesador interpreta esta directiva antes de compilar las instrucciones de C.\nDebe comenzar con el carácter # al inicio de una línea lógica.\nDirectiva de algunas implementaciones que emite una aviso durante la compilación; no forma parte del estándar C99.\nLas directivas condicionales pueden anidarse, pero cada bloque debe cerrarse correctamente.\nEditor C implementa solo el comportamiento descrito y no equivale a un preprocesador completo de GCC.\nNo confundas una condición de preprocesador con una condición if que se evalúa durante la ejecución.",
   "relacionados": [
    "#error",
    "#pragma",

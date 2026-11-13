@@ -122,31 +122,31 @@ async function suite(browser, target, mobile) {
   await shot('3-aviso');
   await page.evaluate(() => window.__editorc.setNivel(1));
 
-  // ---- 4) bucle infinito sin salida: Detener durante la ejecución
+  // ---- 4) lazo infinito sin salida: Detener durante la ejecución
   await setCode(LOOP); await clickRun();
   await page.waitForFunction(() => document.getElementById('status').textContent === 'Ejecutando…');
   await page.waitForTimeout(300);
-  ok((await H.alive()) < 500, 'bucle infinito: la página sigue respondiendo');
+  ok((await H.alive()) < 500, 'lazo infinito: la página sigue respondiendo');
   await H.tap('#stop');
   await page.waitForFunction(() => /Detenido/.test(document.getElementById('out').textContent), null, { timeout: 5000 });
-  ok(await page.isEnabled('#run'), 'Detener corta el bucle infinito y se puede volver a ejecutar');
+  ok(await page.isEnabled('#run'), 'Detener corta el lazo infinito y se puede volver a ejecutar');
 
   // ---- 5) aviso de "sigue ejecutándose" (umbral reducido para no esperar 5 s en cada suite)
   await page.evaluate(() => { window.__editorc.cfg.slowMs = 1000; });
   await setCode(LOOP); await clickRun();
   await page.waitForTimeout(500);
-  ok(!(await page.isVisible('#slow')), 'aviso de bucle: todavía no aparece antes del umbral');
+  ok(!(await page.isVisible('#slow')), 'aviso de lazo: todavía no aparece antes del umbral');
   await page.waitForSelector('#slow:not([hidden])', { timeout: 6000 });
-  ok(/sigue ejecutándose/.test(await page.textContent('#slowTxt')) && /bucle infinito/.test(await page.textContent('#slowTxt')) && /Detener/.test(await page.textContent('#slowTxt')), 'aviso de bucle: texto pedido');
-  ok(await page.isEnabled('#stop') && /Ejecutando/.test(await page.textContent('#status')), 'aviso de bucle: no bloquea (sigue ejecutando y Detener habilitado)');
-  await shot('5-aviso-bucle');
+  ok(/sigue ejecutándose/.test(await page.textContent('#slowTxt')) && /lazo infinito/.test(await page.textContent('#slowTxt')) && /Detener/.test(await page.textContent('#slowTxt')), 'aviso de lazo: texto pedido');
+  ok(await page.isEnabled('#stop') && /Ejecutando/.test(await page.textContent('#status')), 'aviso de lazo: no bloquea (sigue ejecutando y Detener habilitado)');
+  await shot('5-aviso-lazo');
   await H.tap('#slowStop');
   await page.waitForFunction(() => /Detenido/.test(document.getElementById('out').textContent));
   ok(!(await page.isVisible('#slow')), 'el aviso se oculta al detener');
   // esperar datos del usuario no dispara el aviso
   await setCode(SCANF); await clickRun(); await page.waitForSelector('.stdin input');
   await page.waitForTimeout(1700);
-  ok(!(await page.isVisible('#slow')), 'esperando entrada no dispara el aviso de bucle');
+  ok(!(await page.isVisible('#slow')), 'esperando entrada no dispara el aviso de lazo');
   await H.typeLine('1'); await H.typeLine('2'); await H.done();
   await page.evaluate(() => { window.__editorc.cfg.slowMs = 5000; });
   if (target.realSlow) {
@@ -158,14 +158,14 @@ async function suite(browser, target, mobile) {
     await H.tap('#stop'); await H.done();
   }
 
-  // ---- 6) bucle infinito con salida: tope de salida
+  // ---- 6) lazo infinito con salida: tope de salida
   await setCode(LOOPOUT); await clickRun();
   await page.waitForFunction(() => /Salida cortada/.test(document.getElementById('out').textContent), null, { timeout: 15000 });
   t = await outText();
   ok(t.length < 400200, 'tope de salida: ~400000 caracteres como máximo (' + t.length + ')');
   ok(await page.isEnabled('#run') && !(await page.isEnabled('#stop')) && (await H.alive()) < 500, 'tope de salida: ejecución cortada y página fluida');
   await setCode(LOOPOUT); await clickRun(); await page.waitForTimeout(60);
-  ok((await H.alive()) < 800, 'bucle con salida: la página responde mientras escribe');
+  ok((await H.alive()) < 800, 'lazo con salida: la página responde mientras escribe');
   await H.done(); await page.waitForFunction(() => document.getElementById('run') && !document.getElementById('run').disabled);
 
   // ---- 7) arreglo gigante
@@ -730,9 +730,9 @@ async function fallbackSuite(browser, target) {
   await H.setCode(ERR); await H.run(); await page.waitForSelector('#diagList .it.e');
   ok(true, 'sin Worker: los errores de compilación se muestran igual');
   await H.setCode(LOOP); await H.run(); await page.waitForTimeout(500);
-  ok((await H.alive()) < 800, 'sin Worker: un bucle infinito no congela la página (los lazos ceden el control)');
+  ok((await H.alive()) < 800, 'sin Worker: un lazo infinito no congela la página (los lazos ceden el control)');
   await page.click('#stop'); await page.waitForFunction(() => /Detenido/.test(document.getElementById('out').textContent), null, { timeout: 5000 });
-  ok(await page.isEnabled('#run'), 'sin Worker: Detener corta el bucle');
+  ok(await page.isEnabled('#run'), 'sin Worker: Detener corta el lazo');
   ok(errors.length === 0, 'sin Worker: sin errores en consola' + (errors.length ? ': ' + errors.join(' | ') : ''));
   await ctx.close();
 }

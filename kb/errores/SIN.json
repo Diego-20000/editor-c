@@ -9,10 +9,10 @@
   "entrada": "",
   "que_dice_gcc": "archivo.c:4: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'A'",
   "mensaje_editor": "Línea 3: a la declaración de A le falta el ; del final. Cada declaración termina con punto y coma.",
-  "explicacion": "El punto y coma le dice a C dónde termina una instrucción o una declaración. El salto de línea no cumple esa función: para C, todo puede estar en una sola línea. Por eso el compilador se queja recién cuando ve algo raro en la línea que sigue.",
-  "como_arreglarlo": "Mirá la declaración que está justo antes de la línea que marca el compilador y agregale el ; final.",
+  "explicacion": "El punto y coma le dice a C dónde termina una instrucción o una declaración. El salto de línea no cumple esa función: para C, todo puede estar en una sola línea. Por eso el compilador avisa recién cuando ve algo raro en la línea que sigue.",
+  "como_arreglarlo": "Mira la declaración que está justo antes de la línea que marca el compilador y agrégale el ; final.",
   "pistas": [
-   "Fijate cómo terminan las líneas que declaran variables.",
+   "Fíjate cómo terminan las líneas que declaran variables.",
    "El compilador marca la línea de abajo, pero el problema está en una declaración anterior.",
    "Falta un ; al final de int A."
   ],
@@ -36,13 +36,13 @@
   "codigo_bien": "#include <stdio.h>\nint main(){\n int A=1;\n A=A+2;\n printf(\"%d\\n\",A);\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:4: error: expected ';' before 'printf'",
-  "mensaje_editor": "Línea 4: a la asignación le falta el ; del final. Agregalo antes de la instrucción siguiente.",
+  "mensaje_editor": "Línea 4: a la asignación le falta el ; del final. Agrégalo antes de la instrucción siguiente.",
   "explicacion": "Una asignación es una instrucción y tiene que terminar con punto y coma. Si no, C sigue leyendo la línea de abajo como si fuera parte de la misma instrucción y se confunde.",
-  "como_arreglarlo": "Buscá la última asignación antes de la línea marcada y cerrala con ;.",
+  "como_arreglarlo": "Busca la última asignación antes de la línea marcada y ciérrala con ;.",
   "pistas": [
-   "Mirá cómo terminan las instrucciones, no solo la línea que marca el compilador.",
-   "Revisá la instrucción que está antes de la marcada.",
-   "Agregá ; después de A+2."
+   "Mira cómo terminan las instrucciones, no solo la línea que marca el compilador.",
+   "Revisa la instrucción que está antes de la marcada.",
+   "Agrega ; después de A+2."
   ],
   "relacion_con_la_materia": "SS, asignación",
   "deteccion": "estatica",
@@ -66,11 +66,11 @@
   "que_dice_gcc": "archivo.c:4: error: expected ';' before '}' token",
   "mensaje_editor": "Línea 4: falta el ; después de return 0. La llave de cierre no reemplaza al punto y coma.",
   "explicacion": "return también es una instrucción y termina con punto y coma. Las llaves cierran bloques, pero no terminan instrucciones.",
-  "como_arreglarlo": "Agregá el ; al final del return.",
+  "como_arreglarlo": "Agrega el ; al final del return.",
   "pistas": [
-   "Mirá cómo termina la última instrucción de main.",
-   "El compilador se queja justo antes de la llave que cierra main.",
-   "Escribí return 0;"
+   "Mira cómo termina la última instrucción de main.",
+   "El compilador avisa justo antes de la llave que cierra main.",
+   "Escribe return 0;"
   ],
   "relacion_con_la_materia": "funciones, main y retorno",
   "deteccion": "estatica",
@@ -93,12 +93,12 @@
   "entrada": "",
   "que_dice_gcc": "archivo.c:4: warning: suggest braces around empty body in an 'if' statement [-Wempty-body]",
   "mensaje_editor": "Línea 4: ese ; termina el if y deja su cuerpo vacío. La instrucción de abajo se ejecuta siempre.",
-  "explicacion": "El if controla una sola instrucción (o un bloque entre llaves). Si le ponés ; apenas cerrás el paréntesis, esa instrucción es la vacía, y lo que escribiste abajo ya no depende de la condición.",
-  "como_arreglarlo": "Sacá el ; que está pegado al paréntesis de cierre del if.",
+  "explicacion": "El if controla una sola instrucción (o un bloque entre llaves). Si le pones ; apenas cierras el paréntesis, esa instrucción es la vacía, y lo que escribiste abajo ya no depende de la condición.",
+  "como_arreglarlo": "Saca el ; que está pegado al paréntesis de cierre del if.",
   "pistas": [
-   "Probá con un valor para el que la condición sea falsa y mirá qué imprime.",
-   "Fijate qué hay justo después del paréntesis de cierre del if.",
-   "Quitá el ; que está después de if(A>5)."
+   "Prueba con un valor para el que la condición sea falsa y mira qué imprime.",
+   "Fíjate qué hay justo después del paréntesis de cierre del if.",
+   "Quita el ; que está después de if(A>5)."
   ],
   "relacion_con_la_materia": "BC, if",
   "deteccion": "heuristica",
@@ -122,11 +122,11 @@
   "que_dice_gcc": "archivo.c:4: warning: this 'for' clause does not guard... [-Wmisleading-indentation]",
   "mensaje_editor": "Línea 4: el ; después del for deja vacío lo que se repite. La instrucción de abajo se ejecuta una sola vez.",
   "explicacion": "El for repite una sola instrucción o un bloque. Con ; pegado al paréntesis, lo que se repite es una instrucción vacía: el lazo da las vueltas sin hacer nada y el printf corre una vez al final.",
-  "como_arreglarlo": "Sacá el ; que está después del paréntesis del for.",
+  "como_arreglarlo": "Saca el ; que está después del paréntesis del for.",
   "pistas": [
-   "Fijate cuántas veces se imprime y compará con las vueltas que esperabas.",
-   "Mirá qué hay justo después del paréntesis de cierre del for.",
-   "Quitá el ; que está después de for(A=0;A<3;A++)."
+   "Fíjate cuántas veces se imprime y compara con las vueltas que esperabas.",
+   "Mira qué hay justo después del paréntesis de cierre del for.",
+   "Quita el ; que está después de for(A=0;A<3;A++)."
   ],
   "relacion_con_la_materia": "LC, for",
   "deteccion": "heuristica",
@@ -151,11 +151,11 @@
   "que_dice_gcc": "archivo.c:4: error: expected ')' before '{' token",
   "mensaje_editor": "Línea 4: a la condición del if le falta cerrar el paréntesis antes de la llave.",
   "explicacion": "Todo paréntesis que se abre tiene que cerrarse. En el if, la condición va entre paréntesis y recién después empieza la instrucción o el bloque.",
-  "como_arreglarlo": "Contá los paréntesis de la condición y agregá el que falta antes de la {.",
+  "como_arreglarlo": "Cuenta los paréntesis de la condición y agrega el que falta antes de la {.",
   "pistas": [
-   "Contá cuántos paréntesis abrís y cuántos cerrás en esa línea.",
+   "Cuenta cuántos paréntesis abres y cuántos cierras en esa línea.",
    "La condición del if quedó abierta cuando empieza el bloque.",
-   "Escribí if(A>0) {"
+   "Escribe if(A>0) {"
   ],
   "relacion_con_la_materia": "BC, condiciones",
   "deteccion": "estatica",
@@ -179,11 +179,11 @@
   "que_dice_gcc": "archivo.c:3: error: expected ')' before ';' token",
   "mensaje_editor": "Línea 3: a la llamada de printf le falta el paréntesis de cierre antes del ;.",
   "explicacion": "Una llamada a función lleva los argumentos entre paréntesis. Si el que abre no tiene su par que cierra, la instrucción queda incompleta aunque ya hayas puesto el ;.",
-  "como_arreglarlo": "Agregá el ) que falta, justo antes del ;.",
+  "como_arreglarlo": "Agrega el ) que falta, justo antes del ;.",
   "pistas": [
-   "Contá los paréntesis de esa instrucción.",
+   "Cuenta los paréntesis de esa instrucción.",
    "La llamada se abre pero no se cierra.",
-   "Poné ) antes del ; final."
+   "Pon ) antes del ; final."
   ],
   "relacion_con_la_materia": "SS, salida con printf",
   "deteccion": "estatica",
@@ -205,13 +205,13 @@
   "codigo_bien": "#include <stdio.h>\nint main(){\n int A=1;\n if(A>0){\n  printf(\"%d\\n\",A);\n }\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:7: error: expected declaration or statement at end of input",
-  "mensaje_editor": "Línea 4: desde acá hay un bloque que no se cierra, falta una }. Contá las { y las } del programa.",
+  "mensaje_editor": "Línea 4: desde acá hay un bloque que no se cierra, falta una }. Cuenta las { y las } del programa.",
   "explicacion": "Cada { abre un bloque y necesita su }. Si falta una, C toma la } de más abajo como cierre del if y se queda esperando otra para main, así que el error aparece recién al final del archivo.",
-  "como_arreglarlo": "Con la sangría, buscá el bloque que no tiene su cierre alineado con la apertura y agregá la }.",
+  "como_arreglarlo": "Con la sangría, busca el bloque que no tiene su cierre alineado con la apertura y agrega la }.",
   "pistas": [
-   "Mirá la sangría: cada { debería tener una } a su misma altura.",
-   "El compilador se queja al final del archivo, pero la llave faltante está más arriba.",
-   "Cerrá el if con } antes del return."
+   "Mira la sangría: cada { debería tener una } a su misma altura.",
+   "El compilador avisa al final del archivo, pero la llave faltante está más arriba.",
+   "Cierra el if con } antes del return."
   ],
   "relacion_con_la_materia": "SS, BC, bloques",
   "deteccion": "estatica",
@@ -233,11 +233,11 @@
   "codigo_bien": "#include <stdio.h>\nint main(){\n printf(\"Hola\\n\");\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:4: error: expected identifier or '(' before '}' token",
-  "mensaje_editor": "Línea 4: hay una } de más: main ya estaba cerrado. Borrá la que sobra.",
+  "mensaje_editor": "Línea 4: hay una } de más: main ya estaba cerrado. Borra la que sobra.",
   "explicacion": "Cada } cierra el bloque que abrió la { más cercana sin cerrar. Cuando main ya terminó, una } extra no cierra nada y C no sabe qué hacer con ella.",
-  "como_arreglarlo": "Contá las llaves de apertura y de cierre y sacá la que sobra.",
+  "como_arreglarlo": "Cuenta las llaves de apertura y de cierre y saca la que sobra.",
   "pistas": [
-   "Contá cuántas { y cuántas } hay en todo el programa.",
+   "Cuenta cuántas { y cuántas } hay en todo el programa.",
    "El problema aparece al final del archivo.",
    "Hay una } de más después de la que cierra main."
   ],
@@ -263,11 +263,11 @@
   "que_dice_gcc": "archivo.c:3: error: expected ']' before ';' token",
   "mensaje_editor": "Línea 3: abriste el corchete del tamaño de V y falta el ] que lo cierra.",
   "explicacion": "El tamaño de un arreglo va entre corchetes, y cada [ necesita su ]. Es el mismo cuidado que con los paréntesis y las llaves.",
-  "como_arreglarlo": "Cerrá el corchete justo después del número.",
+  "como_arreglarlo": "Cierra el corchete justo después del número.",
   "pistas": [
-   "Mirá cómo escribiste el tamaño del arreglo.",
+   "Mira cómo escribiste el tamaño del arreglo.",
    "El número quedó dentro de un corchete abierto.",
-   "Escribí V[3]."
+   "Escribe V[3]."
   ],
   "relacion_con_la_materia": "arreglos",
   "deteccion": "estatica",
@@ -291,11 +291,11 @@
   "que_dice_gcc": "archivo.c:3: error: stray '\\342' in program",
   "mensaje_editor": "Línea 3: esas comillas son curvas y C solo acepta las rectas (\"). Suele pasar al copiar de Word o del celular.",
   "explicacion": "Los editores de texto y los celulares cambian las comillas rectas por curvas. Se parecen, pero son otro carácter y para C no sirven para encerrar un texto.",
-  "como_arreglarlo": "Borrá las comillas curvas y escribilas de nuevo con la tecla del teclado.",
+  "como_arreglarlo": "Borra las comillas curvas y escríbelas de nuevo con la tecla del teclado.",
   "pistas": [
-   "Mirá bien la forma de las comillas del texto.",
+   "Mira bien la forma de las comillas del texto.",
    "Parecen iguales, pero son caracteres distintos.",
-   "Reemplazalas por \" escritas desde el teclado."
+   "Reemplázalas por \" escritas desde el teclado."
   ],
   "relacion_con_la_materia": "SS, salida con printf",
   "deteccion": "estatica",
@@ -304,7 +304,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "las comillas tipográficas “ no sirven en C: usá las comillas rectas \"",
+  "mensaje_editor_actual": "las comillas tipográficas “ no sirven en C: usa las comillas rectas \"",
   "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
@@ -317,13 +317,13 @@
   "codigo_bien": "#include <stdio.h>\nint main(){\n char C='A';\n printf(\"%c\\n\",C);\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:3: error: stray '\\342' in program",
-  "mensaje_editor": "Línea 3: las comillas que rodean la A son curvas. Para un carácter usá las comillas simples rectas.",
+  "mensaje_editor": "Línea 3: las comillas que rodean la A son curvas. Para un carácter usa las comillas simples rectas.",
   "explicacion": "Un carácter se escribe entre comillas simples rectas. Las curvas (que aparecen al copiar de un documento) son otros caracteres y C no los entiende.",
-  "como_arreglarlo": "Reescribí las dos comillas desde el teclado.",
+  "como_arreglarlo": "Reescribe las dos comillas desde el teclado.",
   "pistas": [
-   "Mirá los símbolos que rodean la letra.",
+   "Mira los símbolos que rodean la letra.",
    "C distingue las comillas rectas de las curvas.",
-   "Escribí 'A' con las comillas del teclado."
+   "Escribe 'A' con las comillas del teclado."
   ],
   "relacion_con_la_materia": "char, SS",
   "deteccion": "estatica",
@@ -332,7 +332,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "las comillas tipográficas ‘ no sirven en C: usá las comillas rectas '",
+  "mensaje_editor_actual": "las comillas tipográficas ‘ no sirven en C: usa las comillas rectas '",
   "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
@@ -347,11 +347,11 @@
   "que_dice_gcc": "archivo.c:3: warning: missing terminating ' character",
   "mensaje_editor": "Línea 3: abriste una comilla simple para el carácter y no la cerraste.",
   "explicacion": "Un carácter se escribe entre dos comillas simples: 'A'. Si falta la de cierre, C no sabe dónde termina el carácter.",
-  "como_arreglarlo": "Agregá la comilla de cierre justo después de la letra.",
+  "como_arreglarlo": "Agrega la comilla de cierre justo después de la letra.",
   "pistas": [
-   "Contá las comillas simples de esa línea.",
+   "Cuenta las comillas simples de esa línea.",
    "El carácter empieza pero no termina.",
-   "Escribí 'A'; con la comilla de cierre antes del punto y coma."
+   "Escribe 'A'; con la comilla de cierre antes del punto y coma."
   ],
   "relacion_con_la_materia": "char",
   "deteccion": "estatica",
@@ -360,7 +360,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "falta cerrar la comilla simple del carácter (usá 'a' con un solo carácter)",
+  "mensaje_editor_actual": "falta cerrar la comilla simple del carácter (usa 'a' con un solo carácter)",
   "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
@@ -374,12 +374,12 @@
   "entrada": "",
   "que_dice_gcc": "archivo.c:3: error: unterminated comment",
   "mensaje_editor": "Línea 3: abriste un comentario con /* y no lo cerraste con */. Todo lo que sigue quedó comentado.",
-  "explicacion": "Un comentario que empieza con /* sigue hasta que aparece */, aunque pase por muchas líneas. Si nunca lo cerrás, el compilador se traga el resto del programa.",
-  "como_arreglarlo": "Escribí */ donde querés que termine el comentario.",
+  "explicacion": "Un comentario que empieza con /* sigue hasta que aparece */, aunque pase por muchas líneas. Si nunca lo cierras, el compilador se traga el resto del programa.",
+  "como_arreglarlo": "Escribe */ donde quieres que termine el comentario.",
   "pistas": [
-   "Fijate si el programa parece cortado a la mitad al leerlo.",
+   "Fíjate si el programa parece cortado a la mitad al leerlo.",
    "Un comentario de varias líneas necesita cierre.",
-   "Agregá */ al final del comentario."
+   "Agrega */ al final del comentario."
   ],
   "relacion_con_la_materia": "comentarios",
   "deteccion": "estatica",
@@ -403,11 +403,11 @@
   "que_dice_gcc": "archivo.c:4: error: 'then' undeclared (first use in this function)",
   "mensaje_editor": "Línea 4: en C no se escribe then. La instrucción va directamente después del paréntesis de la condición.",
   "explicacion": "En otros lenguajes (Pascal, Visual Basic) el if lleva then. En C la condición va entre paréntesis y lo que sigue ya es lo que se hace si se cumple.",
-  "como_arreglarlo": "Borrá la palabra then.",
+  "como_arreglarlo": "Borra la palabra then.",
   "pistas": [
    "Esa palabra viene de otro lenguaje de programación.",
    "En C, después del paréntesis de la condición va directo la instrucción.",
-   "Eliminá then."
+   "Elimina then."
   ],
   "relacion_con_la_materia": "BC, if",
   "deteccion": "estatica",
@@ -429,13 +429,13 @@
   "codigo_bien": "#include <stdio.h>\nint main(){\n int A=1;\n if(A>0) A++;\n else if(A<0) A--;\n printf(\"%d\\n\",A);\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:5: warning: implicit declaration of function 'elif' [-Wimplicit-function-declaration]",
-  "mensaje_editor": "Línea 5: en C no existe elif. Para otra condición escribí else if, en dos palabras.",
+  "mensaje_editor": "Línea 5: en C no existe elif. Para otra condición escribe else if, en dos palabras.",
   "explicacion": "elif viene de Python. En C la segunda alternativa es un else cuyo cuerpo es otro if, por eso se escribe else if.",
-  "como_arreglarlo": "Reemplazá elif por else if.",
+  "como_arreglarlo": "Reemplaza elif por else if.",
   "pistas": [
    "Esa palabra pertenece a otro lenguaje.",
    "En C la alternativa se arma con dos palabras.",
-   "Escribí else if(A<0)."
+   "Escribe else if(A<0)."
   ],
   "relacion_con_la_materia": "BC anidada",
   "deteccion": "estatica",
@@ -459,11 +459,11 @@
   "que_dice_gcc": "archivo.c:4: error: expected expression before '>' token",
   "mensaje_editor": "Línea 4: en C \"distinto\" se escribe !=, no <>.",
   "explicacion": "<> es el \"distinto\" de Pascal y de SQL. En C el operador de desigualdad es != (el ! es \"no\" y el = completa la comparación).",
-  "como_arreglarlo": "Reemplazá <> por !=.",
+  "como_arreglarlo": "Reemplaza <> por !=.",
   "pistas": [
-   "Mirá el operador que usaste entre A y 0.",
+   "Mira el operador que usaste entre A y 0.",
    "C tiene otro símbolo para \"distinto\".",
-   "Escribí A!=0."
+   "Escribe A!=0."
   ],
   "relacion_con_la_materia": "BC, condiciones",
   "deteccion": "estatica",
@@ -487,11 +487,11 @@
   "que_dice_gcc": "archivo.c:4: error: expected expression before '>' token",
   "mensaje_editor": "Línea 4: escribiste =>, pero en C el mayor o igual es >=, con el > primero.",
   "explicacion": "Los operadores de comparación con = siempre llevan el = al final: >=, <=, ==, !=. El orden al revés (=>) no existe.",
-  "como_arreglarlo": "Poné el > antes del =.",
+  "como_arreglarlo": "Pon el > antes del =.",
   "pistas": [
-   "Mirá el orden de los dos símbolos del operador.",
+   "Mira el orden de los dos símbolos del operador.",
    "Los símbolos están bien, pero cambiados de lugar.",
-   "Escribí >=."
+   "Escribe >=."
   ],
   "relacion_con_la_materia": "BC, condiciones",
   "deteccion": "estatica",
@@ -514,12 +514,12 @@
   "entrada": "",
   "que_dice_gcc": "archivo.c:4: error: expected ')' before 'and'",
   "mensaje_editor": "Línea 4: la \"y\" lógica de C se escribe &&, y la \"o\" se escribe ||.",
-  "explicacion": "En C las condiciones se unen con símbolos: && (y), || (o) y ! (no). Si escribís and, el compilador lo toma como el nombre de una variable que no declaraste.",
-  "como_arreglarlo": "Cambiá and por &&.",
+  "explicacion": "En C las condiciones se unen con símbolos: && (y), || (o) y ! (no). Si escribes and, el compilador lo toma como el nombre de una variable que no declaraste.",
+  "como_arreglarlo": "Cambia and por &&.",
   "pistas": [
    "Esa palabra no es un operador de C.",
    "En C el operador \"y\" se escribe con símbolos.",
-   "Escribí &&."
+   "Escribe &&."
   ],
   "relacion_con_la_materia": "BC, operadores lógicos",
   "deteccion": "estatica",
@@ -542,12 +542,12 @@
   "entrada": "",
   "que_dice_gcc": "archivo.c:4: warning: implicit declaration of function 'print'; did you mean 'printf'? [-Wimplicit-function-declaration]",
   "mensaje_editor": "Línea 4: la función print no existe en C. Para mostrar datos se usa printf.",
-  "explicacion": "En Python se muestra con print, pero en C la función de salida se llama printf (la f es de \"formateado\"). Si usás otro nombre, el compilador no la encuentra.",
-  "como_arreglarlo": "Cambiá print por printf.",
+  "explicacion": "En Python se muestra con print, pero en C la función de salida se llama printf (la f es de \"formateado\"). Si usas otro nombre, el compilador no la encuentra.",
+  "como_arreglarlo": "Cambia print por printf.",
   "pistas": [
    "El nombre de la función se parece al de otro lenguaje.",
    "En C la función de salida tiene una letra más.",
-   "Escribí printf."
+   "Escribe printf."
   ],
   "relacion_con_la_materia": "SS, salida",
   "deteccion": "estatica",
@@ -569,13 +569,13 @@
   "codigo_bien": "#include <stdio.h>\nint main(){\n int A=1;\n printf(\"%d\\n\",A);\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:4: error: 'cout' undeclared (first use in this function)",
-  "mensaje_editor": "Línea 4: cout es de C++ y no existe en C. Para mostrar A usá printf.",
+  "mensaje_editor": "Línea 4: cout es de C++ y no existe en C. Para mostrar A usa printf.",
   "explicacion": "cout y << son la forma de mostrar datos en C++. En C se usa printf con un formato como %d para los enteros.",
-  "como_arreglarlo": "Reemplazá la línea por un printf con el formato que corresponde al tipo de la variable.",
+  "como_arreglarlo": "Reemplaza la línea por un printf con el formato que corresponde al tipo de la variable.",
   "pistas": [
    "Esa instrucción viene de otro lenguaje.",
    "En C la salida se hace con una función de stdio.h.",
-   "Escribí printf(\"%d\\n\",A);"
+   "Escribe printf(\"%d\\n\",A);"
   ],
   "relacion_con_la_materia": "SS, salida",
   "deteccion": "estatica",
@@ -599,11 +599,11 @@
   "que_dice_gcc": "archivo.c:3: error: unknown type name 'Int'; did you mean 'int'?",
   "mensaje_editor": "Línea 3: el tipo se escribe int, todo en minúscula. C distingue mayúsculas de minúsculas.",
   "explicacion": "En C las palabras reservadas van en minúscula. Int con I mayúscula es para el compilador un nombre cualquiera que nunca declaraste.",
-  "como_arreglarlo": "Escribí el tipo en minúscula.",
+  "como_arreglarlo": "Escribe el tipo en minúscula.",
   "pistas": [
-   "Compará cómo escribiste el tipo con las palabras que ya conocés.",
+   "Compara cómo escribiste el tipo con las palabras que ya conoces.",
    "Una letra está en mayúscula.",
-   "Escribí int."
+   "Escribe int."
   ],
   "relacion_con_la_materia": "SS, tipos",
   "deteccion": "estatica",
@@ -626,12 +626,12 @@
   "entrada": "",
   "que_dice_gcc": "archivo.c:3: error: unknown type name 'flaot'; did you mean 'float'?",
   "mensaje_editor": "Línea 3: flaot no es un tipo de C. ¿Quisiste escribir float?",
-  "explicacion": "El compilador conoce una lista fija de tipos (int, float, char, double...). Si te comés o cambiás una letra, la palabra deja de ser un tipo y no entiende la declaración.",
-  "como_arreglarlo": "Compará la palabra con el tipo que querés usar y corregí las letras.",
+  "explicacion": "El compilador conoce una lista fija de tipos (int, float, char, double...). Si te comes o cambias una letra, la palabra deja de ser un tipo y no entiende la declaración.",
+  "como_arreglarlo": "Compara la palabra con el tipo que quieres usar y corrige las letras.",
   "pistas": [
-   "Leé el tipo letra por letra.",
+   "Lee el tipo letra por letra.",
    "Las letras están todas, pero en otro orden.",
-   "Escribí float."
+   "Escribe float."
   ],
   "relacion_con_la_materia": "SS, tipos",
   "deteccion": "estatica",
@@ -653,13 +653,13 @@
   "codigo_bien": "#include <stdio.h>\nint main(){\n float A=5.0f;\n printf(\"%.1f\\n\",A);\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:3: error: invalid suffix \"f\" on integer constant",
-  "mensaje_editor": "Línea 3: 5f no es un número válido. Para un float escribí 5.0f (o simplemente 5.0).",
+  "mensaje_editor": "Línea 3: 5f no es un número válido. Para un float escribe 5.0f (o simplemente 5.0).",
   "explicacion": "La f al final solo se puede agregar a un número con punto decimal. Un entero con letra pegada no es un número válido para C.",
-  "como_arreglarlo": "Agregale el punto decimal al número, o sacá la f.",
+  "como_arreglarlo": "Agrégale el punto decimal al número, o saca la f.",
   "pistas": [
-   "Mirá cómo escribiste el número.",
+   "Mira cómo escribiste el número.",
    "La f va con números que tienen punto decimal.",
-   "Escribí 5.0f."
+   "Escribe 5.0f."
   ],
   "relacion_con_la_materia": "tipos, float",
   "deteccion": "estatica",
@@ -668,7 +668,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "el número '5f' no es válido: un entero no lleva letras (para un decimal escribí 5.0f o 5.0)",
+  "mensaje_editor_actual": "el número '5f' no es válido: un entero no lleva letras (para un decimal escribe 5.0f o 5.0)",
   "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
@@ -681,13 +681,13 @@
   "codigo_bien": "#include <stdio.h>\nint main(){\n int A=5;\n printf(\"%d\\n\",A);\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:3: warning: `5;' is not in NFC [-Wnormalized=]",
-  "mensaje_editor": "Línea 3: ese ; parece un punto y coma pero es otro carácter, de otro alfabeto. Borralo y escribilo desde el teclado.",
+  "mensaje_editor": "Línea 3: ese ; parece un punto y coma pero es otro carácter, de otro alfabeto. Bórralo y escríbelo desde el teclado.",
   "explicacion": "Algunos caracteres se ven igual que un punto y coma pero son otros símbolos (el signo de pregunta del griego, por ejemplo). Aparecen al copiar y pegar, y C no los reconoce.",
-  "como_arreglarlo": "Borrá el símbolo raro y escribí ; con la tecla.",
+  "como_arreglarlo": "Borra el símbolo raro y escribe ; con la tecla.",
   "pistas": [
    "Todo parece bien escrito, pero C no lo entiende.",
    "Un carácter que se ve normal puede ser otro distinto.",
-   "Borrá el ; de esa línea y escribilo de nuevo."
+   "Borra el ; de esa línea y escríbelo de nuevo."
   ],
   "relacion_con_la_materia": "copiar y pegar",
   "deteccion": "estatica",
@@ -696,7 +696,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "carácter no válido ';': parece un punto y coma pero es otro carácter (viene de copiar y pegar); escribilo de nuevo",
+  "mensaje_editor_actual": "carácter no válido ';': parece un punto y coma pero es otro carácter (viene de copiar y pegar); escríbelo de nuevo",
   "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
@@ -711,11 +711,11 @@
   "que_dice_gcc": "archivo.c:2: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token",
   "mensaje_editor": "Línea 2: a main le faltan los paréntesis. Se escribe int main(void) o main().",
   "explicacion": "Una función se reconoce porque su nombre lleva paréntesis, aunque no reciba datos. Sin ellos, main es para C una variable.",
-  "como_arreglarlo": "Escribí los paréntesis después de main.",
+  "como_arreglarlo": "Escribe los paréntesis después de main.",
   "pistas": [
-   "Compará la primera línea con la de otros programas tuyos.",
+   "Compara la primera línea con la de otros programas tuyos.",
    "Falta algo justo después del nombre de la función.",
-   "Escribí int main(void)."
+   "Escribe int main(void)."
   ],
   "relacion_con_la_materia": "funciones, main",
   "deteccion": "estatica",
@@ -739,11 +739,11 @@
   "que_dice_gcc": "archivo.c:4: error: expected '(' before 'A'",
   "mensaje_editor": "Línea 4: después del if la condición va entre paréntesis.",
   "explicacion": "En C la condición de un if, un while o un for siempre se escribe entre paréntesis. Sin ellos, el compilador no sabe dónde termina la condición.",
-  "como_arreglarlo": "Encerrá la condición entre paréntesis.",
+  "como_arreglarlo": "Encierra la condición entre paréntesis.",
   "pistas": [
-   "Mirá qué escribiste justo después de la palabra if.",
+   "Mira qué escribiste justo después de la palabra if.",
    "La condición necesita estar delimitada.",
-   "Escribí if(A>0)."
+   "Escribe if(A>0)."
   ],
   "relacion_con_la_materia": "BC, if",
   "deteccion": "estatica",
@@ -766,12 +766,12 @@
   "entrada": "",
   "que_dice_gcc": "archivo.c:4: error: expected statement before ')' token",
   "mensaje_editor": "Línea 4: hay un paréntesis de cierre de más en la condición del if.",
-  "explicacion": "Cada ) cierra al ( más cercano que sigue abierto. Si ya cerraste la condición y ponés otro ), no hay nada que cerrar.",
-  "como_arreglarlo": "Sacá el paréntesis que sobra.",
+  "explicacion": "Cada ) cierra al ( más cercano que sigue abierto. Si ya cerraste la condición y pones otro ), no hay nada que cerrar.",
+  "como_arreglarlo": "Saca el paréntesis que sobra.",
   "pistas": [
-   "Contá los paréntesis que abren y los que cierran.",
+   "Cuenta los paréntesis que abren y los que cierran.",
    "Hay dos cierres y una sola apertura.",
-   "Borrá el segundo )."
+   "Borra el segundo )."
   ],
   "relacion_con_la_materia": "BC, condiciones",
   "deteccion": "estatica",
@@ -793,13 +793,13 @@
   "codigo_bien": "#include <stdio.h>\nint main(){\n int A;\n A=5;\n printf(\"%d\\n\",A);\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:4: error: expected expression before ';' token",
-  "mensaje_editor": "Línea 4: después del = falta el valor que querés guardar en A.",
+  "mensaje_editor": "Línea 4: después del = falta el valor que quieres guardar en A.",
   "explicacion": "Una asignación guarda en la variable el resultado de una expresión. Sin nada a la derecha del =, no hay qué guardar.",
-  "como_arreglarlo": "Escribí a la derecha del = el valor o la expresión.",
+  "como_arreglarlo": "Escribe a la derecha del = el valor o la expresión.",
   "pistas": [
-   "Mirá qué hay a cada lado del =.",
+   "Mira qué hay a cada lado del =.",
    "La asignación quedó incompleta.",
-   "Agregá un valor entre el = y el ;."
+   "Agrega un valor entre el = y el ;."
   ],
   "relacion_con_la_materia": "SS, asignación",
   "deteccion": "estatica",
@@ -808,7 +808,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "después del '=' falta el valor que querés guardar",
+  "mensaje_editor_actual": "después del '=' falta el valor que quieres guardar",
   "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
@@ -823,11 +823,11 @@
   "que_dice_gcc": "archivo.c:4: error: expected expression before '/' token",
   "mensaje_editor": "Línea 4: la división necesita un valor a la izquierda del / y otro a la derecha.",
   "explicacion": "Los operadores como + - * / trabajan con dos valores, uno de cada lado. Si falta uno, la expresión no se puede calcular.",
-  "como_arreglarlo": "Escribí el número o la variable que falta antes del /.",
+  "como_arreglarlo": "Escribe el número o la variable que falta antes del /.",
   "pistas": [
    "Una división necesita dos datos.",
-   "Mirá qué hay a la izquierda del /.",
-   "Escribí un operando antes del /."
+   "Mira qué hay a la izquierda del /.",
+   "Escribe un operando antes del /."
   ],
   "relacion_con_la_materia": "SS, expresiones",
   "deteccion": "estatica",
@@ -851,11 +851,11 @@
   "que_dice_gcc": "archivo.c:3: error: expected expression before ')' token",
   "mensaje_editor": "Línea 3: hay una coma antes del paréntesis de cierre del printf, pero después no hay ningún dato.",
   "explicacion": "La coma separa un argumento del siguiente. Si después de la coma no viene nada, la llamada queda incompleta.",
-  "como_arreglarlo": "Sacá la coma, o agregá el dato que falta.",
+  "como_arreglarlo": "Saca la coma, o agrega el dato que falta.",
   "pistas": [
-   "Mirá lo último que escribiste antes del paréntesis de cierre.",
+   "Mira lo último que escribiste antes del paréntesis de cierre.",
    "La coma anuncia otro dato que no está.",
-   "Borrá la coma sobrante."
+   "Borra la coma sobrante."
   ],
   "relacion_con_la_materia": "SS, salida",
   "deteccion": "estatica",
@@ -879,11 +879,11 @@
   "que_dice_gcc": "archivo.c:4: error: expected ';' before 'A'",
   "mensaje_editor": "Línea 4: al encabezado del for le falta un ; entre la condición y el incremento.",
   "explicacion": "El for tiene tres partes separadas por dos ;: inicio, condición e incremento. Si falta un separador, C no puede saber dónde termina cada parte.",
-  "como_arreglarlo": "Revisá que haya exactamente dos ; dentro del paréntesis del for.",
+  "como_arreglarlo": "Revisa que haya exactamente dos ; dentro del paréntesis del for.",
   "pistas": [
-   "Contá los ; que hay dentro del paréntesis del for.",
+   "Cuenta los ; que hay dentro del paréntesis del for.",
    "El for tiene tres partes y necesita dos separadores.",
-   "Agregá ; después de A<3."
+   "Agrega ; después de A<3."
   ],
   "relacion_con_la_materia": "LC, for",
   "deteccion": "estatica",
@@ -907,11 +907,11 @@
   "que_dice_gcc": "archivo.c:4: error: expected ';' before 'printf'",
   "mensaje_editor": "Línea 4: el do-while termina con ; después de la condición.",
   "explicacion": "A diferencia del while común, el do-while cierra con punto y coma después del paréntesis de la condición. Es un detalle fácil de olvidar.",
-  "como_arreglarlo": "Agregá el ; después del paréntesis del while.",
+  "como_arreglarlo": "Agrega el ; después del paréntesis del while.",
   "pistas": [
-   "Compará cómo termina este lazo con los otros que escribiste.",
+   "Compara cómo termina este lazo con los otros que escribiste.",
    "El ; va al final de todo el do-while.",
-   "Agregá ; después de while(A>0)."
+   "Agrega ; después de while(A>0)."
   ],
   "relacion_con_la_materia": "LC, do-while",
   "deteccion": "estatica",
@@ -935,11 +935,11 @@
   "que_dice_gcc": "archivo.c:5: error: expected ':' or '...' before 'printf'",
   "mensaje_editor": "Línea 5: después del valor de case (o de default) falta el signo :.",
   "explicacion": "Cada opción del switch es una etiqueta que termina con dos puntos: case 1: o default:. Sin los dos puntos, C no sabe dónde empieza el código de esa opción.",
-  "como_arreglarlo": "Agregá : después del valor de case, o después de default.",
+  "como_arreglarlo": "Agrega : después del valor de case, o después de default.",
   "pistas": [
-   "Mirá cómo termina la etiqueta de la opción.",
+   "Mira cómo termina la etiqueta de la opción.",
    "Las etiquetas del switch llevan un signo al final.",
-   "Escribí case 1:."
+   "Escribe case 1:."
   ],
   "relacion_con_la_materia": "SS, switch",
   "deteccion": "estatica",
@@ -963,11 +963,11 @@
   "que_dice_gcc": "archivo.c:4: warning: this 'if' clause does not guard... [-Wmisleading-indentation]",
   "mensaje_editor": "Línea 5: este else quedó sin su if. Sin llaves, el if solo controla la primera instrucción.",
   "explicacion": "Sin llaves, el if gobierna una sola instrucción. La segunda ya no es parte del if, así que cuando aparece el else no hay un if inmediato al que pertenezca.",
-  "como_arreglarlo": "Si querés que el if controle varias instrucciones, encerralas entre llaves.",
+  "como_arreglarlo": "Si quieres que el if controle varias instrucciones, enciérralas entre llaves.",
   "pistas": [
-   "Fijate cuántas instrucciones dependen del if.",
+   "Fíjate cuántas instrucciones dependen del if.",
    "El else tiene que ir pegado al if o a su bloque.",
-   "Agrupá las instrucciones con { }."
+   "Agrupa las instrucciones con { }."
   ],
   "relacion_con_la_materia": "BC, if-else",
   "deteccion": "estatica",
@@ -976,7 +976,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "'else' sin su 'if' (revisá las llaves y los ';')",
+  "mensaje_editor_actual": "'else' sin su 'if' (revisa las llaves y los ';')",
   "codigo_editor_actual": "E-otro",
   "verificado_editor_corrige": true,
   "notas": "gcc además avisa -Wmisleading-indentation en este programa; el primer diagnóstico es ese."
@@ -992,11 +992,11 @@
   "que_dice_gcc": "archivo.c:5: error: case label does not reduce to an integer constant",
   "mensaje_editor": "Línea 5: case necesita un valor fijo (un número o un carácter), no una variable como B.",
   "explicacion": "Las etiquetas de un switch se resuelven al compilar, antes de que el programa corra. Una variable puede cambiar durante la ejecución, por eso no se acepta.",
-  "como_arreglarlo": "Escribí el número o el carácter que corresponde. Si necesitás comparar con una variable, usá if.",
+  "como_arreglarlo": "Escribe el número o el carácter que corresponde. Si necesitas comparar con una variable, usa if.",
   "pistas": [
-   "Pensá si el valor de B se conoce antes de ejecutar el programa.",
+   "Piensa si el valor de B se conoce antes de ejecutar el programa.",
    "Las etiquetas de un switch tienen que ser fijas.",
-   "Usá un número en lugar de B."
+   "Usa un número en lugar de B."
   ],
   "relacion_con_la_materia": "SS, switch",
   "deteccion": "estatica",
@@ -1020,11 +1020,11 @@
   "que_dice_gcc": "archivo.c:3: error: too many decimal points in number",
   "mensaje_editor": "Línea 3: ese número tiene dos puntos decimales. Un número lleva uno solo.",
   "explicacion": "En C el punto separa la parte entera de la decimal y solo puede haber uno. Para separar miles no se usa ningún símbolo.",
-  "como_arreglarlo": "Dejá un solo punto decimal.",
+  "como_arreglarlo": "Deja un solo punto decimal.",
   "pistas": [
-   "Contá los puntos del número.",
+   "Cuenta los puntos del número.",
    "El separador decimal no puede repetirse.",
-   "Escribí 1.23."
+   "Escribe 1.23."
   ],
   "relacion_con_la_materia": "tipos, float",
   "deteccion": "estatica",
@@ -1048,11 +1048,11 @@
   "que_dice_gcc": "archivo.c:3: error: invalid digit \"9\" in octal constant",
   "mensaje_editor": "Línea 3: un número que empieza con 0 es octal (base 8) y no admite los dígitos 8 ni 9.",
   "explicacion": "En C, un 0 delante convierte al número en octal: 010 vale 8, no 10. Por eso 09 no existe. Conviene no escribir ceros a la izquierda.",
-  "como_arreglarlo": "Sacá el cero de adelante.",
+  "como_arreglarlo": "Saca el cero de adelante.",
   "pistas": [
-   "Mirá el primer dígito del número.",
+   "Mira el primer dígito del número.",
    "C trata de manera especial a los números que arrancan con 0.",
-   "Escribí 9."
+   "Escribe 9."
   ],
   "relacion_con_la_materia": "tipos, enteros",
   "deteccion": "estatica",
@@ -1076,11 +1076,11 @@
   "que_dice_gcc": "archivo.c:3: error: invalid suffix \"A\" on integer constant",
   "mensaje_editor": "Línea 3: el nombre de una variable no puede empezar con un número. Tiene que empezar con una letra o con _.",
   "explicacion": "Los nombres de variables empiezan con letra o guion bajo y después pueden tener números. Si empezara con un número, C no podría distinguirlo de una constante.",
-  "como_arreglarlo": "Reordená el nombre para que empiece con una letra.",
+  "como_arreglarlo": "Reordena el nombre para que empiece con una letra.",
   "pistas": [
-   "Mirá el primer carácter del nombre.",
+   "Mira el primer carácter del nombre.",
    "Un nombre no puede comenzar como un número.",
-   "Escribí A1 en lugar de 1A."
+   "Escribe A1 en lugar de 1A."
   ],
   "relacion_con_la_materia": "SS, nombres de variables",
   "deteccion": "estatica",
@@ -1102,13 +1102,13 @@
   "codigo_bien": "#include <stdio.h>\nint main(){\n int MI_NUMERO=2;\n printf(\"%d\\n\",MI_NUMERO);\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:3: error: expected '=', ',', ';', 'asm' or '__attribute__' before '-' token",
-  "mensaje_editor": "Línea 3: el guion - es el signo de la resta y no puede ir en un nombre. Usá el guion bajo (_).",
+  "mensaje_editor": "Línea 3: el guion - es el signo de la resta y no puede ir en un nombre. Usa el guion bajo (_).",
   "explicacion": "Los nombres solo pueden tener letras, números y guion bajo. El - se interpreta como una resta entre dos nombres.",
-  "como_arreglarlo": "Reemplazá el - por _ en todos los lugares donde aparece el nombre.",
+  "como_arreglarlo": "Reemplaza el - por _ en todos los lugares donde aparece el nombre.",
   "pistas": [
-   "Mirá el símbolo que separa las palabras del nombre.",
+   "Mira el símbolo que separa las palabras del nombre.",
    "Ese símbolo es una operación.",
-   "Usá MI_NUMERO."
+   "Usa MI_NUMERO."
   ],
   "relacion_con_la_materia": "SS, nombres de variables",
   "deteccion": "estatica",
@@ -1132,11 +1132,11 @@
   "que_dice_gcc": "archivo.c:3: error: expected identifier or '(' before numeric constant",
   "mensaje_editor": "Línea 3: los decimales se separan con punto (3.5), no con coma. La coma separa variables.",
   "explicacion": "En Argentina se escribe 3,5, pero en C el separador decimal es el punto. La coma sirve para declarar varias variables juntas, por eso C cree que 5 es otra variable.",
-  "como_arreglarlo": "Reemplazá la coma por un punto.",
+  "como_arreglarlo": "Reemplaza la coma por un punto.",
   "pistas": [
-   "Mirá cómo escribiste el número.",
+   "Mira cómo escribiste el número.",
    "La coma tiene otro significado en C.",
-   "Escribí 3.5."
+   "Escribe 3.5."
   ],
   "relacion_con_la_materia": "tipos, float",
   "deteccion": "estatica",
@@ -1158,13 +1158,13 @@
   "codigo_bien": "#include <stdio.h>\nint main(){\n printf(\"Hola\\nmundo\\n\");\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:3: warning: missing terminating \" character",
-  "mensaje_editor": "Línea 3: el texto empieza con comillas pero no se cierra en la misma línea. Para un salto de línea usá \\n.",
+  "mensaje_editor": "Línea 3: el texto empieza con comillas pero no se cierra en la misma línea. Para un salto de línea usa \\n.",
   "explicacion": "Un texto entre comillas tiene que empezar y terminar en la misma línea. Para mostrar un salto de línea se escribe \\n dentro del texto, no se aprieta Enter.",
-  "como_arreglarlo": "Cerrá las comillas, y si querés un salto de línea escribí \\n.",
+  "como_arreglarlo": "Cierra las comillas, y si quieres un salto de línea escribe \\n.",
   "pistas": [
-   "Mirá dónde termina la línea del printf.",
+   "Mira dónde termina la línea del printf.",
    "El texto sigue abierto cuando cambia la línea.",
-   "Cerrá las comillas o usá \\n para el salto."
+   "Cierra las comillas o usa \\n para el salto."
   ],
   "relacion_con_la_materia": "SS, salida",
   "deteccion": "estatica",
@@ -1188,11 +1188,11 @@
   "que_dice_gcc": "archivo.c:3: warning: unknown escape sequence: '\\q'",
   "mensaje_editor": "Línea 3: \\q no es una secuencia de escape válida de C. ¿Querías escribir \\n o \\t?",
   "explicacion": "Dentro de un texto, la barra invertida forma pares especiales como \\n (salto de línea) y \\t (tabulador). Si la letra que sigue no es una de esas, el resultado no está definido.",
-  "como_arreglarlo": "Cambiá la secuencia por la correcta, o sacá la barra.",
+  "como_arreglarlo": "Cambia la secuencia por la correcta, o saca la barra.",
   "pistas": [
-   "Mirá qué letra viene después de la barra invertida.",
+   "Mira qué letra viene después de la barra invertida.",
    "Las secuencias válidas son pocas: \\n, \\t, \\\\, \\\", entre otras.",
-   "Escribí \\n."
+   "Escribe \\n."
   ],
   "relacion_con_la_materia": "SS, salida",
   "deteccion": "estatica",
@@ -1216,11 +1216,11 @@
   "que_dice_gcc": "archivo.c:3: error: stray '\\' in program",
   "mensaje_editor": "Línea 3: hay una barra invertida (\\) fuera de un texto. Las comillas se escriben solas: \"Hola\".",
   "explicacion": "La barra invertida solo tiene sentido dentro de un texto. Fuera de él, C no la reconoce. Suele aparecer al copiar un printf de una página donde las comillas estaban \"escapadas\".",
-  "como_arreglarlo": "Borrá las barras que están fuera del texto.",
+  "como_arreglarlo": "Borra las barras que están fuera del texto.",
   "pistas": [
-   "Mirá los caracteres que rodean al texto.",
+   "Mira los caracteres que rodean al texto.",
    "Esa barra no pertenece a la instrucción.",
-   "Escribí printf(\"Hola\");"
+   "Escribe printf(\"Hola\");"
   ],
   "relacion_con_la_materia": "SS, salida",
   "deteccion": "estatica",
@@ -1229,7 +1229,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "carácter no válido '\\': si querías escribir un texto, ponelo entre comillas, por ejemplo printf(\"Hola\\n\");",
+  "mensaje_editor_actual": "carácter no válido '\\': si querías escribir un texto, ponlo entre comillas, por ejemplo printf(\"Hola\\n\");",
   "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
@@ -1242,13 +1242,13 @@
   "codigo_bien": "#include <stdio.h>\nint main(){\n int A=1;\n printf(\"%d\\n\", A);\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:4: error: stray '\\302' in program",
-  "mensaje_editor": "Línea 4: hay un espacio especial (no separable) que no se ve. Borralo y escribí el espacio con la barra espaciadora.",
+  "mensaje_editor": "Línea 4: hay un espacio especial (no separable) que no se ve. Bórralo y escribe el espacio con la barra espaciadora.",
   "explicacion": "Al copiar de una página web o de un chat pueden colarse espacios que parecen normales pero son otro carácter. Para el compilador es un símbolo desconocido.",
-  "como_arreglarlo": "Borrá el espacio de esa zona y escribilo de nuevo.",
+  "como_arreglarlo": "Borra el espacio de esa zona y escríbelo de nuevo.",
   "pistas": [
-   "El código se ve perfecto, pero el compilador se queja.",
+   "El código se ve perfecto, pero el compilador avisa.",
    "Algún espacio puede no ser un espacio común.",
-   "Borrá el espacio antes de A y escribilo de nuevo."
+   "Borra el espacio antes de A y escríbelo de nuevo."
   ],
   "relacion_con_la_materia": "copiar y pegar",
   "deteccion": "estatica",
@@ -1257,7 +1257,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "hay un carácter invisible (espacio no separable) en esta línea, seguramente por copiar y pegar: borrá el espacio y volvé a escribirlo",
+  "mensaje_editor_actual": "hay un carácter invisible (espacio no separable) en esta línea, seguramente por copiar y pegar: borra el espacio y vuelve a escribirlo",
   "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
@@ -1272,11 +1272,11 @@
   "que_dice_gcc": "archivo.c:3: error: stray '@' in program",
   "mensaje_editor": "Línea 3: el símbolo @ no existe en C. Un nombre solo tiene letras, números y _.",
   "explicacion": "En C los nombres solo usan letras, números y guion bajo. Símbolos como @, $ o # no forman parte de los nombres.",
-  "como_arreglarlo": "Sacá el símbolo del nombre.",
+  "como_arreglarlo": "Saca el símbolo del nombre.",
   "pistas": [
-   "Mirá los caracteres del nombre de la variable.",
+   "Mira los caracteres del nombre de la variable.",
    "Hay un símbolo que no es letra ni número.",
-   "Dejá solamente B."
+   "Deja solamente B."
   ],
   "relacion_con_la_materia": "SS, nombres de variables",
   "deteccion": "estatica",
@@ -1298,13 +1298,13 @@
   "codigo_bien": "#include <stdio.h>\nint main(){\n int A=1;\n if(A>0) A++;\n printf(\"%d\\n\",A);\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:4: error: 'if\\U0000ff08A' undeclared (first use in this function)",
-  "mensaje_editor": "Línea 4: esos paréntesis parecen normales pero son de ancho completo (de teclados asiáticos o del autocorrector). Escribilos de nuevo con el teclado.",
+  "mensaje_editor": "Línea 4: esos paréntesis parecen normales pero son de ancho completo (de teclados asiáticos o del autocorrector). Escríbelos de nuevo con el teclado.",
   "explicacion": "Existen paréntesis que ocupan más lugar y se ven apenas distintos. Para C son símbolos desconocidos, no paréntesis.",
-  "como_arreglarlo": "Reemplazalos por los paréntesis del teclado.",
+  "como_arreglarlo": "Reemplázalos por los paréntesis del teclado.",
   "pistas": [
-   "Mirá si los paréntesis son iguales a los de otras líneas.",
+   "Mira si los paréntesis son iguales a los de otras líneas.",
    "Pueden ser caracteres distintos aunque parezcan iguales.",
-   "Borralos y escribí ( y ) con el teclado."
+   "Bórralos y escribe ( y ) con el teclado."
   ],
   "relacion_con_la_materia": "copiar y pegar",
   "deteccion": "estatica",
@@ -1327,12 +1327,12 @@
   "entrada": "",
   "que_dice_gcc": "archivo.c:3: error: expected identifier or '(' before 'for'",
   "mensaje_editor": "Línea 3: for es una palabra reservada de C y no se puede usar como nombre de variable.",
-  "explicacion": "Las palabras reservadas (for, if, while, int, return...) tienen un significado fijo en el lenguaje. Por eso no podés usarlas como nombre de tus variables.",
-  "como_arreglarlo": "Elegí otro nombre para la variable.",
+  "explicacion": "Las palabras reservadas (for, if, while, int, return...) tienen un significado fijo en el lenguaje. Por eso no puedes usarlas como nombre de tus variables.",
+  "como_arreglarlo": "Elige otro nombre para la variable.",
   "pistas": [
    "El nombre que elegiste coincide con algo que ya significa otra cosa.",
    "Las instrucciones del lenguaje no pueden ser nombres de variables.",
-   "Usá un nombre como CONT."
+   "Usa un nombre como CONT."
   ],
   "relacion_con_la_materia": "SS, nombres de variables",
   "deteccion": "estatica",
@@ -1356,11 +1356,11 @@
   "que_dice_gcc": "archivo.c:3: error: expected identifier or '(' before '=' token",
   "mensaje_editor": "Línea 3: después de int tiene que venir el nombre de la variable, y acá aparece directamente el =.",
   "explicacion": "Una declaración tiene un tipo y un nombre. Sin nombre no hay dónde guardar el valor.",
-  "como_arreglarlo": "Escribí el nombre de la variable entre el tipo y el =.",
+  "como_arreglarlo": "Escribe el nombre de la variable entre el tipo y el =.",
   "pistas": [
    "Una declaración dice qué tipo es y cómo se llama.",
    "Falta algo entre int y el signo =.",
-   "Agregá un nombre antes del =."
+   "Agrega un nombre antes del =."
   ],
   "relacion_con_la_materia": "SS, declaración",
   "deteccion": "estatica",
@@ -1384,11 +1384,11 @@
   "que_dice_gcc": "archivo.c:3: warning: multi-character character constant [-Wmultichar]",
   "mensaje_editor": "Línea 3: entre comillas simples va un solo carácter. Para una palabra se usa un texto entre comillas dobles.",
   "explicacion": "Las comillas simples encierran un único carácter ('A'). Un char guarda un solo carácter, no una palabra.",
-  "como_arreglarlo": "Dejá un solo carácter, o usá un arreglo de char con comillas dobles para una palabra.",
+  "como_arreglarlo": "Deja un solo carácter, o usa un arreglo de char con comillas dobles para una palabra.",
   "pistas": [
-   "Contá cuántos caracteres hay entre las comillas simples.",
+   "Cuenta cuántos caracteres hay entre las comillas simples.",
    "Un char guarda un solo carácter.",
-   "Dejá solamente 'A'."
+   "Deja solamente 'A'."
   ],
   "relacion_con_la_materia": "char",
   "deteccion": "estatica",
@@ -1413,11 +1413,11 @@
   "que_dice_gcc": "archivo.c:3: error: unknown type name 'string'; did you mean 'stdin'?",
   "mensaje_editor": "Línea 3: string no es un tipo de C. Un texto se guarda en un arreglo de char.",
   "explicacion": "Lenguajes como Java, C# o C++ tienen un tipo string. En C no existe: un texto es un arreglo de char terminado en un carácter especial. Lo mismo pasa con boolean (en C se usa int, o bool con stdbool.h).",
-  "como_arreglarlo": "Declaralo como arreglo de char, por ejemplo char N[]=\"Ana\";",
+  "como_arreglarlo": "Decláralo como arreglo de char, por ejemplo char N[]=\"Ana\";",
   "pistas": [
    "Ese tipo existe en otros lenguajes, no en C.",
    "En C un texto es una secuencia de caracteres.",
-   "Usá char N[]=\"Ana\";"
+   "Usa char N[]=\"Ana\";"
   ],
   "relacion_con_la_materia": "arreglos y textos",
   "deteccion": "estatica",
@@ -1426,7 +1426,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "en C no existe 'string': para un carácter usá char (los textos completos todavía no están soportados en este editor)",
+  "mensaje_editor_actual": "en C no existe 'string': para un carácter usa char (los textos completos todavía no están soportados en este editor)",
   "codigo_editor_actual": "E-texto-no-soportado",
   "verificado_editor_corrige": true
  },
@@ -1440,12 +1440,12 @@
   "entrada": "",
   "que_dice_gcc": "archivo.c:3: warning: character constant too long for its type",
   "mensaje_editor": "Línea 3: los textos van entre comillas dobles (\"Hola\"). Las comillas simples son solo para un carácter.",
-  "explicacion": "En C las comillas dobles crean un texto y las simples un solo carácter. Es un error común si venís de Python o JavaScript, donde sirven las dos.",
-  "como_arreglarlo": "Reemplazá las comillas simples por comillas dobles.",
+  "explicacion": "En C las comillas dobles crean un texto y las simples un solo carácter. Es un error común si vienes de Python o JavaScript, donde sirven las dos.",
+  "como_arreglarlo": "Reemplaza las comillas simples por comillas dobles.",
   "pistas": [
-   "Mirá qué comillas usaste para el texto.",
+   "Mira qué comillas usaste para el texto.",
    "Las comillas simples y las dobles significan cosas distintas.",
-   "Escribí printf(\"Hola\\n\");"
+   "Escribe printf(\"Hola\\n\");"
   ],
   "relacion_con_la_materia": "SS, salida",
   "deteccion": "estatica",
@@ -1470,11 +1470,11 @@
   "que_dice_gcc": "archivo.c:3: warning: initialization of 'char' from 'char *' makes integer from pointer without a cast [-Wint-conversion]",
   "mensaje_editor": "Línea 3: un carácter solo va entre comillas simples ('A'). Las comillas dobles son para textos.",
   "explicacion": "\"A\" es un texto de una letra (con un terminador oculto) y 'A' es el carácter. Un char guarda el carácter, no un texto.",
-  "como_arreglarlo": "Reemplazá las comillas dobles por simples.",
+  "como_arreglarlo": "Reemplaza las comillas dobles por simples.",
   "pistas": [
-   "Mirá qué comillas usaste para la letra.",
+   "Mira qué comillas usaste para la letra.",
    "Un carácter y un texto se escriben distinto.",
-   "Escribí 'A'."
+   "Escribe 'A'."
   ],
   "relacion_con_la_materia": "char",
   "deteccion": "estatica",
@@ -1483,7 +1483,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "a un char le asignás un texto entre comillas dobles: ¿es lo que querías guardar ahí? Pensá qué guarda cada tipo",
+  "mensaje_editor_actual": "a un char le asignas un texto entre comillas dobles: ¿es lo que querías guardar ahí? Piensa qué guarda cada tipo",
   "codigo_editor_actual": "W-comillas-dobles",
   "verificado_editor_corrige": true,
   "notas": "gcc 13 compila con un aviso (-Wint-conversion); gcc 14 lo rechaza."
@@ -1499,11 +1499,11 @@
   "que_dice_gcc": "archivo.c:3: error: expected identifier or '(' before '{' token",
   "mensaje_editor": "Línea 2: ese ; después de main(void) termina la función antes de que empiece su cuerpo.",
   "explicacion": "Al definir una función, el encabezado va seguido del bloque { } sin punto y coma. Con el ; C lo toma como una declaración (un prototipo) y el bloque de abajo queda suelto.",
-  "como_arreglarlo": "Sacá el ; del encabezado de la función.",
+  "como_arreglarlo": "Saca el ; del encabezado de la función.",
   "pistas": [
-   "Compará el encabezado de main con el de un prototipo.",
+   "Compara el encabezado de main con el de un prototipo.",
    "Al definir una función no va ; antes de la llave.",
-   "Borrá el ; de int main(void);"
+   "Borra el ; de int main(void);"
   ],
   "relacion_con_la_materia": "funciones, prototipos",
   "deteccion": "estatica",
@@ -1527,11 +1527,11 @@
   "que_dice_gcc": "archivo.c:4: warning: right-hand operand of comma expression has no effect [-Wunused-value]",
   "mensaje_editor": "Línea 4: las partes del for se separan con ; y no con comas.",
   "explicacion": "El encabezado del for lleva tres partes separadas por punto y coma. Con comas, C lo lee como una sola expresión y se queda esperando el ;.",
-  "como_arreglarlo": "Reemplazá las comas del encabezado por ;.",
+  "como_arreglarlo": "Reemplaza las comas del encabezado por ;.",
   "pistas": [
-   "Mirá los signos que separan las partes del for.",
+   "Mira los signos que separan las partes del for.",
    "La coma y el punto y coma no son lo mismo.",
-   "Escribí for(A=0; A<3; A++)"
+   "Escribe for(A=0; A<3; A++)"
   ],
   "relacion_con_la_materia": "LC, for",
   "deteccion": "estatica",
@@ -1554,12 +1554,12 @@
   "entrada": "",
   "que_dice_gcc": "archivo.c:4: error: expected ')' before 'A'",
   "mensaje_editor": "Línea 4: falta una coma entre el texto y A. Los argumentos del printf se separan con comas.",
-  "explicacion": "En printf, el texto con los formatos y cada dato que querés mostrar son argumentos distintos y van separados por comas.",
-  "como_arreglarlo": "Agregá la coma después del texto.",
+  "explicacion": "En printf, el texto con los formatos y cada dato que quieres mostrar son argumentos distintos y van separados por comas.",
+  "como_arreglarlo": "Agrega la coma después del texto.",
   "pistas": [
-   "Mirá cómo están separados los datos dentro del printf.",
+   "Mira cómo están separados los datos dentro del printf.",
    "Entre el texto y la variable falta un separador.",
-   "Escribí una coma después de las comillas de cierre."
+   "Escribe una coma después de las comillas de cierre."
   ],
   "relacion_con_la_materia": "SS, salida",
   "deteccion": "estatica",
@@ -1583,11 +1583,11 @@
   "que_dice_gcc": "archivo.c:4: error: invalid suffix \"A\" on integer constant",
   "mensaje_editor": "Línea 4: en C la multiplicación siempre se escribe con *. 2A no es 2 por A.",
   "explicacion": "En matemática 2A significa 2 por A, pero en C hay que escribir el operador. Sin él, 2A se lee como un número con una letra pegada, que no existe.",
-  "como_arreglarlo": "Escribí el * entre los dos factores.",
+  "como_arreglarlo": "Escribe el * entre los dos factores.",
   "pistas": [
    "En C no se puede omitir el signo de multiplicar.",
-   "Mirá cómo escribiste el producto.",
-   "Escribí 2*A."
+   "Mira cómo escribiste el producto.",
+   "Escribe 2*A."
   ],
   "relacion_con_la_materia": "SS, expresiones",
   "deteccion": "estatica",
@@ -1611,11 +1611,11 @@
   "que_dice_gcc": "archivo.c:4: warning: implicit declaration of function 'While' [-Wimplicit-function-declaration]",
   "mensaje_editor": "Línea 4: while se escribe todo en minúscula. C distingue mayúsculas de minúsculas.",
   "explicacion": "Las palabras del lenguaje (if, else, for, while, switch) van siempre en minúscula. Con una mayúscula pasan a ser nombres comunes y el compilador cree que estás llamando a una función.",
-  "como_arreglarlo": "Escribí la palabra en minúscula.",
+  "como_arreglarlo": "Escribe la palabra en minúscula.",
   "pistas": [
-   "Fijate cómo escribiste el nombre de la estructura.",
+   "Fíjate cómo escribiste el nombre de la estructura.",
    "Una letra está en mayúscula.",
-   "Escribí while."
+   "Escribe while."
   ],
   "relacion_con_la_materia": "LC, while",
   "deteccion": "estatica",
@@ -1638,12 +1638,12 @@
   "entrada": "",
   "que_dice_gcc": "archivo.c:3: error: invalid preprocessing directive #muestra",
   "mensaje_editor": "Línea 3: en C los comentarios empiezan con // o con /* */, no con #.",
-  "explicacion": "El # en C es para las directivas (#include, #define). Si escribís # y una palabra que no es una directiva, el compilador da error.",
-  "como_arreglarlo": "Reemplazá el # por //.",
+  "explicacion": "El # en C es para las directivas (#include, #define). Si escribes # y una palabra que no es una directiva, el compilador da error.",
+  "como_arreglarlo": "Reemplaza el # por //.",
   "pistas": [
    "Esa forma de comentar viene de otro lenguaje.",
    "En C hay dos formas de comentar.",
-   "Escribí // al comienzo del comentario."
+   "Escribe // al comienzo del comentario."
   ],
   "relacion_con_la_materia": "comentarios",
   "deteccion": "estatica",
@@ -1667,11 +1667,11 @@
   "que_dice_gcc": "archivo.c:4: error: expected '(' before '{' token",
   "mensaje_editor": "Línea 4: la condición del if va entre paréntesis ( ), no entre llaves { }.",
   "explicacion": "Los paréntesis encierran la condición y las llaves encierran el bloque de instrucciones. No son intercambiables.",
-  "como_arreglarlo": "Cambiá las llaves de la condición por paréntesis.",
+  "como_arreglarlo": "Cambia las llaves de la condición por paréntesis.",
   "pistas": [
-   "Mirá qué símbolos rodean a la condición.",
+   "Mira qué símbolos rodean a la condición.",
    "Cada par de símbolos tiene una función distinta.",
-   "Escribí if(A>0)."
+   "Escribe if(A>0)."
   ],
   "relacion_con_la_materia": "BC, if",
   "deteccion": "estatica",
@@ -1693,13 +1693,13 @@
   "codigo_bien": "#include <stdio.h>\nint main(){\n printf(\"Dijo \\\"Hola\\\" y se fue\\n\");\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:3: error: expected ')' before 'Hola'",
-  "mensaje_editor": "Línea 3: las comillas de adentro cierran el texto antes de tiempo. Para mostrar una comilla escribí \\\".",
+  "mensaje_editor": "Línea 3: las comillas de adentro cierran el texto antes de tiempo. Para mostrar una comilla escribe \\\".",
   "explicacion": "Una comilla doble en medio de un texto termina el texto. Para mostrarla hay que escribirla con la barra invertida: \\\".",
-  "como_arreglarlo": "Escribí \\\" en cada comilla que querés mostrar dentro del texto.",
+  "como_arreglarlo": "Escribe \\\" en cada comilla que quieres mostrar dentro del texto.",
   "pistas": [
-   "Contá cuántas comillas hay en esa línea.",
+   "Cuenta cuántas comillas hay en esa línea.",
    "El texto termina donde aparece la segunda comilla.",
-   "Escribí \\\" para las comillas de adentro."
+   "Escribe \\\" para las comillas de adentro."
   ],
   "relacion_con_la_materia": "SS, salida",
   "deteccion": "estatica",
@@ -1721,13 +1721,13 @@
   "codigo_bien": "#include <stdio.h>\nint main(){\n printf(\"Hola\\n\");\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:2: warning: return type defaults to 'int' [-Wimplicit-int]",
-  "mensaje_editor": "Línea 2: a main le falta el tipo int adelante. Escribí int main(void).",
-  "explicacion": "Toda función declara qué tipo de dato devuelve. main devuelve un int (el código con que termina el programa). Si lo omitís, el compilador lo supone pero avisa.",
-  "como_arreglarlo": "Escribí int antes de main.",
+  "mensaje_editor": "Línea 2: a main le falta el tipo int adelante. Escribe int main(void).",
+  "explicacion": "Toda función declara qué tipo de dato devuelve. main devuelve un int (el código con que termina el programa). Si lo omites, el compilador lo supone pero avisa.",
+  "como_arreglarlo": "Escribe int antes de main.",
   "pistas": [
-   "Mirá la primera línea de main y compará con otros programas.",
+   "Mira la primera línea de main y compara con otros programas.",
    "Falta una palabra antes del nombre de la función.",
-   "Escribí int main(void)."
+   "Escribe int main(void)."
   ],
   "relacion_con_la_materia": "funciones, main",
   "deteccion": "estatica",
@@ -1749,13 +1749,13 @@
   "codigo_bien": "#include <stdio.h>\nint main(){\n int A=5;\n int B=A - 2;\n printf(\"%d\\n\",B);\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:4: error: stray '\\342' in program",
-  "mensaje_editor": "Línea 4: ese guion es largo (–), no el signo menos de C. Escribilo de nuevo con la tecla -.",
-  "explicacion": "Cuando copiás de un documento, el procesador puede cambiar el signo menos por un guion largo. Se parecen, pero C solo reconoce el signo menos común.",
-  "como_arreglarlo": "Borrá ese símbolo y escribí - con el teclado.",
+  "mensaje_editor": "Línea 4: ese guion es largo (–), no el signo menos de C. Escríbelo de nuevo con la tecla -.",
+  "explicacion": "Cuando copias de un documento, el procesador puede cambiar el signo menos por un guion largo. Se parecen, pero C solo reconoce el signo menos común.",
+  "como_arreglarlo": "Borra ese símbolo y escribe - con el teclado.",
   "pistas": [
    "El signo de la resta se ve bien, pero C no lo entiende.",
    "Puede ser un guion distinto al de la tecla.",
-   "Reescribí el - con el teclado."
+   "Reescribe el - con el teclado."
   ],
   "relacion_con_la_materia": "copiar y pegar",
   "deteccion": "estatica",
@@ -1764,7 +1764,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "el símbolo '–' no es el signo menos de C: escribí '-'",
+  "mensaje_editor_actual": "el símbolo '–' no es el signo menos de C: escribe '-'",
   "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
@@ -1779,11 +1779,11 @@
   "que_dice_gcc": "archivo.c:4: error: stray '\\303' in program",
   "mensaje_editor": "Línea 4: el símbolo × no existe en C. Multiplicar es *, dividir es /.",
   "explicacion": "En C las operaciones se escriben con el teclado: * para multiplicar y / para dividir. Los símbolos × y ÷ de la matemática no se reconocen.",
-  "como_arreglarlo": "Reemplazá el símbolo por el operador de C.",
+  "como_arreglarlo": "Reemplaza el símbolo por el operador de C.",
   "pistas": [
    "Ese símbolo es de matemática escrita.",
    "C usa otros caracteres para multiplicar y dividir.",
-   "Escribí *."
+   "Escribe *."
   ],
   "relacion_con_la_materia": "SS, expresiones",
   "deteccion": "estatica",

@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="dark light">
 <title>Editor C</title>
-<meta name="description" content="Editor de C sin anuncios que corre en tu navegador: escribí, ejecutá y probá tus programas al instante.">
+<meta name="description" content="Editor de C sin anuncios que corre en tu navegador: escribe, ejecuta y prueba tus programas al instante.">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="assets/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="shortcut icon" href="assets/favicon.ico">
@@ -28,7 +28,7 @@
   <div class="actions">
     <button id="run" class="btn primary" title="Ejecutar (Ctrl+Enter o F5)"><svg class="i" aria-hidden="true"><use href="#i-ejecutar"/></svg><span>Ejecutar</span></button>
     <button id="stop" class="btn danger" title="Detener la ejecución" aria-label="Detener" disabled><svg class="i" aria-hidden="true"><use href="#i-detener"/></svg><span>Detener</span></button>
-    <button id="ayudaBtn" class="btn" title="Ayuda: buscá una duda de C o de un error" aria-label="Ayuda" aria-haspopup="dialog"><svg class="i" aria-hidden="true"><use href="#i-ayuda"/></svg><span>Ayuda</span></button>
+    <button id="ayudaBtn" class="btn" title="Ayuda: busca una duda de C o de un error" aria-label="Ayuda" aria-haspopup="dialog"><svg class="i" aria-hidden="true"><use href="#i-ayuda"/></svg><span>Ayuda</span></button>
     <details class="more" id="more"><summary class="btn" aria-label="Más opciones"><svg class="i" aria-hidden="true"><use href="#i-mas-menu"/></svg><span>Más</span></summary>
     <div class="menu">
       <button id="progs" class="btn" title="Mis programas guardados en este dispositivo" aria-label="Programas"><svg class="i" aria-hidden="true"><use href="#i-programas"/></svg><span class="l">Programas</span></button>
@@ -41,7 +41,7 @@
     </div></details>
   </div>
 </header>
-<div class="practica" id="practica" role="status" hidden>Modo práctica: en este enlace no se puede pegar. Escribí el código vos.</div>
+<div class="practica" id="practica" role="status" hidden>Modo práctica: en este enlace no se puede pegar. Escribe el código tú.</div>
 <div class="tabs" id="tabs" role="tablist" aria-label="Vista">
   <button type="button" id="tabEd" class="tab" role="tab" aria-selected="true" aria-controls="paneEd">Editor</button>
   <button type="button" id="tabCo" class="tab" role="tab" aria-selected="false" aria-controls="paneCo" tabindex="-1">Consola<i id="tabDot" class="dot" hidden></i></button>
@@ -53,7 +53,7 @@
       <span class="hint" id="pos" aria-hidden="true">Lín 1, Col 1</span>
       <button id="findBtn" class="btn mini ico" title="Buscar y reemplazar (Ctrl+F)" aria-label="Buscar y reemplazar"><svg class="i" aria-hidden="true"><use href="#i-buscar"/></svg></button>
       <button id="readBtn" class="btn mini" aria-pressed="false" title="Modo lectura: solo el código, sin distracciones (Esc para salir)"><svg class="i" aria-hidden="true"><use href="#i-lectura"/></svg><span id="readTxt">Lectura</span></button>
-      <button id="whatBtn" class="btn mini ico" aria-pressed="false" title="¿Qué es esto? Tocá una palabra, un operador o un %d del código para ver qué significa (en escritorio también Alt+clic)" aria-label="¿Qué es esto? Explicar una palabra del código"><svg class="i" aria-hidden="true"><use href="#i-quees"/></svg></button>
+      <button id="whatBtn" class="btn mini ico" aria-pressed="false" title="¿Qué es esto? Toca una palabra, un operador o un %d del código para ver qué significa (en escritorio también Alt+clic)" aria-label="¿Qué es esto? Explicar una palabra del código"><svg class="i" aria-hidden="true"><use href="#i-quees"/></svg></button>
     </div>
     <div class="find" id="find" hidden>
       <div class="frow"><input id="fq" type="text" placeholder="Buscar" aria-label="Buscar" autocomplete="off" spellcheck="false" autocapitalize="off"><span id="fcount" class="fcount" aria-live="polite"></span>
@@ -77,7 +77,7 @@
     </div>
     <div class="symbar" id="symbar" role="toolbar" aria-label="Símbolos de C" hidden></div>
   </section>
-  <div class="divider" id="divider" role="separator" tabindex="0" aria-orientation="vertical" aria-label="Tamaño del editor y de la consola" title="Arrastrá o usá las flechas (Inicio y Fin: extremos, Enter: restablecer)" aria-valuemin="20" aria-valuemax="80" aria-valuenow="55"></div>
+  <div class="divider" id="divider" role="separator" tabindex="0" aria-orientation="vertical" aria-label="Tamaño del editor y de la consola" title="Arrastra o usa las flechas (Inicio y Fin: extremos, Enter: restablecer)" aria-valuemin="20" aria-valuemax="80" aria-valuenow="55"></div>
   <section class="pane term" id="paneCo" aria-label="Consola">
     <div class="pane-head"><span>Consola</span><span id="status" class="chip" role="status">Listo</span>
       <span class="tools">
@@ -104,7 +104,7 @@
   <p>Se guardan solos en este dispositivo (no se suben a ningún lado).</p>
   <ul class="plist" id="plist"></ul>
   <div class="drow"><button id="pnew" class="btn primary" type="button"><svg class="i" aria-hidden="true"><use href="#i-mas"/></svg>Nuevo programa</button><button id="popen" class="btn" type="button"><svg class="i" aria-hidden="true"><use href="#i-abrir"/></svg>Abrir archivo .c</button></div>
-  <div class="drow"><button id="pexp" class="btn" type="button" title="Descarga todos tus programas en un solo archivo .json (copia de seguridad)"><svg class="i" aria-hidden="true"><use href="#i-descargar"/></svg>Exportar todo (.json)</button><button id="pimp" class="btn" type="button" title="Agrega los programas de un archivo .json exportado antes; no pisa los que ya tenés"><svg class="i" aria-hidden="true"><use href="#i-subir"/></svg>Importar (.json)</button><button class="btn" type="button" data-close>Cerrar</button></div>
+  <div class="drow"><button id="pexp" class="btn" type="button" title="Descarga todos tus programas en un solo archivo .json (copia de seguridad)"><svg class="i" aria-hidden="true"><use href="#i-descargar"/></svg>Exportar todo (.json)</button><button id="pimp" class="btn" type="button" title="Agrega los programas de un archivo .json exportado antes; no sobrescribe los que ya tienes"><svg class="i" aria-hidden="true"><use href="#i-subir"/></svg>Importar (.json)</button><button class="btn" type="button" data-close>Cerrar</button></div>
 </dialog>
 
 <dialog id="dSet" aria-labelledby="tSet">
@@ -122,7 +122,7 @@
     <div class="group">
       <div class="segrow"><span id="themeLbl">Tema</span>
         <div class="seg" id="theme" role="radiogroup" aria-labelledby="themeLbl"><button type="button" role="radio" data-v="auto">Automático</button><button type="button" role="radio" data-v="light">Claro</button><button type="button" role="radio" data-v="dark">Oscuro</button></div></div>
-      <div class="srow"><span id="fsLbl">Tamaño de letra</span><span class="grp" role="group" aria-labelledby="fsLbl"><button id="fsm" class="btn icon" type="button" title="Letra más chica" aria-label="Letra más chica">A−</button><output id="fsv" class="fsv"></output><button id="fsp" class="btn icon" type="button" title="Letra más grande" aria-label="Letra más grande">A+</button></span></div>
+      <div class="srow"><span id="fsLbl">Tamaño de letra</span><span class="grp" role="group" aria-labelledby="fsLbl"><button id="fsm" class="btn icon" type="button" title="Letra más pequeña" aria-label="Letra más pequeña">A−</button><output id="fsv" class="fsv"></output><button id="fsp" class="btn icon" type="button" title="Letra más grande" aria-label="Letra más grande">A+</button></span></div>
     </div>
     <p class="foot">Automático sigue el modo claro u oscuro del dispositivo.</p>
   </fieldset>
@@ -142,12 +142,12 @@
   </fieldset>
   <fieldset><legend>Escritura</legend>
     <div class="group"><label class="chk"><input type="checkbox" id="autoCierre" role="switch"> Cerrar solo llaves, paréntesis y comillas</label></div>
-    <p class="foot">Apagado: practicás tipeando todo. La sangría automática no cambia.</p>
+    <p class="foot">Apagado: practicas escribiendo todo. La sangría automática no cambia.</p>
     <div class="group"><label class="chk"><input type="checkbox" id="symChk" role="switch"> Barra de símbolos en el celular</label></div>
-    <p class="foot">Una fila sobre el teclado con { } ( ) [ ] ; &amp; * y otros símbolos de C. Cada toque escribe un solo símbolo: no completa nada por vos.</p>
+    <p class="foot">Una fila sobre el teclado con { } ( ) [ ] ; &amp; * y otros símbolos de C. Cada toque escribe un solo símbolo: no completa nada por ti.</p>
   </fieldset>
   <fieldset><legend>Casos para enviar</legend>
-    <p class="lead">Cuando el editor no sabe explicar algo, guarda el caso solo en este dispositivo. Nada se envía solo: vos mirás qué se manda y elegís si se lo mandás a Diego.</p>
+    <p class="lead">Cuando el editor no sabe explicar algo, guarda el caso solo en este dispositivo. Nada se envía solo: tú miras qué se manda y eliges si se lo envías a Diego.</p>
     <div class="group"><button id="casosBtn" class="btn" type="button">Casos para enviar</button></div>
   </fieldset>
   <div class="group" id="mutedGroup"><div class="srow" id="mutedRow" hidden><span id="mutedTxt"></span><button id="mutedReset" class="btn" type="button">Mostrar de nuevo</button></div></div>
@@ -180,7 +180,7 @@
   <h2 id="tEnlace">Pasar a otro dispositivo</h2>
   <p id="enlTxt"></p>
   <textarea id="enlUrl" rows="3" readonly aria-label="Enlace del programa"></textarea>
-  <p class="fine">El programa viaja dentro del enlace y no se sube a ningún servidor. Quien tenga el enlace puede ver el código: mandalo solo a quien quieras.</p>
+  <p class="fine">El programa viaja dentro del enlace y no se sube a ningún servidor. Quien tenga el enlace puede ver el código: mándalo solo a quien quieras.</p>
   <div class="drow"><button id="enlCopy" class="btn primary" type="button">Copiar enlace</button><button id="enlShare" class="btn" type="button" hidden>Compartir…</button><button class="btn" type="button" data-close>Cerrar</button></div>
 </dialog>
 
@@ -188,7 +188,7 @@
   <h2 id="tRecibido">Recibiste un programa</h2>
   <p id="recTxt"></p>
   <pre class="prev" id="recPrev" tabindex="0" aria-label="Vista previa del código recibido"></pre>
-  <p class="fine">Se abre como un programa nuevo. No se borra ni se pisa ninguno de los que ya tenés.</p>
+  <p class="fine">Se abre como un programa nuevo. No se borra ni se sobrescribe ninguno de los que ya tienes.</p>
   <div class="drow"><button id="recOk" class="btn primary" type="button">Abrir como programa nuevo</button><button class="btn" type="button" data-close>No abrirlo</button></div>
 </dialog>
 
@@ -196,13 +196,13 @@
   <h2 id="tImp">Importar programas</h2>
   <p id="impTxt"></p>
   <ul id="impList"></ul>
-  <p class="fine">No se borra ni se pisa ningún programa que ya tengas.</p>
+  <p class="fine">No se borra ni se sobrescribe ningún programa que ya tengas.</p>
   <div class="drow"><button id="impOk" class="btn primary" type="button">Importar</button><button class="btn" type="button" data-close>Cancelar</button></div>
 </dialog>
 
 <dialog id="dlg" aria-labelledby="tHelp">
   <h2 id="tHelp">Atajos y alcance</h2>
-  <p>Interpreta el C que se usa en la materia. No es gcc: si algo se comporta distinto, avisá.</p>
+  <p>Interpreta el C que se usa en la materia. No es gcc: si algo se comporta distinto, avisa.</p>
   <ul>
     <li><b>Tipos:</b> int, float, double, char, long, unsigned.</li>
     <li><b>Control:</b> if / else, switch, while, do-while, for, break, continue.</li>
@@ -228,7 +228,7 @@
 </dialog>
 <dialog id="dAyuda" class="wide ayuda" aria-labelledby="tAyuda">
   <div class="ahead"><h2 id="tAyuda">Ayuda</h2><button type="button" class="btn mini ico" data-close aria-label="Cerrar la ayuda" title="Cerrar (Esc)"><svg class="i" aria-hidden="true"><use href="#i-cerrar"/></svg></button></div>
-  <form id="aForm" role="search" autocomplete="off"><svg class="i" aria-hidden="true"><use href="#i-buscar"/></svg><input id="aQ" type="search" placeholder="Buscá una duda: scanf, %d, ¿por qué 7/2 da 3?" aria-label="Buscar en la ayuda" spellcheck="false" autocapitalize="off" enterkeyhint="search"></form>
+  <form id="aForm" role="search" autocomplete="off"><svg class="i" aria-hidden="true"><use href="#i-buscar"/></svg><input id="aQ" type="search" placeholder="Busca una duda: scanf, %d, ¿por qué 7/2 da 3?" aria-label="Buscar en la ayuda" spellcheck="false" autocapitalize="off" enterkeyhint="search"></form>
   <p class="fine alive" id="aLive" role="status" aria-live="polite"></p>
   <div id="aRes">
     <div id="aSug" class="sugs"></div>
@@ -239,10 +239,10 @@
 
 <dialog id="dCasos" aria-labelledby="tCasos" class="wide">
   <h2 id="tCasos">Avisar a Diego</h2>
-  <p>Mandale a Diego un caso para que el editor mejore: un error que no entendiste, un mensaje raro, o un ejercicio que no te sale. <b>Nada se envía solo</b>: vos escribís qué pasó, mirás la vista previa de todo lo que va y recién ahí apretás el botón.</p>
-  <label class="fld" for="cNota2"><b>Contá qué pasó</b> (con tus palabras)</label>
+  <p>Envíale a Diego un caso para que el editor mejore: un error que no entendiste, un mensaje raro, o un ejercicio que no te sale. <b>Nada se envía solo</b>: tú escribes qué pasó, miras la vista previa de todo lo que va y recién ahí aprietas el botón.</p>
+  <label class="fld" for="cNota2"><b>Cuenta qué pasó</b> (con tus palabras)</label>
   <textarea id="cNota2" rows="3" maxlength="600" placeholder="Por ejemplo: «En el ejercicio del promedio me da 2 y esperaba 2.5» o «el editor me marca un error que no entiendo»"></textarea>
-  <p class="fine">Se manda lo que escribís arriba, el código del programa (sin la cabecera con tu nombre), los datos de entrada y el mensaje del compilador. Sin nombre ni datos personales.</p>
+  <p class="fine">Se manda lo que escribes arriba, el código del programa (sin la cabecera con tu nombre), los datos de entrada y el mensaje del compilador. Sin nombre ni datos personales.</p>
   <ul class="clist" id="cList"></ul>
   <p class="fine" id="cVacio" hidden>No hay casos guardados. Cuando el editor no sepa explicar algo, lo vas a poder mandar desde acá.</p>
   <div id="cAcc">

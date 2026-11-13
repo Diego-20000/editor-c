@@ -9,10 +9,10 @@
   "entrada": "",
   "que_dice_gcc": "archivo.c:4: warning: format '%d' expects argument of type 'int', but argument 2 has type 'double' [-Wformat=]",
   "mensaje_editor": "Línea 4: printf usa %d pero A es float: para decimales va %f (o %.2f para dos decimales).",
-  "explicacion": "Cada % del texto de printf le dice cómo interpretar el valor que sigue. %d espera un entero; si le pasás un float, el valor se lee mal y sale un número sin sentido.",
-  "como_arreglarlo": "Cambiá %d por %f, o por %.2f si querés dos decimales.",
+  "explicacion": "Cada % del texto de printf le dice cómo interpretar el valor que sigue. %d espera un entero; si le pasas un float, el valor se lee mal y sale un número sin sentido.",
+  "como_arreglarlo": "Cambia %d por %f, o por %.2f si quieres dos decimales.",
   "pistas": [
-   "Mirá el tipo con que declaraste A y el tipo que pide el % de printf.",
+   "Mira el tipo con que declaraste A y el tipo que pide el % de printf.",
    "El % de la línea del printf no corresponde al tipo de A.",
    "Para un float se usa %f; para elegir cuántos decimales, %.2f."
   ],
@@ -23,7 +23,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "printf: '%d' espera un entero, pero 'A' es float: usá '%f' (o '%.2f' para 2 decimales)",
+  "mensaje_editor_actual": "printf: '%d' espera un entero, pero 'A' es float: usa '%f' (o '%.2f' para 2 decimales)",
   "codigo_editor_actual": "W-printf-formato",
   "verificado_editor_corrige": true
  },
@@ -38,9 +38,9 @@
   "que_dice_gcc": "archivo.c:4: warning: format '%f' expects argument of type 'double', but argument 2 has type 'int' [-Wformat=]",
   "mensaje_editor": "Línea 4: printf usa %f pero A es int: para enteros va %d.",
   "explicacion": "%f espera un número decimal (double). printf espera un decimal y se le entrega un entero: lee un valor que no corresponde y muestra 0.000000 u otro número raro.",
-  "como_arreglarlo": "Usá %d para mostrar un int. Si querías ver decimales, la variable tiene que ser float.",
+  "como_arreglarlo": "Usa %d para mostrar un int. Si querías ver decimales, la variable tiene que ser float.",
   "pistas": [
-   "Fijate si A es entero o decimal.",
+   "Fíjate si A es entero o decimal.",
    "El % del printf pide un tipo distinto al de A.",
    "Un int se muestra con %d."
   ],
@@ -51,7 +51,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "printf: '%f' espera un número decimal, pero 'A' es entero (int): usá '%d'",
+  "mensaje_editor_actual": "printf: '%f' espera un número decimal, pero 'A' es entero (int): usa '%d'",
   "codigo_editor_actual": "W-printf-formato",
   "verificado_editor_corrige": true
  },
@@ -66,11 +66,11 @@
   "que_dice_gcc": "archivo.c:4: warning: format '%d' expects argument of type 'int', but argument 2 has type 'double' [-Wformat=]",
   "mensaje_editor": "Línea 4: A / 2.0 da un número decimal (double) y %d espera un entero.",
   "explicacion": "El tipo de una expresión lo decide el operando de mayor tipo: si uno es decimal, el resultado es decimal. El % de printf tiene que coincidir con ese tipo.",
-  "como_arreglarlo": "Cambiá %d por %f (o %.2f). No hace falta tocar la cuenta.",
+  "como_arreglarlo": "Cambia %d por %f (o %.2f). No hace falta tocar la cuenta.",
   "pistas": [
-   "Pensá qué tipo tiene el resultado de dividir por 2.0.",
+   "Piensa qué tipo tiene el resultado de dividir por 2.0.",
    "La cuenta da decimal y el % no.",
-   "Con una cuenta decimal usá %f o %.2f."
+   "Con una cuenta decimal usa %f o %.2f."
   ],
   "relacion_con_la_materia": "tipos, printf",
   "deteccion": "estatica",
@@ -79,7 +79,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "printf: '%d' espera un entero, pero el argumento 1 es double: usá '%f' (o '%.2f' para 2 decimales)",
+  "mensaje_editor_actual": "printf: '%d' espera un entero, pero el argumento 1 es double: usa '%f' (o '%.2f' para 2 decimales)",
   "codigo_editor_actual": "W-printf-formato",
   "verificado_editor_corrige": true
  },
@@ -94,11 +94,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 4: %c muestra el carácter cuyo código es A (la letra A), no el número 65.",
   "explicacion": "%c convierte un número en el carácter de la tabla ASCII; %d muestra el número tal cual. Si querías ver 65 y salió una letra, el % es el equivocado.",
-  "como_arreglarlo": "Usá %d para ver el número y %c solo cuando quieras el carácter.",
+  "como_arreglarlo": "Usa %d para ver el número y %c solo cuando quieras el carácter.",
   "pistas": [
-   "Compará lo que esperabas ver con lo que salió.",
+   "Compara lo que esperabas ver con lo que salió.",
    "El % decide si se muestra el número o el carácter.",
-   "Para ver el número usá %d."
+   "Para ver el número usa %d."
   ],
   "relacion_con_la_materia": "tipos, printf",
   "deteccion": "no_detectable",
@@ -121,10 +121,10 @@
   "entrada": "",
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 4: con %d se muestra el código de L (65), no la letra.",
-  "explicacion": "Un char guarda un número chico (su código ASCII). %c lo muestra como letra y %d lo muestra como número.",
-  "como_arreglarlo": "Usá %c para mostrar la letra.",
+  "explicacion": "Un char guarda un número pequeño (su código ASCII). %c lo muestra como letra y %d lo muestra como número.",
+  "como_arreglarlo": "Usa %c para mostrar la letra.",
   "pistas": [
-   "Compará la salida con lo que esperabas.",
+   "Compara la salida con lo que esperabas.",
    "El % elige entre mostrar la letra o su número.",
    "Para la letra, %c."
   ],
@@ -148,11 +148,11 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  char L = 'A';\n  printf(\"%c\\n\", L);\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:4: warning: format '%s' expects argument of type 'char *', but argument 2 has type 'int' [-Wformat=]",
-  "mensaje_editor": "Línea 4: %s espera un texto y L es un solo carácter: usá %c.",
+  "mensaje_editor": "Línea 4: %s espera un texto y L es un solo carácter: usa %c.",
   "explicacion": "%s recorre una dirección de memoria hasta encontrar el final de un texto. Un char suelto no es un texto, así que el programa lee memoria que no es suya y puede cerrarse con error.",
-  "como_arreglarlo": "Para un carácter solo usá %c. %s es para textos completos.",
+  "como_arreglarlo": "Para un carácter solo usa %c. %s es para textos completos.",
   "pistas": [
-   "Pensá si L es un texto o una sola letra.",
+   "Piensa si L es un texto o una sola letra.",
    "El % no corresponde a un char.",
    "Una letra suelta se muestra con %c."
   ],
@@ -163,7 +163,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "printf: '%s' es para textos (un arreglo de char) y 'L' es un número (char): usá '%d' o '%f'",
+  "mensaje_editor_actual": "printf: '%s' es para textos (un arreglo de char) y 'L' es un número (char): usa '%d' o '%f'",
   "codigo_editor_actual": "W-printf-formato",
   "verificado_editor_corrige": true
  },
@@ -176,11 +176,11 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  printf(\"%c\\n\", 'A');\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:3: warning: format '%c' expects argument of type 'int', but argument 2 has type 'char *' [-Wformat=]",
-  "mensaje_editor": "Línea 3: \"A\" es un texto y %c espera un carácter: para un solo carácter usá comillas simples 'A'.",
+  "mensaje_editor": "Línea 3: \"A\" es un texto y %c espera un carácter: para un solo carácter usa comillas simples 'A'.",
   "explicacion": "En C las comillas dobles son para textos y las simples para un carácter. \"A\" ocupa dos bytes (la A y el final del texto), 'A' es un solo carácter.",
-  "como_arreglarlo": "Cambiá \"A\" por 'A'.",
+  "como_arreglarlo": "Cambia \"A\" por 'A'.",
   "pistas": [
-   "Mirá qué comillas usaste dentro del paréntesis.",
+   "Mira qué comillas usaste dentro del paréntesis.",
    "Las comillas dobles son para textos.",
    "Para un carácter van comillas simples: 'A'."
   ],
@@ -206,11 +206,11 @@
   "que_dice_gcc": "archivo.c:4: warning: format '%d' expects a matching 'int' argument [-Wformat=]",
   "mensaje_editor": "Línea 4: el texto tiene 2 % pero printf recibe 1 solo valor.",
   "explicacion": "Cada % necesita su valor, en el mismo orden. Si falta uno, printf toma lo que haya en memoria y muestra un número cualquiera.",
-  "como_arreglarlo": "Contá los % del texto y los valores después de la coma: tienen que ser la misma cantidad.",
+  "como_arreglarlo": "Cuenta los % del texto y los valores después de la coma: tienen que ser la misma cantidad.",
   "pistas": [
-   "Contá los % del texto y contá los valores.",
+   "Cuenta los % del texto y cuenta los valores.",
    "Falta algún valor después de la coma.",
-   "Agregá el valor que falta, en el orden de los %."
+   "Agrega el valor que falta, en el orden de los %."
   ],
   "relacion_con_la_materia": "printf",
   "deteccion": "estatica",
@@ -234,9 +234,9 @@
   "que_dice_gcc": "archivo.c:4: warning: too many arguments for format [-Wformat-extra-args]",
   "mensaje_editor": "Línea 4: printf recibe más valores (2) de los que usan los % del texto (1).",
   "explicacion": "Los valores que sobran se ignoran, así que B nunca aparece en la pantalla aunque lo hayas escrito. Por cada valor tiene que haber un %.",
-  "como_arreglarlo": "Agregá un % por cada valor que querés mostrar.",
+  "como_arreglarlo": "Agrega un % por cada valor que quieres mostrar.",
   "pistas": [
-   "Contá los valores y contá los %.",
+   "Cuenta los valores y cuenta los %.",
    "Hay un valor que no tiene su % en el texto.",
    "Falta un %d para B."
   ],
@@ -261,12 +261,12 @@
   "entrada": "",
   "que_dice_gcc": "archivo.c:4: warning: format '%d' expects a matching 'int' argument [-Wformat=]",
   "mensaje_editor": "Línea 4: el texto tiene un %d pero no hay ningún valor después.",
-  "explicacion": "El % sólo reserva el lugar donde va el número; el número lo tenés que pasar vos después de la coma. Si no, se muestra basura de la memoria.",
-  "como_arreglarlo": "Agregá una coma y la variable después del texto.",
+  "explicacion": "El % solo reserva el lugar donde va el número; el número lo tienes que pasar tú después de la coma. Si no, se muestra basura de la memoria.",
+  "como_arreglarlo": "Agrega una coma y la variable después del texto.",
   "pistas": [
-   "Mirá qué viene después del texto entre comillas.",
+   "Mira qué viene después del texto entre comillas.",
    "El %d no tiene variable asignada.",
-   "Poné , A antes del paréntesis de cierre."
+   "Pon , A antes del paréntesis de cierre."
   ],
   "relacion_con_la_materia": "printf",
   "deteccion": "estatica",
@@ -289,12 +289,12 @@
   "entrada": "",
   "que_dice_gcc": "archivo.c:4: warning: too many arguments for format [-Wformat-extra-args]",
   "mensaje_editor": "Línea 4: SUMA llega a printf pero el texto no tiene ningún % donde mostrarla.",
-  "explicacion": "Una variable no se pega al texto por ponerla después de una coma: tiene que haber un % en el lugar donde querés verla. Sin eso, el valor se descarta.",
-  "como_arreglarlo": "Agregá %d al final del texto, donde va a aparecer el valor.",
+  "explicacion": "Una variable no se pega al texto por ponerla después de una coma: tiene que haber un % en el lugar donde quieres verla. Sin eso, el valor se descarta.",
+  "como_arreglarlo": "Agrega %d al final del texto, donde va a aparecer el valor.",
   "pistas": [
-   "Fijate si el texto indica en qué lugar va el valor.",
+   "Fíjate si el texto indica en qué lugar va el valor.",
    "Falta un % dentro de las comillas.",
-   "Escribí %d después de «La suma es: »."
+   "Escribe %d después de «La suma es: »."
   ],
   "relacion_con_la_materia": "printf",
   "deteccion": "estatica",
@@ -317,12 +317,12 @@
   "entrada": "",
   "que_dice_gcc": "archivo.c:3: warning: unused variable 'A' [-Wunused-variable]",
   "mensaje_editor": "Línea 4: printf escribe la letra A tal cual: para mostrar el valor de A hace falta un %d y la variable afuera de las comillas.",
-  "explicacion": "Todo lo que está entre comillas se muestra igual, letra por letra. El valor de una variable sólo aparece si usás un % y pasás la variable después de la coma.",
-  "como_arreglarlo": "Escribí printf(\"%d\\n\", A); para ver el valor.",
+  "explicacion": "Todo lo que está entre comillas se muestra igual, letra por letra. El valor de una variable solo aparece si usas un % y pasas la variable después de la coma.",
+  "como_arreglarlo": "Escribe printf(\"%d\\n\", A); para ver el valor.",
   "pistas": [
-   "Compará lo que salió con lo que esperabas.",
+   "Compara lo que salió con lo que esperabas.",
    "Lo que está entre comillas se muestra tal cual.",
-   "Para ver el valor usá %d y la variable fuera de las comillas."
+   "Para ver el valor usa %d y la variable fuera de las comillas."
   ],
   "relacion_con_la_materia": "printf",
   "deteccion": "heuristica",
@@ -346,11 +346,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 4: los printf no terminan en \\n, así que todo sale en la misma línea.",
   "explicacion": "printf no cambia de línea solo. El salto de línea es un carácter más, que se escribe \\n dentro del texto.",
-  "como_arreglarlo": "Poné \\n al final del texto de cada printf que quiera terminar la línea.",
+  "como_arreglarlo": "Pon \\n al final del texto de cada printf que quiera terminar la línea.",
   "pistas": [
-   "Mirá cómo quedó la salida en la pantalla.",
+   "Mira cómo quedó la salida en la pantalla.",
    "printf no baja de línea por sí solo.",
-   "Agregá \\n antes de la comilla final."
+   "Agrega \\n antes de la comilla final."
   ],
   "relacion_con_la_materia": "printf",
   "deteccion": "heuristica",
@@ -374,9 +374,9 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 4: escribiste /n con barra normal: se muestra /n y no cambia de línea. El salto de línea es \\n con barra invertida.",
   "explicacion": "La barra que abre una secuencia de escape es la invertida (\\), la que está arriba del Enter o al lado del 0 en algunos teclados. La barra común (/) no tiene ese efecto.",
-  "como_arreglarlo": "Cambiá /n por \\n.",
+  "como_arreglarlo": "Cambia /n por \\n.",
   "pistas": [
-   "Mirá la salida: aparece algo raro al final de la línea.",
+   "Mira la salida: aparece algo raro al final de la línea.",
    "El carácter de escape es una barra especial.",
    "Es \\n con barra invertida."
   ],
@@ -402,11 +402,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 4: con dos barras (\\\\n) se muestra \\n en la pantalla y no se cambia de línea.",
   "explicacion": "\\\\ es la secuencia para escribir una barra invertida. Para el salto de línea alcanza con una sola: \\n.",
-  "como_arreglarlo": "Dejá una sola barra: \\n.",
+  "como_arreglarlo": "Deja una sola barra: \\n.",
   "pistas": [
-   "Mirá qué se ve al final de la línea en la salida.",
+   "Mira qué se ve al final de la línea en la salida.",
    "Hay una barra de más.",
-   "Escribí \\n con una sola barra."
+   "Escribe \\n con una sola barra."
   ],
   "relacion_con_la_materia": "printf, secuencias de escape",
   "deteccion": "heuristica",
@@ -430,11 +430,11 @@
   "que_dice_gcc": "archivo.c:4: warning: unknown conversion type character '\\x0a' in format [-Wformat=]",
   "mensaje_editor": "Línea 4: un % solo no sirve para escribir el símbolo de porcentaje: hay que escribir %%.",
   "explicacion": "El % siempre inicia una conversión. Para mostrar el símbolo hay que escribirlo dos veces: %% se muestra como %.",
-  "como_arreglarlo": "Reemplazá el % solo por %%.",
+  "como_arreglarlo": "Reemplaza el % solo por %%.",
   "pistas": [
-   "Mirá cómo termina el texto antes del \\n.",
+   "Mira cómo termina el texto antes del \\n.",
    "El % tiene un significado especial en printf.",
-   "Para escribir el símbolo usá %%."
+   "Para escribir el símbolo usa %%."
   ],
   "relacion_con_la_materia": "printf",
   "deteccion": "estatica",
@@ -458,9 +458,9 @@
   "que_dice_gcc": "archivo.c:4: warning: too many arguments for format [-Wformat-extra-args]",
   "mensaje_editor": "Línea 4: con %%d se escribe literalmente %d y el valor de A no aparece.",
   "explicacion": "%% sirve para mostrar el símbolo %. Para mostrar un valor hace falta un solo % delante de la letra.",
-  "como_arreglarlo": "Dejá un solo % antes de la d.",
+  "como_arreglarlo": "Deja un solo % antes de la d.",
   "pistas": [
-   "Mirá la salida: aparece %d.",
+   "Mira la salida: aparece %d.",
    "Hay un % de más.",
    "Para el valor va %d, con un solo %."
   ],
@@ -485,12 +485,12 @@
   "entrada": "",
   "que_dice_gcc": "archivo.c:4: warning: passing argument 1 of 'printf' makes pointer from integer without a cast [-Wint-conversion]",
   "mensaje_editor": "Línea 4: el primer argumento de printf tiene que ser un texto entre comillas: A es un número.",
-  "explicacion": "printf necesita primero el texto de formato y recién después los valores. Si le pasás un número como formato, intenta leerlo como una dirección y el programa se cierra.",
-  "como_arreglarlo": "Escribí printf(\"%d\\n\", A); : texto primero, variable después de la coma.",
+  "explicacion": "printf necesita primero el texto de formato y recién después los valores. Si le pasas un número como formato, intenta leerlo como una dirección y el programa se cierra.",
+  "como_arreglarlo": "Escribe printf(\"%d\\n\", A); : texto primero, variable después de la coma.",
   "pistas": [
-   "Mirá qué hay entre el paréntesis y la primera coma.",
+   "Mira qué hay entre el paréntesis y la primera coma.",
    "Lo primero del paréntesis tiene que ser un texto.",
-   "Poné \"%d\\n\", antes de A."
+   "Pon \"%d\\n\", antes de A."
   ],
   "relacion_con_la_materia": "printf",
   "deteccion": "estatica",
@@ -514,11 +514,11 @@
   "que_dice_gcc": "archivo.c:4: warning: missing terminating \" character",
   "mensaje_editor": "Línea 4: falta la comilla que cierra el texto del printf.",
   "explicacion": "Todo texto empieza y termina con comillas dobles. Si falta la de cierre, el compilador sigue leyendo como texto el resto de la línea.",
-  "como_arreglarlo": "Cerrá las comillas antes de la coma que separa la variable.",
+  "como_arreglarlo": "Cierra las comillas antes de la coma que separa la variable.",
   "pistas": [
-   "Contá las comillas de la línea del printf.",
-   "El texto empieza pero no termina donde esperás.",
-   "Poné la comilla después del \\n."
+   "Cuenta las comillas de la línea del printf.",
+   "El texto empieza pero no termina donde esperas.",
+   "Pon la comilla después del \\n."
   ],
   "relacion_con_la_materia": "printf, sintaxis",
   "deteccion": "estatica",
@@ -542,9 +542,9 @@
   "que_dice_gcc": "archivo.c:3: warning: character constant too long for its type",
   "mensaje_editor": "Línea 3: las comillas simples son para un solo carácter: el texto de printf va entre comillas dobles.",
   "explicacion": "En C 'a' es un carácter y \"a\" es un texto. Un texto largo entre comillas simples no es válido, y printf necesita el texto con comillas dobles.",
-  "como_arreglarlo": "Cambiá las comillas simples por comillas dobles.",
+  "como_arreglarlo": "Cambia las comillas simples por comillas dobles.",
   "pistas": [
-   "Mirá qué comillas usaste en la línea del printf.",
+   "Mira qué comillas usaste en la línea del printf.",
    "Las comillas simples no sirven para frases.",
    "Para textos van comillas dobles."
   ],
@@ -570,11 +570,11 @@
   "que_dice_gcc": "archivo.c:4: error: expected ')' before 'A'",
   "mensaje_editor": "Línea 4: falta una coma entre el texto y A.",
   "explicacion": "Los argumentos de una función se separan con comas: el texto, una coma y después cada valor.",
-  "como_arreglarlo": "Poné una coma después de las comillas de cierre.",
+  "como_arreglarlo": "Pon una coma después de las comillas de cierre.",
   "pistas": [
-   "Mirá qué separa al texto de la variable.",
+   "Mira qué separa al texto de la variable.",
    "Falta un signo entre el texto y A.",
-   "Poné , después de las comillas."
+   "Pon , después de las comillas."
   ],
   "relacion_con_la_materia": "printf, sintaxis",
   "deteccion": "estatica",
@@ -597,10 +597,10 @@
   "entrada": "",
   "que_dice_gcc": "archivo.c:4: error: expected ';' before 'A'",
   "mensaje_editor": "Línea 4: falta el ; al final de esta línea.",
-  "explicacion": "En C cada instrucción termina con ;. Sin él el compilador no sabe dónde termina el printf y se queja de la línea siguiente.",
-  "como_arreglarlo": "Escribí ; al final de la línea del printf.",
+  "explicacion": "En C cada instrucción termina con ;. Sin él el compilador no sabe dónde termina el printf y avisa de la línea siguiente.",
+  "como_arreglarlo": "Escribe ; al final de la línea del printf.",
   "pistas": [
-   "El error se queja de la línea siguiente.",
+   "El error avisa de la línea siguiente.",
    "Una instrucción no termina como debería.",
    "Falta ; después del paréntesis de cierre."
   ],
@@ -625,10 +625,10 @@
   "entrada": "",
   "que_dice_gcc": "archivo.c:4: warning: implicit declaration of function 'Printf'; did you mean 'printf'? [-Wimplicit-function-declaration]",
   "mensaje_editor": "Línea 4: Printf no existe: en C todo se escribe en minúscula, la función es printf.",
-  "explicacion": "C distingue mayúsculas de minúsculas. Printf, PRINTF y printf son nombres distintos, y sólo el último está en la biblioteca.",
-  "como_arreglarlo": "Escribí printf en minúscula.",
+  "explicacion": "C distingue mayúsculas de minúsculas. Printf, PRINTF y printf son nombres distintos, y solo el último está en la biblioteca.",
+  "como_arreglarlo": "Escribe printf en minúscula.",
   "pistas": [
-   "Mirá cómo escribiste el nombre de la función.",
+   "Mira cómo escribiste el nombre de la función.",
    "C distingue mayúsculas de minúsculas.",
    "Es printf, todo en minúscula."
   ],
@@ -653,10 +653,10 @@
   "entrada": "",
   "que_dice_gcc": "archivo.c:4: warning: format '%d' expects argument of type 'int', but argument 2 has type 'int *' [-Wformat=]",
   "mensaje_editor": "Línea 4: con &A no se muestra el valor sino la dirección de memoria de A. El & es para scanf; en printf va A solo.",
-  "explicacion": "& significa «la dirección de». scanf la necesita para guardar el dato; printf sólo necesita el valor, así que se escribe sin &.",
-  "como_arreglarlo": "Sacá el & de printf.",
+  "explicacion": "& significa «la dirección de». scanf la necesita para guardar el dato; printf solo necesita el valor, así que se escribe sin &.",
+  "como_arreglarlo": "Saca el & de printf.",
   "pistas": [
-   "Compará los argumentos de scanf con los de printf.",
+   "Compara los argumentos de scanf con los de printf.",
    "El & no va en todos lados.",
    "En printf se pasa A, sin &."
   ],
@@ -681,12 +681,12 @@
   "entrada": "",
   "que_dice_gcc": "archivo.c:3: warning: variable 'SUMA' set but not used [-Wunused-but-set-variable]",
   "mensaje_editor": "Línea 5: el texto dice Suma pero se muestra A.",
-  "explicacion": "printf muestra la variable que le pasás, no la que querías. Si el resultado sale distinto del esperado, revisá que el nombre después de la coma sea el correcto.",
-  "como_arreglarlo": "Cambiá la variable del printf por la que guarda el resultado.",
+  "explicacion": "printf muestra la variable que le pasas, no la que querías. Si el resultado sale distinto del esperado, revisa que el nombre después de la coma sea el correcto.",
+  "como_arreglarlo": "Cambia la variable del printf por la que guarda el resultado.",
   "pistas": [
-   "Compará el mensaje con la variable que se muestra.",
+   "Compara el mensaje con la variable que se muestra.",
    "Se calculó un valor pero se muestra otro.",
-   "Mostrá SUMA."
+   "Muestra SUMA."
   ],
   "relacion_con_la_materia": "SS, printf",
   "deteccion": "no_detectable",
@@ -710,11 +710,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 4: SUMA se muestra antes de calcularla: todavía vale 0.",
   "explicacion": "Las instrucciones se ejecutan de arriba hacia abajo. Un printf muestra el valor que tiene la variable en ese momento, no el que va a tener después.",
-  "como_arreglarlo": "Poné el printf después de la línea que calcula SUMA.",
+  "como_arreglarlo": "Pon el printf después de la línea que calcula SUMA.",
   "pistas": [
-   "Seguí el programa de arriba hacia abajo, un renglón a la vez.",
+   "Sigue el programa de arriba hacia abajo, un renglón a la vez.",
    "El printf se ejecuta antes de la cuenta.",
-   "Movelo debajo de SUMA = A + B;"
+   "Muévelo debajo de SUMA = A + B;"
   ],
   "relacion_con_la_materia": "SS, orden de instrucciones",
   "deteccion": "heuristica",
@@ -723,7 +723,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "mostrás SUMA antes de calcularla en la línea 5 (SUMA = A + B), por eso aparece el valor viejo. Primero se calcula y después se muestra.",
+  "mensaje_editor_actual": "muestras SUMA antes de calcularla en la línea 5 (SUMA = A + B), por eso aparece el valor viejo. Primero se calcula y después se muestra.",
   "codigo_editor_actual": "W-mostrar-antes-de-calcular",
   "verificado_editor_corrige": true
  },
@@ -737,10 +737,10 @@
   "entrada": "",
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 4: en %2.5f el primer número es el ancho y el segundo los decimales: esto muestra 5 decimales.",
-  "explicacion": "En %A.Bf, A es el ancho mínimo total y B la cantidad de decimales. El ancho nunca recorta el número; sólo agrega espacios si falta lugar.",
-  "como_arreglarlo": "Escribí primero el ancho y después los decimales, por ejemplo %5.2f.",
+  "explicacion": "En %A.Bf, A es el ancho mínimo total y B la cantidad de decimales. El ancho nunca recorta el número; solo agrega espacios si falta lugar.",
+  "como_arreglarlo": "Escribe primero el ancho y después los decimales, por ejemplo %5.2f.",
   "pistas": [
-   "Mirá cuántos decimales salieron.",
+   "Mira cuántos decimales salieron.",
    "En %x.yf los dos números significan cosas distintas.",
    "El número después del punto son los decimales: %5.2f."
   ],
@@ -764,11 +764,11 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  float A = 2.999;\n  int ENT = (int)(A * 100);\n  printf(\"%d,%d\\n\", ENT / 100, ENT % 100);\n}",
   "entrada": "",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 4: %.2f redondea: 2.999 se muestra como 3.00. El valor guardado no cambia, sólo cómo se ve.",
+  "mensaje_editor": "Línea 4: %.2f redondea: 2.999 se muestra como 3.00. El valor guardado no cambia, solo cómo se ve.",
   "explicacion": "El formato elige cuántos decimales se muestran y redondea el último. La variable sigue guardando todos los decimales.",
-  "como_arreglarlo": "Si necesitás cortar y no redondear, trabajá con la parte entera y el resto como en el programa corregido.",
+  "como_arreglarlo": "Si necesitas cortar y no redondear, trabaja con la parte entera y el resto como en el programa corregido.",
   "pistas": [
-   "Compará el valor guardado con lo que se muestra.",
+   "Compara el valor guardado con lo que se muestra.",
    "%.2f redondea al mostrar.",
    "Para cortar sin redondear hay que separar la parte entera."
   ],
@@ -794,15 +794,15 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 4: %2d rellena con espacios: sale ' 5: 7'. Para rellenar con ceros se escribe %02d.",
   "explicacion": "El número después del % es el ancho mínimo. Si hay lugar de sobra se rellena con espacios, salvo que pongas un 0 antes del ancho: %02d rellena con ceros.",
-  "como_arreglarlo": "Escribí un 0 antes del ancho: %02d.",
+  "como_arreglarlo": "Escribe un 0 antes del ancho: %02d.",
   "pistas": [
-   "Mirá cómo quedó la hora en la pantalla.",
+   "Mira cómo quedó la hora en la pantalla.",
    "El relleno puede ser de espacios o de ceros.",
    "Un 0 delante del ancho rellena con ceros: %02d."
   ],
   "relacion_con_la_materia": "printf, formato",
   "deteccion": "no_detectable",
-  "como_detectarlo": "Formato válido; sólo el alumno sabe cómo quería ver el número.",
+  "como_detectarlo": "Formato válido; solo el alumno sabe cómo quería ver el número.",
   "riesgo_falso_positivo": "ninguno",
   "nivel": "informacion",
   "verificado_gcc13": true,
@@ -820,13 +820,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  float A = 2.5;\n  printf(\"%.1f\\n\", A);\n}",
   "entrada": "",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 4: %f siempre muestra 6 decimales (2.500000). Para elegir cuántos, escribí %.1f, %.2f, etc.",
+  "mensaje_editor": "Línea 4: %f siempre muestra 6 decimales (2.500000). Para elegir cuántos, escribe %.1f, %.2f, etc.",
   "explicacion": "Sin precisión, %f muestra 6 decimales aunque el número tenga menos. El número después del punto elige cuántos mostrar.",
-  "como_arreglarlo": "Agregá la cantidad de decimales: %.1f o %.2f.",
+  "como_arreglarlo": "Agrega la cantidad de decimales: %.1f o %.2f.",
   "pistas": [
-   "Contá los decimales que salieron.",
-   "%f tiene una cantidad fija de decimales si no le indicás otra.",
-   "Escribí %.1f para un decimal."
+   "Cuenta los decimales que salieron.",
+   "%f tiene una cantidad fija de decimales si no le indicas otra.",
+   "Escribe %.1f para un decimal."
   ],
   "relacion_con_la_materia": "printf, formato",
   "deteccion": "no_detectable",
@@ -850,9 +850,9 @@
   "que_dice_gcc": "archivo.c:4: warning: format '%d' expects argument of type 'int', but argument 2 has type 'long int' [-Wformat=]",
   "mensaje_editor": "Línea 4: para un long el formato es %ld, no %d.",
   "explicacion": "%d lee un int de 4 bytes. Un long ocupa 8 bytes, así que con %d se muestra mal (se corta el valor).",
-  "como_arreglarlo": "Usá %ld para long.",
+  "como_arreglarlo": "Usa %ld para long.",
   "pistas": [
-   "Fijate el tipo con que declaraste A.",
+   "Fíjate el tipo con que declaraste A.",
    "Un long necesita una letra más en el formato.",
    "Es %ld."
   ],
@@ -863,7 +863,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "printf: para un long usá '%ld'",
+  "mensaje_editor_actual": "printf: para un long usa '%ld'",
   "codigo_editor_actual": "W-printf-formato",
   "verificado_editor_corrige": true
  },
@@ -878,15 +878,15 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 4: %u muestra el número como si no tuviera signo: -1 sale como 4294967295.",
   "explicacion": "%u es para enteros sin signo (unsigned). Con un int negativo se reinterpretan los bits y aparece un número enorme.",
-  "como_arreglarlo": "Usá %d para enteros con signo.",
+  "como_arreglarlo": "Usa %d para enteros con signo.",
   "pistas": [
-   "Mirá el valor que salió en la pantalla.",
+   "Mira el valor que salió en la pantalla.",
    "La u del formato significa sin signo.",
    "Para enteros normales, %d."
   ],
   "relacion_con_la_materia": "tipos, printf",
   "deteccion": "no_detectable",
-  "como_detectarlo": "gcc no avisa con -Wall; sólo con -Wformat-signedness.",
+  "como_detectarlo": "gcc no avisa con -Wall; solo con -Wformat-signedness.",
   "riesgo_falso_positivo": "Un programa con unsigned A = 5; printf(\"%u\", A);",
   "nivel": "informacion",
   "verificado_gcc13": true,
@@ -905,12 +905,12 @@
   "entrada": "",
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 4: los dos números salen pegados (34) porque en el texto no hay nada entre los %d.",
-  "explicacion": "printf escribe exactamente lo que hay en el texto. Si querés espacio, coma u otro separador, tenés que ponerlo vos entre los %.",
-  "como_arreglarlo": "Poné un espacio o un símbolo entre los dos %d.",
+  "explicacion": "printf escribe exactamente lo que hay en el texto. Si quieres espacio, coma u otro separador, tienes que ponerlo tú entre los %.",
+  "como_arreglarlo": "Pon un espacio o un símbolo entre los dos %d.",
   "pistas": [
-   "Mirá cómo se ven los dos valores en la pantalla.",
+   "Mira cómo se ven los dos valores en la pantalla.",
    "No se agrega ningún espacio automático.",
-   "Escribí un espacio entre %d y %d."
+   "Escribe un espacio entre %d y %d."
   ],
   "relacion_con_la_materia": "printf",
   "deteccion": "heuristica",
@@ -934,11 +934,11 @@
   "que_dice_gcc": "archivo.c:3: error: expected ')' before 'hola'",
   "mensaje_editor": "Línea 3: las comillas de adentro cierran el texto antes de tiempo: para mostrar comillas hay que escribir \\\".",
   "explicacion": "Una comilla doble dentro de un texto termina el texto. Para mostrarla como carácter se escribe con barra invertida: \\\".",
-  "como_arreglarlo": "Escribí \\\" delante de cada comilla que quieras mostrar.",
+  "como_arreglarlo": "Escribe \\\" delante de cada comilla que quieras mostrar.",
   "pistas": [
-   "Contá las comillas del texto.",
+   "Cuenta las comillas del texto.",
    "Una comilla en el medio corta el texto.",
-   "Para mostrar una comilla escribí \\\"."
+   "Para mostrar una comilla escribe \\\"."
   ],
   "relacion_con_la_materia": "printf, sintaxis",
   "deteccion": "estatica",
@@ -962,11 +962,11 @@
   "que_dice_gcc": "archivo.c:4: warning: format not a string literal and no format arguments [-Wformat-security]",
   "mensaje_editor": "Línea 4: en C no se pueden unir un texto y un número con +: el valor se muestra con %d y una coma.",
   "explicacion": "El + entre un texto y un entero no arma un texto más largo: corre la dirección donde empieza el texto. Para mezclar texto y valores se usa un % en el texto y la variable después de la coma.",
-  "como_arreglarlo": "Usá printf(\"Suma: %d\\n\", SUMA);",
+  "como_arreglarlo": "Usa printf(\"Suma: %d\\n\", SUMA);",
   "pistas": [
-   "Pensá qué hace + cuando un lado es un texto.",
+   "Piensa qué hace + cuando un lado es un texto.",
    "Los valores no se pegan a un texto con +.",
-   "Poné %d dentro del texto y SUMA después de una coma."
+   "Pon %d dentro del texto y SUMA después de una coma."
   ],
   "relacion_con_la_materia": "printf",
   "deteccion": "estatica",
@@ -990,11 +990,11 @@
   "que_dice_gcc": "archivo.c:4: warning: format '%f' expects argument of type 'double', but argument 2 has type 'int' [-Wformat=]",
   "mensaje_editor": "Línea 4: A / B es una división entre enteros (da un int) y %f espera un decimal.",
   "explicacion": "Si los dos operandos son enteros, el resultado es entero y se trunca (7/2 da 3). Para obtener decimales, al menos uno tiene que ser float.",
-  "como_arreglarlo": "Convertí uno de los operandos con (float).",
+  "como_arreglarlo": "Convierte uno de los operandos con (float).",
   "pistas": [
-   "Pensá de qué tipo es el resultado de A / B.",
+   "Piensa de qué tipo es el resultado de A / B.",
    "Los dos operandos son enteros.",
-   "Escribí (float)A / B."
+   "Escribe (float)A / B."
   ],
   "relacion_con_la_materia": "tipos, división",
   "deteccion": "estatica",
@@ -1003,7 +1003,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "printf: '%f' espera un número decimal, pero el argumento 1 es entero (int): usá '%d'",
+  "mensaje_editor_actual": "printf: '%f' espera un número decimal, pero el argumento 1 es entero (int): usa '%d'",
   "codigo_editor_actual": "W-printf-formato",
   "verificado_editor_corrige": true
  },
@@ -1016,13 +1016,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int A;\n  printf(\"Ingrese A: \");\n  scanf(\"%d\", &A);\n  printf(\"%d\\n\", A * 2);\n}",
   "entrada": "5\n",
   "que_dice_gcc": "archivo.c:4: warning: 'A' is used uninitialized [-Wuninitialized]",
-  "mensaje_editor": "Línea 4: printf sólo muestra: no lee nada del teclado. A se usa sin valor.",
+  "mensaje_editor": "Línea 4: printf solo muestra: no lee nada del teclado. A se usa sin valor.",
   "explicacion": "Para pedir un dato hace falta scanf. printf no espera nada del usuario: muestra el valor que A tenga en ese momento, que acá es basura.",
-  "como_arreglarlo": "Mostrá el mensaje con printf y leé el valor con scanf(\"%d\", &A);",
+  "como_arreglarlo": "Muestra el mensaje con printf y lee el valor con scanf(\"%d\", &A);",
   "pistas": [
-   "Pensá qué función lee del teclado.",
+   "Piensa qué función lee del teclado.",
    "printf solo escribe en pantalla.",
-   "Agregá scanf(\"%d\", &A); después del mensaje."
+   "Agrega scanf(\"%d\", &A); después del mensaje."
   ],
   "relacion_con_la_materia": "SS, entrada y salida",
   "deteccion": "estatica",
@@ -1031,7 +1031,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "'A' se usa antes de darle un valor (en C su valor inicial es basura): asignale un valor inicial, por ejemplo A = 0;",
+  "mensaje_editor_actual": "'A' se usa antes de darle un valor (en C su valor inicial es basura): asígnale un valor inicial, por ejemplo A = 0;",
   "codigo_editor_actual": "W-sin-inicializar",
   "verificado_editor_corrige": true
  },
@@ -1046,11 +1046,11 @@
   "que_dice_gcc": "archivo.c:3: warning: format '%d' expects argument of type 'int', but argument 2 has type 'char *' [-Wformat=]",
   "mensaje_editor": "Línea 3: \"5\" es un texto, no un número: sin comillas se escribe 5.",
   "explicacion": "Entre comillas dobles un 5 es un texto. %d espera un número entero, así que se muestra la dirección de memoria del texto.",
-  "como_arreglarlo": "Sacá las comillas del 5.",
+  "como_arreglarlo": "Saca las comillas del 5.",
   "pistas": [
-   "Mirá cómo escribiste el valor.",
+   "Mira cómo escribiste el valor.",
    "Las comillas dobles convierten todo en texto.",
-   "Escribí 5 sin comillas."
+   "Escribe 5 sin comillas."
   ],
   "relacion_con_la_materia": "tipos, printf",
   "deteccion": "estatica",
@@ -1074,11 +1074,11 @@
   "que_dice_gcc": "archivo.c:4: warning: format '%d' expects argument of type 'int', but argument 2 has type 'long unsigned int' [-Wformat=]",
   "mensaje_editor": "Línea 4: sizeof da un entero sin signo largo (size_t) y %d espera un int.",
   "explicacion": "sizeof devuelve un valor de tipo size_t (8 bytes en esta plataforma). Para mostrarlo con %d se lo convierte a int; el formato exacto sería %zu, que el curso no usa.",
-  "como_arreglarlo": "Convertí el resultado con (int).",
+  "como_arreglarlo": "Convierte el resultado con (int).",
   "pistas": [
-   "Pensá de qué tipo es lo que devuelve sizeof.",
+   "Piensa de qué tipo es lo que devuelve sizeof.",
    "El valor no es un int común.",
-   "Escribí (int)sizeof(A)."
+   "Escribe (int)sizeof(A)."
   ],
   "relacion_con_la_materia": "tipos, printf",
   "deteccion": "estatica",
@@ -1102,11 +1102,11 @@
   "que_dice_gcc": "archivo.c:5: warning: format '%d' expects argument of type 'int', but argument 2 has type 'double' [-Wformat=]",
   "mensaje_editor": "Línea 5: los valores están en otro orden que los %: el primer % es %d y el primer valor es float.",
   "explicacion": "printf asigna los valores a los % en el orden en que aparecen: el primero con el primero, el segundo con el segundo. Si el orden cambia, los tipos no coinciden.",
-  "como_arreglarlo": "Ordená los valores igual que los % del texto.",
+  "como_arreglarlo": "Ordena los valores igual que los % del texto.",
   "pistas": [
-   "Emparejá cada % con su valor, de izquierda a derecha.",
+   "Empareja cada % con su valor, de izquierda a derecha.",
    "Los valores no están en el mismo orden que los %.",
-   "Poné primero CANT y después PRECIO."
+   "Pon primero CANT y después PRECIO."
   ],
   "relacion_con_la_materia": "printf",
   "deteccion": "estatica",
@@ -1115,7 +1115,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "printf: '%d' espera un entero, pero 'PRECIO' es float: usá '%f' (o '%.2f' para 2 decimales)",
+  "mensaje_editor_actual": "printf: '%d' espera un entero, pero 'PRECIO' es float: usa '%f' (o '%.2f' para 2 decimales)",
   "codigo_editor_actual": "W-printf-formato",
   "verificado_editor_corrige": true
  },
@@ -1130,9 +1130,9 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 4: con %-5d el número queda pegado a la izquierda; para alinearlo a la derecha se escribe %5d.",
   "explicacion": "El ancho reserva lugar para el número. Sin signo menos se alinea a la derecha (se rellena adelante); con signo menos, a la izquierda.",
-  "como_arreglarlo": "Sacá el signo menos si querés alinear a la derecha.",
+  "como_arreglarlo": "Saca el signo menos si quieres alinear a la derecha.",
   "pistas": [
-   "Mirá de qué lado quedó el número dentro de los corchetes.",
+   "Mira de qué lado quedó el número dentro de los corchetes.",
    "El signo - cambia el lado de la alineación.",
    "Para la derecha: %5d."
   ],
@@ -1158,9 +1158,9 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 4: return termina el programa: el printf de abajo nunca se ejecuta.",
   "explicacion": "return 0; dentro de main cierra el programa en ese punto. Lo que está escrito después no se ejecuta.",
-  "como_arreglarlo": "Poné el printf antes del return.",
+  "como_arreglarlo": "Pon el printf antes del return.",
   "pistas": [
-   "Mirá qué hay antes del printf que no se muestra.",
+   "Mira qué hay antes del printf que no se muestra.",
    "El programa termina antes de llegar a esa línea.",
    "El return va siempre al final de main."
   ],
@@ -1186,11 +1186,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 4: el ancho es un mínimo: el número sale completo aunque no entre en 2 lugares.",
   "explicacion": "El ancho mínimo agrega espacios cuando el número es más corto; nunca corta cifras. Si hay que alinear, el ancho tiene que alcanzar para el número más largo.",
-  "como_arreglarlo": "Elegí un ancho mayor o igual a la cantidad de cifras del mayor número.",
+  "como_arreglarlo": "Elige un ancho mayor o igual a la cantidad de cifras del mayor número.",
   "pistas": [
-   "Mirá si el número salió completo.",
+   "Mira si el número salió completo.",
    "El ancho se usa para agregar espacios, no para cortar.",
-   "Con 5 cifras usá un ancho de 5 o más."
+   "Con 5 cifras usa un ancho de 5 o más."
   ],
   "relacion_con_la_materia": "printf, formato",
   "deteccion": "no_detectable",
@@ -1212,13 +1212,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  char L = 'A';\n  printf(\"%c\\n\", 'A');\n  printf(\"%c\\n\", L);\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:4: error: 'A' undeclared (first use in this function)",
-  "mensaje_editor": "Línea 4: A no está declarada: si querías la letra A escribila entre comillas simples ('A'); si querías la variable, usá su nombre.",
+  "mensaje_editor": "Línea 4: A no está declarada: si querías la letra A escríbela entre comillas simples ('A'); si querías la variable, usa su nombre.",
   "explicacion": "Sin comillas, A es un nombre de variable. Las letras sueltas se escriben entre comillas simples. Si el nombre no está declarado el compilador lo rechaza.",
-  "como_arreglarlo": "Poné 'A' entre comillas simples o usá el nombre de una variable declarada.",
+  "como_arreglarlo": "Pon 'A' entre comillas simples o usa el nombre de una variable declarada.",
   "pistas": [
-   "Mirá si existe una variable llamada A.",
+   "Mira si existe una variable llamada A.",
    "Las letras sueltas necesitan comillas.",
-   "Escribí 'A' o usá la variable L."
+   "Escribe 'A' o usa la variable L."
   ],
   "relacion_con_la_materia": "char, printf",
   "deteccion": "estatica",
@@ -1227,7 +1227,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "'A' no está declarada: si querías la letra A escribila entre comillas simples; si querías una variable, usá su nombre",
+  "mensaje_editor_actual": "'A' no está declarada: si querías la letra A escríbela entre comillas simples; si querías una variable, usa su nombre",
   "codigo_editor_actual": "E-no-declarada",
   "verificado_editor_corrige": true
  },
@@ -1242,11 +1242,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 4: una comparación vale 1 si es verdadera y 0 si es falsa: eso es lo que se muestra.",
   "explicacion": "En C no hay un tipo verdadero/falso: las comparaciones dan 1 o 0. Para mostrar un mensaje según el resultado se usa un if.",
-  "como_arreglarlo": "Usá un if y mostrá el mensaje que corresponda.",
+  "como_arreglarlo": "Usa un if y muestra el mensaje que corresponda.",
   "pistas": [
-   "Mirá qué número salió en pantalla.",
+   "Mira qué número salió en pantalla.",
    "Una comparación no se muestra como texto.",
-   "Usá if para elegir qué mensaje mostrar."
+   "Usa if para elegir qué mensaje mostrar."
   ],
   "relacion_con_la_materia": "BC, comparaciones",
   "deteccion": "heuristica",
@@ -1268,11 +1268,11 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int A = 25;\n  printf(\"%d\\n\", A);\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:4: warning: format '%ld' expects argument of type 'long int', but argument 2 has type 'int' [-Wformat=]",
-  "mensaje_editor": "Línea 4: %ld espera un long, pero A está declarada como int. Para un entero común usá %d.",
+  "mensaje_editor": "Línea 4: %ld espera un long, pero A está declarada como int. Para un entero común usa %d.",
   "explicacion": "El modificador l cambia el tipo entero que printf espera recibir. Un int y un long no son intercambiables en una llamada con argumentos variables, aunque algunos valores parezcan mostrarse bien.",
-  "como_arreglarlo": "Revisá el tipo declarado de A y elegí el especificador entero que corresponda.",
+  "como_arreglarlo": "Revisa el tipo declarado de A y elige el especificador entero que corresponda.",
   "pistas": [
-   "Compará el tipo de A con el formato usado para mostrarla.",
+   "Compara el tipo de A con el formato usado para mostrarla.",
    "El formato pide un entero de otro tamaño.",
    "Para int corresponde %d; %ld es para long."
   ],
@@ -1296,11 +1296,11 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  unsigned int CANT = 3000000000U;\n  printf(\"%u\\n\", CANT);\n}",
   "entrada": "",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 4: CANT es unsigned int y %d espera un int. Para mostrar un entero sin signo usá %u.",
+  "mensaje_editor": "Línea 4: CANT es unsigned int y %d espera un int. Para mostrar un entero sin signo usa %u.",
   "explicacion": "El tipo unsigned int representa valores no negativos y tiene un especificador propio. Pasarlo a printf con %d no respeta el tipo esperado y el resultado no está definido por C.",
-  "como_arreglarlo": "Usá el especificador correspondiente al tipo sin signo, sin cambiar la declaración.",
+  "como_arreglarlo": "Usa el especificador correspondiente al tipo sin signo, sin cambiar la declaración.",
   "pistas": [
-   "Mirá cómo está declarada CANT.",
+   "Mira cómo está declarada CANT.",
    "No es un int con signo: es unsigned int.",
    "Para unsigned int corresponde %u."
   ],
@@ -1324,13 +1324,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int A = 5;\n  printf(\"%d\\n\", A);\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:3: warning: implicit declaration of function 'printf' [-Wimplicit-function-declaration]",
-  "mensaje_editor": "Falta incluir el encabezado que declara printf. Agregá stdio.h antes de usar la función.",
+  "mensaje_editor": "Falta incluir el encabezado que declara printf. Agrega stdio.h antes de usar la función.",
   "explicacion": "Las declaraciones de las funciones de entrada y salida estándar están en stdio.h. Sin incluir ese encabezado, el compilador no tiene la declaración correcta de printf y puede emitir diagnósticos.",
-  "como_arreglarlo": "Revisá los encabezados al comienzo del archivo e incluí el que corresponde a entrada y salida.",
+  "como_arreglarlo": "Revisa los encabezados al comienzo del archivo e incluye el que corresponde a entrada y salida.",
   "pistas": [
-   "Fijate qué encabezado necesita la función que aparece en el programa.",
+   "Fíjate qué encabezado necesita la función que aparece en el programa.",
    "printf pertenece a la biblioteca estándar de entrada y salida.",
-   "Incluí stdio.h antes de main."
+   "Incluye stdio.h antes de main."
   ],
   "relacion_con_la_materia": "bibliotecas, printf",
   "deteccion": "estatica",
@@ -1352,11 +1352,11 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int N = 26;\n  printf(\"%d\\n\", N);\n}",
   "entrada": "",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 4: %x muestra el valor en base 16; por eso 26 aparece como 1a. Para verlo en decimal usá %d.",
+  "mensaje_editor": "Línea 4: %x muestra el valor en base 16; por eso 26 aparece como 1a. Para verlo en decimal usa %d.",
   "explicacion": "%x es un formato válido: no cambia el valor guardado, cambia la base en que se representa. La intención no se puede deducir solo mirando el programa.",
-  "como_arreglarlo": "Elegí la conversión según la representación que querés mostrar: decimal o hexadecimal.",
+  "como_arreglarlo": "Elige la conversión según la representación que quieres mostrar: decimal o hexadecimal.",
   "pistas": [
-   "Compará el valor que esperabas con los caracteres que aparecen.",
+   "Compara el valor que esperabas con los caracteres que aparecen.",
    "El formato elegido representa números en otra base.",
    "%x es hexadecimal y %d es decimal."
   ],
@@ -1380,11 +1380,11 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int N = 10;\n  printf(\"%d\\n\", N);\n}",
   "entrada": "",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 4: %o muestra el valor en base 8; por eso 10 aparece como 12. Para verlo en decimal usá %d.",
+  "mensaje_editor": "Línea 4: %o muestra el valor en base 8; por eso 10 aparece como 12. Para verlo en decimal usa %d.",
   "explicacion": "%o es una conversión válida que representa el entero en octal. No es un error del compilador: solo sería un problema si esperabas leer el valor en decimal.",
-  "como_arreglarlo": "Revisá en qué base necesitás presentar el número y cambiá el especificador si corresponde.",
+  "como_arreglarlo": "Revisa en qué base necesitas presentar el número y cambia el especificador si corresponde.",
   "pistas": [
-   "Mirá si el número mostrado coincide con el valor esperado.",
+   "Mira si el número mostrado coincide con el valor esperado.",
    "El valor puede estar representado en base 8.",
    "%o es octal y %d es decimal."
   ],
@@ -1408,13 +1408,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  double X = 125.0;\n  printf(\"%.2f\\n\", X);\n}",
   "entrada": "",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 4: %e muestra el número en notación científica. Para verlo como decimal común con dos cifras decimales usá %.2f.",
+  "mensaje_editor": "Línea 4: %e muestra el número en notación científica. Para verlo como decimal común con dos cifras decimales usa %.2f.",
   "explicacion": "%e es un formato válido para números reales y escribe el valor con exponente. La diferencia está en la presentación, no en el dato guardado.",
-  "como_arreglarlo": "Elegí entre notación científica y decimal fija según cómo necesites leer el resultado.",
+  "como_arreglarlo": "Elige entre notación científica y decimal fija según cómo necesites leer el resultado.",
   "pistas": [
-   "Observá si aparece una letra e en la salida.",
+   "Observa si aparece una letra e en la salida.",
    "Ese formato representa el número con una potencia de diez.",
-   "Usá %f para notación decimal fija."
+   "Usa %f para notación decimal fija."
   ],
   "relacion_con_la_materia": "printf, formato de reales",
   "deteccion": "no_detectable",
@@ -1436,11 +1436,11 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  double X = 12.500;\n  printf(\"%.3f\\n\", X);\n}",
   "entrada": "",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 4: %g puede quitar ceros finales y cambiar a notación científica. Si necesitás tres decimales fijos, usá %.3f.",
+  "mensaje_editor": "Línea 4: %g puede quitar ceros finales y cambiar a notación científica. Si necesitas tres decimales fijos, usa %.3f.",
   "explicacion": "%g prioriza una representación compacta: elimina ceros no necesarios y puede usar exponente según el valor. No reserva una cantidad fija de cifras después de la coma.",
-  "como_arreglarlo": "Definí cuántas cifras decimales necesitás y elegí un formato de precisión fija.",
+  "como_arreglarlo": "Define cuántas cifras decimales necesitas y elige un formato de precisión fija.",
   "pistas": [
-   "Contá cuántos decimales aparecen en pantalla.",
+   "Cuenta cuántos decimales aparecen en pantalla.",
    "El formato usado no obliga a conservar los ceros finales.",
    "%g es compacto; %.3f conserva tres decimales."
   ],
@@ -1466,11 +1466,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 4: en %d, la precisión indica una cantidad mínima de cifras y completa con ceros a la izquierda. No representa decimales.",
   "explicacion": "En una conversión entera, la precisión funciona distinto que en %f: indica el mínimo de dígitos que se muestran. Por eso el valor 7 aparece como 007.",
-  "como_arreglarlo": "Revisá si necesitás ceros de relleno o simplemente mostrar el entero.",
+  "como_arreglarlo": "Revisa si necesitas ceros de relleno o simplemente mostrar el entero.",
   "pistas": [
-   "Mirá si aparecieron ceros antes del número.",
+   "Mira si aparecieron ceros antes del número.",
    "El punto está aplicado a una conversión entera.",
-   "Para mostrar el entero sin relleno, usá %d."
+   "Para mostrar el entero sin relleno, usa %d."
   ],
   "relacion_con_la_materia": "printf, precisión de enteros",
   "deteccion": "no_detectable",
@@ -1492,13 +1492,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int N = 0;\n  printf(\"[%d]\\n\", N);\n}",
   "entrada": "",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 4: con precisión cero, un valor entero igual a cero no se imprime. Si querés que aparezca el 0, usá %d.",
+  "mensaje_editor": "Línea 4: con precisión cero, un valor entero igual a cero no se imprime. Si quieres que aparezca el 0, usa %d.",
   "explicacion": "En printf, una conversión entera con precisión cero suprime la representación cuando el valor también es cero. Los corchetes permiten notar que el espacio quedó vacío.",
-  "como_arreglarlo": "Revisá la precisión aplicada al entero y evitá dejarla en cero cuando necesitás mostrar el valor cero.",
+  "como_arreglarlo": "Revisa la precisión aplicada al entero y evita dejarla en cero cuando necesitas mostrar el valor cero.",
   "pistas": [
-   "Fijate qué quedó entre los corchetes.",
+   "Fíjate qué quedó entre los corchetes.",
    "El dato vale cero y la precisión también es cero.",
-   "Usá %d para mostrar el 0."
+   "Usa %d para mostrar el 0."
   ],
   "relacion_con_la_materia": "printf, precisión de enteros",
   "deteccion": "no_detectable",
@@ -1520,13 +1520,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  char TEXTO[] = \"PROGRAMACION\";\n  printf(\"%s\\n\", TEXTO);\n}",
   "entrada": "",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 4: la precisión de %s limita cuántos caracteres del texto se muestran. Sacá el .3 si necesitás imprimirlo completo.",
+  "mensaje_editor": "Línea 4: la precisión de %s limita cuántos caracteres del texto se muestran. Saca el .3 si necesitas imprimirlo completo.",
   "explicacion": "En una conversión de texto, la precisión establece el máximo de caracteres que se escriben. No modifica el arreglo ni borra el resto de la palabra.",
-  "como_arreglarlo": "Revisá el número que aparece después del punto y quitá ese límite si querés mostrar todo el texto.",
+  "como_arreglarlo": "Revisa el número que aparece después del punto y quita ese límite si quieres mostrar todo el texto.",
   "pistas": [
-   "Compará el texto guardado con el que aparece.",
+   "Compara el texto guardado con el que aparece.",
    "El formato está limitando la cantidad de caracteres.",
-   "Para mostrar todo el arreglo, usá %s sin precisión."
+   "Para mostrar todo el arreglo, usa %s sin precisión."
   ],
   "relacion_con_la_materia": "printf, textos",
   "deteccion": "no_detectable",
@@ -1548,13 +1548,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  double X = 123.45;\n  printf(\"%.2f\\n\", X);\n}",
   "entrada": "",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 4: %.2g conserva dos cifras significativas, no dos decimales. Para mostrar dos cifras después del punto usá %.2f.",
+  "mensaje_editor": "Línea 4: %.2g conserva dos cifras significativas, no dos decimales. Para mostrar dos cifras después del punto usa %.2f.",
   "explicacion": "Con %g, la precisión cuenta cifras significativas del número completo. Con %f, cuenta las cifras que aparecen después del separador decimal.",
-  "como_arreglarlo": "Elegí el especificador según si necesitás cifras significativas o una cantidad fija de decimales.",
+  "como_arreglarlo": "Elige el especificador según si necesitas cifras significativas o una cantidad fija de decimales.",
   "pistas": [
-   "Mirá qué parte del número está contando el 2.",
+   "Mira qué parte del número está contando el 2.",
    "La letra g interpreta la precisión de otra manera que f.",
-   "Usá %.2f cuando necesitás exactamente dos decimales."
+   "Usa %.2f cuando necesitas exactamente dos decimales."
   ],
   "relacion_con_la_materia": "printf, precisión de reales",
   "deteccion": "no_detectable",
@@ -1576,13 +1576,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int A = 8;\n  printf(\"%d\\n\", A);\n}",
   "entrada": "",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 4: el modificador + obliga a mostrar el signo de los números positivos. Sacalo si querés que aparezca solo el número.",
+  "mensaje_editor": "Línea 4: el modificador + obliga a mostrar el signo de los números positivos. Sácalo si quieres que aparezca solo el número.",
   "explicacion": "%+d es un formato válido: muestra +8 en lugar de 8 cuando el valor es positivo. El signo no es parte del valor almacenado, sino una decisión de presentación.",
-  "como_arreglarlo": "Revisá si necesitás mostrar explícitamente el signo de los positivos.",
+  "como_arreglarlo": "Revisa si necesitas mostrar explícitamente el signo de los positivos.",
   "pistas": [
-   "Observá qué carácter aparece antes del 8.",
+   "Observa qué carácter aparece antes del 8.",
    "El formato está pidiendo mostrar también el signo positivo.",
-   "Usá %d si no querés el signo +."
+   "Usa %d si no quieres el signo +."
   ],
   "relacion_con_la_materia": "printf, modificadores de formato",
   "deteccion": "no_detectable",
@@ -1604,13 +1604,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int A = 8;\n  printf(\"[%d]\\n\", A);\n}",
   "entrada": "",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 4: el espacio en el formato reserva un lugar para el signo y deja un blanco antes de los positivos. Quitalo si no necesitás esa alineación.",
+  "mensaje_editor": "Línea 4: el espacio en el formato reserva un lugar para el signo y deja un blanco antes de los positivos. Quítalo si no necesitas esa alineación.",
   "explicacion": "El modificador de espacio muestra el signo menos si el valor es negativo y un espacio si es positivo. Puede pasar desapercibido cuando la salida no está entre delimitadores.",
-  "como_arreglarlo": "Revisá los modificadores que aparecen entre % y d.",
+  "como_arreglarlo": "Revisa los modificadores que aparecen entre % y d.",
   "pistas": [
-   "Mirá el espacio que queda dentro de los corchetes.",
+   "Mira el espacio que queda dentro de los corchetes.",
    "Hay un modificador de espacio antes de la d.",
-   "Usá %d para no reservar ese lugar."
+   "Usa %d para no reservar ese lugar."
   ],
   "relacion_con_la_materia": "printf, modificadores de formato",
   "deteccion": "no_detectable",
@@ -1632,11 +1632,11 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int CODIGO = 42;\n  printf(\"%x\\n\", CODIGO);\n}",
   "entrada": "",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 4: el modificador # agrega el prefijo 0x a la representación hexadecimal. Sacalo si necesitás solamente los dígitos.",
+  "mensaje_editor": "Línea 4: el modificador # agrega el prefijo 0x a la representación hexadecimal. Sácalo si necesitas solamente los dígitos.",
   "explicacion": "El modificador # cambia la presentación de una conversión hexadecimal y agrega un prefijo que indica la base. No cambia el valor numérico.",
-  "como_arreglarlo": "Revisá si necesitás identificar explícitamente la base o mostrar solo los dígitos.",
+  "como_arreglarlo": "Revisa si necesitas identificar explícitamente la base o mostrar solo los dígitos.",
   "pistas": [
-   "Mirá qué aparece antes de los dígitos.",
+   "Mira qué aparece antes de los dígitos.",
    "El formato tiene un modificador adicional.",
    "Con %x no se agrega el prefijo 0x."
   ],
@@ -1660,13 +1660,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int N = 42;\n  printf(\"%o\\n\", N);\n}",
   "entrada": "",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 4: el modificador # agrega un cero inicial a la representación octal. Sacalo si querés mostrar el número sin ese prefijo.",
+  "mensaje_editor": "Línea 4: el modificador # agrega un cero inicial a la representación octal. Sácalo si quieres mostrar el número sin ese prefijo.",
   "explicacion": "El modificador # señala que la salida está en base 8 agregando un cero inicial cuando hace falta. Es una opción válida de formato.",
-  "como_arreglarlo": "Compará la representación que necesitás con el modificador usado.",
+  "como_arreglarlo": "Compara la representación que necesitas con el modificador usado.",
   "pistas": [
-   "Fijate qué carácter aparece al principio.",
+   "Fíjate qué carácter aparece al principio.",
    "El formato está indicando explícitamente la base octal.",
-   "Usá %o si no querés el cero inicial."
+   "Usa %o si no quieres el cero inicial."
   ],
   "relacion_con_la_materia": "printf, bases numéricas",
   "deteccion": "no_detectable",
@@ -1688,13 +1688,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  char NOMBRE[] = \"ANA\";\n  printf(\"[%-10s]\\n\", NOMBRE);\n}",
   "entrada": "",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 4: %10s reserva diez posiciones y alinea el texto a la derecha. Para alinearlo a la izquierda, agregá el signo menos.",
+  "mensaje_editor": "Línea 4: %10s reserva diez posiciones y alinea el texto a la derecha. Para alinearlo a la izquierda, agrega el signo menos.",
   "explicacion": "El ancho de campo de una cadena agrega espacios sin cortar el texto. Por defecto el contenido queda a la derecha; el modificador menos cambia la alineación.",
-  "como_arreglarlo": "Revisá el ancho y el signo que aparece antes del número de posiciones.",
+  "como_arreglarlo": "Revisa el ancho y el signo que aparece antes del número de posiciones.",
   "pistas": [
-   "Mirá de qué lado quedaron los espacios.",
+   "Mira de qué lado quedaron los espacios.",
    "El ancho de %s alinea a la derecha por defecto.",
-   "Usá %-10s para alinear a la izquierda."
+   "Usa %-10s para alinear a la izquierda."
   ],
   "relacion_con_la_materia": "printf, formato de textos",
   "deteccion": "no_detectable",
@@ -1716,11 +1716,11 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  char TEXTO[] = \"HOLA\";\n  printf(\"[%s]\\n\", TEXTO);\n}",
   "entrada": "",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 4: en %s, el 5 reserva un ancho mínimo y el .2 limita el texto a dos caracteres. Sacá ambos límites si querés mostrar HOLA completo.",
+  "mensaje_editor": "Línea 4: en %s, el 5 reserva un ancho mínimo y el .2 limita el texto a dos caracteres. Saca ambos límites si quieres mostrar HOLA completo.",
   "explicacion": "El ancho y la precisión hacen trabajos distintos: el ancho reserva espacio, mientras que la precisión limita cuántos caracteres se imprimen. Por eso aparecen espacios y solo una parte de la palabra.",
-  "como_arreglarlo": "Separá mentalmente el ancho del límite de caracteres y quitá los que no necesitás.",
+  "como_arreglarlo": "Separa mentalmente el ancho del límite de caracteres y quita los que no necesitas.",
   "pistas": [
-   "Observá si el texto aparece completo.",
+   "Observa si el texto aparece completo.",
    "Hay dos números en el formato: uno antes y otro después del punto.",
    "El .2 es el que limita la cadena a dos caracteres."
   ],
@@ -1744,13 +1744,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  char LETRA = 'A';\n  printf(\"[%c]\\n\", LETRA);\n}",
   "entrada": "",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 4: %5c reserva cinco posiciones y agrega espacios antes del carácter. Usá %c si querés mostrar solo la letra.",
+  "mensaje_editor": "Línea 4: %5c reserva cinco posiciones y agrega espacios antes del carácter. Usa %c si quieres mostrar solo la letra.",
   "explicacion": "El ancho de campo también se aplica a %c. Como el carácter ocupa una sola posición, el resto del ancho se completa con espacios.",
-  "como_arreglarlo": "Revisá si necesitás un campo alineado o solamente el carácter.",
+  "como_arreglarlo": "Revisa si necesitas un campo alineado o solamente el carácter.",
   "pistas": [
-   "Mirá cuánto espacio hay antes de la letra.",
+   "Mira cuánto espacio hay antes de la letra.",
    "El número que aparece después de % indica el ancho del campo.",
-   "Quitá el 5 para usar %c sin espacios de relleno."
+   "Quita el 5 para usar %c sin espacios de relleno."
   ],
   "relacion_con_la_materia": "printf, ancho de campo",
   "deteccion": "no_detectable",
@@ -1774,11 +1774,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 4: el primer argumento de %*d indica el ancho y el siguiente es el valor. Están pasados al revés.",
   "explicacion": "Cuando el formato tiene un asterisco, printf consume un argumento entero adicional antes del valor que se va a mostrar. El orden de esos argumentos importa aunque los dos sean int.",
-  "como_arreglarlo": "Emparejá primero el asterisco con el ancho y después la d con el número.",
+  "como_arreglarlo": "Empareja primero el asterisco con el ancho y después la d con el número.",
   "pistas": [
-   "Contá cuántos argumentos consume el formato.",
+   "Cuenta cuántos argumentos consume el formato.",
    "El asterisco necesita un entero antes del valor.",
-   "Pasá ANCHO primero y VALOR después."
+   "Pasa ANCHO primero y VALOR después."
   ],
   "relacion_con_la_materia": "printf, ancho dinámico",
   "deteccion": "no_detectable",
@@ -1802,11 +1802,11 @@
   "que_dice_gcc": "archivo.c:5: warning: field precision specifier '.*' expects argument of type 'int', but argument 2 has type 'double' [-Wformat=]",
   "mensaje_editor": "Línea 5: en %.*f, primero va un int con la precisión y después el número decimal. Pasaste los argumentos al revés.",
   "explicacion": "El asterisco reemplaza la precisión escrita en el formato y consume un argumento int. Después, %f consume el valor double que se quiere mostrar.",
-  "como_arreglarlo": "Revisá qué argumento corresponde al asterisco y cuál corresponde a f.",
+  "como_arreglarlo": "Revisa qué argumento corresponde al asterisco y cuál corresponde a f.",
   "pistas": [
-   "Fijate qué significa el asterisco dentro del formato.",
+   "Fíjate qué significa el asterisco dentro del formato.",
    "La precisión dinámica se recibe antes del valor decimal.",
-   "Pasá DECIMALES primero y X después."
+   "Pasa DECIMALES primero y X después."
   ],
   "relacion_con_la_materia": "printf, precisión dinámica",
   "deteccion": "estatica",
@@ -1828,13 +1828,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  float X = 3.5;\n  printf(\"[%05.2f]\\n\", X);\n}",
   "entrada": "",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 4: el cero no agrega relleno si no indicás un ancho de campo. Para obtener 03.50, también tenés que indicar el ancho.",
+  "mensaje_editor": "Línea 4: el cero no agrega relleno si no indicas un ancho de campo. Para obtener 03.50, también tienes que indicar el ancho.",
   "explicacion": "El modificador 0 cambia con qué se completa el ancho disponible. Sin un ancho, no hay posiciones libres que rellenar.",
-  "como_arreglarlo": "Revisá el número de ancho que aparece antes del punto y calculá cuántos caracteres querés reservar.",
+  "como_arreglarlo": "Revisa el número de ancho que aparece antes del punto y calcula cuántos caracteres quieres reservar.",
   "pistas": [
-   "Mirá si el formato tiene un ancho antes del punto.",
+   "Mira si el formato tiene un ancho antes del punto.",
    "El modificador 0 no define por sí solo cuántos lugares debe ocupar la salida.",
-   "Agregá un ancho junto con la precisión."
+   "Agrega un ancho junto con la precisión."
   ],
   "relacion_con_la_materia": "printf, ancho y relleno",
   "deteccion": "no_detectable",
@@ -1856,13 +1856,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  float X = 7.6;\n  printf(\"%.2f\\n\", X);\n}",
   "entrada": "",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 4: la precisión cero hace que printf no muestre cifras decimales y redondee el valor. Para ver dos decimales, usá %.2f.",
+  "mensaje_editor": "Línea 4: la precisión cero hace que printf no muestre cifras decimales y redondee el valor. Para ver dos decimales, usa %.2f.",
   "explicacion": "En una conversión %f, la precisión indica cuántas cifras aparecen después del punto. Con precisión cero se muestra un número redondeado sin parte decimal.",
-  "como_arreglarlo": "Definí cuántos decimales necesitás ver antes de elegir la precisión.",
+  "como_arreglarlo": "Define cuántos decimales necesitas ver antes de elegir la precisión.",
   "pistas": [
-   "Observá si la salida conserva una parte decimal.",
+   "Observa si la salida conserva una parte decimal.",
    "El formato está usando precisión cero.",
-   "Usá %.2f cuando necesitás dos cifras decimales."
+   "Usa %.2f cuando necesitas dos cifras decimales."
   ],
   "relacion_con_la_materia": "printf, precisión de reales",
   "deteccion": "no_detectable",
@@ -1884,13 +1884,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  float X = 0.1f + 0.2f;\n  printf(\"%.2f\\n\", X);\n}",
   "entrada": "",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 4: estás mostrando muchas cifras de un float y aparecen los efectos de su aproximación binaria. Elegí una precisión acorde con lo que necesitás presentar.",
+  "mensaje_editor": "Línea 4: estás mostrando muchas cifras de un float y aparecen los efectos de su aproximación binaria. Elige una precisión acorde con lo que necesitas presentar.",
   "explicacion": "Muchos decimales no garantizan que el valor almacenado sea exacto. Los números reales se representan con precisión limitada y printf muestra esa aproximación según el formato elegido.",
-  "como_arreglarlo": "Distinguí la precisión almacenada del número de decimales que querés mostrar.",
+  "como_arreglarlo": "Distingue la precisión almacenada del número de decimales que quieres mostrar.",
   "pistas": [
-   "Mirá si el valor tiene pequeñas cifras inesperadas al final.",
+   "Mira si el valor tiene pequeñas cifras inesperadas al final.",
    "El dato es float y se está mostrando con muchas posiciones.",
-   "Probá una precisión de salida que tenga sentido para el ejercicio."
+   "Prueba una precisión de salida que tenga sentido para el ejercicio."
   ],
   "relacion_con_la_materia": "tipos, float, printf",
   "deteccion": "no_detectable",
@@ -1914,9 +1914,9 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 4: printf devuelve cuántos caracteres escribió, no el valor que mostró. CANT queda con la cantidad de caracteres impresos.",
   "explicacion": "El retorno de printf es un int que representa la cantidad de caracteres transmitidos. En este ejemplo se imprime 25 y la función devuelve 2, no 25.",
-  "como_arreglarlo": "Usá la variable A para mostrar el dato; reservá el retorno de printf para contar caracteres cuando realmente lo necesites.",
+  "como_arreglarlo": "Usa la variable A para mostrar el dato; reserva el retorno de printf para contar caracteres cuando realmente lo necesites.",
   "pistas": [
-   "Mirá qué valor se guarda en CANT.",
+   "Mira qué valor se guarda en CANT.",
    "La función devuelve información sobre su propia salida.",
    "printf devuelve la cantidad de caracteres escritos."
   ],
@@ -1942,11 +1942,11 @@
   "que_dice_gcc": "archivo.c:3: warning: embedded '\\0' in format [-Wformat-contains-nul]",
   "mensaje_editor": "Línea 3: \\0 representa el carácter nulo y termina la cadena para printf. Por eso la B que está después no aparece.",
   "explicacion": "Las cadenas de C terminan en el primer carácter nulo. printf no sigue leyendo el texto después de ese punto.",
-  "como_arreglarlo": "Revisá si hay un carácter nulo dentro del texto y quitálo cuando no quieras terminar la cadena ahí.",
+  "como_arreglarlo": "Revisa si hay un carácter nulo dentro del texto y quítalo cuando no quieras terminar la cadena ahí.",
   "pistas": [
-   "Fijate qué carácter aparece entre la A y la B en el código.",
+   "Fíjate qué carácter aparece entre la A y la B en el código.",
    "No es una letra ni un espacio: es el terminador nulo.",
-   "Sacá \\0 para que printf pueda mostrar la B."
+   "Saca \\0 para que printf pueda mostrar la B."
   ],
   "relacion_con_la_materia": "printf, textos, caracteres de escape",
   "deteccion": "no_detectable",
@@ -1968,13 +1968,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  printf(\"C:\\\\temp\\\\datos.txt\\n\");\n}",
   "entrada": "",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 3: la barra antes de t forma el escape \\t, que imprime una tabulación. Para mostrar una barra de ruta, tenés que escribirla escapada.",
+  "mensaje_editor": "Línea 3: la barra antes de t forma el escape \\t, que imprime una tabulación. Para mostrar una barra de ruta, tienes que escribirla escapada.",
   "explicacion": "En los textos de C, la barra invertida inicia una secuencia especial. Por eso la ruta termina con un tabulador en lugar de mostrar literalmente la barra seguida de t.",
-  "como_arreglarlo": "Revisá las barras invertidas de la ruta y escribí cada una como una secuencia escapada.",
+  "como_arreglarlo": "Revisa las barras invertidas de la ruta y escribe cada una como una secuencia escapada.",
   "pistas": [
-   "Mirá si hay una barra invertida seguida por una letra especial.",
+   "Mira si hay una barra invertida seguida por una letra especial.",
    "La secuencia \\t representa una tabulación.",
-   "Para mostrar la barra de la ruta, duplicala en el código."
+   "Para mostrar la barra de la ruta, duplícala en el código."
   ],
   "relacion_con_la_materia": "printf, textos, caracteres de escape",
   "deteccion": "estatica",
@@ -1996,13 +1996,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  printf(\"Uno\\nDos\\n\");\n}",
   "entrada": "",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 3: \\r mueve la posición de escritura al comienzo de la misma línea. Para pasar a la línea siguiente usá \\n.",
+  "mensaje_editor": "Línea 3: \\r mueve la posición de escritura al comienzo de la misma línea. Para pasar a la línea siguiente usa \\n.",
   "explicacion": "El retorno de carro y el salto de línea son controles diferentes. Según dónde se muestre la salida, el texto posterior a \\r puede sobrescribir lo que ya estaba escrito.",
-  "como_arreglarlo": "Elegí el carácter de control según si querés volver al inicio de la línea o avanzar a la siguiente.",
+  "como_arreglarlo": "Elige el carácter de control según si quieres volver al inicio de la línea o avanzar a la siguiente.",
   "pistas": [
-   "Observá qué carácter aparece entre Uno y Dos.",
+   "Observa qué carácter aparece entre Uno y Dos.",
    "\\r no significa lo mismo que \\n.",
-   "Usá \\n para comenzar una línea nueva."
+   "Usa \\n para comenzar una línea nueva."
   ],
   "relacion_con_la_materia": "printf, caracteres de escape",
   "deteccion": "no_detectable",
@@ -2026,9 +2026,9 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 3: \\b representa un retroceso. No imprime una barra y una b: mueve la posición de escritura una posición hacia atrás.",
   "explicacion": "Los caracteres de escape representan controles, no letras visibles. El efecto exacto del retroceso depende de cómo se interprete la salida, pero no equivale a escribir los dos símbolos \\ y b.",
-  "como_arreglarlo": "Si necesitás mostrar literalmente esos símbolos, revisá cómo se escapa la barra invertida en el texto.",
+  "como_arreglarlo": "Si necesitas mostrar literalmente esos símbolos, revisa cómo se escapa la barra invertida en el texto.",
   "pistas": [
-   "Mirá la barra invertida seguida de b.",
+   "Mira la barra invertida seguida de b.",
    "Esa secuencia es un carácter de control.",
    "\\b significa retroceso, no el texto formado por barra y b."
   ],
@@ -2052,13 +2052,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  printf(\"A\\\\aB\\n\");\n}",
   "entrada": "",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 3: \\a es el carácter de alerta; no muestra una barra seguida de a. Duplicá la barra si necesitás escribir esos dos símbolos.",
+  "mensaje_editor": "Línea 3: \\a es el carácter de alerta; no muestra una barra seguida de a. Duplica la barra si necesitas escribir esos dos símbolos.",
   "explicacion": "Las secuencias de escape empiezan con una barra invertida y representan caracteres especiales. La alerta puede producir un sonido o no notarse, según la terminal.",
-  "como_arreglarlo": "Decidí si necesitás el carácter de control o los símbolos escritos literalmente.",
+  "como_arreglarlo": "Decide si necesitas el carácter de control o los símbolos escritos literalmente.",
   "pistas": [
-   "Fijate si la barra invertida está dentro del texto.",
+   "Fíjate si la barra invertida está dentro del texto.",
    "\\a es una secuencia de escape reconocida por C.",
-   "Para mostrar barra y a como texto, escapá la barra."
+   "Para mostrar barra y a como texto, escapa la barra."
   ],
   "relacion_con_la_materia": "printf, caracteres de escape",
   "deteccion": "no_detectable",
@@ -2081,12 +2081,12 @@
   "entrada": "",
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 3: \\v es una tabulación vertical, no un espacio común. Su representación puede variar según dónde se muestre la salida.",
-  "explicacion": "Las secuencias de escape pueden mover la posición de escritura en vez de agregar letras o espacios. Si necesitás separar palabras de manera previsible, usá un espacio normal.",
-  "como_arreglarlo": "Usá el carácter de separación que corresponda al resultado que querés obtener.",
+  "explicacion": "Las secuencias de escape pueden mover la posición de escritura en vez de agregar letras o espacios. Si necesitas separar palabras de manera previsible, usa un espacio normal.",
+  "como_arreglarlo": "Usa el carácter de separación que corresponda al resultado que quieres obtener.",
   "pistas": [
-   "Mirá la secuencia que aparece entre A y B.",
+   "Mira la secuencia que aparece entre A y B.",
    "No es \\n ni un espacio: es una tabulación vertical.",
-   "Reemplazá \\v por un espacio si solo querés separar las palabras."
+   "Reemplaza \\v por un espacio si solo quieres separar las palabras."
   ],
   "relacion_con_la_materia": "printf, caracteres de escape",
   "deteccion": "no_detectable",

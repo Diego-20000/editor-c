@@ -10,11 +10,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "El programa se cortó al dividir A por B porque B vale 0. Con enteros, dividir por cero no tiene resultado y el programa se detiene.",
   "explicacion": "En enteros, la división por cero no tiene resultado posible y el programa se cierra con un error (en Linux, 'Floating point exception'). El compilador no puede avisarlo porque B se conoce recién cuando el usuario lo escribe.",
-  "como_arreglarlo": "Antes de dividir, preguntá si el divisor es distinto de cero con un if, y en el lado falso avisá que no se puede dividir.",
+  "como_arreglarlo": "Antes de dividir, pregunta si el divisor es distinto de cero con un if, y en el lado falso avisa que no se puede dividir.",
   "pistas": [
-   "Probá correr el programa con distintos valores: ¿hay alguno para el que se corta?",
-   "Pensá qué valor tiene que tener B para que la división tenga sentido.",
-   "Poné un if (B != 0) alrededor de la división y mostrá un aviso en el sino."
+   "Prueba correr el programa con distintos valores: ¿hay alguno para el que se corta?",
+   "Piensa qué valor tiene que tener B para que la división tenga sentido.",
+   "Pon un if (B != 0) alrededor de la división y muestra un aviso en el sino."
   ],
   "relacion_con_la_materia": "SS, BC",
   "deteccion": "ejecucion",
@@ -38,11 +38,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "El programa se cortó al calcular NUM % DEN porque DEN vale 0. El resto también es una división y con divisor cero no se puede calcular.",
   "explicacion": "El operador % hace una división entera y se queda con lo que sobra, así que tiene la misma restricción que /: el divisor no puede ser cero. Si DEN es 0 el programa termina con un error de ejecución.",
-  "como_arreglarlo": "Controlá que el divisor sea distinto de cero antes de usar % y avisá al usuario en el otro caso.",
+  "como_arreglarlo": "Controla que el divisor sea distinto de cero antes de usar % y avisa al usuario en el otro caso.",
   "pistas": [
    "El error aparece recién al correr, no al compilar. ¿Con qué datos se corta?",
    "El operador % divide para sacar el resto. ¿Qué pasa con cualquier división cuando el divisor es 0?",
-   "Poné un if que pregunte si DEN es distinto de 0 antes de la línea del %."
+   "Pon un if que pregunte si DEN es distinto de 0 antes de la línea del %."
   ],
   "relacion_con_la_materia": "BC, múltiplos con %",
   "deteccion": "ejecucion",
@@ -66,11 +66,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 6: V[i] se sale del arreglo cuando i vale 5. Un arreglo de 5 elementos tiene las posiciones 0 a 4.",
   "explicacion": "Un arreglo de 5 elementos tiene posiciones numeradas de 0 a 4; la posición 5 ya no pertenece al arreglo. C no controla eso: lee lo que haya en memoria al lado, y la suma da un número raro que cambia de una corrida a otra.",
-  "como_arreglarlo": "Revisá hasta dónde llega el lazo: la última posición válida es el tamaño menos 1, así que la condición tiene que dejar afuera al tamaño.",
+  "como_arreglarlo": "Revisa hasta dónde llega el lazo: la última posición válida es el tamaño menos 1, así que la condición tiene que dejar afuera al tamaño.",
   "pistas": [
-   "La suma da un valor que no esperabas. Contá cuántos elementos tiene el arreglo y cuántas vueltas da el lazo.",
+   "La suma da un valor que no esperabas. Cuenta cuántos elementos tiene el arreglo y cuántas vueltas da el lazo.",
    "El primer índice es 0, entonces el último es uno menos que el tamaño.",
-   "Cambiá <= por < en la condición del for."
+   "Cambia <= por < en la condición del for."
   ],
   "relacion_con_la_materia": "LR, arreglos",
   "deteccion": "ejecucion",
@@ -94,11 +94,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 5: la posición -1 no existe en V. Las posiciones válidas van de 0 a 4.",
   "explicacion": "Los índices de un arreglo de 5 elementos van de 0 a 4. Con un índice negativo C no avisa: lee la memoria que está antes del arreglo y muestra un número cualquiera.",
-  "como_arreglarlo": "Antes de usar un índice que viene del teclado, comprobá que esté entre 0 y el tamaño menos 1.",
+  "como_arreglarlo": "Antes de usar un índice que viene del teclado, comprueba que esté entre 0 y el tamaño menos 1.",
   "pistas": [
    "El valor que muestra no está en el arreglo. ¿Qué posición pediste?",
    "¿Cuáles son las posiciones válidas de un arreglo de 5 elementos?",
-   "Controlá con un if que POS sea mayor o igual que 0 y menor que 5."
+   "Controla con un if que POS sea mayor o igual que 0 y menor que 5."
   ],
   "relacion_con_la_materia": "arreglos, BC",
   "deteccion": "ejecucion",
@@ -120,13 +120,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int V[5] = {0, 0, 0, 0, 0};\n  int POS;\n  scanf(\"%d\", &POS);\n  if (POS >= 0 && POS < 5) { V[POS] = 99; printf(\"Guardado: %d\\n\", V[POS]); }\n  else { printf(\"Posición inválida\\n\"); }\n}",
   "entrada": "10000000",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 5: guardás en la posición 10000000, que está muy lejos de V (5 elementos). El programa se cortó.",
+  "mensaje_editor": "Línea 5: guardas en la posición 10000000, que está muy lejos de V (5 elementos). El programa se cortó.",
   "explicacion": "Si el índice se aleja mucho del arreglo, C intenta leer una zona de memoria que el programa no puede usar y el sistema lo corta con 'Segmentation fault'. Con un índice apenas afuera no se corta pero lee basura; con uno enorme sí.",
-  "como_arreglarlo": "Limitá el índice al rango del arreglo con un if antes de usarlo.",
+  "como_arreglarlo": "Limita el índice al rango del arreglo con un if antes de usarlo.",
   "pistas": [
-   "El programa se cerró de golpe. Fijate qué número ingresaste y cuánto mide el arreglo.",
-   "C no revisa los índices: tenés que revisarlos vos.",
-   "Comprobá 0 <= POS y POS < 5 antes de leer V[POS]."
+   "El programa se cerró de golpe. Fíjate qué número ingresaste y cuánto mide el arreglo.",
+   "C no revisa los índices: tienes que revisarlos tú.",
+   "Comprueba 0 <= POS y POS < 5 antes de leer V[POS]."
   ],
   "relacion_con_la_materia": "arreglos, BC",
   "deteccion": "ejecucion",
@@ -150,11 +150,11 @@
   "que_dice_gcc": "archivo.c:6: warning: infinite recursion detected [-Winfinite-recursion]",
   "mensaje_editor": "La función CONTAR se llama a sí misma sin parar y el programa se queda sin memoria. Toda función recursiva necesita un caso en el que no se vuelve a llamar.",
   "explicacion": "Cada llamada a una función ocupa un lugar en la pila de memoria; si la función siempre se vuelve a llamar, la pila se llena y el programa se corta ('Segmentation fault'). Una función recursiva necesita una condición de corte que devuelva un valor sin llamarse de nuevo.",
-  "como_arreglarlo": "Agregá al principio de la función un if que devuelva un valor cuando se llegó al límite, antes de la llamada recursiva.",
+  "como_arreglarlo": "Agrega al principio de la función un if que devuelva un valor cuando se llegó al límite, antes de la llamada recursiva.",
   "pistas": [
-   "El programa se cierra sin mostrar nada. Mirá qué hace la función CONTAR cada vez que la llaman.",
+   "El programa se cierra sin mostrar nada. Mira qué hace la función CONTAR cada vez que la llaman.",
    "¿En qué momento deja de llamarse a sí misma?",
-   "Poné un if con return antes de la línea que se llama a sí misma."
+   "Pon un if con return antes de la línea que se llama a sí misma."
   ],
   "relacion_con_la_materia": "funciones",
   "deteccion": "ejecucion",
@@ -178,11 +178,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "FACT se llama sin parar cuando A es negativo, porque N nunca llega a valer 0. El programa se queda sin memoria y se corta.",
   "explicacion": "El caso base N == 0 solo se alcanza si se parte de un número que baja hasta 0. Con un negativo, N sigue bajando para siempre y la pila de llamadas se llena. Conviene que el corte cubra todos los valores que pueden llegar.",
-  "como_arreglarlo": "Hacé que la condición de corte cubra también los valores menores que el que esperabas, o controlá el dato antes de llamar.",
+  "como_arreglarlo": "Haz que la condición de corte cubra también los valores menores que el que esperabas, o controla el dato antes de llamar.",
   "pistas": [
    "Funciona con 5 pero se corta con otro número. ¿Con cuál?",
-   "Mirá qué valor tiene que alcanzar N para que la función deje de llamarse, y si siempre lo alcanza.",
-   "Cambiá la comparación del corte para que cubra también los valores menores."
+   "Mira qué valor tiene que alcanzar N para que la función deje de llamarse, y si siempre lo alcanza.",
+   "Cambia la comparación del corte para que cubra también los valores menores."
   ],
   "relacion_con_la_materia": "funciones",
   "deteccion": "ejecucion",
@@ -204,13 +204,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int V[1000];\n  V[0] = 1;\n  printf(\"%d\\n\", V[0]);\n}",
   "entrada": "",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 2: el arreglo V es demasiado grande para la memoria de las variables locales y el programa se corta. Reducí el tamaño al que realmente necesitás.",
-  "explicacion": "Las variables locales viven en una zona de memoria chica (la pila, unos 8 MB). Un arreglo de 3 millones de enteros ocupa 12 MB y no entra, así que el programa se cierra apenas arranca. Pedí solo el tamaño que usás.",
-  "como_arreglarlo": "Bajá el tamaño del arreglo a lo que necesita el problema; casi nunca hacen falta más de unos miles de elementos.",
+  "mensaje_editor": "Línea 2: el arreglo V es demasiado grande para la memoria de las variables locales y el programa se corta. Reduce el tamaño al que realmente necesitas.",
+  "explicacion": "Las variables locales viven en una zona de memoria pequeña (la pila, unos 8 MB). Un arreglo de 3 millones de enteros ocupa 12 MB y no entra, así que el programa se cierra apenas arranca. Pide solo el tamaño que usas.",
+  "como_arreglarlo": "Baja el tamaño del arreglo a lo que necesita el problema; casi nunca hacen falta más de unos miles de elementos.",
   "pistas": [
-   "El programa se cierra sin mostrar nada, ni siquiera lo primero. Mirá la declaración del arreglo.",
-   "Cada int ocupa 4 bytes. Multiplicá por el tamaño del arreglo.",
-   "Reducí el tamaño a algo razonable, por ejemplo 1000."
+   "El programa se cierra sin mostrar nada, ni siquiera lo primero. Mira la declaración del arreglo.",
+   "Cada int ocupa 4 bytes. Multiplica por el tamaño del arreglo.",
+   "Reduce el tamaño a algo razonable, por ejemplo 1000."
   ],
   "relacion_con_la_materia": "arreglos",
   "deteccion": "heuristica",
@@ -232,13 +232,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int A, i;\n  A = 0;\n  for (i = 1; i <= 3; i++) { A = A + i; }\n  printf(\"Suma: %d\\n\", A);\n}",
   "entrada": "",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 3: usás A antes de darle un valor. Una variable declarada sin valor tiene basura, no 0.",
-  "explicacion": "Declarar una variable reserva un lugar en memoria, pero no lo limpia: queda lo que había antes. Si la usás sin asignarle algo, el resultado es impredecible y puede dar bien en una máquina y mal en otra.",
-  "como_arreglarlo": "Antes del lazo, asigná el valor inicial que corresponda a la variable que acumula.",
+  "mensaje_editor": "Línea 3: usas A antes de darle un valor. Una variable declarada sin valor tiene basura, no 0.",
+  "explicacion": "Declarar una variable reserva un lugar en memoria, pero no lo limpia: queda lo que había antes. Si la usas sin asignarle algo, el resultado es impredecible y puede dar bien en una máquina y mal en otra.",
+  "como_arreglarlo": "Antes del lazo, asigna el valor inicial que corresponda a la variable que acumula.",
   "pistas": [
    "El resultado no coincide con tu cuenta y a veces cambia entre corridas. ¿De dónde sale el valor de A en la primera vuelta?",
    "Una variable recién declarada no vale 0 automáticamente.",
-   "Asigná A = 0 antes del for."
+   "Asigna A = 0 antes del for."
   ],
   "relacion_con_la_materia": "LR, acumuladores",
   "deteccion": "heuristica",
@@ -247,7 +247,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "'A' se usa antes de darle un valor (en C su valor inicial es basura): asignale un valor inicial, por ejemplo A = 0;",
+  "mensaje_editor_actual": "'A' se usa antes de darle un valor (en C su valor inicial es basura): asígnale un valor inicial, por ejemplo A = 0;",
   "codigo_editor_actual": "W-sin-inicializar",
   "verificado_editor_corrige": true
  },
@@ -260,13 +260,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int N, i;\n  long F;\n  scanf(\"%d\", &N);\n  F = 1;\n  for (i = 1; i <= N; i++) { F = F * i; }\n  printf(\"Factorial: %ld\\n\", F);\n}",
   "entrada": "13",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "El factorial de 13 no entra en un int y el resultado que muestra es incorrecto. Probá con un tipo más grande.",
-  "explicacion": "Un int guarda números hasta unos 2147 millones. Si una cuenta lo pasa, el resultado deja de ser el esperado y suele aparecer un número equivocado, a veces negativo, sin ningún aviso (C no lo garantiza). Para valores más grandes usá long.",
-  "como_arreglarlo": "Cambiá el tipo de la variable que acumula a long y usá %ld para mostrarla.",
+  "mensaje_editor": "El factorial de 13 no entra en un int y el resultado que muestra es incorrecto. Prueba con un tipo más grande.",
+  "explicacion": "Un int guarda números hasta unos 2147 millones. Si una cuenta lo pasa, el resultado deja de ser el esperado y suele aparecer un número equivocado, a veces negativo, sin ningún aviso (C no lo garantiza). Para valores más grandes usa long.",
+  "como_arreglarlo": "Cambia el tipo de la variable que acumula a long y usa %ld para mostrarla.",
   "pistas": [
-   "El resultado de 13 no es el que da la calculadora. Probá con un número más chico.",
+   "El resultado de 13 no es el que da la calculadora. Prueba con un número más pequeño.",
    "Un int tiene un máximo. ¿Qué pasa cuando una cuenta lo supera?",
-   "Declará F como long y mostrala con %ld."
+   "Declara F como long y muéstrala con %ld."
   ],
   "relacion_con_la_materia": "tipos, LR",
   "deteccion": "ejecucion",
@@ -288,18 +288,18 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int A, B;\n  long P;\n  scanf(\"%d %d\", &A, &B);\n  P = (long) A * B;\n  printf(\"Producto: %ld\\n\", P);\n}",
   "entrada": "100000 100000",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 5: A * B se calcula con enteros y se desborda antes de guardarse en el long P. Convertí uno de los dos a long antes de multiplicar.",
+  "mensaje_editor": "Línea 5: A * B se calcula con enteros y se desborda antes de guardarse en el long P. Convierte uno de los dos a long antes de multiplicar.",
   "explicacion": "En C, el tipo del resultado de una cuenta lo decide el tipo de los datos que se multiplican, no la variable donde se guarda. Si A y B son int, el producto es int y se desborda aunque P sea long.",
-  "como_arreglarlo": "Convertí uno de los factores a long con (long) antes de hacer el producto.",
+  "como_arreglarlo": "Convierte uno de los factores a long con (long) antes de hacer el producto.",
   "pistas": [
    "El resultado es mucho menor de lo que esperabas, aunque P es long. ¿Qué tipo tiene A * B?",
    "El tipo del resultado lo definen los datos de la cuenta, no la variable de destino.",
-   "Poné (long) delante de A."
+   "Pon (long) delante de A."
   ],
   "relacion_con_la_materia": "tipos",
   "deteccion": "ejecucion",
   "como_detectarlo": "En ejecución: desborde de int en el producto. Estática: asignación de un producto de dos int a un long.",
-  "riesgo_falso_positivo": "Si los datos son siempre chicos no hay problema; el aviso estático sería de más. Por eso la regla de ejecución es la segura.",
+  "riesgo_falso_positivo": "Si los datos son siempre pequeños no hay problema; el aviso estático sería de más. Por eso la regla de ejecución es la segura.",
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": false,
@@ -316,13 +316,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  long A, B, S;\n  scanf(\"%ld %ld\", &A, &B);\n  S = A + B;\n  printf(\"Suma: %ld\\n\", S);\n}",
   "entrada": "2000000000 2000000000",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "La suma de A y B no entra en un int y se muestra un número negativo. Usá long para valores grandes.",
+  "mensaje_editor": "La suma de A y B no entra en un int y se muestra un número negativo. Usa long para valores grandes.",
   "explicacion": "Un int llega hasta unos 2147 millones; sumar dos números grandes lo pasa y el resultado deja de ser el esperado, y suele salir negativo, sin aviso (C no lo garantiza). Si los datos pueden ser grandes, declarálos como long.",
   "como_arreglarlo": "Declarar las tres variables como long y usar %ld en scanf y printf.",
   "pistas": [
    "Sumaste dos números positivos y salió negativo. Algo se pasó de rango.",
    "¿Cuál es el valor más grande que guarda un int?",
-   "Cambiá int por long y %d por %ld."
+   "Cambia int por long y %d por %ld."
   ],
   "relacion_con_la_materia": "tipos, SS",
   "deteccion": "ejecucion",
@@ -346,11 +346,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "El programa no termina: el lazo espera el 0 y el 0 nunca llega. Cuando se acaban los datos, scanf no cambia V.",
   "explicacion": "Si se terminan los datos de entrada, scanf no lee nada y deja V como estaba, así que la condición V != 0 sigue siendo verdadera para siempre. Escribir el 0 final resuelve el caso normal; controlar lo que devuelve scanf protege ante el resto.",
-  "como_arreglarlo": "Revisá si scanf logró leer algo (devuelve 1 cuando leyó una cosa) y cortá el lazo si no.",
+  "como_arreglarlo": "Revisa si scanf logró leer algo (devuelve 1 cuando leyó una cosa) y corta el lazo si no.",
   "pistas": [
    "El programa se queda trabado. ¿Qué valor hace falta para que el lazo termine?",
-   "Mirá qué hace scanf cuando no hay más datos para leer.",
-   "Preguntá si scanf devolvió 1; si no, poné V en 0."
+   "Mira qué hace scanf cuando no hay más datos para leer.",
+   "Pregunta si scanf devolvió 1; si no, pon V en 0."
   ],
   "relacion_con_la_materia": "LC, scanf",
   "deteccion": "ejecucion",
@@ -375,11 +375,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "scanf no pudo leer un número y N quedó con el valor de antes. scanf devuelve cuántos datos leyó: si es menos de lo esperado, algo falló.",
   "explicacion": "Cuando el dato escrito no coincide con el formato (una letra donde va %d), scanf no modifica la variable y el programa sigue con el valor viejo, sin avisar. Su valor de retorno indica cuántos datos pudo leer.",
-  "como_arreglarlo": "Guardá o consultá lo que devuelve scanf y avisá al usuario cuando no sea la cantidad de datos que pedías.",
+  "como_arreglarlo": "Guarda o consulta lo que devuelve scanf y avisa al usuario cuando no sea la cantidad de datos que pedías.",
   "pistas": [
    "El programa mostró un valor que no ingresaste. ¿De dónde sale?",
-   "Pensá qué pasa con N si scanf no logra leer un número.",
-   "Usá if (scanf(...) != 1) para detectar el fallo."
+   "Piensa qué pasa con N si scanf no logra leer un número.",
+   "Usa if (scanf(...) != 1) para detectar el fallo."
   ],
   "relacion_con_la_materia": "scanf",
   "deteccion": "ejecucion",
@@ -403,11 +403,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "El segundo scanf no pudo leer la 'x' y las vueltas siguientes repiten un valor viejo. La suma da otro resultado que el esperado.",
   "explicacion": "Cuando scanf encuentra una letra donde esperaba un número no la consume y deja V sin cambios; en la vuelta siguiente vuelve a toparse con la misma letra. Por eso el lazo suma varias veces el último valor leído.",
-  "como_arreglarlo": "Controlá el valor de retorno de scanf dentro del lazo y descartá la entrada que no sirve antes de seguir.",
+  "como_arreglarlo": "Controla el valor de retorno de scanf dentro del lazo y descarta la entrada que no sirve antes de seguir.",
   "pistas": [
-   "La suma no coincide con los datos que escribiste. Fijate qué dato falló.",
+   "La suma no coincide con los datos que escribiste. Fíjate qué dato falló.",
    "scanf no avanza si no entiende lo que hay en la entrada.",
-   "Preguntá si scanf devolvió 1 antes de sumar V."
+   "Pregunta si scanf devolvió 1 antes de sumar V."
   ],
   "relacion_con_la_materia": "LR, scanf",
   "deteccion": "ejecucion",
@@ -432,11 +432,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "S / C divide por cero y muestra 'inf' en vez de un número. Con decimales el programa no se corta, pero el resultado no sirve.",
   "explicacion": "Con enteros dividir por cero corta el programa; con decimales da 'inf' (infinito) o 'nan' (no es un número) y el programa sigue como si nada. El resultado impreso no tiene sentido.",
-  "como_arreglarlo": "Controlá que el divisor sea distinto de cero antes de dividir, aunque las variables sean decimales.",
+  "como_arreglarlo": "Controla que el divisor sea distinto de cero antes de dividir, aunque las variables sean decimales.",
   "pistas": [
    "El programa mostró algo que no es un número. ¿Con qué dato pasa?",
    "Dividir decimales por cero no corta el programa, pero igual es un error de la cuenta.",
-   "Poné un if (C != 0) antes de dividir."
+   "Pon un if (C != 0) antes de dividir."
   ],
   "relacion_con_la_materia": "tipos, BC",
   "deteccion": "ejecucion",
@@ -458,13 +458,13 @@
   "codigo_bien": "#include <stdio.h>\n#include <math.h>\nint main() {\n  float A, R;\n  scanf(\"%f\", &A);\n  if (A >= 0) { R = sqrt(A); printf(\"Raiz: %.2f\\n\", R); }\n  else { printf(\"No hay raíz real\\n\"); }\n}",
   "entrada": "-4",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "sqrt de un número negativo no tiene resultado real y el programa muestra 'nan'. Controlá que A sea mayor o igual que 0.",
+  "mensaje_editor": "sqrt de un número negativo no tiene resultado real y el programa muestra 'nan'. Controla que A sea mayor o igual que 0.",
   "explicacion": "La raíz cuadrada solo está definida para números mayores o iguales que 0. Con un negativo, sqrt devuelve 'nan' (no es un número) y el programa sigue sin avisar.",
-  "como_arreglarlo": "Antes de llamar a sqrt, comprobá con un if que el argumento no sea negativo.",
+  "como_arreglarlo": "Antes de llamar a sqrt, comprueba con un if que el argumento no sea negativo.",
   "pistas": [
    "El resultado impreso no es un número. ¿Qué dato ingresaste?",
    "¿Para qué valores existe la raíz cuadrada real?",
-   "Poné if (A >= 0) antes de llamar a sqrt."
+   "Pon if (A >= 0) antes de llamar a sqrt."
   ],
   "relacion_con_la_materia": "math.h, BC",
   "deteccion": "ejecucion",
@@ -488,11 +488,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "A / B no se puede calcular con estos datos: el resultado no entra en un int. El programa se cortó.",
   "explicacion": "El número más negativo que guarda un int, dividido por -1, daría un positivo que ya no entra en el rango, y en la práctica el procesador corta el programa igual que en una división por cero. Es un caso raro, pero real.",
-  "como_arreglarlo": "Controlá ese caso aparte antes de dividir, o usá long.",
+  "como_arreglarlo": "Controla ese caso aparte antes de dividir, o usa long.",
   "pistas": [
    "Probé con un par de números que no esperabas y se cortó.",
    "El int tiene un rango asimétrico: hay un negativo más que positivos.",
-   "Usá long para A y B."
+   "Usa long para A y B."
   ],
   "relacion_con_la_materia": "tipos",
   "deteccion": "ejecucion",
@@ -516,11 +516,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 3: el texto que escribiste no entra en T. Con %s, scanf escribe todo lo que lee aunque se pase del arreglo.",
   "explicacion": "scanf con %s guarda las letras hasta el primer espacio y no sabe cuánto mide el arreglo. Si el texto es más largo, escribe afuera y rompe otras variables o el programa se corta. El arreglo tiene que tener lugar para las letras más el carácter final.",
-  "como_arreglarlo": "Limitá lo que lee scanf con un número entre % y s (por ejemplo %3s para un arreglo de 4) o agrandá el arreglo.",
+  "como_arreglarlo": "Limita lo que lee scanf con un número entre % y s (por ejemplo %3s para un arreglo de 4) o agranda el arreglo.",
   "pistas": [
    "El programa se cortó cuando escribiste una palabra larga. ¿Cuántas letras entran en T?",
    "Un arreglo de 4 chars guarda 3 letras más el cero final.",
-   "Poné %3s en el formato de scanf."
+   "Pon %3s en el formato de scanf."
   ],
   "relacion_con_la_materia": "arreglos y textos, scanf",
   "deteccion": "ejecucion",
@@ -529,7 +529,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "scanf(\"%s\") guarda el texto y su terminador y necesita 17 posiciones pero el arreglo tiene 4 (en C esto pisa la memoria de otras variables)",
+  "mensaje_editor_actual": "scanf(\"%s\") guarda el texto y su terminador y necesita 17 posiciones pero el arreglo tiene 4 (en C esto sobrescribe la memoria de otras variables)",
   "codigo_editor_actual": "R-runtime",
   "verificado_editor_corrige": true
  },
@@ -542,13 +542,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int V[3] = {1, 2, 3};\n  int i;\n  for (i = 2; i >= 0; i--) { printf(\"%d\\n\", V[i]); }\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:5: warning: comparison of unsigned expression in '>= 0' is always true [-Wtype-limits]",
-  "mensaje_editor": "Línea 4: i es unsigned y nunca puede ser menor que 0, así que el lazo no termina y V[i] se sale del arreglo. Declarala como int.",
+  "mensaje_editor": "Línea 4: i es unsigned y nunca puede ser menor que 0, así que el lazo no termina y V[i] se sale del arreglo. Decláralo como int.",
   "explicacion": "Un unsigned no tiene negativos: al bajar de 0 vuelve al número más grande. Entonces la condición i >= 0 es siempre verdadera, el lazo sigue y el índice se sale del arreglo.",
-  "como_arreglarlo": "Usá int para la variable que cuenta hacia atrás.",
+  "como_arreglarlo": "Usa int para la variable que cuenta hacia atrás.",
   "pistas": [
    "Muestra 3, 2, 1 y después se corta. ¿Qué pasa con i cuando baja de 0?",
-   "Mirá el tipo de i: ¿puede valer menos que 0?",
-   "Declarala como int en lugar de unsigned."
+   "Mira el tipo de i: ¿puede valer menos que 0?",
+   "Decláralo como int en lugar de unsigned."
   ],
   "relacion_con_la_materia": "LR, tipos",
   "deteccion": "estatica",
@@ -557,7 +557,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "i es unsigned y nunca es negativo, así que i >= 0 siempre es verdadero. Si es la condición de un bucle, no termina nunca: usá un int.",
+  "mensaje_editor_actual": "i es unsigned y nunca es negativo, así que i >= 0 siempre es verdadero. Si es la condición de un lazo, no termina nunca: usa un int.",
   "codigo_editor_actual": "W-unsigned-siempre-verdadero",
   "verificado_editor_corrige": true
  },
@@ -572,9 +572,9 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "No encuentra el 8 porque no revisa la posición 3.",
   "explicacion": "El arreglo tiene índices de 0 a 3 y el límite excluye el último.",
-  "como_arreglarlo": "Compará el límite con la cantidad de elementos.",
+  "como_arreglarlo": "Compara el límite con la cantidad de elementos.",
   "pistas": [
-   "Contá las vueltas.",
+   "Cuenta las vueltas.",
    "El 8 está al final.",
    "Debe llegar al índice 3."
   ],
@@ -600,9 +600,9 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "La suma termina en 4 y no en 10 porque S se reinicia en cada vuelta.",
   "explicacion": "El acumulador pierde el resultado parcial al volver a cero.",
-  "como_arreglarlo": "Inicializá S antes del recorrido.",
+  "como_arreglarlo": "Inicializa S antes del recorrido.",
   "pistas": [
-   "Seguí S en cada vuelta.",
+   "Sigue S en cada vuelta.",
    "La suma anterior se pierde.",
    "La inicialización va antes del for."
   ],
@@ -628,10 +628,10 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "El promedio debería ser 4,5 pero muestra 4.",
   "explicacion": "Los operandos enteros hacen que se descarte la parte decimal.",
-  "como_arreglarlo": "Hacé que la división sea real.",
+  "como_arreglarlo": "Haz que la división sea real.",
   "pistas": [
-   "Calculá el promedio.",
-   "Mirá los tipos.",
+   "Calcula el promedio.",
+   "Mira los tipos.",
    "La división necesita decimales."
   ],
   "relacion_con_la_materia": "tipos, división, promedio",
@@ -657,11 +657,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Muestra 0 como máximo aunque ambos datos sean negativos.",
   "explicacion": "Ningún valor negativo supera al cero inicial, que no fue ingresado.",
-  "como_arreglarlo": "Inicializá el máximo con un dato real.",
+  "como_arreglarlo": "Inicializa el máximo con un dato real.",
   "pistas": [
-   "Probá con negativos.",
+   "Prueba con negativos.",
    "¿Ingresaste el cero?",
-   "Tomá el primer dato como máximo."
+   "Toma el primer dato como máximo."
   ],
   "relacion_con_la_materia": "if, máximo",
   "deteccion": "ejecucion",
@@ -685,11 +685,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Muestra 0 como mínimo aunque ambos datos sean positivos.",
   "explicacion": "El cero inicial es menor que los dos datos y nunca se reemplaza.",
-  "como_arreglarlo": "Inicializá el mínimo con un dato real.",
+  "como_arreglarlo": "Inicializa el mínimo con un dato real.",
   "pistas": [
-   "Probá con positivos.",
+   "Prueba con positivos.",
    "¿Ingresaste el cero?",
-   "Tomá el primer dato como mínimo."
+   "Toma el primer dato como mínimo."
   ],
   "relacion_con_la_materia": "if, mínimo",
   "deteccion": "ejecucion",
@@ -713,11 +713,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "La suma omite elementos porque I aumenta dentro del bloque y en el encabezado del for.",
   "explicacion": "El contador avanza dos posiciones por vuelta y saltea índices.",
-  "como_arreglarlo": "Actualizá el contador en un solo lugar.",
+  "como_arreglarlo": "Actualiza el contador en un solo lugar.",
   "pistas": [
-   "Anotá índices.",
+   "Anota índices.",
    "Hay dos incrementos.",
-   "Dejá uno solo."
+   "Deja uno solo."
   ],
   "relacion_con_la_materia": "for, arreglos",
   "deteccion": "ejecucion",
@@ -741,9 +741,9 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "No termina: I toma 0, 2, 4, 6 y nunca vale 5.",
   "explicacion": "La condición != exige alcanzar exactamente un valor que el incremento saltea.",
-  "como_arreglarlo": "Ajustá la condición o el incremento.",
+  "como_arreglarlo": "Ajusta la condición o el incremento.",
   "pistas": [
-   "Escribí los valores.",
+   "Escribe los valores.",
    "Salta de 4 a 6.",
    "Nunca alcanza 5."
   ],
@@ -769,11 +769,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Con diámetro 10 calcula un área cuatro veces mayor.",
   "explicacion": "La fórmula usa el radio; el diámetro al cuadrado cuadruplica el área.",
-  "como_arreglarlo": "Convertí el diámetro a radio.",
+  "como_arreglarlo": "Convierte el diámetro a radio.",
   "pistas": [
-   "Dibujá el círculo.",
+   "Dibuja el círculo.",
    "La fórmula necesita radio.",
-   "Calculá la mitad."
+   "Calcula la mitad."
   ],
   "relacion_con_la_materia": "fórmulas, matemática",
   "deteccion": "ejecucion",
@@ -797,11 +797,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Para 8 informa Impar porque 8/2 da 4.",
   "explicacion": "El cociente no indica paridad; hay que comprobar el resto.",
-  "como_arreglarlo": "Usá el operador de resto.",
+  "como_arreglarlo": "Usa el operador de resto.",
   "pistas": [
-   "Probá 8 y 9.",
+   "Prueba 8 y 9.",
    "El cociente no indica paridad.",
-   "Revisá el operador."
+   "Revisa el operador."
   ],
   "relacion_con_la_materia": "if, operadores",
   "deteccion": "ejecucion",
@@ -825,11 +825,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Muestra 0% en lugar de 25%.",
   "explicacion": "La parte decimal se pierde en P/T antes de multiplicar.",
-  "como_arreglarlo": "Convertí un operando a real.",
+  "como_arreglarlo": "Convierte un operando a real.",
   "pistas": [
-   "Calculá 1/4.",
+   "Calcula 1/4.",
    "Se pierde antes de multiplicar.",
-   "Hacé real la división."
+   "Haz real la división."
   ],
   "relacion_con_la_materia": "tipos, porcentajes",
   "deteccion": "ejecucion",
@@ -853,11 +853,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "El producto A*B excede int de 32 bits antes de dividir.",
   "explicacion": "La multiplicación intermedia se realiza como int aunque el resultado se guarde después.",
-  "como_arreglarlo": "Usá un tipo de mayor rango en los operandos.",
+  "como_arreglarlo": "Usa un tipo de mayor rango en los operandos.",
   "pistas": [
-   "Calculá A por B.",
+   "Calcula A por B.",
    "El producto es enorme.",
-   "Revisá el tipo de la multiplicación."
+   "Revisa el tipo de la multiplicación."
   ],
   "relacion_con_la_materia": "tipos, expresiones",
   "deteccion": "ejecucion",
@@ -881,9 +881,9 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "El 9 está en la posición 2 pero imprime 1.",
   "explicacion": "Al salir del while, I ya contiene el índice encontrado.",
-  "como_arreglarlo": "Revisá I al salir.",
+  "como_arreglarlo": "Revisa I al salir.",
   "pistas": [
-   "Seguí I.",
+   "Sigue I.",
    "Termina con 2.",
    "No restes uno."
   ],
@@ -909,7 +909,7 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Imprime 7 aunque B vale 12.",
   "explicacion": "La condición compara A con M, que ya contiene A, y nunca considera B.",
-  "como_arreglarlo": "Compará el máximo con el otro dato.",
+  "como_arreglarlo": "Compara el máximo con el otro dato.",
   "pistas": [
    "M ya vale A.",
    "El if compara A otra vez.",
@@ -937,9 +937,9 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Muestra 2.0 en vez de 4.0 porque suma solo dos valores y divide por tres.",
   "explicacion": "El límite I<2 deja afuera el tercer elemento.",
-  "como_arreglarlo": "Recorré todas las posiciones antes de dividir.",
+  "como_arreglarlo": "Recorre todas las posiciones antes de dividir.",
   "pistas": [
-   "Sumá los valores.",
+   "Suma los valores.",
    "Visita dos posiciones.",
    "Debe llegar al índice 2."
   ],

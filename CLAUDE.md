@@ -24,6 +24,11 @@ Un editor de C que corre en el navegador, para alumnos de 5.º año de la E.E.S.
 - Decisión de Diego (08/11/2026, ya implementada): el alumno tiene que **encontrar** el error mirando el código; el editor no se lo entrega por defecto. Por eso la interfaz no muestra explicaciones ni pistas por error: esos textos viven en `kb/` y alimentan el buscador, el «¿qué es esto?» y «Avisar a Diego». Si algún día se quieren mostrar, es una decisión nueva de Diego.
 - Decisión de Diego (12/11/2026): la captura y Ajustes **ya no muestran** el porcentaje de tipeado/pegado ni «cómo se escribió el programa», y el PNG no lleva datos de proceso. `src/proceso.js` sigue en el código solo para el modo práctica (`?practica`, bloquea pegar) y para las pruebas; no hay forma de ver ni exportar esa medida. Si algún día se quiere volver, está en el historial de git (PR anterior a este cambio).
 
+## Idioma y términos (decisión de Diego, 14/11/2026)
+- Todo lo que lee el alumno está en **español neutro**, sin voseo ni regionalismos (nada de «usá», «tenés», «vos», «fijate», «tipear», «pisar»). Trato de «tú» o impersonal. Lo vigila `node test/neutro.test.js`. (Este archivo es para agentes y quedó como estaba.)
+- Términos de la materia (Brizuela): **lazo** (lazo repetitivo LR, lazo condicional LC; no «bucle»), **instrucción** (no «sentencia»), **aviso** (no «advertencia»), **archivo cabecera** (.h), **ciclo** solo para cada vuelta. En el código, `main` va como `int main()` **sin `return 0`** (la materia no lo usa); tampoco `do-while` en los ejemplos.
+- La ayuda no copia ejercicios de la materia: las lecciones usan otros datos y las fichas de errores que traían la solución de un ejercicio llevan `solucion_ejercicio: true` (no se muestra «Así queda bien»).
+
 ## Lo que enseña la materia (alcance del lenguaje)
 ANSI C básico: `char`, `int`, `float`, `double`, operadores, `printf`/`scanf` (`%d %f %5.2f %10d`), `if`/`else`, `for`, `while`, `switch`, funciones con prototipos, arreglos, `math.h`. Variables en MAYÚSCULAS. El método: algoritmo en papel → diagrama Nassi-Shneiderman → verificación → código C → pruebas en computadora. El apunte y las reglas están en `Diego-20000/brizuela` (`CLAUDE.md`, `REFERENCIA_CLAUDE_BRIZUELA.md`, PDFs).
 

@@ -36,9 +36,9 @@
   "explicacion": [
    "Las llaves agrupan instrucciones en un bloque.",
    "Cada { debe tener una } que cierre el mismo bloque.",
-   "Un if, un ciclo y una función pueden tener su propio bloque.",
+   "Un if, un lazo y una función pueden tener su propio bloque.",
    "Si falta una llave, el compilador puede interpretar mal todo lo que sigue.",
-   "Indentá el código para ver con claridad qué instrucciones pertenecen a cada estructura."
+   "Sangra el código para ver con claridad qué instrucciones pertenecen a cada estructura."
   ],
   "ejemplo": "#include <stdio.h>\nint main(){\n if(1){\n  int A=2;\n  printf(\"%d\\n\",A);\n }\n}",
   "entrada": "",
@@ -166,7 +166,7 @@
    "Se usa para contadores, cantidades y valores discretos.",
    "Una división entre dos int produce un resultado entero.",
    "El resultado no conserva la parte decimal.",
-   "Para trabajar con decimales necesitás float o double."
+   "Para trabajar con decimales necesitas float o double."
   ],
   "ejemplo": "#include <stdio.h>\nint main(){\n int A=7;\n int B=2;\n printf(\"%d\\n\",A/B);\n}",
   "entrada": "",
@@ -223,7 +223,7 @@
   "id": "L-008",
   "titulo": "La división entera",
   "explicacion": [
-   "Si dividís dos enteros, C calcula un resultado entero.",
+   "Si divides dos enteros, C calcula un resultado entero.",
    "Por ejemplo, 7/2 da 3 porque se descarta la parte fraccionaria.",
    "Guardar ese 3 en una variable float no recupera el decimal perdido.",
    "Al menos uno de los operandos debe convertirse a decimal antes de dividir.",
@@ -265,7 +265,7 @@
    "Declarar una variable reserva un lugar para guardar un valor.",
    "Una variable local automática no recibe automáticamente un valor útil.",
    "Leerla antes de asignarle un valor produce comportamiento indefinido en C.",
-   "Asignale un valor antes de utilizarla o asegurate de que scanf la haya leído correctamente.",
+   "Asígnale un valor antes de utilizarla o asegúrate de que scanf la haya leído correctamente.",
    "No confíes en que aparezca cero por casualidad."
   ],
   "ejemplo": "#include <stdio.h>\nint main(){\n int CONT=0;\n CONT++;\n printf(\"%d\\n\",CONT);\n}",
@@ -299,7 +299,7 @@
    "El operador == compara dos valores para saber si son iguales.",
    "Dentro de un if, usar = puede cambiar la variable en lugar de comparar.",
    "La asignación también produce un valor, por eso el código puede compilar.",
-   "Revisá cuál de las dos acciones querías realizar."
+   "Revisa cuál de las dos acciones querías realizar."
   ],
   "ejemplo": "#include <stdio.h>\nint main(){\n int A=5;\n if(A==5) printf(\"Iguales\\n\");\n}",
   "entrada": "",
@@ -363,7 +363,7 @@
    "C sigue reglas de precedencia para decidir qué operación hacer primero.",
    "La multiplicación y la división tienen mayor prioridad que la suma y la resta.",
    "Las comparaciones se realizan después de resolver las expresiones aritméticas que contienen.",
-   "Los paréntesis permiten dejar explícito el orden que querés.",
+   "Los paréntesis permiten dejar explícito el orden que quieres.",
    "Usalos cuando una expresión no sea fácil de leer."
   ],
   "ejemplo": "#include <stdio.h>\nint main(){\n printf(\"%d\\n\",2+3*4);\n printf(\"%d\\n\",(2+3)*4);\n}",
@@ -464,7 +464,7 @@
    "Su primer argumento es una cadena de formato entre comillas dobles.",
    "Cada especificador % indica qué tipo de dato se va a mostrar.",
    "Los argumentos después de la cadena deben coincidir en cantidad y tipo.",
-   "Para mostrar un signo porcentaje literal escribí %%."
+   "Para mostrar un signo porcentaje literal escribe %%."
   ],
   "ejemplo": "#include <stdio.h>\nint main(){\n int A=5;\n printf(\"Valor=%d%%\\n\",A);\n}",
   "entrada": "",
@@ -505,7 +505,7 @@
    "%f muestra un número decimal, incluyendo valores double.",
    "%.2f pide mostrar dos cifras después del punto decimal.",
    "El ancho, como %8.2f, reserva un mínimo de ocho posiciones.",
-   "Un formato incorrecto puede producir advertencias o comportamiento indefinido."
+   "Un formato incorrecto puede producir avisos o comportamiento indefinido."
   ],
   "ejemplo": "#include <stdio.h>\nint main(){\n double A=3.14159;\n printf(\"%.2f\\n\",A);\n}",
   "entrada": "",
@@ -688,7 +688,7 @@
    "No es un dato común que deba procesarse como los demás.",
    "Con la lectura adelantada (opción B de la materia) se lee el primer valor antes del lazo y de nuevo al final de cada vuelta. La opción A da un valor inicial que no es el corte y lee adentro.",
    "Después de procesar cada valor, tiene que leer el siguiente.",
-   "Si nunca se actualiza el dato, el ciclo puede no terminar."
+   "Si nunca se actualiza el dato, el lazo puede no terminar."
   ],
   "ejemplo": "#include <stdio.h>\nint main(){\n int N; scanf(\"%d\",&N);\n while(N!=-1){ printf(\"%d\\n\",N); scanf(\"%d\",&N); }\n}",
   "entrada": "3\n5\n-1\n",
@@ -719,7 +719,7 @@
    "Primero ejecuta el inicio una sola vez.",
    "Después evalúa la condición; si es verdadera, ejecuta el cuerpo.",
    "Al terminar el cuerpo, realiza la actualización y vuelve a evaluar.",
-   "Cuando la condición resulta falsa, sale del ciclo."
+   "Cuando la condición resulta falsa, sale del lazo."
   ],
   "ejemplo": "#include <stdio.h>\nint main(){\n for(int I=1;I<=3;I++) printf(\"%d\\n\",I);\n}",
   "entrada": "",
@@ -758,7 +758,7 @@
    "while evalúa la condición antes de ejecutar el cuerpo.",
    "Si la condición es falsa al principio, el cuerpo no se ejecuta.",
    "Si es verdadera, ejecuta las instrucciones y vuelve a comprobarla.",
-   "Alguna instrucción debe permitir que la condición cambie si se espera que el ciclo termine.",
+   "Alguna instrucción debe permitir que la condición cambie si se espera que el lazo termine.",
    "Sin una salida posible, el programa puede quedar repitiéndose."
   ],
   "ejemplo": "#include <stdio.h>\nint main(){\n int I=1;\n while(I<=3){ printf(\"%d\\n\",I); I++; }\n}",
@@ -923,7 +923,7 @@
    "return finaliza la ejecución de esa llamada y entrega el resultado.",
    "Una función void no entrega un valor que pueda guardarse en una variable.",
    "No alcanza con calcular el resultado si nunca se lo devuelve.",
-   "Revisá todos los caminos posibles de la función."
+   "Revisa todos los caminos posibles de la función."
   ],
   "ejemplo": "#include <stdio.h>\nint DOBLE(int A){ return A*2; }\nint main(){ int B=DOBLE(4); printf(\"%d\\n\",B);}",
   "entrada": "",
@@ -989,7 +989,7 @@
    "Un entero tiene un rango de valores limitado por su tipo y la implementación.",
    "Si una operación produce un valor fuera del rango de un int con signo, el comportamiento es indefinido en C.",
    "No se debe confiar en que el número vuelva a cero ni en que se comporte igual con todas las optimizaciones.",
-   "Revisá los límites antes de sumar o multiplicar cantidades grandes.",
+   "Revisa los límites antes de sumar o multiplicar cantidades grandes.",
    "Los tipos unsigned tienen reglas diferentes para el desborde."
   ],
   "ejemplo": "#include <stdio.h>\n#include <limits.h>\nint main(){ printf(\"%d\\n\",INT_MAX);}",
@@ -1028,7 +1028,7 @@
    "Muchos números decimales no tienen una representación binaria exacta.",
    "Una cuenta puede quedar apenas por encima o por debajo del valor esperado.",
    "Por eso dos resultados que parecen iguales pueden no compararse como iguales.",
-   "Cuando tiene sentido, compará si la diferencia está dentro de una tolerancia."
+   "Cuando tiene sentido, compara si la diferencia está dentro de una tolerancia."
   ],
   "ejemplo": "#include <stdio.h>\n#include <math.h>\nint main(){ double A=0.1+0.2; printf(\"%d\\n\",fabs(A-0.3)<0.000001);}",
   "entrada": "",
@@ -1061,7 +1061,7 @@
    "En C, la primera comparación produce 0 o 1.",
    "Luego ese resultado se compara con 10, no se vuelve a comparar A.",
    "Para comprobar un intervalo se unen dos condiciones con &&.",
-   "Escribí cada comparación completa para evitar interpretaciones equivocadas."
+   "Escribe cada comparación completa para evitar interpretaciones equivocadas."
   ],
   "ejemplo": "#include <stdio.h>\nint main(){ int A=5; printf(\"%d\\n\",A>1 && A<10);}",
   "entrada": "",
@@ -1199,7 +1199,7 @@
   "explicacion": [
    "Un contador es una variable que sube de a 1 cada vez que ocurre un hecho.",
    "Se inicia en 0 antes del lazo, nunca adentro: si no, arranca de cero en cada vuelta.",
-   "Se incrementa solo cuando se cumple lo que querés contar (dentro de un if).",
+   "Se incrementa solo cuando se cumple lo que quieres contar (dentro de un if).",
    "No se confunde con un acumulador: el contador suma siempre 1, el acumulador suma el dato.",
    "Al final del lazo, el contador tiene la cantidad que buscabas."
   ],
@@ -1228,10 +1228,10 @@
   "titulo": "Acumulador: ir sumando valores",
   "explicacion": [
    "Un acumulador junta en una variable la suma de los datos que van llegando.",
-   "Se inicia en 0 antes del lazo (en 1 si lo que acumulás es un producto).",
+   "Se inicia en 0 antes del lazo (en 1 si lo que acumulas es un producto).",
    "Dentro del lazo se le suma el dato: SUMA = SUMA + A.",
-   "Si lo iniciás o lo declarás adentro del lazo, se borra en cada vuelta y solo queda el último dato.",
-   "Mostrá el total después del lazo, no adentro."
+   "Si lo inicias o lo declaras adentro del lazo, se borra en cada vuelta y solo queda el último dato.",
+   "Muestra el total después del lazo, no adentro."
   ],
   "ejemplo": "#include <stdio.h>\nint main() {\n float PRECIO[4] = {120.5, 80, 45.25, 10};\n float TOTAL = 0;\n int I;\n for (I = 0; I < 4; I++) {\n  TOTAL = TOTAL + PRECIO[I];\n }\n printf(\"Total: %.2f\\n\", TOTAL);\n}",
   "entrada": "",
@@ -1264,7 +1264,7 @@
    "El promedio es la suma dividida por la cantidad de datos.",
    "Si no se cargó ningún dato, la cantidad es 0 y dividir por cero no da un resultado válido (con enteros el programa se cierra con error).",
    "Por eso se pregunta con un if si la cantidad es mayor que 0 antes de dividir.",
-   "Además, si SUMA y CANT son enteros, la división pierde los decimales: convertí uno a float con un cast.",
+   "Además, si SUMA y CANT son enteros, la división pierde los decimales: convierte uno a float con un cast.",
    "Con (float)SUMA/CANT primero se convierte SUMA y recién después se divide.",
    "Prueba cambiar PARTIDOS a 5: con la cuenta hecha en decimales el resultado conserva los decimales."
   ],
@@ -1296,7 +1296,7 @@
   "titulo": "Mayor y menor de una serie",
   "explicacion": [
    "Para hallar el mayor se guarda el mejor valor visto hasta ahora y se compara con cada dato nuevo.",
-   "El valor inicial importa: si arrancás MAYOR en 0 y todos los datos son negativos, el resultado queda mal.",
+   "El valor inicial importa: si arrancas MAYOR en 0 y todos los datos son negativos, el resultado queda mal.",
    "Lo más seguro es inicializar con el primer dato que se lee.",
    "Lo mismo vale para el menor: no lo inicies en 0.",
    "Después, dentro del lazo, un if actualiza MAYOR o MENOR cuando el dato lo supera."
@@ -1436,9 +1436,9 @@
   "explicacion": [
    "Muchos ejemplos de internet usan cosas de Windows que no existen en Linux ni en los compiladores en línea.",
    "system(\"pause\"), system(\"cls\"), getch(), clrscr() y la biblioteca conio.h son de Windows.",
-   "Para frenar el programa podés usar getchar() o un scanf; para mostrar todo no hace falta limpiar la pantalla.",
+   "Para frenar el programa puedes usar getchar() o un scanf; para mostrar todo no hace falta limpiar la pantalla.",
    "fflush(stdin) tampoco es C estándar: el comportamiento depende del sistema.",
-   "Cuando un programa \"anda en mi casa\" y falla en la escuela o en el editor, mirá primero si usa algo de esa lista."
+   "Cuando un programa \"funciona en mi casa\" y falla en la escuela o en el editor, mira primero si usa algo de esa lista."
   ],
   "ejemplo": "#include <stdio.h>\nint main(){\n printf(\"Fin del programa\\n\");\n printf(\"Presione Enter para salir\\n\");\n getchar();\n}",
   "entrada": "\n",
@@ -1510,7 +1510,7 @@
   "id": "L-045",
   "titulo": "Cast: convertir el tipo antes de dividir",
   "explicacion": [
-   "Cuando dividís dos enteros, C hace una división entera aunque guardes el resultado en un float.",
+   "Cuando divides dos enteros, C hace una división entera aunque guardes el resultado en un float.",
    "Un cast es una conversión forzada: (float)A hace que A se trate como decimal.",
    "Tiene que ir sobre un operando antes de dividir: (float)A/B.",
    "(float)(A/B) no sirve: la división entera ya se hizo y se perdieron los decimales.",
@@ -1548,7 +1548,7 @@
    "Una constante es un valor con nombre que no cambia mientras corre el programa.",
    "Con #define el preprocesador reemplaza el nombre por el valor antes de compilar: no lleva ; ni =.",
    "Con const se declara una variable que no se puede modificar después de darle el valor inicial.",
-   "Si intentás cambiar una constante, el compilador da error; si ponés ; en el #define, se copia en cada uso y rompe las cuentas.",
+   "Si intentas cambiar una constante, el compilador da error; si pones ; en el #define, se copia en cada uso y rompe las cuentas.",
    "Usar constantes evita números sueltos repetidos y facilita cambiar el valor en un solo lugar."
   ],
   "ejemplo": "#include <stdio.h>\n#define IVA 21\nint main(){\n const int TOPE=100;\n int PRECIO=50;\n int TOTAL=PRECIO+PRECIO*IVA/100;\n if(TOTAL<TOPE) printf(\"Total %d\\n\",TOTAL);\n}",
@@ -1579,7 +1579,7 @@
  {
   "id": "L-047",
   "titulo": "lazo infinito por contador inverso",
-  "explicacion": "El contador se aleja del límite que debería terminar el lazo. Revisá hacia dónde cambia el contador.",
+  "explicacion": "El contador se aleja del límite que debería terminar el lazo. Revisa hacia dónde cambia el contador.",
   "ejemplo": "#include <stdio.h>\nint main() {\n int I=1; while(I<5){I++;}\n}",
   "entrada": "",
   "resultado": "",

@@ -113,7 +113,7 @@
  {
   "elemento": "for",
   "tipo": "palabra clave",
-  "que_es": "Ciclo con inicio, condición y actualización en su encabezado.",
+  "que_es": "Lazo con inicio, condición y actualización en su encabezado.",
   "como_se_usa": "for (I=0; I<5; I++) { SUMA += I; }",
   "error_tipico": "Olvidar uno de los dos punto y coma del encabezado.",
   "en_la_materia": "LR",
@@ -144,7 +144,7 @@
  {
   "elemento": "do",
   "tipo": "palabra clave",
-  "que_es": "Inicia un ciclo que ejecuta el cuerpo al menos una vez.",
+  "que_es": "Inicia un lazo que ejecuta el cuerpo al menos una vez.",
   "como_se_usa": "do { A--; } while (A>0);",
   "error_tipico": "Olvidar el punto y coma después de la condición final.",
   "en_la_materia": "LR",
@@ -190,9 +190,9 @@
  {
   "elemento": "break",
   "tipo": "palabra clave",
-  "que_es": "Termina el switch o el ciclo más cercano.",
+  "que_es": "Termina el switch o el lazo más cercano.",
   "como_se_usa": "if (A==0) break;",
-  "error_tipico": "Usarlo fuera de un ciclo o switch.",
+  "error_tipico": "Usarlo fuera de un lazo o switch.",
   "en_la_materia": "BC, LR",
   "buscar": [
    "salir del ciclo",
@@ -203,9 +203,9 @@
  {
   "elemento": "continue",
   "tipo": "palabra clave",
-  "que_es": "Salta al siguiente avance del ciclo más cercano.",
+  "que_es": "Salta al siguiente avance del lazo más cercano.",
   "como_se_usa": "if (A==0) continue;",
-  "error_tipico": "Usarlo fuera de un ciclo.",
+  "error_tipico": "Usarlo fuera de un lazo.",
   "en_la_materia": "LR",
   "buscar": [],
   "errores_ids": []

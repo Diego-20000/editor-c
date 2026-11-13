@@ -205,7 +205,7 @@
   }
   function escribir(dst, bytes, conCero, que, line) { // copia bytes (y un 0) a dst, controlando que entren
     const need = bytes.length + (conCero ? 1 : 0);
-    if (need > dst.length) throw new CRuntimeError(que + ' necesita ' + need + ' posiciones pero el arreglo tiene ' + dst.length + ' (en C esto pisa la memoria de otras variables)', line);
+    if (need > dst.length) throw new CRuntimeError(que + ' necesita ' + need + ' posiciones pero el arreglo tiene ' + dst.length + ' (en C esto sobrescribe la memoria de otras variables)', line);
     for (let i = 0; i < bytes.length; i++) dst[i] = sb(bytes[i]);
     if (conCero) dst[bytes.length] = 0;
   }
@@ -518,7 +518,7 @@
       if (e instanceof CRuntimeError) return { error: e.message, line: e.cline, code: 136 };
       if (e instanceof RangeError && /Invalid (string|array) length|allocation/i.test(e.message)) return { error: 'el programa pidió más memoria de la que el editor puede darle', code: 139 };
       if (e instanceof RangeError && /call stack/i.test(e.message)) return { error: 'desbordamiento de la pila (recursión infinita o muy profunda)', code: 139 };
-      return { error: 'Error inesperado del editor (no es culpa de tu programa): ' + (e && e.message) + '. Avisale al profe.', code: 1 };
+      return { error: 'Error inesperado del editor (no es culpa de tu programa): ' + (e && e.message) + '. Avísale al profe.', code: 1 };
     }
   }
 

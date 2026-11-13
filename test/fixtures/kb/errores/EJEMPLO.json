@@ -10,11 +10,11 @@
   "que_dice_gcc": "",
   "mensaje_editor": "Línea 2: a la declaración de A le falta un punto y coma. En C, cada declaración termina con ;.",
   "explicacion": "El punto y coma indica dónde termina una declaración o instrucción. El salto de línea no cumple esa función.",
-  "como_arreglarlo": "Revisá la declaración y agregá ; al final.",
+  "como_arreglarlo": "Revisa la declaración y agrega ; al final.",
   "pistas": [
-   "Revisá cómo termina la línea.",
+   "Revisa cómo termina la línea.",
    "La declaración todavía no está cerrada.",
-   "Agregá ; después de A."
+   "Agrega ; después de A."
   ],
   "relacion_con_la_materia": "SS, declaración de variables y tipos.",
   "deteccion": "estatica",
@@ -36,13 +36,13 @@
   "codigo_bien": "#include <stdio.h>\nint main(void){\n int A=1;\n printf(\"%d\",A);\n return 0;\n}",
   "entrada": "",
   "que_dice_gcc": "",
-  "mensaje_editor": "Línea 2: la asignación de A no termina con ;. Agregalo antes de la siguiente instrucción.",
+  "mensaje_editor": "Línea 2: la asignación de A no termina con ;. Agrégalo antes de la siguiente instrucción.",
   "explicacion": "Una asignación es una instrucción y necesita terminar con punto y coma. C no considera que una instrucción terminó solamente porque cambió la línea.",
-  "como_arreglarlo": "Volvé a la instrucción anterior al error y agregá ; al final de la asignación.",
+  "como_arreglarlo": "Vuelve a la instrucción anterior al error y agrega ; al final de la asignación.",
   "pistas": [
    "El error puede estar antes de la línea señalada.",
-   "Revisá dónde termina la asignación.",
-   "Agregá ; después de 1."
+   "Revisa dónde termina la asignación.",
+   "Agrega ; después de 1."
   ],
   "relacion_con_la_materia": "SS, asignación de variables y BC.",
   "deteccion": "estatica",
@@ -66,11 +66,11 @@
   "que_dice_gcc": "",
   "mensaje_editor": "Línea 2: falta ; después de return 0. La llave no reemplaza el punto y coma.",
   "explicacion": "La instrucción return también necesita terminar con punto y coma. Las llaves cierran bloques, no sustituyen los terminadores de instrucciones.",
-  "como_arreglarlo": "Agregá ; después del valor que devuelve return.",
+  "como_arreglarlo": "Agrega ; después del valor que devuelve return.",
   "pistas": [
    "El compilador señala la llave de cierre.",
-   "Revisá la última instrucción.",
-   "Escribí return 0;."
+   "Revisa la última instrucción.",
+   "Escribe return 0;."
   ],
   "relacion_con_la_materia": "Funciones, main y retorno.",
   "deteccion": "estatica",
@@ -94,11 +94,11 @@
   "que_dice_gcc": "",
   "mensaje_editor": "Línea 3: ese ; termina el if y deja su cuerpo vacío. La instrucción siguiente se ejecuta siempre.",
   "explicacion": "En C, un punto y coma solo es una instrucción vacía. Por eso el if puede terminar antes de la instrucción que el alumno quería controlar.",
-  "como_arreglarlo": "Revisá el ; después de la condición y agrupá el cuerpo con llaves si contiene varias instrucciones.",
+  "como_arreglarlo": "Revisa el ; después de la condición y agrupa el cuerpo con llaves si contiene varias instrucciones.",
   "pistas": [
-   "Mirá qué hay después del paréntesis.",
+   "Mira qué hay después del paréntesis.",
    "El if podría estar terminando antes de lo esperado.",
-   "Quitá el ; después de if."
+   "Quita el ; después de if."
   ],
   "relacion_con_la_materia": "SS, BC y condiciones.",
   "deteccion": "estatica",
@@ -120,13 +120,13 @@
   "codigo_bien": "#include <stdio.h>\nint main(void){\n int A;\n for(A=0;A<3;A++){\n  printf(\"%d\\n\",A);\n }\n return 0;\n}",
   "entrada": "",
   "que_dice_gcc": "",
-  "mensaje_editor": "Línea 3: el ; deja vacío el cuerpo del for. Las instrucciones posteriores no se repiten con el ciclo.",
-  "explicacion": "El cuerpo de un for puede ser una instrucción vacía. El ciclo puede avanzar correctamente sin ejecutar el trabajo que el alumno quería repetir.",
-  "como_arreglarlo": "Revisá el ; después del encabezado y colocá dentro del cuerpo la instrucción que debe repetirse.",
+  "mensaje_editor": "Línea 3: el ; deja vacío el cuerpo del for. Las instrucciones posteriores no se repiten con el lazo.",
+  "explicacion": "El cuerpo de un for puede ser una instrucción vacía. El lazo puede avanzar correctamente sin ejecutar el trabajo que el alumno quería repetir.",
+  "como_arreglarlo": "Revisa el ; después del encabezado y coloca dentro del cuerpo la instrucción que debe repetirse.",
   "pistas": [
-   "Revisá dónde empieza el cuerpo.",
+   "Revisa dónde empieza el cuerpo.",
    "La repetición puede terminar antes de lo esperado.",
-   "Quitá el ; y abrí el bloque."
+   "Quita el ; y abre el bloque."
   ],
   "relacion_con_la_materia": "LR, LC, contador e iteraciones.",
   "deteccion": "estatica",
@@ -150,11 +150,11 @@
   "que_dice_gcc": "",
   "mensaje_editor": "Línea 3: falta cerrar el paréntesis de la condición antes de abrir el bloque.",
   "explicacion": "La condición de if debe quedar encerrada entre paréntesis. La llave de apertura aparece después de cerrar esa condición.",
-  "como_arreglarlo": "Agregá ) después de la comparación y antes de {.",
+  "como_arreglarlo": "Agrega ) después de la comparación y antes de {.",
   "pistas": [
-   "Contá los paréntesis.",
+   "Cuenta los paréntesis.",
    "La condición tiene una apertura sin cierre.",
-   "Escribí if(A>0)."
+   "Escribe if(A>0)."
   ],
   "relacion_con_la_materia": "BC y condiciones.",
   "deteccion": "estatica",
@@ -176,13 +176,13 @@
   "codigo_bien": "#include <stdio.h>\nint main(void){\n printf(\"Hola\");\n return 0;\n}",
   "entrada": "",
   "que_dice_gcc": "",
-  "mensaje_editor": "Línea 2: a la llamada de la función le falta cerrar el paréntesis antes del punto y coma. Revisá los argumentos y agregá el cierre que falta.",
+  "mensaje_editor": "Línea 2: a la llamada de la función le falta cerrar el paréntesis antes del punto y coma. Revisa los argumentos y agrega el cierre que falta.",
   "explicacion": "Los argumentos de una función se escriben entre paréntesis. El cierre indica que terminó la llamada y debe aparecer antes de terminar la instrucción.",
-  "como_arreglarlo": "Revisá el paréntesis que abre la llamada, contá los cierres y agregá el que falta antes de ;.",
+  "como_arreglarlo": "Revisa el paréntesis que abre la llamada, cuenta los cierres y agrega el que falta antes de ;.",
   "pistas": [
-   "Revisá los paréntesis de la llamada.",
+   "Revisa los paréntesis de la llamada.",
    "La llamada no terminó todavía.",
-   "Agregá ) antes del punto y coma."
+   "Agrega ) antes del punto y coma."
   ],
   "relacion_con_la_materia": "printf, funciones y salida.",
   "deteccion": "estatica",
@@ -206,11 +206,11 @@
   "que_dice_gcc": "",
   "mensaje_editor": "Línea 2: abriste el bloque del if, pero falta una llave } para cerrarlo.",
   "explicacion": "Las llaves agrupan instrucciones. Cada apertura debe tener un cierre correspondiente; de lo contrario, el resto del programa queda dentro del bloque.",
-  "como_arreglarlo": "Agregá la llave de cierre al terminar el bloque del if.",
+  "como_arreglarlo": "Agrega la llave de cierre al terminar el bloque del if.",
   "pistas": [
-   "Revisá las llaves desde el principio.",
+   "Revisa las llaves desde el principio.",
    "El bloque del if quedó abierto.",
-   "Agregá } antes de cerrar main."
+   "Agrega } antes de cerrar main."
   ],
   "relacion_con_la_materia": "SS, BC, LR y LC.",
   "deteccion": "estatica",
@@ -234,11 +234,11 @@
   "que_dice_gcc": "",
   "mensaje_editor": "Línea 3: hay una llave } de más; main ya estaba cerrado.",
   "explicacion": "Una llave de cierre debe corresponder a una apertura anterior. Una llave extra queda fuera de cualquier bloque.",
-  "como_arreglarlo": "Eliminá el cierre que no corresponde a ningún bloque.",
+  "como_arreglarlo": "Elimina el cierre que no corresponde a ningún bloque.",
   "pistas": [
    "El problema aparece al final del programa.",
-   "Contá aperturas y cierres.",
-   "Eliminá una llave final."
+   "Cuenta aperturas y cierres.",
+   "Elimina una llave final."
   ],
   "relacion_con_la_materia": "SS y bloques.",
   "deteccion": "estatica",
@@ -262,11 +262,11 @@
   "que_dice_gcc": "",
   "mensaje_editor": "Línea 2: abriste el corchete del tamaño de V, pero falta cerrarlo antes de terminar la declaración.",
   "explicacion": "Los corchetes delimitan el tamaño de un arreglo o una posición. Cada apertura necesita un cierre.",
-  "como_arreglarlo": "Agregá ] después del tamaño del arreglo.",
+  "como_arreglarlo": "Agrega ] después del tamaño del arreglo.",
   "pistas": [
-   "Revisá la declaración de V.",
+   "Revisa la declaración de V.",
    "El número quedó dentro de un corchete abierto.",
-   "Escribí V[3]."
+   "Escribe V[3]."
   ],
   "relacion_con_la_materia": "Arreglos y declaración de vectores.",
   "deteccion": "estatica",
@@ -290,11 +290,11 @@
   "que_dice_gcc": "",
   "mensaje_editor": "Línea 2: usaste comillas curvas. C necesita comillas dobles rectas para delimitar un texto.",
   "explicacion": "Las comillas rectas son símbolos de la sintaxis de C. Las comillas curvas son caracteres Unicode diferentes aunque se parezcan visualmente.",
-  "como_arreglarlo": "Reemplazá las comillas curvas por comillas dobles rectas.",
+  "como_arreglarlo": "Reemplaza las comillas curvas por comillas dobles rectas.",
   "pistas": [
-   "Observá la forma de las comillas.",
+   "Observa la forma de las comillas.",
    "Son caracteres distintos aunque se parezcan.",
-   "Usá \"."
+   "Usa \"."
   ],
   "relacion_con_la_materia": "printf y cadenas de formato.",
   "deteccion": "estatica",
@@ -316,13 +316,13 @@
   "codigo_bien": "int main(void){\n char C='A';\n return 0;\n}",
   "entrada": "",
   "que_dice_gcc": "",
-  "mensaje_editor": "Línea 2: las comillas que rodean A son tipográficas. Para escribir un carácter usá comillas simples rectas.",
+  "mensaje_editor": "Línea 2: las comillas que rodean A son tipográficas. Para escribir un carácter usa comillas simples rectas.",
   "explicacion": "Una constante de carácter se delimita con comillas simples ASCII. Las comillas tipográficas no cumplen esa función en C.",
-  "como_arreglarlo": "Reemplazá las comillas curvas por comillas simples rectas.",
+  "como_arreglarlo": "Reemplaza las comillas curvas por comillas simples rectas.",
   "pistas": [
-   "Mirá los símbolos alrededor de A.",
+   "Mira los símbolos alrededor de A.",
    "C distingue comillas rectas de curvas.",
-   "Escribí 'A'."
+   "Escribe 'A'."
   ],
   "relacion_con_la_materia": "char y constantes de carácter.",
   "deteccion": "estatica",
@@ -345,12 +345,12 @@
   "entrada": "",
   "que_dice_gcc": "",
   "mensaje_editor": "Línea N: a scanf le falta el & delante de la variable.",
-  "explicacion": "scanf guarda el dato en la dirección de la variable. Sin & le pasás el valor y no la dirección, así que el dato no llega a la variable.",
+  "explicacion": "scanf guarda el dato en la dirección de la variable. Sin & le pasas el valor y no la dirección, así que el dato no llega a la variable.",
   "como_arreglarlo": "",
   "pistas": [
-   "Mirá los argumentos de scanf.",
+   "Mira los argumentos de scanf.",
    "Falta un símbolo delante del nombre de la variable.",
-   "Escribí & antes del nombre."
+   "Escribe & antes del nombre."
   ],
   "relacion_con_la_materia": "scanf",
   "deteccion": "estatica",
@@ -381,9 +381,9 @@
   "explicacion": "%d lee enteros y %f lee float. Si no coinciden con el tipo declarado, el dato se guarda mal.",
   "como_arreglarlo": "",
   "pistas": [
-   "Revisá el tipo de la variable.",
-   "Compará el % con el tipo.",
-   "Usá %f para float y %d para int."
+   "Revisa el tipo de la variable.",
+   "Compara el % con el tipo.",
+   "Usa %f para float y %d para int."
   ],
   "relacion_con_la_materia": "scanf",
   "deteccion": "estatica",
@@ -409,13 +409,13 @@
   "codigo_bien": "",
   "entrada": "",
   "que_dice_gcc": "",
-  "mensaje_editor": "Línea N: dividís dos enteros y el resultado pierde los decimales.",
+  "mensaje_editor": "Línea N: divides dos enteros y el resultado pierde los decimales.",
   "explicacion": "En C, si los dos operandos son int, la división da un int y se descarta la parte decimal. 7/2 da 3, no 3.5.",
   "como_arreglarlo": "",
   "pistas": [
-   "Mirá el tipo de los dos números.",
+   "Mira el tipo de los dos números.",
    "Uno de los dos tiene que ser decimal.",
-   "Convertí uno con (float) o escribí 2.0."
+   "Convierte uno con (float) o escribe 2.0."
   ],
   "relacion_con_la_materia": "tipos",
   "deteccion": "estatica",
@@ -442,13 +442,13 @@
   "codigo_bien": "",
   "entrada": "",
   "que_dice_gcc": "",
-  "mensaje_editor": "Línea N: usás %d para mostrar un número decimal.",
+  "mensaje_editor": "Línea N: usas %d para mostrar un número decimal.",
   "explicacion": "%d espera un int. Un float necesita %f. Si no coinciden, se muestra cualquier cosa.",
   "como_arreglarlo": "",
   "pistas": [
-   "Compará el % con el tipo de la variable.",
+   "Compara el % con el tipo de la variable.",
    "El tipo es float.",
-   "Cambiá %d por %f."
+   "Cambia %d por %f."
   ],
   "relacion_con_la_materia": "tipos",
   "deteccion": "estatica",
@@ -474,13 +474,13 @@
   "codigo_bien": "",
   "entrada": "",
   "que_dice_gcc": "",
-  "mensaje_editor": "Línea N: usás 'ACUM' antes de darle un valor.",
-  "explicacion": "Una variable local nueva tiene basura. Si sumás sobre ella, el resultado no es el que esperás.",
+  "mensaje_editor": "Línea N: usas 'ACUM' antes de darle un valor.",
+  "explicacion": "Una variable local nueva tiene basura. Si sumas sobre ella, el resultado no es el que esperas.",
   "como_arreglarlo": "",
   "pistas": [
    "¿Qué vale ACUM al principio?",
-   "Falta una asignación antes del ciclo.",
-   "Escribí ACUM = 0 antes de usarla."
+   "Falta una asignación antes del lazo.",
+   "Escribe ACUM = 0 antes de usarla."
   ],
   "relacion_con_la_materia": "LC",
   "deteccion": "estatica",
@@ -506,13 +506,13 @@
   "codigo_bien": "",
   "entrada": "",
   "que_dice_gcc": "",
-  "mensaje_editor": "Línea N: en la condición usás = (asigna) en vez de == (compara).",
-  "explicacion": "= guarda un valor; == pregunta si dos valores son iguales. En un if casi siempre querés ==.",
+  "mensaje_editor": "Línea N: en la condición usas = (asigna) en vez de == (compara).",
+  "explicacion": "= guarda un valor; == pregunta si dos valores son iguales. En un if casi siempre quieres ==.",
   "como_arreglarlo": "",
   "pistas": [
-   "Mirá el operador de la condición.",
+   "Mira el operador de la condición.",
    "Hay un solo signo igual.",
-   "Poné ==."
+   "Pon ==."
   ],
   "relacion_con_la_materia": "BC",
   "deteccion": "estatica",
@@ -532,19 +532,19 @@
  {
   "id": "CTL-002",
   "categoria": "control",
-  "nombre_corto": "Ciclo infinito",
+  "nombre_corto": "Lazo infinito",
   "frecuencia": "alta",
   "codigo_mal": "",
   "codigo_bien": "",
   "entrada": "",
   "que_dice_gcc": "",
-  "mensaje_editor": "Línea N: la condición del ciclo nunca se vuelve falsa.",
+  "mensaje_editor": "Línea N: la condición del lazo nunca se vuelve falsa.",
   "explicacion": "Un while repite mientras la condición sea verdadera. Si dentro del cuerpo nada la cambia, nunca termina.",
   "como_arreglarlo": "",
   "pistas": [
-   "¿Qué variable controla el ciclo?",
+   "¿Qué variable controla el lazo?",
    "Esa variable no cambia adentro.",
-   "Agregá el incremento."
+   "Agrega el incremento."
   ],
   "relacion_con_la_materia": "LC",
   "deteccion": "heuristica",
@@ -577,7 +577,7 @@
   "pistas": [
    "¿Cuánto vale el divisor?",
    "El divisor es 0 en esta ejecución.",
-   "Preguntá si el divisor es distinto de 0 antes de dividir."
+   "Pregunta si el divisor es distinto de 0 antes de dividir."
   ],
   "relacion_con_la_materia": "tipos",
   "deteccion": "estatica",
@@ -604,13 +604,13 @@
   "codigo_bien": "",
   "entrada": "",
   "que_dice_gcc": "",
-  "mensaje_editor": "Línea N: usás un índice fuera del arreglo.",
+  "mensaje_editor": "Línea N: usas un índice fuera del arreglo.",
   "explicacion": "Un arreglo de N elementos tiene índices de 0 a N-1.",
   "como_arreglarlo": "",
   "pistas": [
-   "Contá los elementos.",
+   "Cuenta los elementos.",
    "El último índice es uno menos.",
-   "Cambiá <= por <."
+   "Cambia <= por <."
   ],
   "relacion_con_la_materia": "arreglos",
   "deteccion": "estatica",
@@ -636,13 +636,13 @@
   "codigo_bien": "",
   "entrada": "",
   "que_dice_gcc": "",
-  "mensaje_editor": "Línea N: usás una función que todavía no fue declarada.",
+  "mensaje_editor": "Línea N: usas una función que todavía no fue declarada.",
   "explicacion": "Antes de llamar a una función, el compilador tiene que conocer su forma: eso es el prototipo.",
   "como_arreglarlo": "",
   "pistas": [
    "¿Dónde está definida la función?",
    "Está después de main.",
-   "Escribí el prototipo arriba de main."
+   "Escribe el prototipo arriba de main."
   ],
   "relacion_con_la_materia": "prototipos",
   "deteccion": "estatica",
@@ -675,7 +675,7 @@
   "pistas": [
    "¿Qué estás comparando?",
    "Son textos.",
-   "Usá strcmp de string.h."
+   "Usa strcmp de string.h."
   ],
   "relacion_con_la_materia": "arreglos",
   "deteccion": "estatica",

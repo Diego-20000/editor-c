@@ -22,15 +22,15 @@ t('cargar cuenta las entradas', () => { const r = KB.cargar(datos); eq(r, { erro
 /* ---------- buscador: [consulta, id esperado, posición máxima (1 = primero)] ---------- */
 const CONSULTAS = [
   ['por qué 7/2 da 3', 'L-008', 1], ['scanf &', 'SCN-001', 3], ['punto y coma', 'L-001', 3], ['qué es un prototipo', 'prototipo', 3],
-  ['dividir por cero', 'EJE-001', 2], ['comparar decimales', 'TIP-003', 2], ['texto', 'L-036', 1], ['ciclo infinito', 'CTL-002', 1],
+  ['dividir por cero', 'EJE-001', 2], ['comparar decimales', 'TIP-003', 2], ['texto', 'L-036', 1], ['ciclo infinito', 'CTL-002', 2],
   ['&&', '&&', 1], ['%d', '%d', 1], ['for', 'for', 1], ['raíz cuadrada', 'sqrt', 1], ['número aleatorio', 'rand', 1],
   ['comparar cadenas', 'ARR-001', 1], ['strcmp', 'ARR-001', 1], ['variable sin valor', 'L-009', 1], ['mi programa se cuelga', 'CTL-002', 1],
   ['índice fuera de rango', 'EJE-002', 1], ['if con un solo igual', 'CTL-001', 1], ['valor absoluto', 'abs', 1], ['scanf no lee el dato', 'L-017', 3],
   ['salto de linea', '\\n', 2], ['llaves', 'L-002', 3], ['potencia', 'pow', 1], ['declarar una función', 'FUN-001', 3], ['++', '++', 1],
   ['stdio', 'stdio.h', 1], ['el while no termina', 'CTL-002', 1], ['división entera', 'L-008', 1], ['&', '&', 1], ['mayúsculas', 'L-004', 1],
-  ['mostrar en pantalla', 'printf', 1], ['para qué sirve el resto', '%', 1], ['qué es un bucle', 'while', 3], ['float con %d', 'TIP-002', 3],
+  ['mostrar en pantalla', 'printf', 1], ['para qué sirve el resto', '%', 1], ['qué es un lazo', 'while', 3], ['float con %d', 'TIP-002', 3],
   ['ciclos', 'while', 3], ['decimales', 'float', 3], ['ampersand', 'SCN-001', 3], ['dividir enteros', 'L-008', 2], ['0.1 + 0.2', 'TIP-003', 3],
-  ['bucle infinito', 'CTL-002', 1], ['SCANF SIN &', 'SCN-001', 1], ['Division', 'L-008', 3], ['cadena', 'L-036', 3], ['string', 'L-036', 3],
+  ['lazo infinito', 'CTL-002', 1], ['SCANF SIN &', 'SCN-001', 1], ['Division', 'L-008', 3], ['cadena', 'L-036', 3], ['string', 'L-036', 3],
   ['qué hace el módulo', '%', 3], ['como declaro una funcion', 'FUN-001', 3], ['basura en una variable', 'DEC-001', 3], ['igual igual', '==', 2]
 ];
 for (const [q, id, pos] of CONSULTAS) {
@@ -200,7 +200,7 @@ t('almacén: tolera fallas, datos rotos y sin almacén', () => {
 });
 t('mensajeWhatsApp: título, versión, diagnóstico, código y línea de datos', () => {
   const c = Compartir.nuevoCaso(CASO), m = Compartir.mensajeWhatsApp([c]);
-  ok(m.startsWith('Caso para el entrenador del Editor C')); ok(m.includes('abc123') && m.includes("falta '&'") && m.includes('línea 2'));
+  ok(m.startsWith('Caso para Diego (Editor C)')); ok(m.includes('abc123') && m.includes("falta '&'") && m.includes('línea 2'));
   ok(m.includes('```c\n' + c.codigo + '\n```')); const ult = m.split('\n').pop(); ok(ult.startsWith('#DATOS {')); eq(JSON.parse(ult.slice(7)).casos[0].codigo, c.codigo);
   ok(Compartir.mensajeWhatsApp([c, c]).includes('Caso 2') && Compartir.mensajeWhatsApp([c, c]).includes('2 casos'));
 });
@@ -216,8 +216,8 @@ t('urlWhatsApp: texto corto, sin recorte y textoCompleto', () => {
 t('urlWhatsApp: texto largo se recorta con aviso y queda en ~1800', () => {
   const m = Compartir.mensajeWhatsApp([Compartir.nuevoCaso({ codigo: '#include <stdio.h>\n' + 'printf("lineaañ %d\\n", 1);\n'.repeat(120), diag: { msg: 'm', line: 3 }, version: 'v1' })]);
   const u = Compartir.urlWhatsApp(m, ''), enc = u.split('?text=')[1], txt = decodeURIComponent(enc);
-  ok(enc.length <= 1800, 'quedó en ' + enc.length); ok(txt.endsWith('(recortado: copiá el resto con Copiar)')); ok(Compartir.recortado); eq(Compartir.textoCompleto, m);
-  ok(txt.includes('Caso para el entrenador') && txt.includes('```c'), 'conserva el encabezado y el bloque de código');
+  ok(enc.length <= 1800, 'quedó en ' + enc.length); ok(txt.endsWith('(recortado: copia el resto con Copiar)')); ok(Compartir.recortado); eq(Compartir.textoCompleto, m);
+  ok(txt.includes('Caso para Diego') && txt.includes('```c'), 'conserva el encabezado y el bloque de código');
 });
 t('urlWhatsApp: corte duro con un mensaje enorme', () => {
   const u = Compartir.urlWhatsApp('ñ'.repeat(5000), '549'), enc = u.split('?text=')[1]; ok(enc.length <= 1800); ok(decodeURIComponent(enc).endsWith('Copiar)'));
@@ -290,8 +290,8 @@ t('herramienta: archivo malo o sin uso → error y no escribe', () => {
 
 t('mensajeWhatsApp: la nota del alumno va primero y el encabezado fijo se reemplaza', () => {
   const c = Compartir.nuevoCaso(CASO), m = Compartir.mensajeWhatsApp([c], '  Me da 2 y esperaba 2.5  ');
-  ok(m.indexOf('Mensaje del alumno:\nMe da 2 y esperaba 2.5') === 0 && !m.includes('Caso para el entrenador'));
-  ok(Compartir.mensajeWhatsApp([c], '').startsWith('Caso para el entrenador del Editor C'));
+  ok(m.indexOf('Mensaje del alumno:\nMe da 2 y esperaba 2.5') === 0 && !m.includes('Caso para Diego'));
+  ok(Compartir.mensajeWhatsApp([c], '').startsWith('Caso para Diego (Editor C)'));
   ok(JSON.parse(Compartir.exportarJSON([c], { nota: 'hola' })).nota === 'hola' && !('nota' in JSON.parse(Compartir.exportarJSON([c]))));
   ok(Compartir.mensajeWhatsApp([Compartir.nuevoCaso(Object.assign({}, CASO, { diag: { msg: '', line: 0 } }))]).includes('sin mensaje del compilador'));
   eq(Compartir.importarJSON(m).casos, [c], 'el mensaje con nota se sigue pudiendo importar');

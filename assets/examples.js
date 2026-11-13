@@ -398,7 +398,7 @@ int main() {
     char TEXTO[80];
     int I, VOCALES = 0;
 
-    printf("Escribí una frase: ");
+    printf("Escribe una frase: ");
     fgets(TEXTO, 80, stdin);
 
     for (I = 0; TEXTO[I] != '\\0'; I++) {

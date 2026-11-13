@@ -11,7 +11,7 @@
   function norm(s) { return sinTildes(String(s == null ? '' : s).toLowerCase()); }
 
   var PALABRAS_VACIAS = {};
-  ('a al algo ante aca ahi ahora asi aun aunque con contra cual cuales cuando cuanto como de del desde donde dos e el ella ellos en entre era eran es esa ese eso esas esos esta estan este esto estos estoy fue ha hace hacen hacer hago han hay la las le les lo los me mi mis mucho muy ni no nos nuestro o os otra otro para pero por porque que quien quienes se ser si son su sus te ti tu tus un una uno unos unas va vamos van voy y ya yo da dan dar das dice dicen puede pueden puedo podria quiero quiere quieren saber necesito tengo tiene tienen sirve sirven usa usan usar significa sobre cada todo toda todos todas tambien segun sera seria hacemos hizo haga hagan muestra ayuda ayudame explicame explica decime dime').split(' ').forEach(function (w) { PALABRAS_VACIAS[w] = 1; });
+  ('a al algo ante aca ahi ahora asi aun aunque con contra cual cuales cuando cuanto como de del desde donde dos e el ella ellos en entre era eran es esa ese eso esas esos esta estan este esto estos estoy fue ha hace hacen hacer hago han hay la las le les lo los me mi mis mucho muy ni no nos nuestro o os otra otro para pero por porque que quien quienes se ser si son su sus te ti tu tus un una uno unos unas va vamos van voy y ya yo da dan dar das dice dicen puede pueden puedo podria quiero quiere quieren saber necesito tengo tiene tienen sirve sirven usa usan usar significa sobre cada todo toda todos todas tambien segun sera seria hacemos hizo haga hagan muestra ayuda ayúdame explícame explica dime dime').split(' ').forEach(function (w) { PALABRAS_VACIAS[w] = 1; });
 
   // Frases que se reemplazan por una sola palabra, igual en los textos de la base y en la consulta.
   var FRASES = [['punto y coma', 'puntoycoma'], ['punto flotante', 'flotante'], ['division entera', 'divisionentera'], ['division por cero', 'divisionporcero'], ['igual igual', 'sym:==']];
@@ -190,8 +190,8 @@
     if (!(n >= 1 && n <= 3) || n > p.length) return null;
     opts = opts || {};
     var vistas = typeof opts.vistas === 'number' ? opts.vistas : (n === 3 ? 0 : n - 1);
-    if (n > vistas + 1) return { n: n, texto: null, bloqueada: true, motivo: 'Pedí primero la pista ' + (vistas + 1) + '.', esSolucion: n === 3 };
-    if (n === 3 && opts.confirmar !== true) return { n: 3, texto: null, bloqueada: true, motivo: 'Esta pista es casi la solución. Confirmá que la querés ver.', esSolucion: true };
+    if (n > vistas + 1) return { n: n, texto: null, bloqueada: true, motivo: 'Pide primero la pista ' + (vistas + 1) + '.', esSolucion: n === 3 };
+    if (n === 3 && opts.confirmar !== true) return { n: 3, texto: null, bloqueada: true, motivo: 'Esta pista es casi la solución. Confirma que la quieres ver.', esSolucion: true };
     return { n: n, texto: p[n - 1], bloqueada: false, esSolucion: n === 3, hayMas: n < p.length };
   }
 
