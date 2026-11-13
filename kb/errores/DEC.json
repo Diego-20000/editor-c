@@ -8,13 +8,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int A;\n  A = 5;\n  printf(\"%d\\n\", A);\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:3: error: 'A' undeclared (first use in this function)",
-  "mensaje_editor": "Línea 3: A no está declarada. Antes de usarla escribí su tipo, por ejemplo int A;.",
+  "mensaje_editor": "Línea 3: A no está declarada. Antes de usarla escribe su tipo, por ejemplo int A;.",
   "explicacion": "En C toda variable se declara (tipo y nombre) antes de usarla. Si no, el compilador no sabe qué tipo de dato es ni cuánto lugar reservarle.",
-  "como_arreglarlo": "Agregá la declaración con su tipo antes de la primera línea donde se usa la variable.",
+  "como_arreglarlo": "Agrega la declaración con su tipo antes de la primera línea donde se usa la variable.",
   "pistas": [
-   "Mirá cada nombre que usás y preguntate dónde lo presentaste al programa.",
+   "Mira cada nombre que usas y pregúntate dónde lo presentaste al programa.",
    "Hay una variable que se usa sin haber sido declarada.",
-   "Antes de la línea 3 escribí el tipo y el nombre de la variable, terminado en ;."
+   "Antes de la línea 3 escribe el tipo y el nombre de la variable, terminado en ;."
   ],
   "relacion_con_la_materia": "SS, declaración de variables",
   "deteccion": "estatica",
@@ -37,12 +37,12 @@
   "entrada": "",
   "que_dice_gcc": "archivo.c:4: error: 'PORM' undeclared (first use in this function); did you mean 'PROM'?",
   "mensaje_editor": "Línea 4: PORM no está declarada. ¿Quisiste decir PROM?",
-  "explicacion": "Para C, PROM y PORM son dos nombres distintos. Si te comés o cambiás una letra, el compilador cree que es una variable nueva que nunca declaraste.",
-  "como_arreglarlo": "Comparaste el nombre de la declaración con el que usaste y escribilo igual, letra por letra.",
+  "explicacion": "Para C, PROM y PORM son dos nombres distintos. Si te comes o cambias una letra, el compilador cree que es una variable nueva que nunca declaraste.",
+  "como_arreglarlo": "Comparaste el nombre de la declaración con el que usaste y escríbelo igual, letra por letra.",
   "pistas": [
-   "Leé el error con calma: nombra una variable que vos creés haber declarado.",
+   "Lee el error con calma: nombra una variable que crees haber declarado.",
    "El nombre de la línea del printf no coincide con el de la declaración.",
-   "Dos letras están cambiadas de orden: escribí PROM como en la declaración."
+   "Dos letras están cambiadas de orden: escribe PROM como en la declaración."
   ],
   "relacion_con_la_materia": "SS, nombres de variables",
   "deteccion": "estatica",
@@ -66,11 +66,11 @@
   "que_dice_gcc": "archivo.c:4: error: 'n' undeclared (first use in this function)",
   "mensaje_editor": "Línea 4: n no está declarada, pero existe N. C distingue mayúsculas de minúsculas.",
   "explicacion": "En C, N y n son variables diferentes. La materia usa variables en mayúsculas, así que un descuido con la tecla de mayúsculas hace que el nombre no exista.",
-  "como_arreglarlo": "Escribí el nombre con las mismas mayúsculas que en la declaración.",
+  "como_arreglarlo": "Escribe el nombre con las mismas mayúsculas que en la declaración.",
   "pistas": [
-   "Los nombres coinciden en letras, pero fijate bien cómo están escritos.",
+   "Los nombres coinciden en letras, pero fíjate bien cómo están escritos.",
    "Una variable está en mayúscula en un lugar y en minúscula en otro.",
-   "Usá N, en mayúscula, en el printf."
+   "Usa N, en mayúscula, en el printf."
   ],
   "relacion_con_la_materia": "SS, declaración de variables",
   "deteccion": "estatica",
@@ -94,11 +94,11 @@
   "que_dice_gcc": "archivo.c:4: error: redefinition of 'A'",
   "mensaje_editor": "Línea 4: A ya fue declarada antes en este bloque. Para cambiar su valor alcanza con A = 2;.",
   "explicacion": "Una variable se declara una sola vez. Después se le cambia el valor con una asignación, sin repetir el tipo.",
-  "como_arreglarlo": "Dejá la declaración con el tipo una sola vez y en el resto del programa asigná sin escribir int.",
+  "como_arreglarlo": "Deja la declaración con el tipo una sola vez y en el resto del programa asigna sin escribir int.",
   "pistas": [
-   "Contá cuántas veces aparece el tipo delante de A.",
+   "Cuenta cuántas veces aparece el tipo delante de A.",
    "La misma variable está declarada dos veces en el mismo bloque.",
-   "La segunda vez no repitas int: solo asigná el valor."
+   "La segunda vez no repitas int: solo asigna el valor."
   ],
   "relacion_con_la_materia": "SS, declaración de variables",
   "deteccion": "estatica",
@@ -120,13 +120,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int SUMA = 0, I;\n  for (I = 1; I <= 3; I++) {\n    SUMA = SUMA + I;\n  }\n  printf(\"%d\\n\", SUMA);\n}",
   "entrada": "",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 5: SUMA se usa antes de darle un valor, y en C su valor inicial es basura. Asignale un valor inicial, por ejemplo SUMA = 0;.",
-  "explicacion": "Una variable local recién declarada no vale 0: tiene lo que haya quedado en esa memoria. Si la usás para acumular, el resultado arranca con basura.",
-  "como_arreglarlo": "Dale el valor inicial del acumulador antes del bucle, el neutro de la operación que acumulás.",
+  "mensaje_editor": "Línea 5: SUMA se usa antes de darle un valor, y en C su valor inicial es basura. Asígnale un valor inicial, por ejemplo SUMA = 0;.",
+  "explicacion": "Una variable local recién declarada no vale 0: tiene lo que haya quedado en esa memoria. Si la usas para acumular, el resultado arranca con basura.",
+  "como_arreglarlo": "Dale el valor inicial del acumulador antes del lazo, el neutro de la operación que acumulas.",
   "pistas": [
-   "Pensá cuánto vale SUMA la primera vez que se ejecuta la línea de adentro del for.",
+   "Piensa cuánto vale SUMA la primera vez que se ejecuta la línea de adentro del for.",
    "SUMA se usa para acumular sin tener un valor de partida.",
-   "Antes del for asigná a SUMA el valor con el que tiene que empezar."
+   "Antes del for asigna a SUMA el valor con el que tiene que empezar."
   ],
   "relacion_con_la_materia": "LC por acumuladores",
   "deteccion": "heuristica",
@@ -135,7 +135,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "'SUMA' se usa antes de darle un valor (en C su valor inicial es basura): asignale un valor inicial, por ejemplo SUMA = 0;",
+  "mensaje_editor_actual": "'SUMA' se usa antes de darle un valor (en C su valor inicial es basura): asígnale un valor inicial, por ejemplo SUMA = 0;",
   "codigo_editor_actual": "W-sin-inicializar",
   "verificado_editor_corrige": true
  },
@@ -148,13 +148,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int CONT = 0, A = 5;\n  if (A > 0) {\n    CONT++;\n  }\n  printf(\"%d\\n\", CONT);\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:5: warning: 'CONT' is used uninitialized [-Wuninitialized]",
-  "mensaje_editor": "Línea 5: CONT se usa antes de darle un valor, y en C su valor inicial es basura. Asignale un valor inicial, por ejemplo CONT = 0;.",
+  "mensaje_editor": "Línea 5: CONT se usa antes de darle un valor, y en C su valor inicial es basura. Asígnale un valor inicial, por ejemplo CONT = 0;.",
   "explicacion": "CONT++ suma 1 al valor que ya tenía CONT. Si nunca le diste un valor, suma 1 a basura y el contador sale mal aunque la lógica sea correcta.",
-  "como_arreglarlo": "Inicializá el contador en 0 al declararlo o antes de empezar a contar.",
+  "como_arreglarlo": "Inicializa el contador en 0 al declararlo o antes de empezar a contar.",
   "pistas": [
-   "Preguntate cuánto vale CONT antes del primer CONT++.",
+   "Pregúntate cuánto vale CONT antes del primer CONT++.",
    "Un contador tiene que arrancar de un valor conocido.",
-   "Declará CONT con = 0."
+   "Declara CONT con = 0."
   ],
   "relacion_con_la_materia": "LC por contadores",
   "deteccion": "heuristica",
@@ -163,7 +163,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "'CONT' se usa antes de darle un valor (en C su valor inicial es basura): asignale un valor inicial, por ejemplo CONT = 0;",
+  "mensaje_editor_actual": "'CONT' se usa antes de darle un valor (en C su valor inicial es basura): asígnale un valor inicial, por ejemplo CONT = 0;",
   "codigo_editor_actual": "W-sin-inicializar",
   "verificado_editor_corrige": true
  },
@@ -178,11 +178,11 @@
   "que_dice_gcc": "archivo.c:5: warning: unused variable 'DOBLE' [-Wunused-variable]",
   "mensaje_editor": "Línea 6: DOBLE no está declarada en este lugar. Se declaró adentro de las llaves de la línea 4 y solo existe ahí.",
   "explicacion": "Una variable declarada entre llaves existe solamente hasta la llave que cierra. Fuera de ese bloque el nombre deja de existir.",
-  "como_arreglarlo": "Declarala afuera del bloque, antes del if, y adentro del if solo asignale el valor.",
+  "como_arreglarlo": "Decláralo afuera del bloque, antes del if, y adentro del if solo asígnale el valor.",
   "pistas": [
-   "Fijate entre qué llaves nace la variable y dónde la querés usar.",
+   "Fíjate entre qué llaves nace la variable y dónde la quieres usar.",
    "La variable se declara en un bloque y se usa en otro, fuera de ese bloque.",
-   "Subí la declaración antes del if; adentro dejá solo la asignación."
+   "Sube la declaración antes del if; adentro deja solo la asignación."
   ],
   "relacion_con_la_materia": "BC, alcance de variables",
   "deteccion": "estatica",
@@ -205,12 +205,12 @@
   "entrada": "",
   "que_dice_gcc": "archivo.c:7: error: 'I' undeclared (first use in this function)",
   "mensaje_editor": "Línea 6: I no está declarada en este lugar. Se declaró dentro del for y deja de existir cuando termina.",
-  "explicacion": "Una variable declarada dentro de los paréntesis del for vive solo en ese for. Si después querés leer su valor final, tiene que estar declarada antes.",
+  "explicacion": "Una variable declarada dentro de los paréntesis del for vive solo en ese for. Si después quieres leer su valor final, tiene que estar declarada antes.",
   "como_arreglarlo": "Declarar la variable antes del for y en el for solo inicializarla.",
   "pistas": [
-   "Preguntate dónde nace I y hasta dónde llega.",
+   "Pregúntate dónde nace I y hasta dónde llega.",
    "I se declara dentro del for pero se usa en una línea posterior.",
-   "Declarala antes del for con int I; y en el for dejá I = 1."
+   "Decláralo antes del for con int I; y en el for deja I = 1."
   ],
   "relacion_con_la_materia": "LR, alcance de variables",
   "deteccion": "estatica",
@@ -233,12 +233,12 @@
   "entrada": "",
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 7: esta A es una variable nueva que tapa a la A global de la línea 2. Lo que cambies acá no modifica la global.",
-  "explicacion": "Si dentro de una función declarás una variable con el mismo nombre que una global, la local tapa a la global. Los cambios se hacen sobre la copia local y la global queda igual.",
-  "como_arreglarlo": "Si querés modificar la global, no la vuelvas a declarar adentro de la función.",
+  "explicacion": "Si dentro de una función declaras una variable con el mismo nombre que una global, la local tapa a la global. Los cambios se hacen sobre la copia local y la global queda igual.",
+  "como_arreglarlo": "Si quieres modificar la global, no la vuelvas a declarar adentro de la función.",
   "pistas": [
-   "Contá cuántas A distintas hay en el programa.",
+   "Cuenta cuántas A distintas hay en el programa.",
    "Hay una A afuera de las funciones y otra adentro de main.",
-   "Sacá el int de la A que está en main y usá la global."
+   "Saca el int de la A que está en main y usa la global."
   ],
   "relacion_con_la_materia": "SS, variables globales y locales",
   "deteccion": "heuristica",
@@ -262,11 +262,11 @@
   "que_dice_gcc": "archivo.c:4: error: assignment of read-only variable 'N'",
   "mensaje_editor": "Línea 4: N es const (constante) y no se le puede asignar otro valor.",
   "explicacion": "Una variable declarada con const queda fija: el compilador no deja cambiarle el valor después de inicializarla. Sirve para datos que no deben cambiar.",
-  "como_arreglarlo": "Si el valor tiene que cambiar, declará la variable sin const; si no debe cambiar, sacá la asignación.",
+  "como_arreglarlo": "Si el valor tiene que cambiar, declara la variable sin const; si no debe cambiar, saca la asignación.",
   "pistas": [
-   "Mirá cómo está declarada N.",
+   "Mira cómo está declarada N.",
    "N tiene una palabra antes del tipo que la vuelve de solo lectura.",
-   "Sacá const de la declaración si necesitás cambiar el valor."
+   "Saca const de la declaración si necesitas cambiar el valor."
   ],
   "relacion_con_la_materia": "SS, constantes",
   "deteccion": "estatica",
@@ -290,11 +290,11 @@
   "que_dice_gcc": "archivo.c:3: error: 'A' undeclared (first use in this function)",
   "mensaje_editor": "Línea 3: A se usa antes de declararla. La declaración tiene que estar antes de la primera línea que usa la variable.",
   "explicacion": "C lee el programa de arriba hacia abajo. Una variable existe recién a partir de su declaración, no antes.",
-  "como_arreglarlo": "Mové la declaración hacia arriba, antes de la primera línea que usa la variable.",
+  "como_arreglarlo": "Mueve la declaración hacia arriba, antes de la primera línea que usa la variable.",
   "pistas": [
-   "Fijate en qué orden aparecen la declaración y el primer uso.",
+   "Fíjate en qué orden aparecen la declaración y el primer uso.",
    "El primer uso aparece antes que la declaración.",
-   "Intercambiá el orden de las dos líneas."
+   "Intercambia el orden de las dos líneas."
   ],
   "relacion_con_la_materia": "SS, declaración de variables",
   "deteccion": "estatica",
@@ -318,11 +318,11 @@
   "que_dice_gcc": "archivo.c:3: warning: unused variable 'B' [-Wunused-variable]",
   "mensaje_editor": "Línea 3: B se declara pero nunca se usa. ¿Te olvidaste de usarla o sobra?",
   "explicacion": "Una variable que nunca se lee suele indicar un olvido: faltó usarla en una cuenta o en un printf. Si no hace falta, se saca.",
-  "como_arreglarlo": "Revisá si te falta usar la variable en algún cálculo o salida; si no hace falta, borrá la declaración.",
+  "como_arreglarlo": "Revisa si te falta usar la variable en algún cálculo o salida; si no hace falta, borra la declaración.",
   "pistas": [
-   "Contá las variables que declarás y las que usás.",
+   "Cuenta las variables que declaras y las que usas.",
    "Hay una variable que figura en la declaración y en ningún otro lugar.",
-   "Usala en el printf o quitala de la declaración."
+   "Úsala en el printf o quítala de la declaración."
   ],
   "relacion_con_la_materia": "SS, declaración de variables",
   "deteccion": "estatica",
@@ -346,11 +346,11 @@
   "que_dice_gcc": "archivo.c:3: warning: variable 'B' set but not used [-Wunused-but-set-variable]",
   "mensaje_editor": "Línea 3: B recibe un valor pero ese valor nunca se usa. ¿Te faltó mostrarla o usarla?",
   "explicacion": "Calcular un resultado y no mostrarlo ni usarlo es un descuido típico: el programa hace la cuenta pero el usuario nunca la ve.",
-  "como_arreglarlo": "Mostrá o usá el valor calculado, o sacá la cuenta si no hace falta.",
+  "como_arreglarlo": "Muestra o usa el valor calculado, o saca la cuenta si no hace falta.",
   "pistas": [
-   "Seguí el camino de B desde que se calcula.",
+   "Sigue el camino de B desde que se calcula.",
    "B se calcula y después nadie la lee.",
-   "Agregá B al printf."
+   "Agrega B al printf."
   ],
   "relacion_con_la_materia": "SS, salida de resultados",
   "deteccion": "estatica",
@@ -374,11 +374,11 @@
   "que_dice_gcc": "archivo.c:4: warning: 'A' is used uninitialized [-Wuninitialized]",
   "mensaje_editor": "Línea 4: A se usa antes de darle un valor, y en C su valor inicial es basura. En int A, B, C = 0; solo C vale 0.",
   "explicacion": "El = 0 de una declaración con comas inicializa únicamente a la variable que lo lleva al lado. Las demás quedan sin valor.",
-  "como_arreglarlo": "Escribí el valor inicial junto a cada variable que lo necesite.",
+  "como_arreglarlo": "Escribe el valor inicial junto a cada variable que lo necesite.",
   "pistas": [
-   "Pensá cuántas variables valen 0 al arrancar.",
+   "Piensa cuántas variables valen 0 al arrancar.",
    "En la declaración con comas, el = 0 aparece una sola vez.",
-   "Poné = 0 al lado de A y de B también."
+   "Pon = 0 al lado de A y de B también."
   ],
   "relacion_con_la_materia": "SS, declaración de variables",
   "deteccion": "heuristica",
@@ -387,7 +387,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "'A' se usa antes de darle un valor (en C su valor inicial es basura): asignale un valor inicial, por ejemplo A = 0;",
+  "mensaje_editor_actual": "'A' se usa antes de darle un valor (en C su valor inicial es basura): asígnale un valor inicial, por ejemplo A = 0;",
   "codigo_editor_actual": "W-sin-inicializar",
   "verificado_editor_corrige": true
  },
@@ -402,11 +402,11 @@
   "que_dice_gcc": "archivo.c:3: error: expected identifier or '(' before numeric constant",
   "mensaje_editor": "Línea 3: en C los decimales se escriben con punto (12.5), no con coma. La coma separa variables.",
   "explicacion": "En C la coma separa elementos (variables, argumentos). El separador decimal es el punto, como en las calculadoras en inglés.",
-  "como_arreglarlo": "Reemplazá la coma por un punto en el número.",
+  "como_arreglarlo": "Reemplaza la coma por un punto en el número.",
   "pistas": [
-   "Mirá el número que le das a PRECIO.",
+   "Mira el número que le das a PRECIO.",
    "El número decimal está escrito como se hace en español.",
-   "Usá punto en lugar de coma."
+   "Usa punto en lugar de coma."
   ],
   "relacion_con_la_materia": "SS, tipos de datos",
   "deteccion": "estatica",
@@ -428,13 +428,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int NOTA_FINAL = 8;\n  printf(\"%d\\n\", NOTA_FINAL);\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:3: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'FINAL'",
-  "mensaje_editor": "Línea 3: el nombre de una variable no puede tener espacios. Usá un guion bajo, por ejemplo NOTA_FINAL.",
+  "mensaje_editor": "Línea 3: el nombre de una variable no puede tener espacios. Usa un guion bajo, por ejemplo NOTA_FINAL.",
   "explicacion": "Un nombre de variable es una sola palabra, sin espacios. Para unir dos palabras se usa el guion bajo _ o se escriben pegadas.",
-  "como_arreglarlo": "Unilas con guion bajo y usá siempre el mismo nombre.",
+  "como_arreglarlo": "Unilas con guion bajo y usa siempre el mismo nombre.",
   "pistas": [
-   "Leé el nombre completo de la variable.",
+   "Lee el nombre completo de la variable.",
    "El nombre tiene dos palabras separadas.",
-   "Cambiá el espacio por _."
+   "Cambia el espacio por _."
   ],
   "relacion_con_la_materia": "SS, nombres de variables",
   "deteccion": "estatica",
@@ -456,13 +456,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int NOTA1 = 8;\n  printf(\"%d\\n\", NOTA1);\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:3: error: invalid suffix \"NOTA\" on integer constant",
-  "mensaje_editor": "Línea 3: un nombre de variable no puede empezar con un número. Probá NOTA1.",
+  "mensaje_editor": "Línea 3: un nombre de variable no puede empezar con un número. Prueba NOTA1.",
   "explicacion": "Los nombres de variables empiezan con una letra o con _. Los números pueden ir en el medio o al final.",
-  "como_arreglarlo": "Poné el número al final del nombre.",
+  "como_arreglarlo": "Pon el número al final del nombre.",
   "pistas": [
-   "Mirá con qué carácter empieza el nombre.",
+   "Mira con qué carácter empieza el nombre.",
    "El nombre empieza con un dígito.",
-   "Escribilo como NOTA1."
+   "Escríbelo como NOTA1."
   ],
   "relacion_con_la_materia": "SS, nombres de variables",
   "deteccion": "estatica",
@@ -486,11 +486,11 @@
   "que_dice_gcc": "archivo.c:3: error: expected identifier or '(' before 'case'",
   "mensaje_editor": "Línea 3: case es una palabra reservada de C y no puede usarse como nombre de variable.",
   "explicacion": "Palabras como case, for, while, int o return tienen un significado fijo en C. No se pueden usar como nombres.",
-  "como_arreglarlo": "Elegí otro nombre que no sea una palabra reservada.",
+  "como_arreglarlo": "Elige otro nombre que no sea una palabra reservada.",
   "pistas": [
-   "Probá leer el nombre como si fuera una instrucción de C.",
+   "Prueba leer el nombre como si fuera una instrucción de C.",
    "El nombre elegido ya significa algo en el lenguaje.",
-   "Cambialo por CASO."
+   "Cámbialo por CASO."
   ],
   "relacion_con_la_materia": "SS, nombres de variables",
   "deteccion": "estatica",
@@ -512,13 +512,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int TOTAL_FINAL = 5;\n  printf(\"%d\\n\", TOTAL_FINAL);\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:3: error: expected '=', ',', ';', 'asm' or '__attribute__' before '-' token",
-  "mensaje_editor": "Línea 3: el guion - es el operador resta y no puede ir en un nombre. Usá el guion bajo _.",
+  "mensaje_editor": "Línea 3: el guion - es el operador resta y no puede ir en un nombre. Usa el guion bajo _.",
   "explicacion": "En C el signo - es una resta. Para separar palabras en un nombre se usa el guion bajo _.",
-  "como_arreglarlo": "Cambiá el guion medio por un guion bajo en la declaración y en cada uso.",
+  "como_arreglarlo": "Cambia el guion medio por un guion bajo en la declaración y en cada uso.",
   "pistas": [
-   "Mirá los caracteres que forman el nombre.",
+   "Mira los caracteres que forman el nombre.",
    "El nombre contiene un signo que C lee como operación.",
-   "Escribí TOTAL_FINAL."
+   "Escribe TOTAL_FINAL."
   ],
   "relacion_con_la_materia": "SS, nombres de variables",
   "deteccion": "estatica",
@@ -541,17 +541,17 @@
   "entrada": "",
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 4: SUMA = 0 dentro del for vuelve a poner el acumulador en 0 en cada vuelta, así que nunca acumula.",
-  "explicacion": "La inicialización del acumulador va una sola vez, antes del bucle. Si está adentro, cada vuelta borra lo que se juntó antes.",
-  "como_arreglarlo": "Sacá la inicialización de adentro del bucle y ponela antes de que empiece.",
+  "explicacion": "La inicialización del acumulador va una sola vez, antes del lazo. Si está adentro, cada vuelta borra lo que se juntó antes.",
+  "como_arreglarlo": "Saca la inicialización de adentro del lazo y ponla antes de que empiece.",
   "pistas": [
-   "Seguí el valor de SUMA durante las vueltas del for.",
+   "Sigue el valor de SUMA durante las vueltas del for.",
    "Hay una asignación a 0 que se repite en cada vuelta.",
-   "Mové SUMA = 0 antes del for."
+   "Mueve SUMA = 0 antes del for."
   ],
   "relacion_con_la_materia": "LC por acumuladores",
   "deteccion": "heuristica",
-  "como_detectarlo": "Asignación de una constante al acumulador dentro del cuerpo del bucle que también hace SUMA = SUMA + algo.",
-  "riesgo_falso_positivo": "Un total parcial que sí tiene que reiniciarse en cada grupo (bucle anidado).",
+  "como_detectarlo": "Asignación de una constante al acumulador dentro del cuerpo del lazo que también hace SUMA = SUMA + algo.",
+  "riesgo_falso_positivo": "Un total parcial que sí tiene que reiniciarse en cada grupo (lazo anidado).",
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
@@ -569,12 +569,12 @@
   "entrada": "",
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 4: este int N crea una variable nueva que tapa a la N de la línea 3. Al salir de las llaves, la de afuera sigue valiendo lo mismo.",
-  "explicacion": "Si en un bloque repetís el tipo y el nombre, nace otra variable distinta que desaparece al cerrar la llave. La original no cambia.",
-  "como_arreglarlo": "Dentro del bloque no repitas el tipo: asigná directamente a la variable que ya existe.",
+  "explicacion": "Si en un bloque repites el tipo y el nombre, nace otra variable distinta que desaparece al cerrar la llave. La original no cambia.",
+  "como_arreglarlo": "Dentro del bloque no repitas el tipo: asigna directamente a la variable que ya existe.",
   "pistas": [
-   "Pensá cuántas variables llamadas N existen en ese programa.",
+   "Piensa cuántas variables llamadas N existen en ese programa.",
    "Dentro de las llaves se declara otra N.",
-   "Sacá int de la línea de adentro."
+   "Saca int de la línea de adentro."
   ],
   "relacion_con_la_materia": "BC, alcance de variables",
   "deteccion": "heuristica",
@@ -596,13 +596,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int A = 1;\n  float B = 2.5;\n  printf(\"%d %f\\n\", A, B);\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:4: error: conflicting types for 'A'; have 'float'",
-  "mensaje_editor": "Línea 4: A ya fue declarada antes con otro tipo. Usá un nombre distinto para la segunda variable.",
-  "explicacion": "Cada nombre se declara una sola vez en su bloque, aunque el tipo cambie. Si necesitás dos datos distintos, usá dos nombres.",
-  "como_arreglarlo": "Dale un nombre diferente a una de las dos variables y usá cada una donde corresponde.",
+  "mensaje_editor": "Línea 4: A ya fue declarada antes con otro tipo. Usa un nombre distinto para la segunda variable.",
+  "explicacion": "Cada nombre se declara una sola vez en su bloque, aunque el tipo cambie. Si necesitas dos datos distintos, usa dos nombres.",
+  "como_arreglarlo": "Dale un nombre diferente a una de las dos variables y usa cada una donde corresponde.",
   "pistas": [
-   "Leé las dos declaraciones una debajo de la otra.",
+   "Lee las dos declaraciones una debajo de la otra.",
    "Dos variables tienen el mismo nombre.",
-   "Renombrá la segunda como B."
+   "Renombra la segunda como B."
   ],
   "relacion_con_la_materia": "SS, declaración de variables",
   "deteccion": "estatica",
@@ -625,12 +625,12 @@
   "entrada": "",
   "que_dice_gcc": "archivo.c:3: error: 'B' undeclared (first use in this function)",
   "mensaje_editor": "Línea 3: B no está declarada. En una declaración, el = solo inicializa la variable que se declara.",
-  "explicacion": "Podés encadenar asignaciones (A = B = 0;) pero antes las dos variables tienen que estar declaradas. En una declaración no se puede inventar B.",
-  "como_arreglarlo": "Declarí A y B primero y después asignalas en cadena.",
+  "explicacion": "Puedes encadenar asignaciones (A = B = 0;) pero antes las dos variables tienen que estar declaradas. En una declaración no se puede inventar B.",
+  "como_arreglarlo": "Declara A y B primero y después asígnalas en cadena.",
   "pistas": [
-   "Fijate qué variables nombra esa línea y cuáles declara.",
+   "Fíjate qué variables nombra esa línea y cuáles declara.",
    "B aparece sin haber sido declarada.",
-   "Declará A y B en una línea y asigná en otra."
+   "Declara A y B en una línea y asigna en otra."
   ],
   "relacion_con_la_materia": "SS, asignaciones",
   "deteccion": "estatica",
@@ -652,13 +652,13 @@
   "codigo_bien": "#include <stdio.h>\nint C = 0;\nint cuenta() {\n  C++;\n  return C;\n}\nint main() {\n  printf(\"%d \", cuenta());\n  printf(\"%d \", cuenta());\n  printf(\"%d\\n\", cuenta());\n}",
   "entrada": "",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 2: la variable C se crea de nuevo en cada llamada a cuenta(), por eso siempre vale 1. Si querés que recuerde su valor, declarala afuera de la función.",
+  "mensaje_editor": "Línea 2: la variable C se crea de nuevo en cada llamada a cuenta(), por eso siempre vale 1. Si quieres que recuerde su valor, decláralo afuera de la función.",
   "explicacion": "Las variables locales nacen cuando se llama a la función y se pierden al terminar. En la próxima llamada vuelven a empezar de cero.",
   "como_arreglarlo": "Declarar la variable fuera de la función (global) para que conserve su valor entre llamadas.",
   "pistas": [
-   "Probá a mano qué valor tiene C al empezar cada llamada.",
+   "Prueba a mano qué valor tiene C al empezar cada llamada.",
    "La variable se declara y se inicializa adentro de la función.",
-   "Declará C arriba de la función, en el nivel de los globales."
+   "Declara C arriba de la función, en el nivel de los globales."
   ],
   "relacion_con_la_materia": "Funciones, alcance de variables",
   "deteccion": "heuristica",
@@ -681,12 +681,12 @@
   "entrada": "7",
   "que_dice_gcc": "archivo.c:8: error: 'A' undeclared (first use in this function)",
   "mensaje_editor": "Línea 7: A no está declarada en main. Se declaró dentro de leer() y solo existe ahí.",
-  "explicacion": "Cada función tiene sus propias variables. Lo que declarás en una función no se ve desde otra, salvo que se lo devuelvas o la declares global.",
-  "como_arreglarlo": "Hacé que la función devuelva el valor con return y guardalo en una variable de main.",
+  "explicacion": "Cada función tiene sus propias variables. Lo que declaras en una función no se ve desde otra, salvo que se lo devuelvas o la declares global.",
+  "como_arreglarlo": "Haz que la función devuelva el valor con return y guárdalo en una variable de main.",
   "pistas": [
-   "Pensá dónde nace A y dónde la querés usar.",
+   "Piensa dónde nace A y dónde la quieres usar.",
    "A se declara en una función y se usa en otra.",
-   "Devolvé el valor con return y recibilo en main."
+   "Devuelve el valor con return y recíbelo en main."
   ],
   "relacion_con_la_materia": "Funciones, alcance de variables",
   "deteccion": "estatica",
@@ -709,12 +709,12 @@
   "entrada": "",
   "que_dice_gcc": "archivo.c:4: warning: 'LIMITE' is used uninitialized [-Wuninitialized]",
   "mensaje_editor": "Línea 3: LIMITE es const pero no tiene valor inicial. Como después no se puede asignar, hay que darle el valor al declararla.",
-  "explicacion": "Una constante solo se puede dar valor en su declaración. Si la declarás sin valor, queda con basura y no podés corregirlo.",
-  "como_arreglarlo": "Escribí el valor en la misma línea de la declaración: const int LIMITE = 10;",
+  "explicacion": "Una constante solo se puede dar valor en su declaración. Si la declaras sin valor, queda con basura y no puedes corregirlo.",
+  "como_arreglarlo": "Escribe el valor en la misma línea de la declaración: const int LIMITE = 10;",
   "pistas": [
-   "Pensá cuándo se le puede dar un valor a una constante.",
+   "Piensa cuándo se le puede dar un valor a una constante.",
    "La constante se declara y no recibe valor.",
-   "Agregá = 10 en la declaración."
+   "Agrega = 10 en la declaración."
   ],
   "relacion_con_la_materia": "SS, constantes",
   "deteccion": "heuristica",
@@ -723,7 +723,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "'LIMITE' se usa antes de darle un valor (en C su valor inicial es basura): asignale un valor inicial, por ejemplo LIMITE = 0;",
+  "mensaje_editor_actual": "'LIMITE' se usa antes de darle un valor (en C su valor inicial es basura): asígnale un valor inicial, por ejemplo LIMITE = 0;",
   "codigo_editor_actual": "W-sin-inicializar",
   "verificado_editor_corrige": true
  },
@@ -738,11 +738,11 @@
   "que_dice_gcc": "archivo.c:3: error: expected '=', ',', ';', 'asm' or '__attribute__' before '==' token",
   "mensaje_editor": "Línea 3: para darle un valor inicial a A se usa un solo =. El == es para comparar.",
   "explicacion": "= guarda un valor en la variable. == pregunta si dos valores son iguales. En una declaración solo tiene sentido guardar.",
-  "como_arreglarlo": "Reemplazá == por = en la declaración.",
+  "como_arreglarlo": "Reemplaza == por = en la declaración.",
   "pistas": [
-   "Contá cuántos signos = escribiste.",
+   "Cuenta cuántos signos = escribiste.",
    "La declaración tiene un signo de comparación en lugar del de asignación.",
-   "Dejá un solo =."
+   "Deja un solo =."
   ],
   "relacion_con_la_materia": "SS, declaración y asignación",
   "deteccion": "estatica",
@@ -766,11 +766,11 @@
   "que_dice_gcc": "archivo.c:4: error: 'B' undeclared (first use in this function)",
   "mensaje_editor": "Línea 4: B no está declarada. Cada variable nueva lleva su tipo, por ejemplo int B = 2;.",
   "explicacion": "El tipo de la primera declaración vale solo para esa línea. Para otra variable hay que declarar de nuevo con su tipo.",
-  "como_arreglarlo": "Escribí el tipo delante de B en su primera aparición.",
+  "como_arreglarlo": "Escribe el tipo delante de B en su primera aparición.",
   "pistas": [
-   "Compará cómo empieza la línea de A y la de B.",
+   "Compara cómo empieza la línea de A y la de B.",
    "B se asigna sin haber sido declarada.",
-   "Agregá int delante de B."
+   "Agrega int delante de B."
   ],
   "relacion_con_la_materia": "SS, declaración de variables",
   "deteccion": "estatica",
@@ -796,9 +796,9 @@
   "explicacion": "El contador de un for es una variable como cualquier otra: necesita su declaración con tipo antes de usarse.",
   "como_arreglarlo": "Declarar el contador antes del for.",
   "pistas": [
-   "Revisá las variables del for una por una.",
+   "Revisa las variables del for una por una.",
    "El contador del for no figura en ninguna declaración.",
-   "Agregá I a la declaración de arriba."
+   "Agrega I a la declaración de arriba."
   ],
   "relacion_con_la_materia": "LR, variable de control",
   "deteccion": "estatica",
@@ -821,16 +821,16 @@
   "entrada": "",
   "que_dice_gcc": "archivo.c:9: error: 'SUMA' undeclared (first use in this function)",
   "mensaje_editor": "Línea 8: SUMA no está declarada en este lugar. Se declaró dentro del while y solo existe en cada vuelta.",
-  "explicacion": "Lo que se declara dentro de un bucle nace y muere en cada vuelta. Un acumulador debe declararse antes del bucle.",
+  "explicacion": "Lo que se declara dentro de un lazo nace y muere en cada vuelta. Un acumulador debe declararse antes del lazo.",
   "como_arreglarlo": "Declarar e inicializar el acumulador antes del while.",
   "pistas": [
-   "Pensá cuántas veces nace SUMA durante el programa.",
+   "Piensa cuántas veces nace SUMA durante el programa.",
    "SUMA se declara dentro del while y se muestra después del while.",
-   "Declarala y poné = 0 antes del while."
+   "Decláralo y pon = 0 antes del while."
   ],
   "relacion_con_la_materia": "LC por acumuladores, alcance",
   "deteccion": "estatica",
-  "como_detectarlo": "Identificador usado después de un bucle y declarado dentro del cuerpo.",
+  "como_detectarlo": "Identificador usado después de un lazo y declarado dentro del cuerpo.",
   "riesgo_falso_positivo": "ninguno",
   "nivel": "error",
   "verificado_gcc13": true,
@@ -848,13 +848,13 @@
   "codigo_bien": "#include <stdio.h>\nint doble(int N) {\n  int R = N * 2;\n  return R;\n}\nint main() {\n  printf(\"%d\\n\", doble(4));\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:3: error: 'N' redeclared as different kind of symbol",
-  "mensaje_editor": "Línea 3: N ya es un parámetro de la función y no se puede declarar de nuevo. Usá otro nombre para el resultado.",
+  "mensaje_editor": "Línea 3: N ya es un parámetro de la función y no se puede declarar de nuevo. Usa otro nombre para el resultado.",
   "explicacion": "Los parámetros son variables locales de la función. Declarar otra con el mismo nombre en el mismo bloque es una redeclaración.",
-  "como_arreglarlo": "Usá un nombre distinto para la variable nueva.",
+  "como_arreglarlo": "Usa un nombre distinto para la variable nueva.",
   "pistas": [
-   "Mirá qué variables ya existen al entrar a la función.",
+   "Mira qué variables ya existen al entrar a la función.",
    "El nombre de la variable nueva ya se usa en la cabecera.",
-   "Llamala R."
+   "Llámala R."
   ],
   "relacion_con_la_materia": "Funciones, parámetros",
   "deteccion": "estatica",
@@ -876,13 +876,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int A = 5, B = A * 2;\n  printf(\"%d %d\\n\", A, B);\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:3: error: 'A' undeclared (first use in this function)",
-  "mensaje_editor": "Línea 3: A se usa antes de estar declarada. Declarala antes de B en la lista.",
+  "mensaje_editor": "Línea 3: A se usa antes de estar declarada. Decláralo antes de B en la lista.",
   "explicacion": "En una declaración con comas, cada variable existe recién desde que se la nombra. B usa a A antes de que A haya sido declarada.",
-  "como_arreglarlo": "Poné primero la variable de la que depende la otra.",
+  "como_arreglarlo": "Pon primero la variable de la que depende la otra.",
   "pistas": [
-   "Fijate el orden en que se calculan los valores en la línea.",
+   "Fíjate el orden en que se calculan los valores en la línea.",
    "B se calcula con una A que todavía no tiene valor.",
-   "Invertí el orden: A primero."
+   "Invierte el orden: A primero."
   ],
   "relacion_con_la_materia": "SS, inicialización",
   "deteccion": "estatica",
@@ -891,7 +891,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "'A' se usa antes de estar declarada: declarala antes en la lista",
+  "mensaje_editor_actual": "'A' se usa antes de estar declarada: decláralo antes en la lista",
   "codigo_editor_actual": "E-no-declarada",
   "verificado_editor_corrige": true
  },
@@ -904,13 +904,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int A, B;\n  scanf(\"%d\", &A);\n  B = A;\n  printf(\"%d %d\\n\", A, B);\n}",
   "entrada": "7",
   "que_dice_gcc": "archivo.c:4: warning: 'A' is used uninitialized [-Wuninitialized]",
-  "mensaje_editor": "Línea 3: A se usa antes de darle un valor. Primero leé A con scanf y después copiala en B.",
-  "explicacion": "Una asignación copia el valor que la variable tiene en ese momento. Si todavía no leíste el dato, copiás basura y B no se actualiza cuando A cambia.",
-  "como_arreglarlo": "Hacé la copia después de leer el dato.",
+  "mensaje_editor": "Línea 3: A se usa antes de darle un valor. Primero lee A con scanf y después cópiala en B.",
+  "explicacion": "Una asignación copia el valor que la variable tiene en ese momento. Si todavía no leíste el dato, copias basura y B no se actualiza cuando A cambia.",
+  "como_arreglarlo": "Haz la copia después de leer el dato.",
   "pistas": [
-   "Ordená en el tiempo: qué línea ejecuta primero cada cosa.",
+   "Ordena en el tiempo: qué línea ejecuta primero cada cosa.",
    "B = A se ejecuta antes del scanf.",
-   "Poné B = A debajo del scanf."
+   "Pon B = A debajo del scanf."
   ],
   "relacion_con_la_materia": "SS, entrada de datos",
   "deteccion": "heuristica",
@@ -919,7 +919,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "'A' se usa antes de darle un valor (en C su valor inicial es basura): asignale un valor inicial, por ejemplo A = 0;",
+  "mensaje_editor_actual": "'A' se usa antes de darle un valor (en C su valor inicial es basura): asígnale un valor inicial, por ejemplo A = 0;",
   "codigo_editor_actual": "W-sin-inicializar",
   "verificado_editor_corrige": true
  },
@@ -936,9 +936,9 @@
   "explicacion": "Si una variable se asigna solo en una rama, cuando esa rama no se ejecuta sigue valiendo basura. Por eso conviene dar un valor de partida.",
   "como_arreglarlo": "Inicializar la variable antes del if o asignarla también en el sino.",
   "pistas": [
-   "Probá el programa con un dato que no cumple la condición.",
+   "Prueba el programa con un dato que no cumple la condición.",
    "Hay un camino por el que MAYOR llega al printf sin valor.",
-   "Inicializala en 0 al declararla."
+   "Inicialízala en 0 al declararla."
   ],
   "relacion_con_la_materia": "BC, inicialización",
   "deteccion": "heuristica",
@@ -947,7 +947,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "'MAYOR' se usa antes de darle un valor (en C su valor inicial es basura): asignale un valor inicial, por ejemplo MAYOR = 0;",
+  "mensaje_editor_actual": "'MAYOR' se usa antes de darle un valor (en C su valor inicial es basura): asígnale un valor inicial, por ejemplo MAYOR = 0;",
   "codigo_editor_actual": "W-sin-inicializar",
   "verificado_editor_corrige": true
  },
@@ -962,11 +962,11 @@
   "que_dice_gcc": "archivo.c:3: error: variable or field 'A' declared void",
   "mensaje_editor": "Línea 3: A no puede ser void. Una variable necesita un tipo de dato como int, float o char.",
   "explicacion": "void significa que no hay valor. Se usa para funciones que no devuelven nada, pero una variable tiene que guardar algo.",
-  "como_arreglarlo": "Cambiá void por el tipo del dato que querés guardar.",
+  "como_arreglarlo": "Cambia void por el tipo del dato que quieres guardar.",
   "pistas": [
-   "Pensá qué tipo de dato querés guardar en A.",
+   "Piensa qué tipo de dato quieres guardar en A.",
    "El tipo que usaste significa vacío.",
-   "Usá int."
+   "Usa int."
   ],
   "relacion_con_la_materia": "SS, tipos de datos",
   "deteccion": "estatica",
@@ -992,9 +992,9 @@
   "explicacion": "El valor inicial depende de la operación: para sumar se empieza en 0 y para multiplicar en 1 (el elemento neutro).",
   "como_arreglarlo": "Cambiar el valor inicial del acumulador por el neutro de la multiplicación.",
   "pistas": [
-   "Hacé la cuenta a mano para la primera vuelta.",
+   "Haz la cuenta a mano para la primera vuelta.",
    "Multiplicar por 0 siempre da 0.",
-   "Arrancá FACT en 1."
+   "Arranca FACT en 1."
   ],
   "relacion_con_la_materia": "LC por acumuladores",
   "deteccion": "heuristica",
@@ -1018,11 +1018,11 @@
   "que_dice_gcc": "archivo.c:3: error: unknown type name 'Int'; did you mean 'int'?",
   "mensaje_editor": "Línea 3: Int no es un tipo de C, el tipo se escribe int en minúscula.",
   "explicacion": "Las palabras de C (int, float, char, while...) se escriben siempre en minúscula. Con una mayúscula, C no las reconoce.",
-  "como_arreglarlo": "Escribí el tipo en minúscula.",
+  "como_arreglarlo": "Escribe el tipo en minúscula.",
   "pistas": [
-   "Compará la palabra del tipo con cómo se escribe en el apunte.",
+   "Compara la palabra del tipo con cómo se escribe en el apunte.",
    "El tipo está escrito con una letra mayúscula.",
-   "Escribí int."
+   "Escribe int."
   ],
   "relacion_con_la_materia": "SS, declaración de variables",
   "deteccion": "estatica",
@@ -1044,13 +1044,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int A = 1, B = 2;\n  printf(\"%d %d\\n\", A, B);\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:3: error: expected identifier or '(' before 'int'",
-  "mensaje_editor": "Línea 3: después de la coma no se repite el tipo. Escribí int A = 1, B = 2;.",
+  "mensaje_editor": "Línea 3: después de la coma no se repite el tipo. Escribe int A = 1, B = 2;.",
   "explicacion": "En una declaración con comas, el tipo se escribe una sola vez al principio y vale para todas las variables de la lista.",
-  "como_arreglarlo": "Sacá el tipo que sigue a la coma.",
+  "como_arreglarlo": "Saca el tipo que sigue a la coma.",
   "pistas": [
-   "Contá cuántas veces aparece int en la línea.",
+   "Cuenta cuántas veces aparece int en la línea.",
    "Hay un tipo repetido después de una coma.",
-   "Dejá solo el primer int."
+   "Deja solo el primer int."
   ],
   "relacion_con_la_materia": "SS, declaración de variables",
   "deteccion": "estatica",

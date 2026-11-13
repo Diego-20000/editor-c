@@ -8,9 +8,9 @@
   "codigo_bien": "#include <stdio.h>\nint main()\n{\n  int A = 4;\n  printf(\"%d\\n\", A);\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:4: warning: implicit declaration of function 'printf' [-Wimplicit-function-declaration]",
-  "mensaje_editor": "Línea 4: printf no está declarada. Agregá #include <stdio.h> al principio.",
+  "mensaje_editor": "Línea 4: printf no está declarada. Agrega #include <stdio.h> al principio.",
   "explicacion": "printf y scanf pertenecen a la biblioteca de entrada y salida. Hay que avisarle al compilador con #include <stdio.h> antes de usarlas.",
-  "como_arreglarlo": "Escribí #include <stdio.h> en la primera línea del programa.",
+  "como_arreglarlo": "Escribe #include <stdio.h> en la primera línea del programa.",
   "pistas": [
    "¿De dónde sale printf?",
    "Falta una línea al comienzo del archivo.",
@@ -23,7 +23,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "usás printf pero falta #include <stdio.h> al principio del programa",
+  "mensaje_editor_actual": "usas printf pero falta #include <stdio.h> al principio del programa",
   "codigo_editor_actual": "W-preprocesador",
   "verificado_editor_corrige": true
  },
@@ -36,13 +36,13 @@
   "codigo_bien": "#include <stdio.h>\nint main()\n{\n  int A;\n  scanf(\"%d\", &A);\n  return A - A;\n}",
   "entrada": "5\n",
   "que_dice_gcc": "archivo.c:4: warning: implicit declaration of function 'scanf' [-Wimplicit-function-declaration]",
-  "mensaje_editor": "Línea 4: scanf no está declarada. Agregá #include <stdio.h>.",
+  "mensaje_editor": "Línea 4: scanf no está declarada. Agrega #include <stdio.h>.",
   "explicacion": "Sin el include, el compilador no conoce scanf ni cómo se la llama, y supone cosas que pueden estar mal.",
-  "como_arreglarlo": "Agregá #include <stdio.h> arriba de todo.",
+  "como_arreglarlo": "Agrega #include <stdio.h> arriba de todo.",
   "pistas": [
-   "Fijate la primera línea de tu programa.",
+   "Fíjate la primera línea de tu programa.",
    "scanf también viene de stdio.h.",
-   "Agregá el include."
+   "Agrega el include."
   ],
   "relacion_con_la_materia": "preprocesador",
   "deteccion": "estatica",
@@ -51,7 +51,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "usás scanf pero falta #include <stdio.h> al principio del programa",
+  "mensaje_editor_actual": "usas scanf pero falta #include <stdio.h> al principio del programa",
   "codigo_editor_actual": "W-preprocesador",
   "verificado_editor_corrige": true
  },
@@ -64,9 +64,9 @@
   "codigo_bien": "#include <stdio.h>\n#include <math.h>\nint main()\n{\n  float R = sqrt(16.0);\n  printf(\"%.1f\\n\", R);\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:4: warning: implicit declaration of function 'sqrt' [-Wimplicit-function-declaration]",
-  "mensaje_editor": "Línea 4: sqrt no está declarada. Agregá #include <math.h>.",
+  "mensaje_editor": "Línea 4: sqrt no está declarada. Agrega #include <math.h>.",
   "explicacion": "Las funciones matemáticas (sqrt, pow, fabs...) están en math.h. Sin el include el compilador las trata como si fueran desconocidas.",
-  "como_arreglarlo": "Incluí <math.h> junto con <stdio.h>.",
+  "como_arreglarlo": "Incluye <math.h> junto con <stdio.h>.",
   "pistas": [
    "¿En qué biblioteca está sqrt?",
    "Falta un include.",
@@ -79,7 +79,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "usás sqrt pero falta #include <math.h> al principio del programa",
+  "mensaje_editor_actual": "usas sqrt pero falta #include <math.h> al principio del programa",
   "codigo_editor_actual": "W-preprocesador",
   "verificado_editor_corrige": true
  },
@@ -92,11 +92,11 @@
   "codigo_bien": "#include <stdio.h>\n#include <math.h>\nint main()\n{\n  double P = pow(2, 3);\n  printf(\"%.0f\\n\", P);\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:4: warning: implicit declaration of function 'pow' [-Wimplicit-function-declaration]",
-  "mensaje_editor": "Línea 4: pow no está declarada. Agregá #include <math.h>.",
+  "mensaje_editor": "Línea 4: pow no está declarada. Agrega #include <math.h>.",
   "explicacion": "pow(base, exponente) está en math.h y devuelve un double.",
-  "como_arreglarlo": "Agregá #include <math.h>.",
+  "como_arreglarlo": "Agrega #include <math.h>.",
   "pistas": [
-   "Revisá los include del principio.",
+   "Revisa los include del principio.",
    "pow viene de una biblioteca matemática.",
    "#include <math.h>."
   ],
@@ -107,7 +107,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "usás pow pero falta #include <math.h> al principio del programa",
+  "mensaje_editor_actual": "usas pow pero falta #include <math.h> al principio del programa",
   "codigo_editor_actual": "W-preprocesador",
   "verificado_editor_corrige": true
  },
@@ -120,11 +120,11 @@
   "codigo_bien": "#include <stdio.h>\n#include <stdlib.h>\nint main()\n{\n  int A = -5;\n  printf(\"%d\\n\", abs(A));\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:5: warning: implicit declaration of function 'abs' [-Wimplicit-function-declaration]",
-  "mensaje_editor": "Línea 5: abs no está declarada. Agregá #include <stdlib.h>.",
+  "mensaje_editor": "Línea 5: abs no está declarada. Agrega #include <stdlib.h>.",
   "explicacion": "abs (valor absoluto de un entero) está en stdlib.h. Para decimales se usa fabs, de math.h.",
-  "como_arreglarlo": "Incluí <stdlib.h>.",
+  "como_arreglarlo": "Incluye <stdlib.h>.",
   "pistas": [
-   "Revisá los include.",
+   "Revisa los include.",
    "abs no es de stdio.h.",
    "#include <stdlib.h>."
   ],
@@ -135,7 +135,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "usás abs pero falta #include <stdlib.h> al principio del programa",
+  "mensaje_editor_actual": "usas abs pero falta #include <stdlib.h> al principio del programa",
   "codigo_editor_actual": "W-preprocesador",
   "verificado_editor_corrige": true
  },
@@ -148,9 +148,9 @@
   "codigo_bien": "#include <stdio.h>\n#include <string.h>\nint main()\n{\n  char T[10] = \"Hola\";\n  printf(\"%d\\n\", (int)strlen(T));\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:5: warning: implicit declaration of function 'strlen' [-Wimplicit-function-declaration]",
-  "mensaje_editor": "Línea 5: strlen no está declarada. Agregá #include <string.h>.",
+  "mensaje_editor": "Línea 5: strlen no está declarada. Agrega #include <string.h>.",
   "explicacion": "Las funciones de textos (strlen, strcpy, strcmp, strcat) están en string.h.",
-  "como_arreglarlo": "Agregá #include <string.h>.",
+  "como_arreglarlo": "Agrega #include <string.h>.",
   "pistas": [
    "¿Qué biblioteca trae las funciones de textos?",
    "Falta un include.",
@@ -163,7 +163,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "usás strlen pero falta #include <string.h> al principio del programa",
+  "mensaje_editor_actual": "usas strlen pero falta #include <string.h> al principio del programa",
   "codigo_editor_actual": "W-preprocesador",
   "verificado_editor_corrige": true
  },
@@ -176,11 +176,11 @@
   "codigo_bien": "#include <stdio.h>\n#include <string.h>\nint main()\n{\n  char A[10] = \"si\";\n  if (strcmp(A, \"si\") == 0) {\n    printf(\"Igual\\n\");\n  }\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:5: warning: implicit declaration of function 'strcmp' [-Wimplicit-function-declaration]",
-  "mensaje_editor": "Línea 5: strcmp no está declarada. Agregá #include <string.h>.",
+  "mensaje_editor": "Línea 5: strcmp no está declarada. Agrega #include <string.h>.",
   "explicacion": "strcmp compara dos textos y está en string.h. Sin el include el compilador no la reconoce.",
-  "como_arreglarlo": "Agregá #include <string.h>.",
+  "como_arreglarlo": "Agrega #include <string.h>.",
   "pistas": [
-   "Mirá los include del principio.",
+   "Mira los include del principio.",
    "strcmp es de la biblioteca de textos.",
    "#include <string.h>."
   ],
@@ -191,7 +191,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "usás strcmp pero falta #include <string.h> al principio del programa",
+  "mensaje_editor_actual": "usas strcmp pero falta #include <string.h> al principio del programa",
   "codigo_editor_actual": "W-preprocesador",
   "verificado_editor_corrige": true
  },
@@ -204,9 +204,9 @@
   "codigo_bien": "#include <stdio.h>\n#include <stdlib.h>\nint main()\n{\n  srand(1);\n  int A = rand() % 6 + 1;\n  printf(\"%d\\n\", A > 0);\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:4: warning: implicit declaration of function 'srand' [-Wimplicit-function-declaration]",
-  "mensaje_editor": "Línea 4: srand y rand no están declaradas. Agregá #include <stdlib.h>.",
+  "mensaje_editor": "Línea 4: srand y rand no están declaradas. Agrega #include <stdlib.h>.",
   "explicacion": "rand y srand, para números aleatorios, están en stdlib.h.",
-  "como_arreglarlo": "Agregá #include <stdlib.h>.",
+  "como_arreglarlo": "Agrega #include <stdlib.h>.",
   "pistas": [
    "¿De qué biblioteca son rand y srand?",
    "Falta un include.",
@@ -219,7 +219,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "usás srand pero falta #include <stdlib.h> al principio del programa",
+  "mensaje_editor_actual": "usas srand pero falta #include <stdlib.h> al principio del programa",
   "codigo_editor_actual": "W-preprocesador",
   "verificado_editor_corrige": true
  },
@@ -232,11 +232,11 @@
   "codigo_bien": "#include <stdio.h>\n#include <stdlib.h>\n#include <time.h>\nint main()\n{\n  srand(time(NULL));\n  int A = rand() % 6 + 1;\n  printf(\"%d\\n\", A > 0);\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:5: warning: implicit declaration of function 'time' [-Wimplicit-function-declaration]",
-  "mensaje_editor": "Línea 5: time no está declarada. Agregá #include <time.h>.",
+  "mensaje_editor": "Línea 5: time no está declarada. Agrega #include <time.h>.",
   "explicacion": "time está en time.h. Se usa con srand para que los números aleatorios cambien en cada ejecución.",
-  "como_arreglarlo": "Agregá #include <time.h>.",
+  "como_arreglarlo": "Agrega #include <time.h>.",
   "pistas": [
-   "Revisá los include.",
+   "Revisa los include.",
    "time viene de su propia biblioteca.",
    "#include <time.h>."
   ],
@@ -247,7 +247,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "usás time pero falta #include <time.h> al principio del programa",
+  "mensaje_editor_actual": "usas time pero falta #include <time.h> al principio del programa",
   "codigo_editor_actual": "W-preprocesador",
   "verificado_editor_corrige": true
  },
@@ -260,9 +260,9 @@
   "codigo_bien": "#include <stdio.h>\n#include <stdlib.h>\nint main()\n{\n  int A = 0;\n  if (A == 0) {\n    printf(\"Fin\\n\");\n    exit(0);\n  }\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:7: warning: implicit declaration of function 'exit' [-Wimplicit-function-declaration]",
-  "mensaje_editor": "Línea 7: exit no está declarada. Agregá #include <stdlib.h>.",
+  "mensaje_editor": "Línea 7: exit no está declarada. Agrega #include <stdlib.h>.",
   "explicacion": "exit termina el programa de inmediato y está en stdlib.h.",
-  "como_arreglarlo": "Agregá #include <stdlib.h>.",
+  "como_arreglarlo": "Agrega #include <stdlib.h>.",
   "pistas": [
    "¿De qué biblioteca es exit?",
    "Falta un include.",
@@ -275,7 +275,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "usás exit pero falta #include <stdlib.h> al principio del programa",
+  "mensaje_editor_actual": "usas exit pero falta #include <stdlib.h> al principio del programa",
   "codigo_editor_actual": "W-preprocesador",
   "verificado_editor_corrige": true
  },
@@ -288,11 +288,11 @@
   "codigo_bien": "#include <stdio.h>\n#include <ctype.h>\nint main()\n{\n  char C = 'a';\n  printf(\"%c\\n\", toupper(C));\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:5: warning: implicit declaration of function 'toupper' [-Wimplicit-function-declaration]",
-  "mensaje_editor": "Línea 5: toupper no está declarada. Agregá #include <ctype.h>.",
+  "mensaje_editor": "Línea 5: toupper no está declarada. Agrega #include <ctype.h>.",
   "explicacion": "Las funciones que trabajan con una letra (toupper, tolower, isdigit, isalpha) están en ctype.h.",
-  "como_arreglarlo": "Agregá #include <ctype.h>.",
+  "como_arreglarlo": "Agrega #include <ctype.h>.",
   "pistas": [
-   "Revisá los include.",
+   "Revisa los include.",
    "toupper viene de su biblioteca.",
    "#include <ctype.h>."
   ],
@@ -303,7 +303,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "usás toupper pero falta #include <ctype.h> al principio del programa",
+  "mensaje_editor_actual": "usas toupper pero falta #include <ctype.h> al principio del programa",
   "codigo_editor_actual": "W-preprocesador",
   "verificado_editor_corrige": true
  },
@@ -318,9 +318,9 @@
   "que_dice_gcc": "archivo.c:1: fatal error: studio.h: No such file or directory",
   "mensaje_editor": "Línea 1: no existe la biblioteca studio.h. Es stdio.h (standard input/output).",
   "explicacion": "El nombre del archivo tiene que ser exacto: stdio.h, por \"standard input output\". Un nombre mal escrito hace que el compilador no encuentre el archivo.",
-  "como_arreglarlo": "Corregí el nombre a stdio.h.",
+  "como_arreglarlo": "Corrige el nombre a stdio.h.",
   "pistas": [
-   "Leé el nombre del include letra por letra.",
+   "Lee el nombre del include letra por letra.",
    "stdio viene de standard input output.",
    "Es stdio.h, sin la u."
   ],
@@ -346,7 +346,7 @@
   "que_dice_gcc": "archivo.c:1: fatal error: stdio: No such file or directory",
   "mensaje_editor": "Línea 1: falta el .h en el nombre de la biblioteca: <stdio.h>.",
   "explicacion": "Los archivos de cabecera de C terminan en .h. Sin la extensión el compilador no encuentra el archivo.",
-  "como_arreglarlo": "Escribí stdio.h completo.",
+  "como_arreglarlo": "Escribe stdio.h completo.",
   "pistas": [
    "¿Cómo se llama el archivo?",
    "Falta algo después de stdio.",
@@ -374,11 +374,11 @@
   "que_dice_gcc": "archivo.c:1: error: missing terminating > character",
   "mensaje_editor": "Línea 1: falta cerrar el include con >.",
   "explicacion": "Después del nombre del archivo va el símbolo > que cierra el <.",
-  "como_arreglarlo": "Agregá > al final.",
+  "como_arreglarlo": "Agrega > al final.",
   "pistas": [
-   "Compará la línea con la de otros programas.",
+   "Compara la línea con la de otros programas.",
    "Los símbolos < y > van de a pares.",
-   "Agregá > después de stdio.h."
+   "Agrega > después de stdio.h."
   ],
   "relacion_con_la_materia": "preprocesador",
   "deteccion": "estatica",
@@ -402,11 +402,11 @@
   "que_dice_gcc": "archivo.c:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '<' token",
   "mensaje_editor": "Línea 1: falta el # al principio de include.",
   "explicacion": "Las órdenes para el preprocesador empiezan con #.",
-  "como_arreglarlo": "Escribí #include.",
+  "como_arreglarlo": "Escribe #include.",
   "pistas": [
-   "Mirá el primer carácter de la línea.",
+   "Mira el primer carácter de la línea.",
    "Las directivas empiezan con un símbolo especial.",
-   "Agregá #."
+   "Agrega #."
   ],
   "relacion_con_la_materia": "preprocesador",
   "deteccion": "estatica",
@@ -430,9 +430,9 @@
   "que_dice_gcc": "archivo.c:1: error: invalid preprocessing directive #Include; did you mean #include?",
   "mensaje_editor": "Línea 1: la directiva es #include, todo en minúscula.",
   "explicacion": "C distingue mayúsculas de minúsculas, también en las directivas del preprocesador.",
-  "como_arreglarlo": "Escribí #include en minúscula.",
+  "como_arreglarlo": "Escribe #include en minúscula.",
   "pistas": [
-   "Leé la directiva con atención.",
+   "Lee la directiva con atención.",
    "C distingue mayúsculas.",
    "Es #include."
   ],
@@ -458,7 +458,7 @@
   "que_dice_gcc": "archivo.c:1: fatal error: STDIO.H: No such file or directory",
   "mensaje_editor": "Línea 1: en Linux los nombres de archivo distinguen mayúsculas. Es <stdio.h> en minúscula.",
   "explicacion": "En Windows estos nombres no distinguen mayúsculas y por eso funcionaba, pero en Linux y en los compiladores en línea el archivo no se encuentra.",
-  "como_arreglarlo": "Escribí el nombre en minúscula.",
+  "como_arreglarlo": "Escribe el nombre en minúscula.",
   "pistas": [
    "¿Cómo está escrito el nombre del archivo?",
    "Los archivos de C van en minúscula.",
@@ -486,11 +486,11 @@
   "que_dice_gcc": "archivo.c:1: warning: extra tokens at end of #include directive",
   "mensaje_editor": "Línea 1: las directivas con # no llevan ; al final.",
   "explicacion": "Las líneas que empiezan con # no son instrucciones de C: las procesa el preprocesador y terminan con el salto de línea.",
-  "como_arreglarlo": "Sacá el ;.",
+  "como_arreglarlo": "Saca el ;.",
   "pistas": [
-   "Compará con el #include de los apuntes.",
+   "Compara con el #include de los apuntes.",
    "Las directivas no terminan con ;.",
-   "Borrá el ;."
+   "Borra el ;."
   ],
   "relacion_con_la_materia": "preprocesador",
   "deteccion": "estatica",
@@ -512,13 +512,13 @@
   "codigo_bien": "#include <stdio.h>\n#define PI 3.14159\nint main()\n{\n  float R = 2.0f;\n  float A = PI * R * R;\n  printf(\"%.2f\\n\", A);\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:6: error: invalid type argument of unary '*' (have 'float')",
-  "mensaje_editor": "Línea 2: el ; del #define se copia donde se usa PI y rompe la expresión. Sacalo.",
+  "mensaje_editor": "Línea 2: el ; del #define se copia donde se usa PI y rompe la expresión. Sácalo.",
   "explicacion": "#define reemplaza el nombre por todo lo que sigue en la línea, ; incluido. En float A = PI * R * R; queda float A = 3.14159; * R * R;.",
-  "como_arreglarlo": "Escribí el #define sin punto y coma.",
+  "como_arreglarlo": "Escribe el #define sin punto y coma.",
   "pistas": [
-   "Reemplazá PI por su valor a mano y leé la línea resultante.",
+   "Reemplaza PI por su valor a mano y lee la línea resultante.",
    "El ; viaja con el valor.",
-   "Sacá el ; del #define."
+   "Saca el ; del #define."
   ],
   "relacion_con_la_materia": "preprocesador",
   "deteccion": "estatica",
@@ -527,7 +527,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "el ';' del #define de 'PI' se copia en cada uso y deja una instrucción suelta: sacalo del #define",
+  "mensaje_editor_actual": "el ';' del #define de 'PI' se copia en cada uso y deja una instrucción suelta: sácalo del #define",
   "codigo_editor_actual": "E-preprocesador",
   "verificado_editor_corrige": true
  },
@@ -542,9 +542,9 @@
   "que_dice_gcc": "archivo.c:2: error: expected expression before '=' token",
   "mensaje_editor": "Línea 2: #define no lleva =. Es #define N 5.",
   "explicacion": "#define no es una asignación, es un reemplazo de texto: el = se copia donde se use N y queda int A = = 5 * 2;.",
-  "como_arreglarlo": "Escribí el nombre y el valor separados por un espacio.",
+  "como_arreglarlo": "Escribe el nombre y el valor separados por un espacio.",
   "pistas": [
-   "Reemplazá N por lo que dice el #define.",
+   "Reemplaza N por lo que dice el #define.",
    "El = se copia.",
    "#define N 5."
   ],
@@ -570,11 +570,11 @@
   "que_dice_gcc": "archivo.c:5: error: invalid type argument of unary '*' (have 'int')",
   "mensaje_editor": "Línea 5: N no tiene valor: el #define lo deja vacío y la expresión queda incompleta.",
   "explicacion": "Un #define sin valor reemplaza el nombre por nada. La línea int A = N * 2; queda int A = * 2;, que ya no tiene sentido.",
-  "como_arreglarlo": "Escribí el valor después del nombre.",
+  "como_arreglarlo": "Escribe el valor después del nombre.",
   "pistas": [
    "¿Qué reemplaza el #define?",
    "N desaparece.",
-   "Agregá el valor."
+   "Agrega el valor."
   ],
   "relacion_con_la_materia": "preprocesador",
   "deteccion": "estatica",
@@ -596,13 +596,13 @@
   "codigo_bien": "#include <stdio.h>\n#define DOBLE(X) ((X) * 2)\nint main()\n{\n  printf(\"%d\\n\", DOBLE(1 + 2));\n}",
   "entrada": "",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 5: DOBLE(1 + 2) se expande a 1 + 2 * 2, que da 5 y no 6. Poné paréntesis alrededor de X.",
+  "mensaje_editor": "Línea 5: DOBLE(1 + 2) se expande a 1 + 2 * 2, que da 5 y no 6. Pon paréntesis alrededor de X.",
   "explicacion": "Una macro copia el texto del argumento. Sin paréntesis, la precedencia de los operadores cambia el resultado.",
-  "como_arreglarlo": "Poné paréntesis alrededor de cada parámetro y alrededor de todo el resultado.",
+  "como_arreglarlo": "Pon paréntesis alrededor de cada parámetro y alrededor de todo el resultado.",
   "pistas": [
-   "Reemplazá X por 1 + 2 a mano.",
+   "Reemplaza X por 1 + 2 a mano.",
    "Se multiplica antes de sumar.",
-   "Escribí (X) y encerrá todo entre paréntesis."
+   "Escribe (X) y encierra todo entre paréntesis."
   ],
   "relacion_con_la_materia": "macros",
   "deteccion": "heuristica",
@@ -624,13 +624,13 @@
   "codigo_bien": "#include <stdio.h>\n#define SUMA(A, B) ((A) + (B))\nint main()\n{\n  printf(\"%d\\n\", 2 * SUMA(1, 2));\n}",
   "entrada": "",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 5: 2 * SUMA(1, 2) se convierte en 2 * 1 + 2, que da 4. Encerrá toda la macro entre paréntesis.",
+  "mensaje_editor": "Línea 5: 2 * SUMA(1, 2) se convierte en 2 * 1 + 2, que da 4. Encierra toda la macro entre paréntesis.",
   "explicacion": "Aunque los parámetros tengan paréntesis, si el resultado queda suelto, una operación que lo rodea se aplica solo al primer término.",
-  "como_arreglarlo": "Poné paréntesis alrededor de todo el cuerpo de la macro.",
+  "como_arreglarlo": "Pon paréntesis alrededor de todo el cuerpo de la macro.",
   "pistas": [
-   "Escribí cómo queda la expresión después de reemplazar.",
+   "Escribe cómo queda la expresión después de reemplazar.",
    "La multiplicación afecta solo al primer término.",
-   "Encerrá todo el cuerpo entre paréntesis."
+   "Encierra todo el cuerpo entre paréntesis."
   ],
   "relacion_con_la_materia": "macros",
   "deteccion": "heuristica",
@@ -652,13 +652,13 @@
   "codigo_bien": "#include <stdio.h>\n#define MAX(A, B) ((A) > (B) ? (A) : (B))\nint main()\n{\n  printf(\"%d\\n\", 10 + MAX(2, 3));\n}",
   "entrada": "",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 5: 10 + MAX(2, 3) se expande mal y da 2 en lugar de 13. Poné paréntesis en la macro.",
+  "mensaje_editor": "Línea 5: 10 + MAX(2, 3) se expande mal y da 2 en lugar de 13. Pon paréntesis en la macro.",
   "explicacion": "El operador ?: tiene muy poca prioridad: lo que está alrededor de la macro se evalúa primero.",
-  "como_arreglarlo": "Encerrá el cuerpo completo y cada parámetro entre paréntesis.",
+  "como_arreglarlo": "Encierra el cuerpo completo y cada parámetro entre paréntesis.",
   "pistas": [
-   "Expandí la macro a mano.",
+   "Expande la macro a mano.",
    "10 + 2 > 3 se evalúa antes del ?.",
-   "Poné paréntesis en todo."
+   "Pon paréntesis en todo."
   ],
   "relacion_con_la_materia": "macros",
   "deteccion": "heuristica",
@@ -680,13 +680,13 @@
   "codigo_bien": "#include <stdio.h>\n#define MAX(A, B) ((A) > (B) ? (A) : (B))\nint main()\n{\n  printf(\"%d\\n\", MAX(2, 3));\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:2: error: expected ')' before ';' token",
-  "mensaje_editor": "Línea 2: el ; del #define se copia dentro del printf. Sacalo.",
+  "mensaje_editor": "Línea 2: el ; del #define se copia dentro del printf. Sácalo.",
   "explicacion": "El punto y coma forma parte del reemplazo, y queda dentro de los paréntesis de printf.",
-  "como_arreglarlo": "Escribí el #define sin ; al final.",
+  "como_arreglarlo": "Escribe el #define sin ; al final.",
   "pistas": [
-   "Reemplazá MAX por su texto en el printf.",
+   "Reemplaza MAX por su texto en el printf.",
    "El ; no puede ir ahí.",
-   "Borrá el ; del #define."
+   "Borra el ; del #define."
   ],
   "relacion_con_la_materia": "macros",
   "deteccion": "estatica",
@@ -695,7 +695,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "el ';' del #define de 'MAX' se copia dentro de la cuenta: sacalo del #define",
+  "mensaje_editor_actual": "el ';' del #define de 'MAX' se copia dentro de la cuenta: sácalo del #define",
   "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
@@ -708,13 +708,13 @@
   "codigo_bien": "#include <stdio.h>\n#define DOBLE(X) ((X) * 2)\nint main()\n{\n  printf(\"%d\\n\", DOBLE(4));\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:2: error: 'X' undeclared (first use in this function)",
-  "mensaje_editor": "Línea 2: con un espacio después de DOBLE, no es una macro con parámetro sino una constante que vale \"(X) ((X) * 2)\". Pegá el paréntesis al nombre.",
+  "mensaje_editor": "Línea 2: con un espacio después de DOBLE, no es una macro con parámetro sino una constante que vale \"(X) ((X) * 2)\". Pega el paréntesis al nombre.",
   "explicacion": "En una macro con parámetros el paréntesis va inmediatamente después del nombre, sin espacio.",
-  "como_arreglarlo": "Sacá el espacio entre DOBLE y (X).",
+  "como_arreglarlo": "Saca el espacio entre DOBLE y (X).",
   "pistas": [
-   "Compará DOBLE (X) con DOBLE(X).",
+   "Compara DOBLE (X) con DOBLE(X).",
    "Un espacio cambia el significado del #define.",
-   "Pegá el paréntesis al nombre."
+   "Pega el paréntesis al nombre."
   ],
   "relacion_con_la_materia": "macros",
   "deteccion": "estatica",
@@ -736,13 +736,13 @@
   "codigo_bien": "#include <stdio.h>\n#define CUADRADO(X) ((X) * (X))\nint main()\n{\n  int N = 3;\n  printf(\"%d\\n\", CUADRADO(N));\n  N++;\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:6: warning: operation on 'N' may be undefined [-Wsequence-point]",
-  "mensaje_editor": "Línea 6: CUADRADO(N++) evalúa N++ dos veces y el resultado no está definido. Pasale una variable sin ++.",
+  "mensaje_editor": "Línea 6: CUADRADO(N++) evalúa N++ dos veces y el resultado no está definido. Pásale una variable sin ++.",
   "explicacion": "La macro copia el argumento tantas veces como aparece X. Si el argumento cambia una variable, el cambio se hace dos veces.",
-  "como_arreglarlo": "No uses ++ ni llamadas a funciones como argumento de una macro: calculá antes.",
+  "como_arreglarlo": "No uses ++ ni llamadas a funciones como argumento de una macro: calcula antes.",
   "pistas": [
-   "Expandí la macro a mano.",
+   "Expande la macro a mano.",
    "N++ aparece dos veces.",
-   "Hacé N++ en otra línea."
+   "Haz N++ en otra línea."
   ],
   "relacion_con_la_materia": "macros",
   "deteccion": "estatica",
@@ -766,11 +766,11 @@
   "que_dice_gcc": "archivo.c:5: error: lvalue required as left operand of assignment",
   "mensaje_editor": "Línea 5: N no es una variable, es un 5 que se copia. No se le puede asignar otro valor.",
   "explicacion": "El preprocesador reemplaza N por 5 antes de compilar. La línea queda 5 = 6;, que no tiene sentido.",
-  "como_arreglarlo": "Si el valor debe cambiar, usá una variable. Si es constante, no la modifiques.",
+  "como_arreglarlo": "Si el valor debe cambiar, usa una variable. Si es constante, no la modifiques.",
   "pistas": [
-   "Reemplazá N por 5 a mano en la línea.",
+   "Reemplaza N por 5 a mano en la línea.",
    "No se puede asignar a un 5.",
-   "Usá una variable para valores que cambian."
+   "Usa una variable para valores que cambian."
   ],
   "relacion_con_la_materia": "preprocesador",
   "deteccion": "estatica",
@@ -792,13 +792,13 @@
   "codigo_bien": "#include <stdio.h>\nint main()\n{\n  int A;\n  scanf(\"%d\", &A);\n  printf(\"%d\\n\", A);\n}",
   "entrada": "3\n",
   "que_dice_gcc": "archivo.c:5: error: lvalue required as unary '&' operand",
-  "mensaje_editor": "Línea 5: N es una constante #define, no hay una variable donde guardar el dato. Declará una variable.",
+  "mensaje_editor": "Línea 5: N es una constante #define, no hay una variable donde guardar el dato. Declara una variable.",
   "explicacion": "scanf necesita la dirección de una variable. Una constante definida con #define no ocupa memoria y no tiene dirección.",
-  "como_arreglarlo": "Declará una variable para leer el dato.",
+  "como_arreglarlo": "Declara una variable para leer el dato.",
   "pistas": [
    "¿Qué es N después del #define?",
    "Un número no tiene dirección.",
-   "Declarás int A; y leé en &A."
+   "Declaras int A; y lee en &A."
   ],
   "relacion_con_la_materia": "preprocesador, scanf",
   "deteccion": "estatica",
@@ -807,7 +807,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "'N' es una constante #define, no una variable: no hay dónde guardar el dato. Declará una variable",
+  "mensaje_editor_actual": "'N' es una constante #define, no una variable: no hay dónde guardar el dato. Declara una variable",
   "codigo_editor_actual": "E-preprocesador",
   "verificado_editor_corrige": true
  },
@@ -820,9 +820,9 @@
   "codigo_bien": "#include <stdio.h>\n#define N 5\nint main()\n{\n  int V[N];\n  V[0] = 1;\n  printf(\"%d\\n\", V[0]);\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:4: error: 'N' undeclared (first use in this function)",
-  "mensaje_editor": "Línea 4: N no está definida todavía en este punto. Movés el #define arriba de main.",
+  "mensaje_editor": "Línea 4: N no está definida todavía en este punto. Mueves el #define arriba de main.",
   "explicacion": "El preprocesador lee el archivo de arriba hacia abajo. Un #define solo vale desde la línea donde aparece.",
-  "como_arreglarlo": "Poné el #define antes de usarlo, junto con los include.",
+  "como_arreglarlo": "Pon el #define antes de usarlo, junto con los include.",
   "pistas": [
    "¿En qué línea está el #define?",
    "Se usa antes de existir.",
@@ -848,13 +848,13 @@
   "codigo_bien": "#include <stdio.h>\n#define LIMITE 10\nint main()\n{\n  int A = 5;\n  printf(\"%d\\n\", A);\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:2: error: expected identifier or '(' before numeric constant",
-  "mensaje_editor": "Línea 5: A está definida como 10 con #define, así que acá queda int 10 = 5. Cambiá el nombre de la constante o de la variable.",
+  "mensaje_editor": "Línea 5: A está definida como 10 con #define, así que acá queda int 10 = 5. Cambia el nombre de la constante o de la variable.",
   "explicacion": "El preprocesador reemplaza todas las apariciones del nombre, también las que querías como variables.",
-  "como_arreglarlo": "Usá nombres distintos para constantes y variables.",
+  "como_arreglarlo": "Usa nombres distintos para constantes y variables.",
   "pistas": [
-   "Reemplazá A por 10 en la línea.",
+   "Reemplaza A por 10 en la línea.",
    "El nombre A ya está tomado.",
-   "Renombrá la constante."
+   "Renombra la constante."
   ],
   "relacion_con_la_materia": "preprocesador",
   "deteccion": "estatica",
@@ -863,7 +863,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "'A' está definida con #define: acá se reemplaza por su valor y queda un nombre inválido. Cambiá el nombre de la constante o el de la variable",
+  "mensaje_editor_actual": "'A' está definida con #define: acá se reemplaza por su valor y queda un nombre inválido. Cambia el nombre de la constante o el de la variable",
   "codigo_editor_actual": "E-preprocesador",
   "verificado_editor_corrige": true
  },
@@ -878,11 +878,11 @@
   "que_dice_gcc": "archivo.c:1: error: unknown type name 'define'",
   "mensaje_editor": "Línea 1: falta el # delante de define.",
   "explicacion": "Las directivas del preprocesador empiezan con #.",
-  "como_arreglarlo": "Escribí #define.",
+  "como_arreglarlo": "Escribe #define.",
   "pistas": [
-   "Revisá el primer carácter de la línea.",
+   "Revisa el primer carácter de la línea.",
    "Las directivas empiezan con un símbolo.",
-   "Agregá #."
+   "Agrega #."
   ],
   "relacion_con_la_materia": "preprocesador",
   "deteccion": "estatica",
@@ -906,7 +906,7 @@
   "que_dice_gcc": "archivo.c:2: error: expected '=', ',', ';', 'asm' or '__attribute__' before numeric constant",
   "mensaje_editor": "Línea 2: #define no lleva tipo. Es #define N 5.",
   "explicacion": "#define reemplaza un nombre por un texto. No declara una variable, así que no se le pone int.",
-  "como_arreglarlo": "Sacá el int.",
+  "como_arreglarlo": "Saca el int.",
   "pistas": [
    "¿#define declara una variable?",
    "No lleva tipo.",
@@ -932,13 +932,13 @@
   "codigo_bien": "#include <stdio.h>\n#define LADO (2 + 3)\nint main()\n{\n  printf(\"%d\\n\", LADO * LADO);\n}",
   "entrada": "",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 5: LADO * LADO se expande a 2 + 3 * 2 + 3, que da 11 y no 25. Poné paréntesis en el valor.",
+  "mensaje_editor": "Línea 5: LADO * LADO se expande a 2 + 3 * 2 + 3, que da 11 y no 25. Pon paréntesis en el valor.",
   "explicacion": "El #define copia el texto tal cual. Si el valor es una expresión, hay que encerrarla entre paréntesis.",
-  "como_arreglarlo": "Encerrá el valor entre paréntesis.",
+  "como_arreglarlo": "Encierra el valor entre paréntesis.",
   "pistas": [
-   "Reemplazá LADO por su valor a mano.",
+   "Reemplaza LADO por su valor a mano.",
    "La multiplicación se hace antes que la suma.",
-   "Poné paréntesis en el #define."
+   "Pon paréntesis en el #define."
   ],
   "relacion_con_la_materia": "preprocesador",
   "deteccion": "heuristica",
@@ -960,13 +960,13 @@
   "codigo_bien": "#include <stdio.h>\n#define N 5\nint main()\n{\n  printf(\"N vale %d\\n\", N);\n}",
   "entrada": "",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 5: dentro de las comillas el #define no reemplaza nada. Para mostrar el valor usá %d y pasá N.",
+  "mensaje_editor": "Línea 5: dentro de las comillas el #define no reemplaza nada. Para mostrar el valor usa %d y pasa N.",
   "explicacion": "El texto entre comillas se imprime tal cual. Solo los nombres que están fuera de comillas se reemplazan.",
-  "como_arreglarlo": "Usá %d y pasá el nombre como argumento.",
+  "como_arreglarlo": "Usa %d y pasa el nombre como argumento.",
   "pistas": [
    "¿Qué muestra el programa?",
    "N entre comillas es un carácter más.",
-   "Usá %d y N como argumento."
+   "Usa %d y N como argumento."
   ],
   "relacion_con_la_materia": "preprocesador, printf",
   "deteccion": "no_detectable",
@@ -988,9 +988,9 @@
   "codigo_bien": "#include <stdio.h>\n#include <math.h>\nint main()\n{\n  float A = M_PI * 4;\n  printf(\"%.2f\\n\", A);\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:4: error: 'M_PI' undeclared (first use in this function)",
-  "mensaje_editor": "Línea 4: M_PI no está declarada. Incluí <math.h>.",
+  "mensaje_editor": "Línea 4: M_PI no está declarada. Incluye <math.h>.",
   "explicacion": "M_PI es una constante de math.h. Sin esa biblioteca el nombre no existe.",
-  "como_arreglarlo": "Agregá #include <math.h> o definí tu propia constante.",
+  "como_arreglarlo": "Agrega #include <math.h> o define tu propia constante.",
   "pistas": [
    "¿Dónde está definido M_PI?",
    "Falta un include.",
@@ -1003,7 +1003,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "usás M_PI pero falta #include <math.h> al principio del programa",
+  "mensaje_editor_actual": "usas M_PI pero falta #include <math.h> al principio del programa",
   "codigo_editor_actual": "W-preprocesador",
   "verificado_editor_corrige": true
  },
@@ -1016,13 +1016,13 @@
   "codigo_bien": "#include <stdio.h>\nint main()\n{\n  printf(\"Hola\\n\");\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:2: fatal error: conio.h: No such file or directory",
-  "mensaje_editor": "Línea 2: conio.h es de Windows y no existe en este compilador. Sacala.",
+  "mensaje_editor": "Línea 2: conio.h es de Windows y no existe en este compilador. Sácala.",
   "explicacion": "conio.h es una biblioteca de Turbo C y compiladores de Windows. No está en gcc ni en Programiz.",
-  "como_arreglarlo": "Borrá el include y las funciones que venían de ahí.",
+  "como_arreglarlo": "Borra el include y las funciones que venían de ahí.",
   "pistas": [
    "¿Para qué se usaba esa biblioteca?",
    "No existe en gcc.",
-   "Borrá el include."
+   "Borra el include."
   ],
   "relacion_con_la_materia": "portabilidad",
   "deteccion": "estatica",
@@ -1031,7 +1031,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "<conio.h> solo existe en Windows (Code::Blocks): en Programiz y OnlineGDB no compila. Para esperar una tecla usá getchar() o scanf",
+  "mensaje_editor_actual": "<conio.h> solo existe en Windows (Code::Blocks): en Programiz y OnlineGDB no compila. Para esperar una tecla usa getchar() o scanf",
   "codigo_editor_actual": "W-preprocesador",
   "verificado_editor_corrige": true
  },
@@ -1044,13 +1044,13 @@
   "codigo_bien": "#include <stdio.h>\nint main()\n{\n  printf(\"Hola\\n\");\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:5: warning: implicit declaration of function 'getch'; did you mean 'getc'? [-Wimplicit-function-declaration]",
-  "mensaje_editor": "Línea 5: getch no existe en este compilador. Sacala; el programa ya espera solo.",
+  "mensaje_editor": "Línea 5: getch no existe en este compilador. Sácala; el programa ya espera solo.",
   "explicacion": "getch era una función de conio.h para esperar una tecla. En gcc no existe.",
-  "como_arreglarlo": "Borrá la llamada.",
+  "como_arreglarlo": "Borra la llamada.",
   "pistas": [
    "¿Para qué la usabas?",
    "Ya no hace falta.",
-   "Borrá getch()."
+   "Borra getch()."
   ],
   "relacion_con_la_materia": "portabilidad",
   "deteccion": "estatica",
@@ -1059,7 +1059,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "usás getch pero falta #include <conio.h> al principio del programa",
+  "mensaje_editor_actual": "usas getch pero falta #include <conio.h> al principio del programa",
   "codigo_editor_actual": "W-preprocesador",
   "verificado_editor_corrige": true
  },
@@ -1072,13 +1072,13 @@
   "codigo_bien": "#include <stdio.h>\nint main()\n{\n  printf(\"Hola\\n\");\n}",
   "entrada": "",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 6: system(\"pause\") es un comando de Windows; en Linux no existe. Sacalo.",
+  "mensaje_editor": "Línea 6: system(\"pause\") es un comando de Windows; en Linux no existe. Sácalo.",
   "explicacion": "system le pasa el texto al sistema operativo. \"pause\" y \"cls\" son comandos de Windows y fallan en Linux.",
-  "como_arreglarlo": "Borrá la línea.",
+  "como_arreglarlo": "Borra la línea.",
   "pistas": [
    "¿Quién ejecuta el comando?",
    "pause es de Windows.",
-   "Borrá la línea."
+   "Borra la línea."
   ],
   "relacion_con_la_materia": "portabilidad",
   "deteccion": "estatica",
@@ -1102,11 +1102,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 5: cls es un comando de Windows. En Linux no hay system(\"cls\").",
   "explicacion": "Mismo problema que pause: el comando no existe en el sistema donde corre el programa.",
-  "como_arreglarlo": "Sacá la línea.",
+  "como_arreglarlo": "Saca la línea.",
   "pistas": [
    "¿Cuál es el sistema operativo?",
    "cls es de Windows.",
-   "Borrá la llamada."
+   "Borra la llamada."
   ],
   "relacion_con_la_materia": "portabilidad",
   "deteccion": "estatica",
@@ -1130,11 +1130,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 3: los #include van al principio del archivo, afuera de main.",
   "explicacion": "El include copia el archivo en ese lugar. gcc a veces lo acepta adentro de una función, pero otros compiladores no y se rompe la estructura del programa.",
-  "como_arreglarlo": "Movelo arriba de main.",
+  "como_arreglarlo": "Muévelo arriba de main.",
   "pistas": [
    "¿Dónde pusiste el include?",
    "Va antes de la función.",
-   "Subilo al principio."
+   "Súbelo al principio."
   ],
   "relacion_con_la_materia": "preprocesador",
   "deteccion": "estatica",
@@ -1156,13 +1156,13 @@
   "codigo_bien": "#include <stdio.h>\nint main()\n{\n  printf(\"Hola\\n\");\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:3: warning: implicit declaration of function 'printf' [-Wimplicit-function-declaration]",
-  "mensaje_editor": "Línea 3: el #include está al final, después de usar printf. Subilo al principio.",
+  "mensaje_editor": "Línea 3: el #include está al final, después de usar printf. Súbelo al principio.",
   "explicacion": "El compilador lee de arriba hacia abajo, por eso printf se usó antes de saber qué es.",
-  "como_arreglarlo": "Poné los include en la primera línea.",
+  "como_arreglarlo": "Pon los include en la primera línea.",
   "pistas": [
    "¿En qué orden están las cosas?",
    "Primero se declara, después se usa.",
-   "Subí el include."
+   "Sube el include."
   ],
   "relacion_con_la_materia": "preprocesador",
   "deteccion": "estatica",
@@ -1171,7 +1171,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "usás printf antes de este #include: los #include van todos al principio, antes de usar sus funciones",
+  "mensaje_editor_actual": "usas printf antes de este #include: los #include van todos al principio, antes de usar sus funciones",
   "codigo_editor_actual": "W-portabilidad",
   "verificado_editor_corrige": true
  },
@@ -1184,13 +1184,13 @@
   "codigo_bien": "#include <stdio.h>\n#include <math.h>\nint main()\n{\n  float A = -2.5f;\n  printf(\"%.1f\\n\", fabs(A));\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:6: warning: using integer absolute value function 'abs' when argument is of floating-point type 'float' [-Wabsolute-value]",
-  "mensaje_editor": "Línea 6: abs es para enteros. Para decimales usá fabs de <math.h>.",
+  "mensaje_editor": "Línea 6: abs es para enteros. Para decimales usa fabs de <math.h>.",
   "explicacion": "abs trabaja con int. Con un float, convierte a int, pierde la parte decimal y devuelve un entero.",
-  "como_arreglarlo": "Usá fabs para float o double.",
+  "como_arreglarlo": "Usa fabs para float o double.",
   "pistas": [
    "¿Qué tipo es A?",
    "abs es de enteros.",
-   "Usá fabs e incluí math.h."
+   "Usa fabs e incluye math.h."
   ],
   "relacion_con_la_materia": "math.h",
   "deteccion": "heuristica",
@@ -1199,7 +1199,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "printf: '%f' espera un número decimal, pero el argumento 1 es entero (int): usá '%d'",
+  "mensaje_editor_actual": "printf: '%f' espera un número decimal, pero el argumento 1 es entero (int): usa '%d'",
   "codigo_editor_actual": "W-printf-formato",
   "verificado_editor_corrige": true
  },
@@ -1212,9 +1212,9 @@
   "codigo_bien": "#include <stdio.h>\n#include <math.h>\nint main()\n{\n  int A = 3;\n  printf(\"%.0f\\n\", pow(A, 2));\n}",
   "entrada": "",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 5: ^ en C no es potencia, es otro operador. Usá pow(A, 2) de <math.h>.",
+  "mensaje_editor": "Línea 5: ^ en C no es potencia, es otro operador. Usa pow(A, 2) de <math.h>.",
   "explicacion": "C no tiene operador de potencia. ^ hace una operación bit a bit (XOR). Para elevar se usa pow, que devuelve double.",
-  "como_arreglarlo": "Usá pow(base, exponente) e incluí math.h.",
+  "como_arreglarlo": "Usa pow(base, exponente) e incluye math.h.",
   "pistas": [
    "¿Qué da 3 ^ 2 en tu programa?",
    "^ no es la potencia.",
@@ -1227,7 +1227,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "en C, '^' no es potencia (es XOR de bits): 2 ^ 3 da 1. Para potencias usá pow(2, 3) de <math.h>",
+  "mensaje_editor_actual": "en C, '^' no es potencia (es XOR de bits): 2 ^ 3 da 1. Para potencias usa pow(2, 3) de <math.h>",
   "codigo_editor_actual": "W-comparacion",
   "verificado_editor_corrige": true
  },
@@ -1240,13 +1240,13 @@
   "codigo_bien": "#include <stdio.h>\n#include <math.h>\nint main()\n{\n  int A = 3;\n  printf(\"%.0f\\n\", pow(A, 2));\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:6: warning: format '%d' expects argument of type 'int', but argument 2 has type 'double' [-Wformat=]",
-  "mensaje_editor": "Línea 6: pow devuelve un double y %d espera un int. Usá %f.",
+  "mensaje_editor": "Línea 6: pow devuelve un double y %d espera un int. Usa %f.",
   "explicacion": "pow y sqrt trabajan con double. Mostrarlos con %d da un número cualquiera.",
-  "como_arreglarlo": "Usá %f (o %.0f si no querés decimales).",
+  "como_arreglarlo": "Usa %f (o %.0f si no quieres decimales).",
   "pistas": [
    "¿Qué tipo devuelve pow?",
    "El formato no coincide.",
-   "Cambiá %d por %.0f."
+   "Cambia %d por %.0f."
   ],
   "relacion_con_la_materia": "math.h, printf",
   "deteccion": "estatica",
@@ -1255,7 +1255,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "printf: '%d' espera un entero, pero el argumento 1 es double: usá '%f' (o '%.2f' para 2 decimales)",
+  "mensaje_editor_actual": "printf: '%d' espera un entero, pero el argumento 1 es double: usa '%f' (o '%.2f' para 2 decimales)",
   "codigo_editor_actual": "W-printf-formato",
   "verificado_editor_corrige": true
  },
@@ -1268,9 +1268,9 @@
   "codigo_bien": "#include <stdio.h>\n#include <math.h>\nint main()\n{\n  printf(\"%.1f\\n\", pow(27, 1.0 / 3));\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:5: error: too many arguments to function 'sqrt'",
-  "mensaje_editor": "Línea 5: sqrt recibe un solo número y calcula raíz cuadrada. Para otras raíces usá pow.",
+  "mensaje_editor": "Línea 5: sqrt recibe un solo número y calcula raíz cuadrada. Para otras raíces usa pow.",
   "explicacion": "No existe una función para raíz n-ésima en la materia. Se calcula con pow(numero, 1.0 / n).",
-  "como_arreglarlo": "Usá pow(numero, 1.0 / n).",
+  "como_arreglarlo": "Usa pow(numero, 1.0 / n).",
   "pistas": [
    "¿Cuántos argumentos tiene sqrt?",
    "Solo calcula raíz cuadrada.",
@@ -1296,9 +1296,9 @@
   "codigo_bien": "#include <stdio.h>\nint main()\n{\n  int N = 25;\n  char T[10];\n  sprintf(T, \"%d\", N);\n  printf(\"%s\\n\", T);\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:7: warning: implicit declaration of function 'itoa' [-Wimplicit-function-declaration]",
-  "mensaje_editor": "Línea 7: itoa no es del estándar y no existe en gcc. Usá sprintf(T, \"%d\", N).",
+  "mensaje_editor": "Línea 7: itoa no es del estándar y no existe en gcc. Usa sprintf(T, \"%d\", N).",
   "explicacion": "itoa viene de compiladores de Windows. Para pasar un número a texto se usa sprintf.",
-  "como_arreglarlo": "Reemplazalo por sprintf.",
+  "como_arreglarlo": "Reemplázalo por sprintf.",
   "pistas": [
    "itoa no está en todos los compiladores.",
    "Hay otra función de stdio.h que arma textos.",
@@ -1324,12 +1324,12 @@
   "codigo_bien": "#include <stdio.h>\nint main()\n{\n  char T[10] = \"Hola\";\n  int I;\n  for (I = 3; I >= 0; I--) {\n    printf(\"%c\", T[I]);\n  }\n  printf(\"\\n\");\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:6: warning: implicit declaration of function 'strrev'; did you mean 'strsep'? [-Wimplicit-function-declaration]",
-  "mensaje_editor": "Línea 6: strrev no existe en gcc. Recorré el texto de atrás para adelante con un for.",
+  "mensaje_editor": "Línea 6: strrev no existe en gcc. Recorre el texto de atrás para adelante con un for.",
   "explicacion": "strrev viene de Turbo C. En gcc hay que invertir el texto a mano.",
-  "como_arreglarlo": "Usá un for que recorra desde el último carácter hasta el primero.",
+  "como_arreglarlo": "Usa un for que recorra desde el último carácter hasta el primero.",
   "pistas": [
    "strrev no está en el estándar.",
-   "Pensá cómo recorrerías un texto de atrás.",
+   "Piensa cómo recorrerías un texto de atrás.",
    "for desde el último índice hasta 0."
   ],
   "relacion_con_la_materia": "portabilidad, textos",
@@ -1352,9 +1352,9 @@
   "codigo_bien": "#include <stdio.h>\nint main()\n{\n  char C;\n  int N;\n  scanf(\"%d\", &N);\n  scanf(\" %c\", &C);\n  printf(\"%d [%c]\\n\", N, C);\n}",
   "entrada": "5\nx\n",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 7: fflush(stdin) no limpia el teclado en gcc. Usá un espacio en el formato: scanf(\" %c\", &C).",
+  "mensaje_editor": "Línea 7: fflush(stdin) no limpia el teclado en gcc. Usa un espacio en el formato: scanf(\" %c\", &C).",
   "explicacion": "fflush solo está definido para flujos de salida. Con stdin, en Linux no hace nada, y el Enter anterior queda esperando. Un espacio antes de %c lo salta.",
-  "como_arreglarlo": "Poné un espacio antes del %c en el scanf.",
+  "como_arreglarlo": "Pon un espacio antes del %c en el scanf.",
   "pistas": [
    "¿Qué carácter queda pendiente después del número?",
    "fflush no funciona en el teclado.",

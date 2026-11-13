@@ -6,7 +6,7 @@
   var FORMATO = 'casos-sin-respuesta-v1';
   var MAX_CODIGO = 4000, MAX_ENTRADA = 500, MAX_MSG = 300, MAX_CASOS = 50, LIMITE_URL = 1800;
   var CLAVE = 'editor-c-casos';
-  var AVISO = '(recortado: copiá el resto con Copiar)';
+  var AVISO = '(recortado: copia el resto con Copiar)';
 
   /* ---------- privacidad ---------- */
 

@@ -163,7 +163,7 @@
  {
   "elemento": "short",
   "tipo": "tipo",
-  "que_es": "Entero más chico que int: ocupa 2 bytes y va de -32768 a 32767. Se muestra con %hd.",
+  "que_es": "Entero más pequeño que int: ocupa 2 bytes y va de -32768 a 32767. Se muestra con %hd.",
   "como_se_usa": "short T=30000;\nprintf(\"%hd\\n\",T);",
   "error_tipico": "Guardar un número que no entra (por ejemplo 40000): da la vuelta y queda negativo.",
   "en_la_materia": "Tipos",
@@ -743,7 +743,7 @@
   "relacionados": [
    "do",
    "for",
-   "bucle infinito"
+   "lazo infinito"
   ]
  },
  {
@@ -1055,7 +1055,7 @@
   "tipo": "palabra clave",
   "que_es": "Define una lista de constantes con nombre. Todavía no está soportado en este editor.",
   "como_se_usa": "enum COLOR { ROJO, VERDE };",
-  "error_tipico": "Escribirlo en el editor: avisa que todavía no lo entiende. Para constantes podés usar #define.",
+  "error_tipico": "Escribirlo en el editor: avisa que todavía no lo entiende. Para constantes puedes usar #define.",
   "en_la_materia": null,
   "errores_ids": [],
   "buscar": [
@@ -1271,7 +1271,7 @@
   "tipo": "operador",
   "que_es": "Da el resto de la división entera: 7%2 da 1. Solo funciona con enteros.",
   "como_se_usa": "R=A%2;\nprintf(\"%d\\n\",R);  // muestra: 1",
-  "error_tipico": "Usarlo con float o double: no compila. Dividir por cero tampoco anda.",
+  "error_tipico": "Usarlo con float o double: no compila. Dividir por cero tampoco funciona.",
   "en_la_materia": "Operadores",
   "errores_ids": [
    "EJE-002",
@@ -1504,7 +1504,7 @@
   "tipo": "operador",
   "que_es": "Da verdadero si el valor de la izquierda es menor que el de la derecha.",
   "como_se_usa": "if(A<5) printf(\"Menor\\n\");",
-  "error_tipico": "Encadenar 0<A<10: se evalúa mal. Usá A>0 && A<10.",
+  "error_tipico": "Encadenar 0<A<10: se evalúa mal. Usa A>0 && A<10.",
   "en_la_materia": "Operadores, BC",
   "errores_ids": [
    "CTL-034",
@@ -2311,7 +2311,7 @@
   "tipo": "operador",
   "que_es": "Operador condicional: CONDICION ? A : B da A si la condición es verdadera y B si no. Es un if dentro de una expresión.",
   "como_se_usa": "MAYOR=(A>B)?A:B;\nprintf(\"%d\\n\",MAYOR);  // muestra: 8",
-  "error_tipico": "Anidar varios ?: y no entender cuál se evalúa: mejor usá if.",
+  "error_tipico": "Anidar varios ?: y no entender cuál se evalúa: mejor usa if.",
   "en_la_materia": "Operadores",
   "errores_ids": [],
   "buscar": [
@@ -2448,7 +2448,7 @@
   "tipo": "símbolo",
   "que_es": "Los paréntesis agrupan una cuenta para cambiar el orden, encierran la condición de if/while/for y llevan los argumentos de una función.",
   "como_se_usa": "R=(A+B)*C;\nprintf(\"%d\\n\",R);  // muestra: 9",
-  "error_tipico": "Dejar uno abierto o cerrar de más: C se queja en esa línea o en la siguiente.",
+  "error_tipico": "Dejar uno abierto o cerrar de más: C avisa en esa línea o en la siguiente.",
   "en_la_materia": "Sintaxis",
   "errores_ids": [
    "CTL-041",
@@ -2577,9 +2577,9 @@
    },
    {
     "cuando": "Para agrupar el cuerpo de un while o un for.",
-    "que_es": "Delimitan todas las instrucciones que se repetirán en cada vuelta del ciclo.",
+    "que_es": "Delimitan todas las instrucciones que se repetirán en cada vuelta del lazo.",
     "ejemplo": "while (A<3) { A++; B=B+A; }",
-    "error_tipico": "Dejar una instrucción después de la llave de cierre hace que se ejecute una sola vez, fuera del ciclo."
+    "error_tipico": "Dejar una instrucción después de la llave de cierre hace que se ejecute una sola vez, fuera del lazo."
    },
    {
     "cuando": "Para delimitar el cuerpo de un switch.",
@@ -2769,19 +2769,19 @@
    },
    {
     "cuando": "Inmediatamente después de la condición de un while.",
-    "que_es": "El punto y coma forma un cuerpo vacío para el ciclo; la instrucción siguiente queda fuera del while.",
+    "que_es": "El punto y coma forma un cuerpo vacío para el lazo; la instrucción siguiente queda fuera del while.",
     "ejemplo": "while (A<0);\nprintf(\"Fin\\n\");",
-    "error_tipico": "Si la condición nunca cambia y es verdadera, el ciclo vacío puede repetirse sin terminar."
+    "error_tipico": "Si la condición nunca cambia y es verdadera, el lazo vacío puede repetirse sin terminar."
    },
    {
     "cuando": "Inmediatamente después de la cabecera de un for.",
-    "que_es": "El punto y coma es el cuerpo vacío del for; las instrucciones siguientes no forman parte del ciclo.",
+    "que_es": "El punto y coma es el cuerpo vacío del for; las instrucciones siguientes no forman parte del lazo.",
     "ejemplo": "for (I=0; I<3; I++);\nA=A+1;",
-    "error_tipico": "El ciclo realiza sus iteraciones sin ejecutar la instrucción que se pensaba repetir."
+    "error_tipico": "El lazo realiza sus iteraciones sin ejecutar la instrucción que se pensaba repetir."
    },
    {
     "cuando": "Al cerrar el bloque de una función o de una estructura de control.",
-    "que_es": "La llave final ya termina el bloque; después de ella no se escribe un punto y coma para cerrar una función, un if o un ciclo.",
+    "que_es": "La llave final ya termina el bloque; después de ella no se escribe un punto y coma para cerrar una función, un if o un lazo.",
     "ejemplo": "if (A>0) {\n    A=A+1;\n}",
     "error_tipico": "Poner un punto y coma después de la llave no termina el if: agrega una instrucción vacía y puede impedir que un else se asocie correctamente."
    }
@@ -4331,7 +4331,7 @@
   "tipo": "formato",
   "que_es": "Formato para short.",
   "como_se_usa": "short T=30000;\nprintf(\"%hd\\n\",T);  // muestra: 30000",
-  "error_tipico": "Usar %d con un short en scanf: pisa memoria de más.",
+  "error_tipico": "Usar %d con un short en scanf: sobrescribe memoria de más.",
   "en_la_materia": "printf y scanf",
   "errores_ids": [],
   "buscar": [
@@ -5055,7 +5055,7 @@
   "tipo": "función",
   "que_es": "Como printf pero escribe el resultado dentro de un arreglo de char en vez de la pantalla (stdio.h).",
   "como_se_usa": "char TXT[30];\nsprintf(TXT,\"A=%d\",A);\nputs(TXT);",
-  "error_tipico": "Usar un arreglo demasiado chico: escribe fuera de él.",
+  "error_tipico": "Usar un arreglo demasiado pequeño: escribe fuera de él.",
   "en_la_materia": "Texto",
   "errores_ids": [
    "ARR-031"
@@ -5128,7 +5128,7 @@
  {
   "elemento": "gets",
   "tipo": "función",
-  "que_es": "Leía una línea sin límite. Es insegura y se eliminó del lenguaje: usá fgets.",
+  "que_es": "Leía una línea sin límite. Es insegura y se eliminó del lenguaje: usa fgets.",
   "como_se_usa": "gets(LINEA);",
   "error_tipico": "Usarla: puede escribir fuera del arreglo.",
   "en_la_materia": "Texto",
@@ -5261,7 +5261,7 @@
   "tipo": "función",
   "que_es": "Lee una tecla sin esperar Enter. No es estándar: viene de conio.h y existe en Windows, no en Linux.",
   "como_se_usa": "C=getch();\nprintf(\"%d\\n\",C);",
-  "error_tipico": "Usarla y que el programa no compile en otro sistema. Si necesitás una pausa, getchar() es portable.",
+  "error_tipico": "Usarla y que el programa no compile en otro sistema. Si necesitas una pausa, getchar() es portable.",
   "en_la_materia": "Portabilidad",
   "errores_ids": [
    "POR-003",
@@ -5436,7 +5436,7 @@
   "tipo": "función",
   "que_es": "Ejecuta un comando del sistema (stdlib.h). El editor la acepta pero no hace nada.",
   "como_se_usa": "system(\"pause\");",
-  "error_tipico": "Usar system(\"pause\") para frenar la pantalla: solo anda en Windows.",
+  "error_tipico": "Usar system(\"pause\") para frenar la pantalla: solo funciona en Windows.",
   "en_la_materia": "Portabilidad",
   "errores_ids": [
    "POR-001",
@@ -6228,7 +6228,7 @@
   "tipo": "función",
   "que_es": "Redondea hacia arriba: el entero más cercano que no es menor que el número. Está en math.h.",
   "como_se_usa": "R=ceil(2.1);\nprintf(\"%g\\n\",R);  // muestra: 3",
-  "error_tipico": "Creer que modifica la variable que le pasás.",
+  "error_tipico": "Creer que modifica la variable que le pasas.",
   "en_la_materia": "math.h",
   "errores_ids": [],
   "buscar": [
@@ -6682,7 +6682,7 @@
  {
   "elemento": "exp",
   "tipo": "función",
-  "que_es": "Calcula e elevado al número que le pasás. Está en math.h.",
+  "que_es": "Calcula e elevado al número que le pasas. Está en math.h.",
   "como_se_usa": "R=exp(1);\nprintf(\"%g\\n\",R);  // muestra: 2.71828",
   "error_tipico": "Confundirla con pow(10,X).",
   "en_la_materia": "math.h",
@@ -6712,7 +6712,7 @@
  {
   "elemento": "exp2",
   "tipo": "función",
-  "que_es": "Calcula 2 elevado al número que le pasás. Está en math.h.",
+  "que_es": "Calcula 2 elevado al número que le pasas. Está en math.h.",
   "como_se_usa": "R=exp2(10);\nprintf(\"%g\\n\",R);  // muestra: 1024",
   "error_tipico": "Confundirla con exp.",
   "en_la_materia": "math.h",
@@ -6741,7 +6741,7 @@
  {
   "elemento": "expm1",
   "tipo": "función",
-  "que_es": "Calcula e elevado a X menos 1, con más precisión para valores muy chicos. Está en math.h.",
+  "que_es": "Calcula e elevado a X menos 1, con más precisión para valores muy pequeños. Está en math.h.",
   "como_se_usa": "R=expm1(0);\nprintf(\"%g\\n\",R);  // muestra: 0",
   "error_tipico": "Usarla sin necesitar tanta precisión: exp(X)-1 alcanza.",
   "en_la_materia": "math.h",
@@ -6856,7 +6856,7 @@
  {
   "elemento": "log1p",
   "tipo": "función",
-  "que_es": "Logaritmo natural de 1+X, con más precisión para valores muy chicos. Está en math.h.",
+  "que_es": "Logaritmo natural de 1+X, con más precisión para valores muy pequeños. Está en math.h.",
   "como_se_usa": "R=log1p(0);\nprintf(\"%g\\n\",R);  // muestra: 0",
   "error_tipico": "Usarla cuando log(1+X) alcanza.",
   "en_la_materia": "math.h",
@@ -8827,7 +8827,7 @@
  {
   "elemento": "prototipo",
   "tipo": "concepto",
-  "que_es": "La declaración de una función (tipo de retorno, nombre y tipos de parámetros) escrita antes de usarla, terminada con ;. Le avisa al compilador cómo es la función que definís más abajo.",
+  "que_es": "La declaración de una función (tipo de retorno, nombre y tipos de parámetros) escrita antes de usarla, terminada con ;. Le avisa al compilador cómo es la función que defines más abajo.",
   "como_se_usa": "int DOBLE(int);",
   "error_tipico": "Olvidarlo cuando main llama a una función definida debajo: el compilador no la conoce.",
   "en_la_materia": "Funciones",
@@ -8854,7 +8854,7 @@
  {
   "elemento": "argumento",
   "tipo": "concepto",
-  "que_es": "El dato concreto que le pasás a una función cuando la llamás.",
+  "que_es": "El dato concreto que le pasas a una función cuando la llamas.",
   "como_se_usa": "R=DOBLE(5);",
   "error_tipico": "Pasar más o menos argumentos que parámetros tiene la función.",
   "en_la_materia": "Funciones",
@@ -9039,7 +9039,7 @@
  {
   "elemento": "lazo",
   "tipo": "concepto",
-  "que_es": "Estructura que repite un grupo de instrucciones. En C: for, while y do-while. También se llama bucle o ciclo.",
+  "que_es": "Estructura que repite un grupo de instrucciones. En C: for, while y do-while. También se llama lazo o lazo.",
   "como_se_usa": "for(I=0;I<3;I++){\n printf(\"%d\\n\",I);\n}",
   "error_tipico": "Un lazo que nunca llega a su condición de corte no termina.",
   "en_la_materia": "LR, LC",
@@ -9218,7 +9218,7 @@
  {
   "elemento": "comportamiento indefinido",
   "tipo": "concepto",
-  "que_es": "Cuando el programa hace algo que C no define: puede dar cualquier resultado, o parecer que anda y fallar en otra máquina. Ejemplos: usar una variable sin valor, salirse de un arreglo, desbordar un int con signo, dividir por cero.",
+  "que_es": "Cuando el programa hace algo que C no define: puede dar cualquier resultado, o parecer que funciona y fallar en otra máquina. Ejemplos: usar una variable sin valor, salirse de un arreglo, desbordar un int con signo, dividir por cero.",
   "como_se_usa": "int V[3];\nV[5]=1;",
   "error_tipico": "Confiar en que \"a mí me anduvo\": el resultado puede cambiar con otro compilador.",
   "en_la_materia": "Portabilidad",
@@ -9250,7 +9250,7 @@
   "tipo": "concepto",
   "que_es": "Cuando una cuenta da un resultado que no entra en el tipo: un int se pasa de 2147483647 y el resultado deja de ser el esperado (en la práctica suele salir un número negativo, pero C no lo garantiza).",
   "como_se_usa": "int A=INT_MAX;\nA=A+1;",
-  "error_tipico": "No darse cuenta: la suma \"anda\" pero da un número absurdo. Probá con long.",
+  "error_tipico": "No darse cuenta: la suma \"funciona\" pero da un número absurdo. Prueba con long.",
   "en_la_materia": "Tipos",
   "errores_ids": [
    "EJE-010",
@@ -9323,7 +9323,7 @@
  {
   "elemento": "conversión de tipos",
   "tipo": "concepto",
-  "que_es": "Cuando una cuenta mezcla tipos, C convierte solo al más \"ancho\": int con float da float. También podés forzarla con un cast: (float)A.",
+  "que_es": "Cuando una cuenta mezcla tipos, C convierte solo al más \"ancho\": int con float da float. También puedes forzarla con un cast: (float)A.",
   "como_se_usa": "printf(\"%.1f\\n\",(float)7/2);",
   "error_tipico": "Convertir el resultado en vez de los operandos: (float)(7/2) ya perdió los decimales.",
   "en_la_materia": "Tipos",
@@ -9542,7 +9542,7 @@
  {
   "elemento": "identificador",
   "tipo": "concepto",
-  "que_es": "El nombre que le ponés a una variable o función. Tiene letras, números y guion bajo, no empieza con número y no puede ser una palabra reservada.",
+  "que_es": "El nombre que le pones a una variable o función. Tiene letras, números y guion bajo, no empieza con número y no puede ser una palabra reservada.",
   "como_se_usa": "int TOTAL_FINAL=0;",
   "error_tipico": "Usar guion medio, espacios o empezar con un número.",
   "en_la_materia": "Variables",
@@ -9609,9 +9609,9 @@
  {
   "elemento": "buffer de entrada",
   "tipo": "concepto",
-  "que_es": "Memoria donde se acumulan las teclas que escribís hasta que se las lee. scanf deja el Enter pendiente en el buffer, y por eso una lectura de char o de línea posterior puede tomarlo sin esperar.",
+  "que_es": "Memoria donde se acumulan las teclas que escribes hasta que se las lee. scanf deja el Enter pendiente en el buffer, y por eso una lectura de char o de línea posterior puede tomarlo sin esperar.",
   "como_se_usa": "scanf(\"%d\",&A);\nscanf(\" %c\",&C);",
-  "error_tipico": "Leer un char con %c justo después de un número: toma el Enter. Dejá un espacio antes de %c.",
+  "error_tipico": "Leer un char con %c justo después de un número: toma el Enter. Deja un espacio antes de %c.",
   "en_la_materia": "scanf",
   "errores_ids": [
    "ARR-042",
@@ -10316,7 +10316,7 @@
  {
   "elemento": "#warning",
   "tipo": "directiva",
-  "que_es": "Directiva de algunas implementaciones que emite una advertencia durante la compilación; no forma parte del estándar C99.",
+  "que_es": "Directiva de algunas implementaciones que emite una aviso durante la compilación; no forma parte del estándar C99.",
   "como_se_usa": "#warning \"Revisar este bloque\"\nint N=0;",
   "error_tipico": "Suponer que es estándar C99 o que Editor C muestra el mismo aviso que GCC.",
   "en_la_materia": "Preprocesador",
@@ -10325,7 +10325,7 @@
    "directiva de preprocesador",
    "#warning"
   ],
-  "detalle": "El preprocesador interpreta esta directiva antes de compilar las instrucciones de C.\nDebe comenzar con el carácter # al inicio de una línea lógica.\nDirectiva de algunas implementaciones que emite una advertencia durante la compilación; no forma parte del estándar C99.\nLas directivas condicionales pueden anidarse, pero cada bloque debe cerrarse correctamente.\nEditor C implementa solo el comportamiento descrito y no equivale a un preprocesador completo de GCC.\nNo confundas una condición de preprocesador con una condición if que se evalúa durante la ejecución.",
+  "detalle": "El preprocesador interpreta esta directiva antes de compilar las instrucciones de C.\nDebe comenzar con el carácter # al inicio de una línea lógica.\nDirectiva de algunas implementaciones que emite una aviso durante la compilación; no forma parte del estándar C99.\nLas directivas condicionales pueden anidarse, pero cada bloque debe cerrarse correctamente.\nEditor C implementa solo el comportamiento descrito y no equivale a un preprocesador completo de GCC.\nNo confundas una condición de preprocesador con una condición if que se evalúa durante la ejecución.",
   "relacionados": [
    "#error",
    "#pragma",

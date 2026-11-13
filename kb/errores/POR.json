@@ -9,12 +9,12 @@
   "entrada": "\n",
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 5: system(\"pause\") es un comando de Windows. En Linux, Programiz u OnlineGDB no existe y muestra un error.",
-  "explicacion": "system() le pasa un comando al sistema operativo, y 'pause' solo existe en Windows (Code::Blocks). En otros sistemas el comando no se encuentra y aparece un mensaje de error. Para esperar una tecla en cualquier entorno usá getchar().",
-  "como_arreglarlo": "Reemplazá system(\"pause\") por getchar() o sacalo: en el editor no hace falta para que la ventana quede abierta.",
+  "explicacion": "system() le pasa un comando al sistema operativo, y 'pause' solo existe en Windows (Code::Blocks). En otros sistemas el comando no se encuentra y aparece un mensaje de error. Para esperar una tecla en cualquier entorno usa getchar().",
+  "como_arreglarlo": "Reemplaza system(\"pause\") por getchar() o sácalo: en el editor no hace falta para que la ventana quede abierta.",
   "pistas": [
    "En tu computadora funciona pero en Programiz sale un mensaje raro. ¿Qué hace system?",
    "El comando pause existe solo en Windows.",
-   "Usá getchar() para esperar una tecla."
+   "Usa getchar() para esperar una tecla."
   ],
   "relacion_con_la_materia": "programas completos",
   "deteccion": "estatica",
@@ -38,11 +38,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 5: system(\"cls\") es de Windows y en otros sistemas muestra un error sin borrar nada. No hace falta limpiar la pantalla.",
   "explicacion": "'cls' es el comando de Windows para limpiar la consola; en Linux el equivalente es 'clear'. Como cambia según el sistema, es mejor no depender de ello: el programa se entiende igual sin borrar la pantalla.",
-  "como_arreglarlo": "Sacá la limpieza de pantalla; si querés separar secciones, imprimí una línea en blanco con \\n.",
+  "como_arreglarlo": "Saca la limpieza de pantalla; si quieres separar secciones, imprime una línea en blanco con \\n.",
   "pistas": [
    "En Programiz sale un mensaje de error cerca del cls. ¿Qué hace system?",
    "cls no existe fuera de Windows.",
-   "Borrá la línea del system y usá printf(\"\\n\") para separar."
+   "Borra la línea del system y usa printf(\"\\n\") para separar."
   ],
   "relacion_con_la_materia": "programas completos",
   "deteccion": "estatica",
@@ -64,13 +64,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int A;\n  A = 5;\n  printf(\"A=%d\\n\", A);\n  getchar();\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:2: fatal error: conio.h: No such file or directory",
-  "mensaje_editor": "Línea 2: conio.h solo existe en Windows (Code::Blocks) y no compila en Programiz ni OnlineGDB. Usá getchar() para esperar una tecla.",
+  "mensaje_editor": "Línea 2: conio.h solo existe en Windows (Code::Blocks) y no compila en Programiz ni OnlineGDB. Usa getchar() para esperar una tecla.",
   "explicacion": "conio.h es una biblioteca de Borland/Windows que no forma parte del lenguaje C estándar. Los compiladores de Linux no la tienen. getchar(), que está en stdio.h, hace lo mismo en todos los sistemas.",
-  "como_arreglarlo": "Sacá #include <conio.h> y reemplazá getch() por getchar().",
+  "como_arreglarlo": "Saca #include <conio.h> y reemplaza getch() por getchar().",
   "pistas": [
    "En Programiz dice que no encuentra un archivo. ¿Cuál es el include que no existe allá?",
    "getch no es parte de C estándar.",
-   "Cambiá getch() por getchar() y sacá conio.h."
+   "Cambia getch() por getchar() y saca conio.h."
   ],
   "relacion_con_la_materia": "programas completos",
   "deteccion": "estatica",
@@ -79,7 +79,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "<conio.h> solo existe en Windows (Code::Blocks): en Programiz y OnlineGDB no compila. Para esperar una tecla usá getchar() o scanf",
+  "mensaje_editor_actual": "<conio.h> solo existe en Windows (Code::Blocks): en Programiz y OnlineGDB no compila. Para esperar una tecla usa getchar() o scanf",
   "codigo_editor_actual": "W-preprocesador",
   "verificado_editor_corrige": true
  },
@@ -92,13 +92,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  printf(\"Hola\\n\");\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:2: fatal error: conio.h: No such file or directory",
-  "mensaje_editor": "Línea 2: conio.h y clrscr() son de Windows y no existen en Programiz ni en OnlineGDB. Borrá la línea de clrscr().",
+  "mensaje_editor": "Línea 2: conio.h y clrscr() son de Windows y no existen en Programiz ni en OnlineGDB. Borra la línea de clrscr().",
   "explicacion": "clrscr() viene de conio.h, una biblioteca de los compiladores viejos de DOS y Windows. No está en el estándar de C, así que en otros entornos el compilador dice que no conoce esa función.",
-  "como_arreglarlo": "Eliminá clrscr() y el include de conio.h; el programa no depende de ella.",
+  "como_arreglarlo": "Elimina clrscr() y el include de conio.h; el programa no depende de ella.",
   "pistas": [
    "El compilador dice que no encuentra conio.h. ¿Para qué sirve clrscr?",
    "No es parte del lenguaje C estándar.",
-   "Borrá clrscr() y el include."
+   "Borra clrscr() y el include."
   ],
   "relacion_con_la_materia": "programas completos",
   "deteccion": "estatica",
@@ -122,11 +122,11 @@
   "que_dice_gcc": "archivo.c:2: warning: return type of 'main' is not 'int' [-Wmain]",
   "mensaje_editor": "Línea 2: main tiene que devolver int. Con void main funciona en Code::Blocks pero gcc avisa.",
   "explicacion": "El estándar de C pide que main devuelva un int: ese número le dice al sistema si el programa terminó bien (0). Algunos compiladores de Windows aceptan void main, pero gcc avisa y otros pueden rechazarlo.",
-  "como_arreglarlo": "Escribí int main() y terminá con return 0;.",
+  "como_arreglarlo": "Escribe int main() y termina con return 0;.",
   "pistas": [
    "gcc avisa algo sobre el tipo de main. ¿Qué tipo tiene que tener?",
    "main devuelve un número al sistema operativo.",
-   "Cambiá void por int y poné return 0; al final."
+   "Cambia void por int y pon return 0; al final."
   ],
   "relacion_con_la_materia": "estructura del programa",
   "deteccion": "estatica",
@@ -150,11 +150,11 @@
   "que_dice_gcc": "archivo.c:2: warning: return type defaults to 'int' [-Wimplicit-int]",
   "mensaje_editor": "Línea 2: a main() le falta el tipo int adelante. gcc lo acepta pero avisa, y los compiladores modernos pueden rechazarlo.",
   "explicacion": "En C antiguo, una función sin tipo se tomaba como int. Los estándares nuevos lo prohíben y gcc avisa con -Wall. Escribir int main() funciona en todos los compiladores.",
-  "como_arreglarlo": "Agregá int antes de main.",
+  "como_arreglarlo": "Agrega int antes de main.",
   "pistas": [
    "gcc avisa por el tipo de retorno. ¿Qué falta antes de main?",
    "Sin tipo, C antiguo suponía int.",
-   "Escribí int main()."
+   "Escribe int main()."
   ],
   "relacion_con_la_materia": "estructura del programa",
   "deteccion": "estatica",
@@ -177,13 +177,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int N;\n  char C;\n  scanf(\"%d\", &N);\n  scanf(\" %c\", &C);\n  printf(\"%d %d\\n\", N, C);\n}",
   "entrada": "5\nA\n",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 6: fflush(stdin) limpia el teclado en Code::Blocks, pero en otros sistemas no hace nada y el scanf siguiente lee el Enter. Poné un espacio antes de %c.",
+  "mensaje_editor": "Línea 6: fflush(stdin) limpia el teclado en Code::Blocks, pero en otros sistemas no hace nada y el scanf siguiente lee el Enter. Pon un espacio antes de %c.",
   "explicacion": "fflush está pensado para vaciar salidas, no entradas; el estándar no define qué hace con stdin. En Windows borra el Enter pendiente, en Linux no. Un espacio antes de %c hace que scanf se salte los espacios y saltos de línea en cualquier sistema.",
-  "como_arreglarlo": "Sacá fflush(stdin) y escribí \" %c\" con un espacio antes del %.",
+  "como_arreglarlo": "Saca fflush(stdin) y escribe \" %c\" con un espacio antes del %.",
   "pistas": [
-   "En tu computadora anda y en Programiz el carácter es raro. ¿Qué queda pendiente en el teclado después de leer el número?",
+   "En tu computadora funciona y en Programiz el carácter es raro. ¿Qué queda pendiente en el teclado después de leer el número?",
    "fflush(stdin) no se comporta igual en todos los sistemas.",
-   "Usá \" %c\" con un espacio."
+   "Usa \" %c\" con un espacio."
   ],
   "relacion_con_la_materia": "scanf",
   "deteccion": "estatica",
@@ -207,11 +207,11 @@
   "que_dice_gcc": "archivo.c:4: warning: multi-character character constant [-Wmultichar]",
   "mensaje_editor": "Línea 4: 'á' no entra en un char. En UTF-8 las letras con acento usan más de un byte y gcc avisa.",
   "explicacion": "Un char guarda un solo byte. Las letras con acento y la ñ ocupan dos bytes cuando el archivo está en UTF-8, así que no caben entre comillas simples. Dentro de un texto entre comillas dobles se muestran bien, pero no como char.",
-  "como_arreglarlo": "Usá letras sin acento en los char; los acentos solo en textos entre comillas dobles.",
+  "como_arreglarlo": "Usa letras sin acento en los char; los acentos solo en textos entre comillas dobles.",
   "pistas": [
    "gcc avisa por una constante de varios caracteres. ¿Cuántos bytes usa la á?",
    "Un char es de un solo byte.",
-   "Usá 'a' sin acento."
+   "Usa 'a' sin acento."
   ],
   "relacion_con_la_materia": "tipos, char",
   "deteccion": "estatica",
@@ -233,13 +233,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  printf(\"%-6s|\\n\", \"ano\");\n  printf(\"%-6s|\\n\", \"ano\");\n}",
   "entrada": "",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 3: el ancho de %-6s cuenta bytes, y 'año' usa 4 bytes en UTF-8, por eso la columna queda corrida. Evitá acentos en textos que tienen que alinear.",
+  "mensaje_editor": "Línea 3: el ancho de %-6s cuenta bytes, y 'año' usa 4 bytes en UTF-8, por eso la columna queda corrida. Evita acentos en textos que tienen que alinear.",
   "explicacion": "Los anchos de printf cuentan bytes, no letras. La ñ y las vocales con acento ocupan dos bytes en UTF-8, así que quedan menos espacios de relleno. En Windows la consola puede mostrar otro resultado, o símbolos raros.",
-  "como_arreglarlo": "En tablas alineadas con anchos fijos usá palabras sin acentos.",
+  "como_arreglarlo": "En tablas alineadas con anchos fijos usa palabras sin acentos.",
   "pistas": [
    "Las dos barras no quedan alineadas. ¿Cuántos caracteres tiene cada texto?",
    "El ancho cuenta bytes, no letras.",
-   "Escribí las palabras sin acento en las tablas."
+   "Escribe las palabras sin acento en las tablas."
   ],
   "relacion_con_la_materia": "printf",
   "deteccion": "no_detectable",
@@ -263,11 +263,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 3: long tiene 8 bytes en Linux pero 4 en Windows, así que el factorial de 20 da bien en Programiz y mal en Code::Blocks. Con long long el tamaño es el mismo en todos lados.",
   "explicacion": "El tamaño de long depende del sistema: 8 bytes en Linux de 64 bits, 4 bytes en Windows. Un programa que depende de que entre un número grande puede dar resultados distintos. long long tiene 8 bytes en ambos.",
-  "como_arreglarlo": "Si el valor puede pasar los 2 mil millones, usá long long y %lld.",
+  "como_arreglarlo": "Si el valor puede pasar los 2 mil millones, usa long long y %lld.",
   "pistas": [
    "El mismo programa da distinto resultado en dos computadoras. ¿Qué tipo se usa para el factorial?",
    "El tamaño de long no es igual en Windows y en Linux.",
-   "Cambiá long por long long y %ld por %lld."
+   "Cambia long por long long y %ld por %lld."
   ],
   "relacion_con_la_materia": "tipos",
   "deteccion": "no_detectable",
@@ -289,13 +289,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  printf(\"%d\\n\", (int) sizeof(int));\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:3: warning: format '%d' expects argument of type 'int', but argument 2 has type 'long unsigned int' [-Wformat=]",
-  "mensaje_editor": "Línea 3: sizeof devuelve un tipo sin signo largo, no un int. Convertílo con (int) para mostrarlo con %d.",
-  "explicacion": "sizeof da un número del tipo size_t, que en Linux de 64 bits tiene 8 bytes y en otros sistemas 4. Si lo mostrás con %d, el formato no coincide con el dato. Convertirlo a int con (int) lo hace portable.",
-  "como_arreglarlo": "Poné (int) delante de sizeof al mostrarlo con %d.",
+  "mensaje_editor": "Línea 3: sizeof devuelve un tipo sin signo largo, no un int. Conviértelo con (int) para mostrarlo con %d.",
+  "explicacion": "sizeof da un número del tipo size_t, que en Linux de 64 bits tiene 8 bytes y en otros sistemas 4. Si lo muestras con %d, el formato no coincide con el dato. Convertirlo a int con (int) lo hace portable.",
+  "como_arreglarlo": "Pon (int) delante de sizeof al mostrarlo con %d.",
   "pistas": [
    "gcc avisa por el formato de printf. ¿Qué tipo devuelve sizeof?",
    "sizeof no devuelve un int.",
-   "Escribí (int) sizeof(int)."
+   "Escribe (int) sizeof(int)."
   ],
   "relacion_con_la_materia": "tipos, printf",
   "deteccion": "estatica",
@@ -318,12 +318,12 @@
   "entrada": "",
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 7: C no define en qué orden se calculan los argumentos de printf. gcc los evalúa de derecha a izquierda y otros compiladores de izquierda a derecha.",
-  "explicacion": "Cuando una llamada tiene varios argumentos con efectos (como mostrar algo), el estándar no fija cuál se calcula primero. Un programa que depende del orden puede dar resultados distintos según el compilador. Si el orden importa, guardá cada resultado en una variable en renglones separados.",
-  "como_arreglarlo": "Ejecutá cada llamada en su propia línea y guardá el resultado en una variable.",
+  "explicacion": "Cuando una llamada tiene varios argumentos con efectos (como mostrar algo), el estándar no fija cuál se calcula primero. Un programa que depende del orden puede dar resultados distintos según el compilador. Si el orden importa, guarda cada resultado en una variable en renglones separados.",
+  "como_arreglarlo": "Ejecuta cada llamada en su propia línea y guarda el resultado en una variable.",
   "pistas": [
    "En tu computadora sale F1 F2 y en otra F2 F1. ¿Quién decide el orden?",
    "C no fija en qué orden evalúa los argumentos de una función.",
-   "Llamá a F en dos líneas aparte y guardá los resultados."
+   "Llama a F en dos líneas aparte y guarda los resultados."
   ],
   "relacion_con_la_materia": "funciones",
   "deteccion": "estatica",
@@ -340,7 +340,7 @@
  {
   "id": "POR-013",
   "categoria": "portabilidad y entorno",
-  "nombre_corto": "Variable local sin inicializar que 'anda' por casualidad",
+  "nombre_corto": "Variable local sin inicializar que 'funciona' por casualidad",
   "frecuencia": "muy alta",
   "codigo_mal": "#include <stdio.h>\nint SUMAR(int N) {\n  int S, i;\n  for (i = 1; i <= N; i++) { S = S + i; }\n  return S;\n}\nint main() {\n  printf(\"%d\\n\", SUMAR(3));\n}",
   "codigo_bien": "#include <stdio.h>\nint SUMAR(int N) {\n  int S, i;\n  S = 0;\n  for (i = 1; i <= N; i++) { S = S + i; }\n  return S;\n}\nint main() {\n  printf(\"%d\\n\", SUMAR(3));\n}",
@@ -348,11 +348,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 3: S se usa sin haberle dado un valor. Puede dar 6 en una computadora y otro número en otra.",
   "explicacion": "Una variable local nunca inicializada contiene lo que quedó en la memoria. A veces ese valor es 0 y el programa da bien, y en otra máquina o con otro compilador da distinto. No se puede confiar en que funcione.",
-  "como_arreglarlo": "Inicializá cada acumulador y contador antes de usarlo.",
+  "como_arreglarlo": "Inicializa cada acumulador y contador antes de usarlo.",
   "pistas": [
    "En el compilador de la escuela da bien y en otra computadora da distinto. ¿Qué valor tiene S al empezar?",
    "Las variables sin inicializar tienen basura.",
-   "Poné S = 0 antes del lazo."
+   "Pon S = 0 antes del lazo."
   ],
   "relacion_con_la_materia": "acumuladores",
   "deteccion": "heuristica",
@@ -361,7 +361,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "'S' se usa antes de darle un valor (en C su valor inicial es basura): asignale un valor inicial, por ejemplo S = 0;",
+  "mensaje_editor_actual": "'S' se usa antes de darle un valor (en C su valor inicial es basura): asígnale un valor inicial, por ejemplo S = 0;",
   "codigo_editor_actual": "W-sin-inicializar",
   "verificado_editor_corrige": true
  },
@@ -376,11 +376,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 4: con \"%d%c\" el %c lee el salto de línea que quedó después del número, no la letra. En Windows el salto es de dos caracteres (\\r\\n).",
   "explicacion": "Un %c lee el carácter que sigue, sea cual sea, incluso un Enter. Windows termina las líneas con dos caracteres (\\r y \\n) y Linux con uno solo (\\n), por eso los programas se comportan distinto con la entrada. Un espacio antes de %c saltea cualquier espacio o salto de línea.",
-  "como_arreglarlo": "Escribí un espacio antes del %c: \" %c\".",
+  "como_arreglarlo": "Escribe un espacio antes del %c: \" %c\".",
   "pistas": [
    "La letra que muestra no es la que escribiste. ¿Qué carácter queda después del número?",
    "Un %c lee cualquier carácter, también el Enter.",
-   "Poné un espacio en el formato antes de %c."
+   "Pon un espacio en el formato antes de %c."
   ],
   "relacion_con_la_materia": "scanf",
   "deteccion": "estatica",
@@ -402,13 +402,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  long long A;\n  A = 5;\n  printf(\"%lld\\n\", A);\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:5: warning: format '%d' expects argument of type 'int', but argument 2 has type 'long long int' [-Wformat=]",
-  "mensaje_editor": "Línea 4: %I64d es un formato de Windows y en Linux muestra el número con espacios de más. Para long long usá %lld.",
+  "mensaje_editor": "Línea 4: %I64d es un formato de Windows y en Linux muestra el número con espacios de más. Para long long usa %lld.",
   "explicacion": "%I64d lo usaban los compiladores viejos de Windows. En el estándar de C el formato de long long es %lld. En Linux, la I es una opción del formato y el 64 es un ancho de campo, por eso aparecen espacios antes del número.",
-  "como_arreglarlo": "Cambiá %I64d por %lld.",
+  "como_arreglarlo": "Cambia %I64d por %lld.",
   "pistas": [
    "El número aparece lejos del margen. ¿Cuál es el formato estándar de long long?",
    "El formato %I64d es de Windows.",
-   "Escribí %lld."
+   "Escribe %lld."
   ],
   "relacion_con_la_materia": "printf, tipos",
   "deteccion": "estatica",
@@ -431,13 +431,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  char N[20];\n  scanf(\"%19s\", N);\n  printf(\"%s\\n\", N);\n}",
   "entrada": "Ana\n",
   "que_dice_gcc": "archivo.c:4: warning: 'gets' is deprecated [-Wdeprecated-declarations]",
-  "mensaje_editor": "Línea 4: gets fue eliminada del estándar porque no controla el tamaño del texto, y gcc avisa. Usá scanf con ancho o fgets.",
+  "mensaje_editor": "Línea 4: gets fue eliminada del estándar porque no controla el tamaño del texto, y gcc avisa. Usa scanf con ancho o fgets.",
   "explicacion": "gets lee una línea sin saber cuántos caracteres entran en el arreglo, y si el texto es largo escribe fuera de él. Por eso se eliminó de C11. scanf(\"%19s\") limita la cantidad; fgets también (y conserva el Enter).",
-  "como_arreglarlo": "Reemplazá gets por scanf con ancho o por fgets.",
+  "como_arreglarlo": "Reemplaza gets por scanf con ancho o por fgets.",
   "pistas": [
    "gcc dice que gets está obsoleta. ¿Por qué es peligrosa?",
    "gets no sabe cuánto mide el arreglo.",
-   "Usá scanf(\"%19s\", N)."
+   "Usa scanf(\"%19s\", N)."
   ],
   "relacion_con_la_materia": "arreglos y textos",
   "deteccion": "estatica",
@@ -459,13 +459,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  printf(\"Espere\\n\");\n  printf(\"Listo\\n\");\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:2: fatal error: windows.h: No such file or directory",
-  "mensaje_editor": "Línea 2: windows.h solo existe en Windows y no compila en Programiz ni OnlineGDB. Sacá el include y las esperas.",
+  "mensaje_editor": "Línea 2: windows.h solo existe en Windows y no compila en Programiz ni OnlineGDB. Saca el include y las esperas.",
   "explicacion": "windows.h es la biblioteca de Windows (ventanas, esperas, colores). No es parte del lenguaje C estándar, así que otros sistemas no la tienen. Las esperas con Sleep no hacen falta para resolver los ejercicios.",
-  "como_arreglarlo": "Borrá el include de windows.h y las llamadas a Sleep.",
+  "como_arreglarlo": "Borra el include de windows.h y las llamadas a Sleep.",
   "pistas": [
    "El compilador no encuentra un archivo. ¿Para qué sistema es windows.h?",
    "Las funciones de windows.h no existen en Linux.",
-   "Eliminá windows.h y Sleep."
+   "Elimina windows.h y Sleep."
   ],
   "relacion_con_la_materia": "programas completos",
   "deteccion": "estatica",
@@ -487,13 +487,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int N;\n  char T[12];\n  N = 123;\n  sprintf(T, \"%d\", N);\n  printf(\"%s\\n\", T);\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:7: warning: implicit declaration of function 'itoa' [-Wimplicit-function-declaration]",
-  "mensaje_editor": "Línea 6: itoa no es estándar y no existe en Linux. Para convertir un número en texto usá sprintf.",
+  "mensaje_editor": "Línea 6: itoa no es estándar y no existe en Linux. Para convertir un número en texto usa sprintf.",
   "explicacion": "itoa es una función de Windows y de algunos compiladores viejos, pero no está en la biblioteca estándar de C. sprintf funciona como printf pero escribe en un arreglo de char en vez de en la pantalla.",
-  "como_arreglarlo": "Reemplazá itoa por sprintf(T, \"%d\", N).",
+  "como_arreglarlo": "Reemplaza itoa por sprintf(T, \"%d\", N).",
   "pistas": [
    "En Programiz dice 'undefined reference'. ¿Quién provee itoa?",
    "itoa no es parte de C estándar.",
-   "Usá sprintf con el formato %d."
+   "Usa sprintf con el formato %d."
   ],
   "relacion_con_la_materia": "arreglos y textos",
   "deteccion": "estatica",
@@ -515,13 +515,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  printf(\"Espere\\n\");\n  printf(\"Listo\\n\");\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:2: fatal error: dos.h: No such file or directory",
-  "mensaje_editor": "Línea 2: dos.h y delay() son de Turbo C / DOS y no existen en Programiz ni en OnlineGDB. Sacalos del programa.",
+  "mensaje_editor": "Línea 2: dos.h y delay() son de Turbo C / DOS y no existen en Programiz ni en OnlineGDB. Sácalos del programa.",
   "explicacion": "dos.h es una biblioteca de compiladores de MS-DOS. Hoy no se encuentra en gcc. Las pausas no son necesarias para los ejercicios de la materia.",
-  "como_arreglarlo": "Eliminá el include y las llamadas a delay.",
+  "como_arreglarlo": "Elimina el include y las llamadas a delay.",
   "pistas": [
    "El compilador no encuentra dos.h. ¿De qué época es?",
    "delay no es C estándar.",
-   "Borrá dos.h y delay."
+   "Borra dos.h y delay."
   ],
   "relacion_con_la_materia": "programas completos",
   "deteccion": "estatica",
@@ -543,13 +543,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  float V;\n  char C;\n  scanf(\"%f%c\", &V, &C);\n  if (C == ',') { printf(\"Usá punto decimal, no coma\\n\"); }\n  else { printf(\"%.2f\\n\", V * 2); }\n}",
   "entrada": "3,5",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "scanf lee 3 y deja ',5' sin leer porque el programa espera un punto decimal. Escribí los decimales con punto.",
-  "explicacion": "En C el separador decimal siempre es el punto. Si escribís 3,5, scanf entiende el 3 y se detiene en la coma, y el programa sigue con un valor equivocado sin avisar. En Argentina el teclado suele tener la coma, así que es un error muy común.",
-  "como_arreglarlo": "Escribí los decimales con punto y avisá al usuario cuando haya quedado algo sin leer.",
+  "mensaje_editor": "scanf lee 3 y deja ',5' sin leer porque el programa espera un punto decimal. Escribe los decimales con punto.",
+  "explicacion": "En C el separador decimal siempre es el punto. Si escribes 3,5, scanf entiende el 3 y se detiene en la coma, y el programa sigue con un valor equivocado sin avisar. En Argentina el teclado suele tener la coma, así que es un error muy común.",
+  "como_arreglarlo": "Escribe los decimales con punto y avisa al usuario cuando haya quedado algo sin leer.",
   "pistas": [
    "Ingresaste 3,5 y el programa multiplicó 3. ¿Qué carácter usa C para los decimales?",
    "scanf se detiene en el primer carácter que no entiende.",
-   "Escribí 3.5 con punto."
+   "Escribe 3.5 con punto."
   ],
   "relacion_con_la_materia": "scanf, tipos",
   "deteccion": "ejecucion",
@@ -573,11 +573,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 5: rand() sin srand da siempre la misma secuencia, y esa secuencia es distinta en Windows y en Linux. No dependas del número concreto.",
   "explicacion": "rand() genera una secuencia que siempre empieza igual si no se llama antes a srand. El estándar no dice cuál es esa secuencia, así que en Windows y en Linux se ven números distintos. Un programa no debe depender del valor exacto.",
-  "como_arreglarlo": "Probá el programa con propiedades (entre 0 y 9) y no con el valor concreto.",
+  "como_arreglarlo": "Prueba el programa con propiedades (entre 0 y 9) y no con el valor concreto.",
   "pistas": [
    "En otra computadora sale otro número. ¿Quién decide la secuencia de rand?",
    "El estándar no fija los valores que genera rand.",
-   "Verificá solo el rango del resultado."
+   "Verifica solo el rango del resultado."
   ],
   "relacion_con_la_materia": "funciones",
   "deteccion": "no_detectable",
@@ -600,12 +600,12 @@
   "entrada": "200",
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 5: un char común puede tener signo (rango -128 a 127) en un sistema y no tenerlo en otro. Con 200 sale -56 en Linux x86.",
-  "explicacion": "El estándar no dice si char guarda negativos. En x86 con gcc sí (de -128 a 127) y en otras arquitecturas no (de 0 a 255). Para guardar números de 0 a 255 declará unsigned char.",
-  "como_arreglarlo": "Si necesitás valores hasta 255, declarálo unsigned char.",
+  "explicacion": "El estándar no dice si char guarda negativos. En x86 con gcc sí (de -128 a 127) y en otras arquitecturas no (de 0 a 255). Para guardar números de 0 a 255 declara unsigned char.",
+  "como_arreglarlo": "Si necesitas valores hasta 255, decláralo unsigned char.",
   "pistas": [
    "Ingresaste 200 y salió un negativo. ¿Qué rango tiene un char?",
    "El signo de char depende del sistema.",
-   "Declarálo como unsigned char."
+   "Decláralo como unsigned char."
   ],
   "relacion_con_la_materia": "tipos, char",
   "deteccion": "no_detectable",
@@ -627,13 +627,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int N;\n  scanf(\"%d\", &N);\n  printf(\"%d\\n\", N);\n}",
   "entrada": "5",
   "que_dice_gcc": "archivo.c:4: warning: implicit declaration of function 'scanf_s'; did you mean 'scanf'? [-Wimplicit-function-declaration]",
-  "mensaje_editor": "Línea 4: scanf_s es una función de Visual Studio y no existe en Programiz ni en OnlineGDB. Usá scanf.",
+  "mensaje_editor": "Línea 4: scanf_s es una función de Visual Studio y no existe en Programiz ni en OnlineGDB. Usa scanf.",
   "explicacion": "scanf_s es la versión 'segura' que agregó Microsoft. No es parte del C de gcc, así que en Linux el compilador no la encuentra. En la materia se usa scanf.",
-  "como_arreglarlo": "Cambiá scanf_s por scanf.",
+  "como_arreglarlo": "Cambia scanf_s por scanf.",
   "pistas": [
    "El compilador dice 'undefined reference to scanf_s'. ¿De dónde viene esa función?",
    "scanf_s es de Microsoft.",
-   "Usá scanf."
+   "Usa scanf."
   ],
   "relacion_con_la_materia": "scanf",
   "deteccion": "estatica",
@@ -642,7 +642,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "scanf_s es una función de Visual Studio y no existe en gcc (ni en Programiz ni en OnlineGDB). Usá scanf",
+  "mensaje_editor_actual": "scanf_s es una función de Visual Studio y no existe en gcc (ni en Programiz ni en OnlineGDB). Usa scanf",
   "codigo_editor_actual": "E-no-declarada",
   "verificado_editor_corrige": true
  },
@@ -655,13 +655,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  printf(\"Hola\\n\");\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:1: fatal error: stdafx.h: No such file or directory",
-  "mensaje_editor": "Línea 1: stdafx.h lo crea Visual Studio y no existe en otros entornos. Borrá esa línea.",
+  "mensaje_editor": "Línea 1: stdafx.h lo crea Visual Studio y no existe en otros entornos. Borra esa línea.",
   "explicacion": "stdafx.h es un archivo del proyecto de Visual Studio, usado para compilar más rápido. Fuera de ese entorno no está. Los programas de la materia solo necesitan stdio.h y math.h.",
-  "como_arreglarlo": "Borrá el include de stdafx.h.",
+  "como_arreglarlo": "Borra el include de stdafx.h.",
   "pistas": [
    "El compilador no encuentra stdafx.h. ¿De dónde viene?",
    "No es una biblioteca de C.",
-   "Quitá esa línea."
+   "Quita esa línea."
   ],
   "relacion_con_la_materia": "programas completos",
   "deteccion": "estatica",
@@ -685,11 +685,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 5: pow devuelve un double y al guardarlo en un int se corta la parte decimal. En algunos compiladores de Windows pow(10, 2) da 99.999 y queda 99.",
   "explicacion": "pow trabaja con decimales y puede devolver un valor apenas menor que el exacto. Al guardarlo en un int se descartan los decimales sin redondear, y en algunos compiladores el resultado queda uno menos. Sumar 0.5 antes de convertir redondea hacia el entero más cercano.",
-  "como_arreglarlo": "Si necesitás una potencia entera, sumá 0.5 antes de convertir, o calculala con un lazo.",
+  "como_arreglarlo": "Si necesitas una potencia entera, suma 0.5 antes de convertir, o cálculala con un lazo.",
   "pistas": [
    "En una computadora da 100 y en otra 99. ¿Qué tipo devuelve pow?",
    "Pasar de decimal a entero corta los decimales.",
-   "Sumá 0.5 antes de guardar en el int."
+   "Suma 0.5 antes de guardar en el int."
   ],
   "relacion_con_la_materia": "math.h, tipos",
   "deteccion": "estatica",

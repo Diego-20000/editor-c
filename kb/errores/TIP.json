@@ -9,12 +9,12 @@
   "entrada": "",
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 5: A / B divide dos enteros y el resultado se trunca antes de guardarse en R. Guardarlo en un float no recupera los decimales.",
-  "explicacion": "Si los dos operandos de una división son enteros, C hace una división entera y descarta la parte decimal. El tipo de la variable donde guardás no cambia cómo se hizo la cuenta.",
-  "como_arreglarlo": "Convertí uno de los dos operandos a decimal antes de dividir.",
+  "explicacion": "Si los dos operandos de una división son enteros, C hace una división entera y descarta la parte decimal. El tipo de la variable donde guardas no cambia cómo se hizo la cuenta.",
+  "como_arreglarlo": "Convierte uno de los dos operandos a decimal antes de dividir.",
   "pistas": [
-   "Calculá a mano 7 / 2 con enteros y compará con lo que muestra el programa.",
+   "Calcula a mano 7 / 2 con enteros y compara con lo que muestra el programa.",
    "El tipo de R es float, pero la división se resuelve antes de llegar a R.",
-   "Convertí A con (float) antes de dividir."
+   "Convierte A con (float) antes de dividir."
   ],
   "relacion_con_la_materia": "SS, tipos de datos",
   "deteccion": "heuristica",
@@ -23,7 +23,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "la división es entre dos enteros y se trunca (7/2 da 3, no 3.5): guardarla en float no recupera los decimales; usá 7/2.0 o (float)7/2",
+  "mensaje_editor_actual": "la división es entre dos enteros y se trunca (7/2 da 3, no 3.5): guardarla en float no recupera los decimales; usa 7/2.0 o (float)7/2",
   "codigo_editor_actual": "W-division-entera",
   "verificado_editor_corrige": true
  },
@@ -38,11 +38,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 5: (N1 + N2) / 2 es una división entera: da 7 y no 7.5. Para que tenga decimales, uno de los dos tiene que ser decimal.",
   "explicacion": "Sumar enteros da un entero y dividirlo por otro entero trunca. El promedio sale redondeado hacia abajo aunque PROM sea float.",
-  "como_arreglarlo": "Hacé que el divisor o el dividendo sea decimal, por ejemplo escribiendo el divisor con punto.",
+  "como_arreglarlo": "Haz que el divisor o el dividendo sea decimal, por ejemplo escribiendo el divisor con punto.",
   "pistas": [
-   "Hacé la cuenta del promedio con una calculadora y compará.",
+   "Haz la cuenta del promedio con una calculadora y compara.",
    "La suma y el 2 son enteros, y por eso se pierde el .5.",
-   "Escribí el divisor como 2.0."
+   "Escribe el divisor como 2.0."
   ],
   "relacion_con_la_materia": "SS, promedio",
   "deteccion": "heuristica",
@@ -51,7 +51,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "la división es entre dos enteros y se trunca (7/2 da 3, no 3.5): guardarla en float no recupera los decimales; usá 7/2.0 o (float)7/2",
+  "mensaje_editor_actual": "la división es entre dos enteros y se trunca (7/2 da 3, no 3.5): guardarla en float no recupera los decimales; usa 7/2.0 o (float)7/2",
   "codigo_editor_actual": "W-division-entera",
   "verificado_editor_corrige": true,
   "solucion_ejercicio": true
@@ -66,12 +66,12 @@
   "entrada": "",
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 5: el (float) se aplica al resultado de A / B, que ya se truncó. El cast tiene que ir sobre un operando, antes de dividir.",
-  "explicacion": "El cast convierte lo que tiene a la derecha. Si lo ponés delante de un paréntesis con la división, convierte el resultado ya truncado.",
-  "como_arreglarlo": "Poné el cast delante de uno de los operandos, no delante de toda la división.",
+  "explicacion": "El cast convierte lo que tiene a la derecha. Si lo pones delante de un paréntesis con la división, convierte el resultado ya truncado.",
+  "como_arreglarlo": "Pon el cast delante de uno de los operandos, no delante de toda la división.",
   "pistas": [
-   "Mirá qué cosa convierte el (float).",
+   "Mira qué cosa convierte el (float).",
    "El cast se aplica cuando la división ya terminó.",
-   "Escribí (float)A / B."
+   "Escribe (float)A / B."
   ],
   "relacion_con_la_materia": "SS, conversión de tipos",
   "deteccion": "heuristica",
@@ -95,11 +95,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 4: 9 / 5 son dos enteros y da 1, no 1.8. Con C = 100 el resultado es 132 en vez de 212.",
   "explicacion": "Las constantes enteras que se dividen entre sí se truncan, aunque el resto de la fórmula sea decimal. Se evalúa 9 / 5 primero.",
-  "como_arreglarlo": "Escribí una de las constantes de la fracción como decimal.",
+  "como_arreglarlo": "Escribe una de las constantes de la fracción como decimal.",
   "pistas": [
-   "Calculá a mano qué da 9 / 5 en C.",
+   "Calcula a mano qué da 9 / 5 en C.",
    "La fracción se resuelve antes de multiplicar por C.",
-   "Escribí 9.0 / 5."
+   "Escribe 9.0 / 5."
   ],
   "relacion_con_la_materia": "SS, fórmulas",
   "deteccion": "heuristica",
@@ -123,11 +123,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 5: PARTE / TOTAL divide dos enteros y da 0, por eso el porcentaje siempre sale 0.",
   "explicacion": "La división se hace antes de multiplicar por 100 y, con enteros, 3 / 4 vale 0. Cualquier cosa por 0 da 0.",
-  "como_arreglarlo": "Cambiá el orden o convertí a decimal para no perder la fracción.",
+  "como_arreglarlo": "Cambia el orden o convierte a decimal para no perder la fracción.",
   "pistas": [
-   "Calculá a mano 3 / 4 con enteros.",
+   "Calcula a mano 3 / 4 con enteros.",
    "Se divide antes de multiplicar, y se pierde el decimal.",
-   "Multiplicá primero por 100.0 y después dividí."
+   "Multiplica primero por 100.0 y después divide."
   ],
   "relacion_con_la_materia": "SS, porcentajes",
   "deteccion": "heuristica",
@@ -151,11 +151,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 5: 1 / 2 es una división entera y vale 0, entonces el área da siempre 0.",
   "explicacion": "Escribir 1 / 2 en una fórmula no representa un medio: con enteros el resultado es 0. Hay que usar un decimal (0.5 o 2.0).",
-  "como_arreglarlo": "Evitá la fracción de enteros: usá un literal decimal.",
+  "como_arreglarlo": "Evita la fracción de enteros: usa un literal decimal.",
   "pistas": [
-   "Probá qué da 1 / 2 en C.",
+   "Prueba qué da 1 / 2 en C.",
    "El primer factor de la cuenta vale 0.",
-   "Dividí por 2.0 al final."
+   "Divide por 2.0 al final."
   ],
   "relacion_con_la_materia": "SS, fórmulas",
   "deteccion": "heuristica",
@@ -179,11 +179,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 6: 1 / N es una división entera: da 1 con N = 1 y 0 con los demás. S suma 1, no 1.83.",
   "explicacion": "La división entera descarta la parte decimal. Con el numerador 1 y un N mayor, siempre da 0.",
-  "como_arreglarlo": "Hacé que el numerador sea decimal.",
+  "como_arreglarlo": "Haz que el numerador sea decimal.",
   "pistas": [
-   "Calculá 1 / 2 y 1 / 3 con enteros.",
+   "Calcula 1 / 2 y 1 / 3 con enteros.",
    "El numerador y el denominador son enteros.",
-   "Escribí 1.0 / N."
+   "Escribe 1.0 / N."
   ],
   "relacion_con_la_materia": "LC por acumuladores, tipos",
   "deteccion": "heuristica",
@@ -207,11 +207,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 4: A + A supera el máximo de un int (2147483647). El resultado deja de ser el esperado: en la práctica suele salir un número negativo, pero C no lo garantiza.",
   "explicacion": "Un int guarda hasta unos 2147 millones. Si una cuenta se pasa, no avisa: el resultado deja de ser el esperado y suele aparecer un número raro, a veces negativo (C no lo garantiza).",
-  "como_arreglarlo": "Usá un tipo con más capacidad para el dato, como double en estas cuentas.",
+  "como_arreglarlo": "Usa un tipo con más capacidad para el dato, como double en estas cuentas.",
   "pistas": [
-   "Mirá cuánto vale cada número y cuánto es el máximo de un int.",
+   "Mira cuánto vale cada número y cuánto es el máximo de un int.",
    "La suma de los dos supera lo que entra en un int.",
-   "Declará las variables como double y mostrá con %.0f."
+   "Declara las variables como double y muestra con %.0f."
   ],
   "relacion_con_la_materia": "SS, tipos de datos",
   "deteccion": "ejecucion",
@@ -235,16 +235,16 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 6: el factorial de 13 no entra en un int: el producto da la vuelta y muestra un valor equivocado. Un int llega hasta el factorial de 12.",
   "explicacion": "Los factoriales crecen muy rápido. 13! vale 6227020800, más que el máximo de un int.",
-  "como_arreglarlo": "Guardá el producto en una variable de un tipo con más capacidad, por ejemplo double.",
+  "como_arreglarlo": "Guarda el producto en una variable de un tipo con más capacidad, por ejemplo double.",
   "pistas": [
-   "Probá con un N más chico y después con 13.",
+   "Prueba con un N más pequeño y después con 13.",
    "A partir de cierto N el resultado deja de ser correcto.",
-   "Cambiá el tipo de FACT por double."
+   "Cambia el tipo de FACT por double."
   ],
   "relacion_con_la_materia": "LC, tipos de datos",
   "deteccion": "ejecucion",
-  "como_detectarlo": "Producto acumulado en un int dentro de un bucle cuyo límite lo decide el usuario.",
-  "riesgo_falso_positivo": "Factoriales chicos (N de hasta 12).",
+  "como_detectarlo": "Producto acumulado en un int dentro de un lazo cuyo límite lo decide el usuario.",
+  "riesgo_falso_positivo": "Factoriales pequeños (N de hasta 12).",
   "nivel": "informacion",
   "verificado_gcc13": true,
   "detectado_editor": false,
@@ -262,12 +262,12 @@
   "entrada": "",
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 3: 200 no entra en un char con signo, que llega hasta 127. Se guarda como -56.",
-  "explicacion": "Un char es un número chico: de -128 a 127. Si le asignás algo más grande, no se guarda bien.",
-  "como_arreglarlo": "Para números grandes usá int.",
+  "explicacion": "Un char es un número pequeño: de -128 a 127. Si le asignas algo más grande, no se guarda bien.",
+  "como_arreglarlo": "Para números grandes usa int.",
   "pistas": [
-   "Pensá qué rango de números cabe en un solo byte.",
-   "El valor que le asignás es más grande que el máximo de un char.",
-   "Declará la variable como int."
+   "Piensa qué rango de números cabe en un solo byte.",
+   "El valor que le asignas es más grande que el máximo de un char.",
+   "Declara la variable como int."
   ],
   "relacion_con_la_materia": "SS, tipos de datos",
   "deteccion": "estatica",
@@ -291,17 +291,17 @@
   "entrada": "",
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 3: SUMA es char y solo guarda de -128 a 127. 300 no entra y se muestra 44.",
-  "explicacion": "char sirve para caracteres o números muy chicos. Un acumulador de sumas necesita int.",
-  "como_arreglarlo": "Declará el acumulador como int.",
+  "explicacion": "char sirve para caracteres o números muy pequeños. Un acumulador de sumas necesita int.",
+  "como_arreglarlo": "Declara el acumulador como int.",
   "pistas": [
-   "Calculá el valor esperado y compará con el que sale.",
-   "El tipo de SUMA es muy chico para el total.",
-   "Cambiá char por int."
+   "Calcula el valor esperado y compara con el que sale.",
+   "El tipo de SUMA es muy pequeño para el total.",
+   "Cambia char por int."
   ],
   "relacion_con_la_materia": "LC por acumuladores, tipos",
   "deteccion": "heuristica",
   "como_detectarlo": "Acumulador char al que se le suman valores mayores de 1.",
-  "riesgo_falso_positivo": "Un char que acumula valores muy chicos.",
+  "riesgo_falso_positivo": "Un char que acumula valores muy pequeños.",
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": false,
@@ -320,11 +320,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 4: %d muestra el número del carácter (65), no la letra. Para ver la letra se usa %c.",
   "explicacion": "Un char guarda el código del carácter. %c lo muestra como letra y %d como el número de ese código.",
-  "como_arreglarlo": "Elegí el formato según lo que quieras ver: letra o código.",
+  "como_arreglarlo": "Elige el formato según lo que quieras ver: letra o código.",
   "pistas": [
-   "Pensá qué querés ver en pantalla: una letra o un número.",
+   "Piensa qué quieres ver en pantalla: una letra o un número.",
    "El formato del printf decide cómo se muestra el char.",
-   "Cambiá %d por %c."
+   "Cambia %d por %c."
   ],
   "relacion_con_la_materia": "SS, tipos de datos, printf",
   "deteccion": "heuristica",
@@ -346,13 +346,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int N = 65;\n  printf(\"%d\\n\", N);\n}",
   "entrada": "",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 4: %c interpreta N como un código de carácter y muestra la letra A. Para ver el número usá %d.",
+  "mensaje_editor": "Línea 4: %c interpreta N como un código de carácter y muestra la letra A. Para ver el número usa %d.",
   "explicacion": "%c convierte el número en el carácter que le corresponde en la tabla ASCII. Para mostrar un entero va %d.",
-  "como_arreglarlo": "Usá %d si querés ver el número.",
+  "como_arreglarlo": "Usa %d si quieres ver el número.",
   "pistas": [
-   "Fijate qué muestra el programa y qué esperabas.",
+   "Fíjate qué muestra el programa y qué esperabas.",
    "El formato no es el de un entero.",
-   "Usá %d."
+   "Usa %d."
   ],
   "relacion_con_la_materia": "SS, printf",
   "deteccion": "heuristica",
@@ -376,11 +376,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 4: %c lee un solo carácter. Con 25 lee '2' y N vale 50, el código del carácter.",
   "explicacion": "Un char guarda un único carácter. Aunque escribas 25, scanf con %c toma solo el primero. Para números se usa int con %d.",
-  "como_arreglarlo": "Para leer un número usá una variable int y %d.",
+  "como_arreglarlo": "Para leer un número usa una variable int y %d.",
   "pistas": [
-   "Probá con un dato de dos cifras y mirá qué guarda.",
+   "Prueba con un dato de dos cifras y mira qué guarda.",
    "El tipo y el formato son los de un carácter.",
-   "Declará N como int y leé con %d."
+   "Declara N como int y lee con %d."
   ],
   "relacion_con_la_materia": "SS, entrada de datos",
   "deteccion": "heuristica",
@@ -404,11 +404,11 @@
   "que_dice_gcc": "archivo.c:3: warning: initialization of 'char' from 'char *' makes integer from pointer without a cast [-Wint-conversion]",
   "mensaje_editor": "Línea 3: un char se escribe con comillas simples ('A'). Las comillas dobles son para textos.",
   "explicacion": "'A' es un carácter. \"A\" es un texto de una letra, que no cabe en un char.",
-  "como_arreglarlo": "Usá comillas simples para un solo carácter.",
+  "como_arreglarlo": "Usa comillas simples para un solo carácter.",
   "pistas": [
-   "Mirá cómo se escribe el valor del char.",
+   "Mira cómo se escribe el valor del char.",
    "Las comillas que usaste son las de texto.",
-   "Cambialas por comillas simples."
+   "Cámbialas por comillas simples."
   ],
   "relacion_con_la_materia": "SS, tipos de datos",
   "deteccion": "estatica",
@@ -432,11 +432,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 4: comparar un decimal con == puede fallar por redondeo, porque 0.1 no se guarda exacto. Conviene comparar con < y >.",
   "explicacion": "Los decimales se guardan en binario y casi nunca representan exactamente un valor como 0.1. Un float y un double con el mismo número aparente son distintos.",
-  "como_arreglarlo": "Comprobá un intervalo en vez de la igualdad exacta.",
+  "como_arreglarlo": "Comprueba un intervalo en vez de la igualdad exacta.",
   "pistas": [
-   "Probá qué muestra y por qué parecen iguales.",
+   "Prueba qué muestra y por qué parecen iguales.",
    "El float y el literal 0.1 no guardan el mismo valor.",
-   "Preguntá si X está en un rango cercano."
+   "Pregunta si X está en un rango cercano."
   ],
   "relacion_con_la_materia": "SS, BC con decimales",
   "deteccion": "estatica",
@@ -460,11 +460,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 4: comparar un decimal con == puede fallar por redondeo (0.1 + 0.2 no es exactamente 0.3). Conviene comparar la diferencia con un margen pequeño.",
   "explicacion": "Cada suma de decimales arrastra un pequeño error de redondeo. El resultado se parece a 0.3, pero no es igual.",
-  "como_arreglarlo": "Restá los dos valores y comprobá que la diferencia es muy chica.",
+  "como_arreglarlo": "Resta los dos valores y comprueba que la diferencia es muy pequeña.",
   "pistas": [
-   "Hacé la cuenta con lápiz y compará con lo que dice el programa.",
+   "Haz la cuenta con lápiz y compara con lo que dice el programa.",
    "Los decimales tienen pequeños errores de redondeo.",
-   "Calculá la diferencia y compará con un valor chico."
+   "Calcula la diferencia y compara con un valor pequeño."
   ],
   "relacion_con_la_materia": "SS, BC con decimales",
   "deteccion": "estatica",
@@ -488,11 +488,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 6: al guardar un decimal en un int se pierden los decimales sin redondear: 3.99 se guarda como 3.",
   "explicacion": "La asignación a un int descarta la parte decimal: no redondea, corta. Para redondear un número positivo se suma 0.5 antes de convertir (con negativos se resta 0.5).",
-  "como_arreglarlo": "Decidí si querés cortar o redondear y hacelo explícito.",
+  "como_arreglarlo": "Decide si quieres cortar o redondear y hazlo explícito.",
   "pistas": [
-   "Probá con 3.99 y compará con tu cuenta.",
+   "Prueba con 3.99 y compara con tu cuenta.",
    "R es un entero y X un decimal.",
-   "Sumale 0.5 a X antes de asignar."
+   "Súmale 0.5 a X antes de asignar."
   ],
   "relacion_con_la_materia": "SS, conversión de tipos",
   "deteccion": "heuristica",
@@ -501,7 +501,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "al guardar el decimal X en el entero R se pierden los decimales sin redondear: 3.99 se guarda como 3. Si lo querés así, escribí el cast (int) para que se note.",
+  "mensaje_editor_actual": "al guardar el decimal X en el entero R se pierden los decimales sin redondear: 3.99 se guarda como 3. Si lo quieres así, escribe el cast (int) para que se note.",
   "codigo_editor_actual": "W-truncamiento",
   "verificado_editor_corrige": true
  },
@@ -514,13 +514,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  double IMPORTE = 0.29;\n  int CENT;\n  CENT = IMPORTE * 100 + 0.5;\n  printf(\"%d\\n\", CENT);\n}",
   "entrada": "",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 5: 0.29 * 100 da 28.999999 y al guardarlo en un int se corta a 28. Sumá 0.5 para redondear.",
+  "mensaje_editor": "Línea 5: 0.29 * 100 da 28.999999 y al guardarlo en un int se corta a 28. Suma 0.5 para redondear.",
   "explicacion": "Los decimales no son exactos: 0.29 * 100 queda apenas por debajo de 29 y el entero corta el decimal en vez de redondear.",
-  "como_arreglarlo": "Redondeá antes de convertir a entero.",
+  "como_arreglarlo": "Redondea antes de convertir a entero.",
   "pistas": [
-   "Calculá 0.29 * 100 y pensá si el resultado es exactamente 29.",
+   "Calcula 0.29 * 100 y piensa si el resultado es exactamente 29.",
    "Se trunca el valor decimal al guardarlo en un int.",
-   "Sumá 0.5 antes de asignar."
+   "Suma 0.5 antes de asignar."
   ],
   "relacion_con_la_materia": "SS, conversión de tipos",
   "deteccion": "heuristica",
@@ -529,7 +529,7 @@
   "nivel": "informacion",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "IMPORTE * 100 puede dar un número como 28.999999 y al guardarlo en un entero se corta a 28. Sumá 0.5 antes de guardarlo para redondear.",
+  "mensaje_editor_actual": "IMPORTE * 100 puede dar un número como 28.999999 y al guardarlo en un entero se corta a 28. Suma 0.5 antes de guardarlo para redondear.",
   "codigo_editor_actual": "W-truncamiento-centavos",
   "verificado_editor_corrige": true
  },
@@ -544,11 +544,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 4: U es unsigned y no guarda negativos. 5 - 10 da la vuelta y se muestra 4294967291.",
   "explicacion": "Un unsigned solo representa números de 0 en adelante. Si una cuenta da negativa, el resultado vuelve a empezar desde el máximo.",
-  "como_arreglarlo": "Si el dato puede ser negativo, usá un tipo con signo.",
+  "como_arreglarlo": "Si el dato puede ser negativo, usa un tipo con signo.",
   "pistas": [
-   "Hacé 5 - 10 a mano y compará con lo que sale.",
+   "Haz 5 - 10 a mano y compara con lo que sale.",
    "Un número sin signo no puede ser negativo.",
-   "Usá int en lugar de unsigned int."
+   "Usa int en lugar de unsigned int."
   ],
   "relacion_con_la_materia": "SS, tipos de datos",
   "deteccion": "heuristica",
@@ -564,19 +564,19 @@
  {
   "id": "TIP-021",
   "categoria": "Tipos y conversiones",
-  "nombre_corto": "Bucle con unsigned que nunca termina",
+  "nombre_corto": "Lazo con unsigned que nunca termina",
   "frecuencia": "media",
   "codigo_mal": "#include <stdio.h>\nint main() {\n  unsigned int U;\n  int C = 0;\n  for (U = 3; U >= 0; U--) {\n    C++;\n    if (C > 6) break;\n  }\n  printf(\"%d\\n\", C);\n}",
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int U;\n  int C = 0;\n  for (U = 3; U >= 0; U--) {\n    C++;\n    if (C > 6) break;\n  }\n  printf(\"%d\\n\", C);\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:5: warning: comparison of unsigned expression in '>= 0' is always true [-Wtype-limits]",
-  "mensaje_editor": "Línea 5: U es unsigned y U >= 0 siempre es verdadero, entonces el bucle no termina nunca. Usá un int.",
+  "mensaje_editor": "Línea 5: U es unsigned y U >= 0 siempre es verdadero, entonces el lazo no termina nunca. Usa un int.",
   "explicacion": "Un número sin signo nunca es menor que 0. Al bajar de 0 vuelve al máximo y la condición sigue cumpliéndose.",
-  "como_arreglarlo": "Usá un tipo con signo cuando contés hacia abajo hasta 0.",
+  "como_arreglarlo": "Usa un tipo con signo cuando cuentes hacia abajo hasta 0.",
   "pistas": [
-   "Pensá en qué valor queda U después de pasar por 0.",
+   "Piensa en qué valor queda U después de pasar por 0.",
    "U >= 0 no puede dejar de cumplirse.",
-   "Declará U como int."
+   "Declara U como int."
   ],
   "relacion_con_la_materia": "LR, tipos de datos",
   "deteccion": "estatica",
@@ -585,7 +585,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "U es unsigned y nunca es negativo, así que U >= 0 siempre es verdadero. Si es la condición de un bucle, no termina nunca: usá un int.",
+  "mensaje_editor_actual": "U es unsigned y nunca es negativo, así que U >= 0 siempre es verdadero. Si es la condición de un lazo, no termina nunca: usa un int.",
   "codigo_editor_actual": "W-unsigned-siempre-verdadero",
   "verificado_editor_corrige": true
  },
@@ -598,13 +598,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  unsigned int A = 3, B = 5;\n  if (A < B) {\n    printf(\"B es mayor\\n\");\n  } else {\n    printf(\"A es mayor o igual\\n\");\n  }\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:4: warning: comparison of unsigned expression in '< 0' is always false [-Wtype-limits]",
-  "mensaje_editor": "Línea 4: A - B es unsigned y nunca es negativo, así que la condición < 0 no se cumple jamás. Compará A con B directamente.",
+  "mensaje_editor": "Línea 4: A - B es unsigned y nunca es negativo, así que la condición < 0 no se cumple jamás. Compara A con B directamente.",
   "explicacion": "La resta entre unsigned da la vuelta en lugar de ser negativa. Para saber cuál es mayor conviene comparar los valores entre sí.",
-  "como_arreglarlo": "Compará los dos números directamente.",
+  "como_arreglarlo": "Compara los dos números directamente.",
   "pistas": [
-   "Probá con papel qué valor da 3 - 5 sin signo.",
+   "Prueba con papel qué valor da 3 - 5 sin signo.",
    "La resta no puede ser menor que cero.",
-   "Escribí A < B."
+   "Escribe A < B."
   ],
   "relacion_con_la_materia": "BC, tipos de datos",
   "deteccion": "estatica",
@@ -613,7 +613,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "A - B es unsigned y nunca es negativo, así que la condición A - B < 0 no se cumple jamás. Compará los valores directamente (por ejemplo A < B).",
+  "mensaje_editor_actual": "A - B es unsigned y nunca es negativo, así que la condición A - B < 0 no se cumple jamás. Compara los valores directamente (por ejemplo A < B).",
   "codigo_editor_actual": "W-unsigned-nunca-negativo",
   "verificado_editor_corrige": true
  },
@@ -626,13 +626,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  float PROM = 7.5;\n  printf(\"%f\\n\", PROM);\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:4: warning: format '%d' expects argument of type 'int', but argument 2 has type 'double' [-Wformat=]",
-  "mensaje_editor": "Línea 4: printf usa %d, que es para enteros, pero PROM es float. Usá %f (o %.2f para dos decimales).",
+  "mensaje_editor": "Línea 4: printf usa %d, que es para enteros, pero PROM es float. Usa %f (o %.2f para dos decimales).",
   "explicacion": "El formato tiene que coincidir con el tipo: %d para int, %f para float y double. Si no, el valor se muestra mal.",
-  "como_arreglarlo": "Cambiá el formato por el que corresponde al tipo de la variable.",
+  "como_arreglarlo": "Cambia el formato por el que corresponde al tipo de la variable.",
   "pistas": [
-   "Compará el tipo de PROM con el formato que usás para mostrarla.",
+   "Compara el tipo de PROM con el formato que usas para mostrarla.",
    "%d no sirve para decimales.",
-   "Usá %f."
+   "Usa %f."
   ],
   "relacion_con_la_materia": "SS, printf",
   "deteccion": "estatica",
@@ -641,7 +641,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "printf: '%d' espera un entero, pero 'PROM' es float: usá '%f' (o '%.2f' para 2 decimales)",
+  "mensaje_editor_actual": "printf: '%d' espera un entero, pero 'PROM' es float: usa '%f' (o '%.2f' para 2 decimales)",
   "codigo_editor_actual": "W-printf-formato",
   "verificado_editor_corrige": true
  },
@@ -654,13 +654,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int N = 5;\n  printf(\"%d\\n\", N);\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:4: warning: format '%f' expects argument of type 'double', but argument 2 has type 'int' [-Wformat=]",
-  "mensaje_editor": "Línea 4: printf usa %f, que es para decimales, pero N es int. Usá %d.",
+  "mensaje_editor": "Línea 4: printf usa %f, que es para decimales, pero N es int. Usa %d.",
   "explicacion": "%f espera un decimal (double). Si se le pasa un entero, printf lo lee de otro lugar y muestra un valor cualquiera, distinto del real.",
-  "como_arreglarlo": "Usá %d para enteros.",
+  "como_arreglarlo": "Usa %d para enteros.",
   "pistas": [
-   "Fijate el tipo de N y el formato.",
+   "Fíjate el tipo de N y el formato.",
    "%f no se usa para enteros.",
-   "Usá %d."
+   "Usa %d."
   ],
   "relacion_con_la_materia": "SS, printf",
   "deteccion": "estatica",
@@ -669,7 +669,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "printf: '%f' espera un número decimal, pero 'N' es entero (int): usá '%d'",
+  "mensaje_editor_actual": "printf: '%f' espera un número decimal, pero 'N' es entero (int): usa '%d'",
   "codigo_editor_actual": "W-printf-formato",
   "verificado_editor_corrige": true
  },
@@ -684,11 +684,11 @@
   "que_dice_gcc": "archivo.c:4: warning: format '%f' expects argument of type 'float *', but argument 2 has type 'double *' [-Wformat=]",
   "mensaje_editor": "Línea 4: %f lee un float, pero X es double. En scanf, para double se usa %lf.",
   "explicacion": "En printf %f sirve para float y double, pero en scanf no. Para un double se usa %lf; para un float, %f.",
-  "como_arreglarlo": "Usá %lf en scanf cuando la variable es double.",
+  "como_arreglarlo": "Usa %lf en scanf cuando la variable es double.",
   "pistas": [
-   "Compará el tipo de X con el formato de scanf.",
+   "Compara el tipo de X con el formato de scanf.",
    "scanf distingue float de double.",
-   "Escribí %lf."
+   "Escribe %lf."
   ],
   "relacion_con_la_materia": "scanf, tipos de datos",
   "deteccion": "estatica",
@@ -697,7 +697,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "scanf: '%f' lee un float pero 'X' es double: usá '%lf'",
+  "mensaje_editor_actual": "scanf: '%f' lee un float pero 'X' es double: usa '%lf'",
   "codigo_editor_actual": "W-scanf-formato",
   "verificado_editor_corrige": true
  },
@@ -710,13 +710,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  float X;\n  scanf(\"%f\", &X);\n  printf(\"%.2f\\n\", X);\n}",
   "entrada": "2.5",
   "que_dice_gcc": "archivo.c:4: warning: format '%lf' expects argument of type 'double *', but argument 2 has type 'float *' [-Wformat=]",
-  "mensaje_editor": "Línea 4: %lf es para double, pero X es float. En scanf usá %f.",
-  "explicacion": "%lf escribe 8 bytes y un float solo tiene 4. El valor se guarda mal y puede pisar otra variable.",
-  "como_arreglarlo": "Hacé coincidir el formato con el tipo de la variable.",
+  "mensaje_editor": "Línea 4: %lf es para double, pero X es float. En scanf usa %f.",
+  "explicacion": "%lf escribe 8 bytes y un float solo tiene 4. El valor se guarda mal y puede sobrescribir otra variable.",
+  "como_arreglarlo": "Haz coincidir el formato con el tipo de la variable.",
   "pistas": [
-   "Mirá el tipo con el que declaraste X.",
+   "Mira el tipo con el que declaraste X.",
    "El formato es el de un double.",
-   "Usá %f."
+   "Usa %f."
   ],
   "relacion_con_la_materia": "scanf, tipos de datos",
   "deteccion": "estatica",
@@ -725,7 +725,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "scanf: '%lf' es para double pero 'X' es float: usá '%f'",
+  "mensaje_editor_actual": "scanf: '%lf' es para double pero 'X' es float: usa '%f'",
   "codigo_editor_actual": "W-scanf-formato",
   "verificado_editor_corrige": true
  },
@@ -740,11 +740,11 @@
   "que_dice_gcc": "archivo.c:4: warning: format '%d' expects argument of type 'int', but argument 2 has type 'long int' [-Wformat=]",
   "mensaje_editor": "Línea 4: para un long el formato es %ld, no %d.",
   "explicacion": "El formato tiene que tener el tamaño del tipo: %d para int y %ld para long. Con %d se lee solo la mitad del número.",
-  "como_arreglarlo": "Agregá la l al formato.",
+  "como_arreglarlo": "Agrega la l al formato.",
   "pistas": [
-   "Revisá el tipo de N y el formato.",
+   "Revisa el tipo de N y el formato.",
    "El tipo ocupa más bytes que un int.",
-   "Escribí %ld."
+   "Escribe %ld."
   ],
   "relacion_con_la_materia": "SS, printf, tipos de datos",
   "deteccion": "estatica",
@@ -753,7 +753,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "printf: para un long usá '%ld'",
+  "mensaje_editor_actual": "printf: para un long usa '%ld'",
   "codigo_editor_actual": "W-printf-formato",
   "verificado_editor_corrige": true
  },
@@ -768,11 +768,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 3: un float solo guarda unos 7 dígitos exactos. 123456789 se guarda como 123456792.",
   "explicacion": "El float tiene precisión limitada. Para números con muchas cifras significativas, double guarda unas 15.",
-  "como_arreglarlo": "Usá double cuando necesitás más cifras.",
+  "como_arreglarlo": "Usa double cuando necesitas más cifras.",
   "pistas": [
-   "Contá las cifras del número que querés guardar.",
+   "Cuenta las cifras del número que quieres guardar.",
    "El tipo no puede representar todas las cifras.",
-   "Cambiá float por double."
+   "Cambia float por double."
   ],
   "relacion_con_la_materia": "SS, tipos de datos",
   "deteccion": "ejecucion",
@@ -796,11 +796,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 7: comparar un decimal con == puede fallar: sumar 0.1 diez veces no da exactamente 1. Conviene comparar con < y >.",
   "explicacion": "Cada suma de 0.1 arrastra un error de redondeo y, después de diez, el total queda apenas distinto de 1.",
-  "como_arreglarlo": "Usá un rango en la comparación, no la igualdad exacta.",
+  "como_arreglarlo": "Usa un rango en la comparación, no la igualdad exacta.",
   "pistas": [
-   "Probá qué muestra y qué esperabas.",
+   "Prueba qué muestra y qué esperabas.",
    "El total no es exactamente 1.",
-   "Preguntá si S está cerca de 1."
+   "Pregunta si S está cerca de 1."
   ],
   "relacion_con_la_materia": "LC por acumuladores, BC con decimales",
   "deteccion": "estatica",
@@ -824,11 +824,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 5: '5' es el carácter cuyo código es 53, no el número 5. N * 2 da 106.",
   "explicacion": "Un char guarda el código de la tabla ASCII. El dígito '5' vale 53, y para obtener el número hay que restar el código de '0'.",
-  "como_arreglarlo": "Convertí el carácter en número restándole el código del cero.",
+  "como_arreglarlo": "Convierte el carácter en número restándole el código del cero.",
   "pistas": [
-   "Probá qué valor numérico tiene el carácter '5'.",
+   "Prueba qué valor numérico tiene el carácter '5'.",
    "El código ASCII del dígito es mayor que el dígito.",
-   "Restale '0'."
+   "Réstale '0'."
   ],
   "relacion_con_la_materia": "SS, char, ASCII",
   "deteccion": "heuristica",
@@ -850,13 +850,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  char C = 'S';\n  if (C == 'S') {\n    printf(\"si\\n\");\n  } else {\n    printf(\"no\\n\");\n  }\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:4: warning: comparison between pointer and integer",
-  "mensaje_editor": "Línea 4: C es un char y \"S\" es un texto. Para comparar con un carácter usá comillas simples: 'S'.",
+  "mensaje_editor": "Línea 4: C es un char y \"S\" es un texto. Para comparar con un carácter usa comillas simples: 'S'.",
   "explicacion": "Las comillas simples son para un carácter y las dobles para textos. No se puede comparar un char con un texto.",
-  "como_arreglarlo": "Cambiá las comillas dobles por comillas simples.",
+  "como_arreglarlo": "Cambia las comillas dobles por comillas simples.",
   "pistas": [
-   "Fijate qué comillas usa la comparación.",
+   "Fíjate qué comillas usa la comparación.",
    "Estás comparando un carácter con un texto.",
-   "Usá 'S'."
+   "Usa 'S'."
   ],
   "relacion_con_la_materia": "BC, char",
   "deteccion": "estatica",
@@ -878,13 +878,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  float N;\n  scanf(\"%f\", &N);\n  printf(\"%.1f\\n\", N);\n}",
   "entrada": "4.5",
   "que_dice_gcc": "archivo.c:4: warning: format '%d' expects argument of type 'int *', but argument 2 has type 'float *' [-Wformat=]",
-  "mensaje_editor": "Línea 4: scanf: %d lee un entero pero N es float. Usá %f.",
-  "explicacion": "scanf escribe el dato con el formato que le indicás. Con %d guarda un entero en la memoria de un float y el valor queda mal.",
-  "como_arreglarlo": "Usá el formato que coincide con el tipo de la variable.",
+  "mensaje_editor": "Línea 4: scanf: %d lee un entero pero N es float. Usa %f.",
+  "explicacion": "scanf escribe el dato con el formato que le indicas. Con %d guarda un entero en la memoria de un float y el valor queda mal.",
+  "como_arreglarlo": "Usa el formato que coincide con el tipo de la variable.",
   "pistas": [
-   "Compará el tipo de N con el formato de scanf.",
+   "Compara el tipo de N con el formato de scanf.",
    "El formato es el de enteros.",
-   "Escribí %f."
+   "Escribe %f."
   ],
   "relacion_con_la_materia": "scanf, tipos de datos",
   "deteccion": "estatica",
@@ -893,7 +893,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "scanf: '%d' lee un entero pero 'N' es float: usá '%f'",
+  "mensaje_editor_actual": "scanf: '%d' lee un entero pero 'N' es float: usa '%f'",
   "codigo_editor_actual": "W-scanf-formato",
   "verificado_editor_corrige": true
  },
@@ -906,13 +906,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int N;\n  scanf(\"%d\", &N);\n  printf(\"%d\\n\", N);\n}",
   "entrada": "4",
   "que_dice_gcc": "archivo.c:4: warning: format '%f' expects argument of type 'float *', but argument 2 has type 'int *' [-Wformat=]",
-  "mensaje_editor": "Línea 4: scanf: %f lee un decimal pero N es int. Usá %d.",
+  "mensaje_editor": "Línea 4: scanf: %f lee un decimal pero N es int. Usa %d.",
   "explicacion": "Con %f scanf guarda un float en el lugar de un int y el número queda mal.",
-  "como_arreglarlo": "Usá el formato que coincide con el tipo de la variable.",
+  "como_arreglarlo": "Usa el formato que coincide con el tipo de la variable.",
   "pistas": [
-   "Mirá el tipo de N.",
+   "Mira el tipo de N.",
    "El formato es el de decimales.",
-   "Escribí %d."
+   "Escribe %d."
   ],
   "relacion_con_la_materia": "scanf, tipos de datos",
   "deteccion": "estatica",
@@ -921,7 +921,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "scanf: '%f' lee un decimal pero 'N' es int: usá '%d'",
+  "mensaje_editor_actual": "scanf: '%f' lee un decimal pero 'N' es int: usa '%d'",
   "codigo_editor_actual": "W-scanf-formato",
   "verificado_editor_corrige": true
  },
@@ -936,11 +936,11 @@
   "que_dice_gcc": "archivo.c:5: warning: using integer absolute value function 'abs' when argument is of floating-point type 'float' [-Wabsolute-value]",
   "mensaje_editor": "Línea 5: abs es para enteros y X es decimal. Para decimales se usa fabs de <math.h>.",
   "explicacion": "abs trabaja con ints y descarta los decimales. Para el valor absoluto de un float o double existe fabs, en math.h.",
-  "como_arreglarlo": "Usá la función de valor absoluto para decimales e incluí su biblioteca.",
+  "como_arreglarlo": "Usa la función de valor absoluto para decimales e incluye su biblioteca.",
   "pistas": [
-   "Mirá con qué tipo trabaja abs.",
+   "Mira con qué tipo trabaja abs.",
    "La función no es la indicada para decimales.",
-   "Probá con fabs y #include <math.h>."
+   "Prueba con fabs y #include <math.h>."
   ],
   "relacion_con_la_materia": "SS, funciones de math.h",
   "deteccion": "estatica",
@@ -949,7 +949,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "printf: '%f' espera un número decimal, pero el argumento 1 es entero (int): usá '%d'",
+  "mensaje_editor_actual": "printf: '%f' espera un número decimal, pero el argumento 1 es entero (int): usa '%d'",
   "codigo_editor_actual": "W-printf-formato",
   "verificado_editor_corrige": true,
   "notas": "El editor avisa por otra causa: ve que abs devuelve int y que el formato %f no coincide. No detecta el problema de fondo (abs con un argumento decimal)."
@@ -963,13 +963,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int A = 100000, B = 100000;\n  double P;\n  P = (double)A * B;\n  printf(\"%.0f\\n\", P);\n}",
   "entrada": "",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 5: A * B se calcula entre dos int y desborda antes de guardarse en P. Convertí uno de los factores a double antes de multiplicar.",
+  "mensaje_editor": "Línea 5: A * B se calcula entre dos int y desborda antes de guardarse en P. Convierte uno de los factores a double antes de multiplicar.",
   "explicacion": "El tipo de una cuenta lo definen sus operandos, no la variable donde se guarda. Si los dos son int, el producto es int y se pasa de rango.",
-  "como_arreglarlo": "Convertí un operando a double antes de multiplicar.",
+  "como_arreglarlo": "Convierte un operando a double antes de multiplicar.",
   "pistas": [
-   "Fijate el tipo de los operandos de la multiplicación.",
+   "Fíjate el tipo de los operandos de la multiplicación.",
    "La cuenta se hace en int y después se guarda en double.",
-   "Usá (double)A * B."
+   "Usa (double)A * B."
   ],
   "relacion_con_la_materia": "SS, tipos de datos",
   "deteccion": "ejecucion",
@@ -993,11 +993,11 @@
   "que_dice_gcc": "archivo.c:4: warning: integer overflow in expression of type 'int' results in '1410065408' [-Woverflow]",
   "mensaje_editor": "Línea 4: 100000 * 100000 no entra en un int. El resultado se pasa del máximo y se muestra un valor equivocado.",
   "explicacion": "Si una cuenta de enteros da más que el máximo de un int, el resultado deja de ser el esperado (C no lo garantiza). El compilador lo detecta cuando son constantes.",
-  "como_arreglarlo": "Usá double para cuentas con números tan grandes.",
+  "como_arreglarlo": "Usa double para cuentas con números tan grandes.",
   "pistas": [
-   "Estimá el resultado: ¿entra en un int?",
+   "Estima el resultado: ¿entra en un int?",
    "El resultado supera el máximo del tipo.",
-   "Usá double."
+   "Usa double."
   ],
   "relacion_con_la_materia": "SS, tipos de datos",
   "deteccion": "estatica",
@@ -1006,7 +1006,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "100000 * 100000 no entra en un int (llega hasta 2147483647): el resultado se pasa del máximo y da un valor equivocado. Usá long o decimales.",
+  "mensaje_editor_actual": "100000 * 100000 no entra en un int (llega hasta 2147483647): el resultado se pasa del máximo y da un valor equivocado. Usa long o decimales.",
   "codigo_editor_actual": "W-constante-desborda",
   "verificado_editor_corrige": true
  },
@@ -1019,13 +1019,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  float X = 0.1;\n  printf(\"%.2f\\n\", X);\n}",
   "entrada": "",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 4: 0.1 no se puede guardar exacto en binario: pedir 10 decimales muestra 0.1000000015. Mostrá solo los decimales que importan, con %.2f.",
+  "mensaje_editor": "Línea 4: 0.1 no se puede guardar exacto en binario: pedir 10 decimales muestra 0.1000000015. Muestra solo los decimales que importan, con %.2f.",
   "explicacion": "Los decimales se guardan en binario con precisión limitada. Mostrar más decimales de los útiles deja a la vista el error de redondeo.",
-  "como_arreglarlo": "Limitá la cantidad de decimales a lo que necesitás.",
+  "como_arreglarlo": "Limita la cantidad de decimales a lo que necesitas.",
   "pistas": [
-   "Compará el valor que guardás con el que se muestra.",
+   "Compara el valor que guardas con el que se muestra.",
    "Se muestran demasiados decimales.",
-   "Usá %.2f."
+   "Usa %.2f."
   ],
   "relacion_con_la_materia": "SS, printf, decimales",
   "deteccion": "ejecucion",
@@ -1049,11 +1049,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 4: 2.675 se guarda un poco por debajo, y %.2f muestra 2.67 en lugar de 2.68. Es un efecto de la representación binaria.",
   "explicacion": "%.2f redondea el número que realmente está guardado, y 2.675 en binario es apenas menor. Por eso a veces el redondeo parece incorrecto.",
-  "como_arreglarlo": "Si necesitás que redondee como en papel, sumá una pequeña cantidad antes de mostrar.",
+  "como_arreglarlo": "Si necesitas que redondee como en papel, suma una pequeña cantidad antes de mostrar.",
   "pistas": [
-   "Probá con una calculadora cómo redondea 2.675.",
+   "Prueba con una calculadora cómo redondea 2.675.",
    "El número guardado no es exactamente 2.675.",
-   "Sumale un valor muy chico antes de mostrar."
+   "Súmale un valor muy pequeño antes de mostrar."
   ],
   "relacion_con_la_materia": "SS, printf, decimales",
   "deteccion": "ejecucion",
@@ -1069,19 +1069,19 @@
  {
   "id": "TIP-039",
   "categoria": "Tipos y conversiones",
-  "nombre_corto": "char como contador de un bucle largo",
+  "nombre_corto": "char como contador de un lazo largo",
   "frecuencia": "baja",
   "codigo_mal": "#include <stdio.h>\nint main() {\n  char I;\n  int C = 0;\n  for (I = 0; I < 200; I++) {\n    C++;\n    if (C > 300) break;\n  }\n  printf(\"%d\\n\", C);\n}",
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int I;\n  int C = 0;\n  for (I = 0; I < 200; I++) {\n    C++;\n    if (C > 300) break;\n  }\n  printf(\"%d\\n\", C);\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:5: warning: comparison is always true due to limited range of data type [-Wtype-limits]",
-  "mensaje_editor": "Línea 5: I es char y solo llega a 127. I < 200 siempre es verdadera y el bucle no termina solo.",
+  "mensaje_editor": "Línea 5: I es char y solo llega a 127. I < 200 siempre es verdadera y el lazo no termina solo.",
   "explicacion": "Un char con signo no puede valer 200. Al llegar a 127 vuelve a -128 y la condición nunca deja de cumplirse.",
-  "como_arreglarlo": "Usá int para la variable que cuenta.",
+  "como_arreglarlo": "Usa int para la variable que cuenta.",
   "pistas": [
-   "Pensá hasta qué valor puede llegar I.",
+   "Piensa hasta qué valor puede llegar I.",
    "La condición compara con un valor que el tipo no alcanza.",
-   "Declará I como int."
+   "Declara I como int."
   ],
   "relacion_con_la_materia": "LR, tipos de datos",
   "deteccion": "estatica",
@@ -1090,7 +1090,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "I es char y solo va de -128 a 127: I < 200 es siempre verdadera. Usá un int para este contador.",
+  "mensaje_editor_actual": "I es char y solo va de -128 a 127: I < 200 es siempre verdadera. Usa un int para este contador.",
   "codigo_editor_actual": "W-char-comparacion-fuera",
   "verificado_editor_corrige": true
  },
@@ -1103,13 +1103,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int N;\n  scanf(\"%d\", &N);\n  printf(\"%d\\n\", N);\n}",
   "entrada": "300",
   "que_dice_gcc": "archivo.c:4: warning: format '%d' expects argument of type 'int *', but argument 2 has type 'char *' [-Wformat=]",
-  "mensaje_editor": "Línea 4: scanf: %d no corresponde al tipo char de N. Para números usá una variable int.",
-  "explicacion": "%d escribe 4 bytes y un char tiene 1. Se pisa memoria de otras variables.",
-  "como_arreglarlo": "Si leés un número, declará la variable como int.",
+  "mensaje_editor": "Línea 4: scanf: %d no corresponde al tipo char de N. Para números usa una variable int.",
+  "explicacion": "%d escribe 4 bytes y un char tiene 1. Se sobrescribe memoria de otras variables.",
+  "como_arreglarlo": "Si lees un número, declara la variable como int.",
   "pistas": [
-   "Compará el tipo de N con el formato de scanf.",
+   "Compara el tipo de N con el formato de scanf.",
    "%d escribe más bytes de los que entran en N.",
-   "Declará N como int."
+   "Declara N como int."
   ],
   "relacion_con_la_materia": "scanf, tipos de datos",
   "deteccion": "estatica",
@@ -1133,11 +1133,11 @@
   "que_dice_gcc": "archivo.c:5: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]",
   "mensaje_editor": "Línea 5: se comparan un int y un unsigned; -1 se convierte en un número enorme y la comparación da otro resultado.",
   "explicacion": "Cuando se mezclan un número con signo y otro sin signo, C convierte los dos a sin signo. -1 se transforma en 4294967295.",
-  "como_arreglarlo": "Usá el mismo tipo en los dos lados de la comparación.",
+  "como_arreglarlo": "Usa el mismo tipo en los dos lados de la comparación.",
   "pistas": [
-   "Probá con papel qué pasa con un número negativo sin signo.",
+   "Prueba con papel qué pasa con un número negativo sin signo.",
    "Los dos lados tienen distinto tipo.",
-   "Declará B como int."
+   "Declara B como int."
   ],
   "relacion_con_la_materia": "BC, tipos de datos",
   "deteccion": "estatica",

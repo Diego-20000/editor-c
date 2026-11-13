@@ -12,9 +12,9 @@
   "explicacion": "scanf guarda los datos en el orden en que aparecen las variables en la lista. Si el algoritmo pide primero A y el código lee primero B, los valores quedan cruzados y la cuenta da otro resultado (en una resta, hasta con el signo cambiado).",
   "como_arreglarlo": "Comparar el orden en que el algoritmo pide los datos con el orden de las variables en el scanf, y hacer que coincidan.",
   "pistas": [
-   "La resta dio con el signo cambiado. Fijate qué número va a cada variable.",
+   "La resta dio con el signo cambiado. Fíjate qué número va a cada variable.",
    "El primer dato que se escribe se guarda en la primera variable del scanf.",
-   "Poné &A antes de &B en el scanf."
+   "Pon &A antes de &B en el scanf."
   ],
   "relacion_con_la_materia": "SS, scanf",
   "deteccion": "heuristica",
@@ -38,11 +38,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 4: la división se hace antes que la suma, así que solo N2 se divide por 2. Falta un paréntesis alrededor de la suma.",
   "explicacion": "En C, la división y la multiplicación se resuelven antes que la suma y la resta, igual que en matemática. Para dividir la suma completa tiene que ir entre paréntesis.",
-  "como_arreglarlo": "Poné entre paréntesis la parte que tiene que calcularse primero.",
+  "como_arreglarlo": "Pon entre paréntesis la parte que tiene que calcularse primero.",
   "pistas": [
-   "El promedio da mayor que las dos notas. Hacé la cuenta a mano con los datos de prueba.",
-   "Pensá qué operación resuelve C primero: la suma o la división.",
-   "Poné la suma de N1 y N2 entre paréntesis."
+   "El promedio da mayor que las dos notas. Haz la cuenta a mano con los datos de prueba.",
+   "Piensa qué operación resuelve C primero: la suma o la división.",
+   "Pon la suma de N1 y N2 entre paréntesis."
   ],
   "relacion_con_la_materia": "SS, operadores",
   "deteccion": "heuristica",
@@ -65,13 +65,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int N1, N2;\n  float PROM;\n  scanf(\"%d %d\", &N1, &N2);\n  PROM = (N1 + N2) / 2.0;\n  printf(\"Promedio: %.2f\\n\", PROM);\n}",
   "entrada": "7 8",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 5: (N1 + N2) / 2 es una división entre enteros y descarta los decimales antes de guardarse en PROM. Usá 2.0 o una variable decimal.",
+  "mensaje_editor": "Línea 5: (N1 + N2) / 2 es una división entre enteros y descarta los decimales antes de guardarse en PROM. Usa 2.0 o una variable decimal.",
   "explicacion": "Si los dos lados de una división son enteros, el resultado es entero: se pierde la parte decimal ANTES de guardarlo en la variable float. Alcanza con que uno de los dos sea decimal para que la división conserve los decimales.",
-  "como_arreglarlo": "Hacé que uno de los dos operandos de la división sea decimal, por ejemplo escribiendo 2.0 en lugar de 2.",
+  "como_arreglarlo": "Haz que uno de los dos operandos de la división sea decimal, por ejemplo escribiendo 2.0 en lugar de 2.",
   "pistas": [
    "El promedio de 7 y 8 muestra 7.00. ¿Dónde se pierde el .5?",
    "Dividir entero por entero da un entero, sin importar el tipo de la variable que lo recibe.",
-   "Cambiá 2 por 2.0."
+   "Cambia 2 por 2.0."
   ],
   "relacion_con_la_materia": "SS, tipos",
   "deteccion": "estatica",
@@ -80,7 +80,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "la división es entre dos enteros y se trunca (7/2 da 3, no 3.5): guardarla en float no recupera los decimales; usá 7/2.0 o (float)7/2",
+  "mensaje_editor_actual": "la división es entre dos enteros y se trunca (7/2 da 3, no 3.5): guardarla en float no recupera los decimales; usa 7/2.0 o (float)7/2",
   "codigo_editor_actual": "W-division-entera",
   "verificado_editor_corrige": true,
   "solucion_ejercicio": true
@@ -95,12 +95,12 @@
   "entrada": "3 8",
   "que_dice_gcc": "nada",
   "mensaje_editor": "Líneas 4 y 5: después de A = B ya perdiste el valor original de A, y B recibe el mismo valor. Hace falta una variable auxiliar.",
-  "explicacion": "Una variable guarda un solo valor: al asignarle otro, el anterior se pierde. Para intercambiar dos valores hay que guardar uno aparte antes de pisarlo.",
-  "como_arreglarlo": "Guardá uno de los dos valores en una tercera variable antes de sobrescribirlo.",
+  "explicacion": "Una variable guarda un solo valor: al asignarle otro, el anterior se pierde. Para intercambiar dos valores hay que guardar uno aparte antes de sobrescribirlo.",
+  "como_arreglarlo": "Guarda uno de los dos valores en una tercera variable antes de sobrescribirlo.",
   "pistas": [
-   "Los dos valores salen iguales. ¿Qué pasa con el valor de A cuando le asignás B?",
-   "Necesitás un lugar donde guardar uno de los valores antes de pisarlo.",
-   "Declará AUX y guardá A en AUX primero."
+   "Los dos valores salen iguales. ¿Qué pasa con el valor de A cuando le asignas B?",
+   "Necesitas un lugar donde guardar uno de los valores antes de sobrescribirlo.",
+   "Declara AUX y guarda A en AUX primero."
   ],
   "relacion_con_la_materia": "SS",
   "deteccion": "heuristica",
@@ -122,13 +122,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int A, B, S;\n  scanf(\"%d %d\", &A, &B);\n  S = 0;\n  S = A + B;\n  printf(\"Suma: %d\\n\", S);\n}",
   "entrada": "4 5",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 5: mostrás S antes de calcularla en la línea 6, por eso aparece el valor viejo. Primero se calcula y después se muestra.",
+  "mensaje_editor": "Línea 5: muestras S antes de calcularla en la línea 6, por eso aparece el valor viejo. Primero se calcula y después se muestra.",
   "explicacion": "Las instrucciones se ejecutan en el orden en que están escritas. Si el printf va antes de la cuenta, muestra lo que la variable valía en ese momento, no el resultado.",
-  "como_arreglarlo": "Pasá el printf después de la línea donde se calcula el resultado.",
+  "como_arreglarlo": "Pasa el printf después de la línea donde se calcula el resultado.",
   "pistas": [
-   "El resultado mostrado es el valor inicial. Seguí el programa línea por línea.",
+   "El resultado mostrado es el valor inicial. Sigue el programa línea por línea.",
    "¿En qué orden se ejecutan la cuenta y el printf?",
-   "Mové el printf debajo de S = A + B."
+   "Mueve el printf debajo de S = A + B."
   ],
   "relacion_con_la_materia": "SS",
   "deteccion": "heuristica",
@@ -137,7 +137,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "mostrás S antes de calcularla en la línea 7 (S = A + B), por eso aparece el valor viejo. Primero se calcula y después se muestra.",
+  "mensaje_editor_actual": "muestras S antes de calcularla en la línea 7 (S = A + B), por eso aparece el valor viejo. Primero se calcula y después se muestra.",
   "codigo_editor_actual": "W-mostrar-antes-de-calcular",
   "verificado_editor_corrige": true
  },
@@ -150,13 +150,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int A, B, S;\n  A = 0;\n  B = 0;\n  scanf(\"%d %d\", &A, &B);\n  S = A + B;\n  printf(\"Suma: %d\\n\", S);\n}",
   "entrada": "4 5",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 5: sumás A y B antes de leerlos con scanf (línea 6), por eso la cuenta usa los valores viejos. Leé los datos primero.",
+  "mensaje_editor": "Línea 5: sumas A y B antes de leerlos con scanf (línea 6), por eso la cuenta usa los valores viejos. Lee los datos primero.",
   "explicacion": "La cuenta se hace con los valores que tienen las variables en el momento de ejecutarse. Los datos leídos después no cambian lo que ya se calculó.",
-  "como_arreglarlo": "Poné el scanf antes de la cuenta que usa esos datos.",
+  "como_arreglarlo": "Pon el scanf antes de la cuenta que usa esos datos.",
   "pistas": [
    "La suma da 0 aunque ingresaste números. ¿Cuándo se lee cada dato?",
    "Una cuenta no se actualiza sola cuando cambian las variables.",
-   "Mové el scanf arriba de la suma."
+   "Mueve el scanf arriba de la suma."
   ],
   "relacion_con_la_materia": "SS, scanf",
   "deteccion": "heuristica",
@@ -165,7 +165,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "calculás S = A + B antes de leer A y B con scanf (línea 7), por eso la cuenta usa los valores viejos. Leé los datos primero y calculá después.",
+  "mensaje_editor_actual": "calculas S = A + B antes de leer A y B con scanf (línea 7), por eso la cuenta usa los valores viejos. Lee los datos primero y calcula después.",
   "codigo_editor_actual": "W-calcular-antes-de-leer",
   "verificado_editor_corrige": true
  },
@@ -178,13 +178,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int A, B, MAYOR;\n  scanf(\"%d %d\", &A, &B);\n  if (A > B) { MAYOR = A; }\n  else { MAYOR = B; }\n  printf(\"Mayor: %d\\n\", MAYOR);\n}",
   "entrada": "9 4",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 4: la condición A < B es verdadera cuando A es el menor, pero en ese caso guardás A en MAYOR. Los lados V y F están cruzados.",
+  "mensaje_editor": "Línea 4: la condición A < B es verdadera cuando A es el menor, pero en ese caso guardas A en MAYOR. Los lados V y F están cruzados.",
   "explicacion": "En un if, el lado verdadero se ejecuta cuando la condición se cumple. Si el signo de la comparación está al revés, cada lado hace lo que le corresponde al otro y el programa da el resultado contrario.",
-  "como_arreglarlo": "Probá el programa con dos valores y mirá qué lado se ejecuta; cambiá el operador (o los lados) para que cada uno haga lo que dice.",
+  "como_arreglarlo": "Prueba el programa con dos valores y mira qué lado se ejecuta; cambia el operador (o los lados) para que cada uno haga lo que dice.",
   "pistas": [
-   "Con 9 y 4 muestra 4 como mayor. Seguí el if con esos datos.",
+   "Con 9 y 4 muestra 4 como mayor. Sigue el if con esos datos.",
    "Cuando la condición es verdadera, ¿qué valor estás guardando en MAYOR?",
-   "Cambiá < por >."
+   "Cambia < por >."
   ],
   "relacion_con_la_materia": "BC",
   "deteccion": "heuristica",
@@ -193,7 +193,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "la condición A < B es verdadera cuando A es el menor, pero en ese caso guardás A en MAYOR. Los lados V y F están cruzados.",
+  "mensaje_editor_actual": "la condición A < B es verdadera cuando A es el menor, pero en ese caso guardas A en MAYOR. Los lados V y F están cruzados.",
   "codigo_editor_actual": "W-condicion-invertida",
   "verificado_editor_corrige": true,
   "solucion_ejercicio": true
@@ -209,11 +209,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 3: el lado verdadero del if está vacío, así que cuando NOTA es 6 o más no se muestra nada. Falta decir qué pasa cuando la condición se cumple.",
   "explicacion": "Una bifurcación condicional tiene dos caminos y los dos tienen que hacer algo si el problema lo pide. Un lado vacío es válido para C, pero el programa calla en uno de los casos.",
-  "como_arreglarlo": "Completá el lado que quedó vacío con lo que corresponde mostrar o calcular.",
+  "como_arreglarlo": "Completa el lado que quedó vacío con lo que corresponde mostrar o calcular.",
   "pistas": [
-   "Con una nota alta no aparece ningún mensaje. Mirá cada lado del if.",
+   "Con una nota alta no aparece ningún mensaje. Mira cada lado del if.",
    "¿Qué debería pasar cuando la condición es verdadera?",
-   "Escribí un printf adentro de las llaves del lado verdadero."
+   "Escribe un printf adentro de las llaves del lado verdadero."
   ],
   "relacion_con_la_materia": "BC",
   "deteccion": "estatica",
@@ -238,11 +238,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Líneas 3 y 4: el else es del segundo if, así que con N positivo aparecen 'Positivo' y 'Cero' juntos. Los tres casos tienen que ir encadenados.",
   "explicacion": "Cada if es una decisión independiente; un else solo pertenece al if que tiene justo arriba. Para que los casos se excluyan entre sí, cada nuevo if tiene que ir en el else del anterior.",
-  "como_arreglarlo": "Encadená los casos: el segundo if va dentro del else del primero (else if).",
+  "como_arreglarlo": "Encadena los casos: el segundo if va dentro del else del primero (else if).",
   "pistas": [
-   "Con un número positivo salen dos mensajes. Contá cuántos if se evalúan.",
-   "El else sólo responde al if que está inmediatamente arriba.",
-   "Escribí else if en lugar del segundo if."
+   "Con un número positivo salen dos mensajes. Cuenta cuántos if se evalúan.",
+   "El else solo responde al if que está inmediatamente arriba.",
+   "Escribe else if en lugar del segundo if."
   ],
   "relacion_con_la_materia": "BC anidada",
   "deteccion": "heuristica",
@@ -265,13 +265,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int A, B;\n  scanf(\"%d %d\", &A, &B);\n  if (A > 0) {\n    if (B > 0) { printf(\"Ambos positivos\\n\"); }\n  } else { printf(\"A no es positivo\\n\"); }\n}",
   "entrada": "-1 3",
   "que_dice_gcc": "archivo.c:5: warning: suggest explicit braces to avoid ambiguous 'else' [-Wdangling-else]",
-  "mensaje_editor": "Línea 5: el else se pega al if de B (el más cercano), no al de A, aunque lo hayas escrito alineado con el primero. Usá llaves para decir a cuál pertenece.",
-  "explicacion": "Cuando no hay llaves, C une cada else con el if más cercano que todavía no tiene else. La sangría que escribís no cuenta para el compilador. Con llaves no hay duda.",
-  "como_arreglarlo": "Poné llaves en todos los if y else, aunque tengan una sola instrucción.",
+  "mensaje_editor": "Línea 5: el else se pega al if de B (el más cercano), no al de A, aunque lo hayas escrito alineado con el primero. Usa llaves para decir a cuál pertenece.",
+  "explicacion": "Cuando no hay llaves, C une cada else con el if más cercano que todavía no tiene else. La sangría que escribes no cuenta para el compilador. Con llaves no hay duda.",
+  "como_arreglarlo": "Pon llaves en todos los if y else, aunque tengan una sola instrucción.",
   "pistas": [
    "Con A negativo no aparece ningún mensaje. ¿A qué if pertenece el else?",
    "C ignora la sangría: el else se une al if más cercano.",
-   "Poné llaves alrededor del if interior."
+   "Pon llaves alrededor del if interior."
   ],
   "relacion_con_la_materia": "BC anidada",
   "deteccion": "estatica",
@@ -280,7 +280,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "el else se pega al if más cercano (el de B > 0), no al de A > 0, aunque lo hayas escrito alineado con el primero. Usá llaves para decir a cuál pertenece.",
+  "mensaje_editor_actual": "el else se pega al if más cercano (el de B > 0), no al de A > 0, aunque lo hayas escrito alineado con el primero. Usa llaves para decir a cuál pertenece.",
   "codigo_editor_actual": "W-else-colgante",
   "verificado_editor_corrige": true
  },
@@ -293,13 +293,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int NOTA;\n  scanf(\"%d\", &NOTA);\n  if (NOTA >= 7) { printf(\"Bueno\\n\"); }\n  else if (NOTA >= 4) { printf(\"Regular\\n\"); }\n  else { printf(\"Insuficiente\\n\"); }\n}",
   "entrada": "8",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 5: nunca se llega a NOTA >= 7, porque todo lo que es 7 o más ya entró en NOTA >= 4. Probá primero la condición más exigente.",
+  "mensaje_editor": "Línea 5: nunca se llega a NOTA >= 7, porque todo lo que es 7 o más ya entró en NOTA >= 4. Prueba primero la condición más exigente.",
   "explicacion": "Un if encadenado se evalúa de arriba hacia abajo y se queda con el primer caso que se cumple. Si la primera condición también abarca a los casos de abajo, esos casos quedan sin uso.",
-  "como_arreglarlo": "Ordená las comparaciones empezando por la más restrictiva (la que abarca menos casos).",
+  "como_arreglarlo": "Ordena las comparaciones empezando por la más restrictiva (la que abarca menos casos).",
   "pistas": [
    "Con un 8 dice 'Regular'. ¿Qué condiciones cumple el 8?",
    "El if se queda con el primer caso verdadero.",
-   "Poné primero la comparación con 7."
+   "Pon primero la comparación con 7."
   ],
   "relacion_con_la_materia": "BC anidada",
   "deteccion": "estatica",
@@ -308,7 +308,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "nunca se llega a NOTA >= 7, porque todo lo que cumple eso ya entró en NOTA >= 4 más arriba. Probá primero la condición más exigente.",
+  "mensaje_editor_actual": "nunca se llega a NOTA >= 7, porque todo lo que cumple eso ya entró en NOTA >= 4 más arriba. Prueba primero la condición más exigente.",
   "codigo_editor_actual": "W-rama-inalcanzable",
   "verificado_editor_corrige": true
  },
@@ -323,16 +323,16 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 5: ser múltiplo de 4 no alcanza para ser bisiesto: 1900 no lo es. Faltan las excepciones de los años terminados en 00.",
   "explicacion": "La regla completa tiene excepciones: los múltiplos de 100 no son bisiestos, salvo que también sean múltiplos de 400. Una sola condición no la cubre.",
-  "como_arreglarlo": "Escribí la regla completa del calendario con los restos que hagan falta y combinalos con && y ||.",
+  "como_arreglarlo": "Escribe la regla completa del calendario con los restos que hagan falta y combínalos con && y ||.",
   "pistas": [
    "1900 sale bisiesto y no lo es. ¿Qué dice el calendario de los años que terminan en 00?",
    "Hay una excepción y una excepción a la excepción.",
-   "Calculá también los restos de dividir por 100 y por 400."
+   "Calcula también los restos de dividir por 100 y por 400."
   ],
   "relacion_con_la_materia": "BC",
   "deteccion": "no_detectable",
   "como_detectarlo": "No hay forma de saber qué pide el enunciado. Solo con la pista del nombre ANIO se podría sugerir revisar los años terminados en 00.",
-  "riesgo_falso_positivo": "Un programa que sólo pide múltiplos de 4 a propósito no debería recibir el aviso; por eso no es detectable.",
+  "riesgo_falso_positivo": "Un programa que solo pide múltiplos de 4 a propósito no debería recibir el aviso; por eso no es detectable.",
   "nivel": "informacion",
   "verificado_gcc13": true,
   "detectado_editor": false,
@@ -351,12 +351,12 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int ANIO, R4, R100, R400;\n  scanf(\"%d\", &ANIO);\n  R4 = ANIO % 4;\n  R100 = ANIO % 100;\n  R400 = ANIO % 400;\n  if (((R4 == 0) && (R100 != 0)) || (R400 == 0)) { printf(\"Es bisiesto\\n\"); }\n  else { printf(\"No es bisiesto\\n\"); }\n}",
   "entrada": "2024",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 6: con tres condiciones unidas por && ningún año es bisiesto, porque un múltiplo de 400 siempre es múltiplo de 100. Revisá qué condiciones van con && y cuáles con ||.",
+  "mensaje_editor": "Línea 6: con tres condiciones unidas por && ningún año es bisiesto, porque un múltiplo de 400 siempre es múltiplo de 100. Revisa qué condiciones van con && y cuáles con ||.",
   "explicacion": "Con && todas las condiciones tienen que ser verdaderas a la vez. R100 != 0 y R400 == 0 no pueden cumplirse juntas, así que la condición completa nunca es verdadera. Las excepciones se unen con ||.",
-  "como_arreglarlo": "Agrupá con paréntesis lo que va junto con && y unilo con || a la otra posibilidad.",
+  "como_arreglarlo": "Agrupa con paréntesis lo que va junto con && y unilo con || a la otra posibilidad.",
   "pistas": [
-   "Probá 2024: es bisiesto y el programa dice que no. ¿Puede cumplirse todo a la vez?",
-   "Una condición con && tiene que cumplirse completa; pensá si R100 != 0 y R400 == 0 pueden ser verdaderas juntas.",
+   "Prueba 2024: es bisiesto y el programa dice que no. ¿Puede cumplirse todo a la vez?",
+   "Una condición con && tiene que cumplirse completa; piensa si R100 != 0 y R400 == 0 pueden ser verdaderas juntas.",
    "El año es bisiesto en dos casos distintos: unilos con ||."
   ],
   "relacion_con_la_materia": "BC",
@@ -366,7 +366,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "unidas por && las condiciones R100 != 0 y R400 == 0 no pueden cumplirse a la vez: un múltiplo de 400 siempre es múltiplo de 100. Revisá qué condiciones van con && y cuáles con ||.",
+  "mensaje_editor_actual": "unidas por && las condiciones R100 != 0 y R400 == 0 no pueden cumplirse a la vez: un múltiplo de 400 siempre es múltiplo de 100. Revisa qué condiciones van con && y cuáles con ||.",
   "codigo_editor_actual": "W-condicion-imposible",
   "verificado_editor_corrige": true,
   "solucion_ejercicio": true
@@ -382,11 +382,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 3: N / 3 da el cociente y no el resto, por eso el 2 sale como múltiplo de 3. Para saber si divide justo hace falta el resto.",
   "explicacion": "Un número es múltiplo de otro cuando el resto de dividirlos es 0. El operador / da el cociente entero (2 / 3 vale 0) y el operador % da el resto.",
-  "como_arreglarlo": "Usá el operador que da el resto de la división.",
+  "como_arreglarlo": "Usa el operador que da el resto de la división.",
   "pistas": [
    "El 2 sale como múltiplo de 3. ¿Cuánto vale 2 / 3 en enteros?",
    "Un múltiplo se reconoce por el resto, no por el cociente.",
-   "Cambiá / por %."
+   "Cambia / por %."
   ],
   "relacion_con_la_materia": "BC, múltiplos",
   "deteccion": "heuristica",
@@ -409,13 +409,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int N, R;\n  scanf(\"%d\", &N);\n  R = N % 3;\n  if (R == 0) { printf(\"Es múltiplo de 3\\n\"); }\n  else { printf(\"No es múltiplo de 3\\n\"); }\n}",
   "entrada": "7",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 4: if (R) es verdadero cuando R es distinto de 0, es decir, cuando NO es múltiplo. Comparalo con 0 para que se lea como lo pensaste.",
+  "mensaje_editor": "Línea 4: if (R) es verdadero cuando R es distinto de 0, es decir, cuando NO es múltiplo. Compáralo con 0 para que se lea como lo pensaste.",
   "explicacion": "En C, cualquier valor distinto de 0 cuenta como verdadero. Entonces if (R) se cumple cuando el resto NO es 0, justo lo contrario de lo que se quería.",
-  "como_arreglarlo": "Escribí la comparación completa con == 0 para no depender de cómo C interpreta el número.",
+  "como_arreglarlo": "Escribe la comparación completa con == 0 para no depender de cómo C interpreta el número.",
   "pistas": [
    "Los múltiplos salen como no múltiplos y viceversa. ¿Cuándo es verdadero un número en un if?",
    "En C, 0 es falso y cualquier otro número es verdadero.",
-   "Escribí R == 0 en la condición."
+   "Escribe R == 0 en la condición."
   ],
   "relacion_con_la_materia": "BC, múltiplos",
   "deteccion": "estatica",
@@ -424,7 +424,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "if (R) es verdadero cuando el resto es distinto de 0, es decir, cuando NO es múltiplo. Comparalo con 0 para que se lea como lo pensaste.",
+  "mensaje_editor_actual": "if (R) es verdadero cuando el resto es distinto de 0, es decir, cuando NO es múltiplo. Compáralo con 0 para que se lea como lo pensaste.",
   "codigo_editor_actual": "W-resto-sin-comparar",
   "verificado_editor_corrige": true,
   "solucion_ejercicio": true
@@ -438,13 +438,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int N;\n  scanf(\"%d\", &N);\n  if (N > 0 && N < 10) { printf(\"Está entre 0 y 10\\n\"); }\n  else { printf(\"Fuera de rango\\n\"); }\n}",
   "entrada": "15",
   "que_dice_gcc": "archivo.c:5: warning: comparison of constant '10' with boolean expression is always true [-Wbool-compare]",
-  "mensaje_editor": "Línea 3: 0 < N < 10 no significa lo mismo que en matemática, y siempre se cumple. Escribí cada comparación por separado y unilas con &&.",
+  "mensaje_editor": "Línea 3: 0 < N < 10 no significa lo mismo que en matemática, y siempre se cumple. Escribe cada comparación por separado y unilas con &&.",
   "explicacion": "C resuelve las comparaciones de a una y de izquierda a derecha: primero 0 < N da 0 o 1, y ese resultado se compara con 10, que siempre es menor. Un rango se escribe como dos comparaciones unidas con &&.",
-  "como_arreglarlo": "Separá el rango en dos comparaciones con la variable en cada una y unilas con &&.",
+  "como_arreglarlo": "Separa el rango en dos comparaciones con la variable en cada una y unilas con &&.",
   "pistas": [
    "El 15 se acepta como si estuviera entre 0 y 10. ¿Qué vale 0 < 15?",
    "La primera comparación da 0 o 1, y después se compara ese resultado.",
-   "Escribí N > 0 && N < 10."
+   "Escribe N > 0 && N < 10."
   ],
   "relacion_con_la_materia": "BC, operadores",
   "deteccion": "estatica",
@@ -453,7 +453,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "a < b < c no comprueba un rango: C evalúa primero la comparación de la izquierda (da 0 o 1). Escribilo con &&, por ejemplo: 0 < a && a < 3",
+  "mensaje_editor_actual": "a < b < c no comprueba un rango: C evalúa primero la comparación de la izquierda (da 0 o 1). Escríbelo con &&, por ejemplo: 0 < a && a < 3",
   "codigo_editor_actual": "W-comparacion",
   "verificado_editor_corrige": true
  },
@@ -466,13 +466,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int N;\n  scanf(\"%d\", &N);\n  if (N == 1 || N == 2) { printf(\"Es 1 o 2\\n\"); }\n  else { printf(\"Es otro\\n\"); }\n}",
   "entrada": "5",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 3: el 2 solo, sin comparar, siempre es verdadero, por eso la condición siempre se cumple. Escribí N == 2 completo.",
+  "mensaje_editor": "Línea 3: el 2 solo, sin comparar, siempre es verdadero, por eso la condición siempre se cumple. Escribe N == 2 completo.",
   "explicacion": "Cada lado de un || es una condición completa. El número 2 solo, sin comparar, vale como verdadero (todo número distinto de 0 es verdadero), y entonces la condición se cumple siempre.",
-  "como_arreglarlo": "Repetí la variable en cada comparación: N == 1 || N == 2.",
+  "como_arreglarlo": "Repite la variable en cada comparación: N == 1 || N == 2.",
   "pistas": [
-   "Con 5 también dice 'Es 1 o 2'. Fijate qué hay a la derecha del ||.",
+   "Con 5 también dice 'Es 1 o 2'. Fíjate qué hay a la derecha del ||.",
    "A cada lado del || tiene que haber una comparación completa.",
-   "Escribí N == 2 en vez de 2."
+   "Escribe N == 2 en vez de 2."
   ],
   "relacion_con_la_materia": "BC, operadores",
   "deteccion": "estatica",
@@ -481,7 +481,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "después de '||' hay solo el número 2, que siempre es verdadero: la condición siempre se cumple. Para comparar con dos valores escribí x == 1 || x == 2",
+  "mensaje_editor_actual": "después de '||' hay solo el número 2, que siempre es verdadero: la condición siempre se cumple. Para comparar con dos valores escribe x == 1 || x == 2",
   "codigo_editor_actual": "W-condicion-constante",
   "verificado_editor_corrige": true
  },
@@ -496,11 +496,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 3: un número no puede ser menor que 0 y mayor que 10 a la vez, así que la condición nunca se cumple. Para 'o' se usa ||.",
   "explicacion": "&& exige que se cumplan las dos condiciones al mismo tiempo; || pide que se cumpla al menos una. Estar fuera de un rango significa estar por debajo O por encima.",
-  "como_arreglarlo": "Cambiá el operador que une las dos comparaciones.",
+  "como_arreglarlo": "Cambia el operador que une las dos comparaciones.",
   "pistas": [
    "El 50 sale 'Dentro del rango'. ¿Puede un número ser menor que 0 y mayor que 10 a la vez?",
    "Fuera del rango es: por debajo, o por encima.",
-   "Cambiá && por ||."
+   "Cambia && por ||."
   ],
   "relacion_con_la_materia": "BC, operadores",
   "deteccion": "estatica",
@@ -524,11 +524,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 3: de 3 a 7 con los dos extremos hay 5 números y la resta da 4. Contando los extremos incluidos, falta sumar 1.",
   "explicacion": "Restar los extremos da la distancia entre ellos, no la cantidad de números. Si los dos extremos entran, hay un número más que la distancia (como los postes y los tramos de una cerca).",
-  "como_arreglarlo": "Hacé la cuenta a mano con un rango chico (3 a 7) y fijate cuánto le falta a la resta para dar la cantidad.",
+  "como_arreglarlo": "Haz la cuenta a mano con un rango pequeño (3 a 7) y fíjate cuánto le falta a la resta para dar la cantidad.",
   "pistas": [
-   "Con 3 y 7 el programa dice 4. Contá a mano: 3, 4, 5, 6, 7.",
+   "Con 3 y 7 el programa dice 4. Cuenta a mano: 3, 4, 5, 6, 7.",
    "La resta cuenta los saltos, no los números.",
-   "Sumale 1 al resultado."
+   "Súmale 1 al resultado."
   ],
   "relacion_con_la_materia": "LR, rangos",
   "deteccion": "heuristica",
@@ -552,11 +552,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 3: entre 3 y 7, sin contar los extremos, hay 3 números (4, 5 y 6) y la cuenta da 5. Hay que restar 1 en lugar de sumarlo.",
   "explicacion": "Si los extremos no cuentan, quedan dos números menos que contando ambos. Sumar 1 es la cuenta para los extremos incluidos, no para los excluidos.",
-  "como_arreglarlo": "Ajustá la cuenta según si los extremos entran o no.",
+  "como_arreglarlo": "Ajusta la cuenta según si los extremos entran o no.",
   "pistas": [
-   "Con 3 y 7 sin contar los extremos, el programa dice 5. Escribí los números a mano.",
-   "Los extremos no entran: ¿cuántos números quitás respecto de la distancia?",
-   "Restá 1 en lugar de sumar 1."
+   "Con 3 y 7 sin contar los extremos, el programa dice 5. Escribe los números a mano.",
+   "Los extremos no entran: ¿cuántos números quitas respecto de la distancia?",
+   "Resta 1 en lugar de sumar 1."
   ],
   "relacion_con_la_materia": "LR, rangos",
   "deteccion": "heuristica",
@@ -580,11 +580,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "El lazo no da ninguna vuelta cuando LI es mayor que LS. Si el usuario puede escribir los extremos en cualquier orden, hay que ordenarlos antes.",
   "explicacion": "Un for con cantidad N negativa no se ejecuta ni una vez: el programa termina sin mostrar nada ni avisar. Conviene controlar el orden de los extremos antes de calcular N.",
-  "como_arreglarlo": "Antes de calcular N, comprobá que LI no sea mayor que LS, e intercambiálos con una variable auxiliar si lo es.",
+  "como_arreglarlo": "Antes de calcular N, comprueba que LI no sea mayor que LS, e intercambiálos con una variable auxiliar si lo es.",
   "pistas": [
    "No muestra nada con algunos datos. ¿Cuánto vale N con 9 y 4?",
    "Un for con N negativo no se ejecuta.",
-   "Si LI > LS, intercambiá los valores con AUX."
+   "Si LI > LS, intercambia los valores con AUX."
   ],
   "relacion_con_la_materia": "LR, BC",
   "deteccion": "heuristica",
@@ -606,13 +606,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int N, V, S, i;\n  scanf(\"%d\", &N);\n  S = 0;\n  for (i = 0; i < N; i++) { scanf(\"%d\", &V); S = S + V; }\n  printf(\"Suma: %d\\n\", S);\n}",
   "entrada": "3\n10 20 30",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 4: el lazo da N - 1 vueltas, porque arranca en 1 y corta en i < N. Leés un dato menos de los que pediste.",
-  "explicacion": "Un for que arranca en 0 y usa i < N repite N veces. Si arrancás en 1 con la misma condición, repite una vez menos. Para repetir N veces se arranca en 0 con <, o en 1 con <=.",
-  "como_arreglarlo": "Elegí un par inicio/condición que repita N veces: 0 con < o 1 con <=.",
+  "mensaje_editor": "Línea 4: el lazo da N - 1 vueltas, porque arranca en 1 y corta en i < N. Lees un dato menos de los que pediste.",
+  "explicacion": "Un for que arranca en 0 y usa i < N repite N veces. Si arrancas en 1 con la misma condición, repite una vez menos. Para repetir N veces se arranca en 0 con <, o en 1 con <=.",
+  "como_arreglarlo": "Elige un par inicio/condición que repita N veces: 0 con < o 1 con <=.",
   "pistas": [
-   "Con N = 3 suma solo dos números. Contá las vueltas del lazo.",
+   "Con N = 3 suma solo dos números. Cuenta las vueltas del lazo.",
    "Si i arranca en 1 y corta cuando i vale N, ¿cuántas veces entra?",
-   "Arrancá i en 0."
+   "Arranca i en 0."
   ],
   "relacion_con_la_materia": "LR",
   "deteccion": "estatica",
@@ -636,11 +636,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 4: el lazo da N + 1 vueltas porque arranca en 0 y usa i <= N. La última lectura falla y vuelve a sumar el último valor.",
   "explicacion": "Con i desde 0, la condición i <= N repite N + 1 veces. Cuando ya no hay más datos, scanf no lee nada y V conserva el último valor, que se suma de nuevo.",
-  "como_arreglarlo": "Para N repeticiones desde 0, usá i < N.",
+  "como_arreglarlo": "Para N repeticiones desde 0, usa i < N.",
   "pistas": [
-   "La suma da más de lo esperado. Contá cuántas veces se ejecuta el lazo.",
+   "La suma da más de lo esperado. Cuenta cuántas veces se ejecuta el lazo.",
    "Desde 0 hasta N inclusive hay N + 1 números.",
-   "Cambiá <= por <."
+   "Cambia <= por <."
   ],
   "relacion_con_la_materia": "LR",
   "deteccion": "estatica",
@@ -664,11 +664,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 4: A = 0 dentro del lazo borra el total en cada vuelta, y al final solo queda el último dato. La inicialización va antes del lazo.",
   "explicacion": "Un acumulador guarda el total de todas las vueltas, así que tiene que arrancar una sola vez, antes de empezar a repetir. Si se lo pone en 0 en cada vuelta, siempre se empieza de cero.",
-  "como_arreglarlo": "Mové la inicialización del acumulador antes del for.",
+  "como_arreglarlo": "Mueve la inicialización del acumulador antes del for.",
   "pistas": [
    "Muestra solo el último número. ¿Qué pasa con A al comienzo de cada vuelta?",
    "La inicialización se hace una sola vez, no en cada vuelta.",
-   "Sacá A = 0 del lazo y ponelo antes del for."
+   "Saca A = 0 del lazo y ponlo antes del for."
   ],
   "relacion_con_la_materia": "LR, acumuladores",
   "deteccion": "estatica",
@@ -692,11 +692,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 3: CP arranca en 1, así que cuenta uno más de los positivos que hay. Un contador empieza en 0.",
   "explicacion": "Un contador cuenta las veces que pasa algo. Si todavía no pasó nada, vale 0. Empezarlo en otro número le suma ese número a todos los resultados.",
-  "como_arreglarlo": "Inicializá el contador en el valor que corresponde a 'todavía no conté nada'.",
+  "como_arreglarlo": "Inicializa el contador en el valor que corresponde a 'todavía no conté nada'.",
   "pistas": [
    "Con tres positivos muestra 4. ¿Con qué valor empieza el contador?",
    "Antes de leer ningún dato, ¿cuántos positivos viste?",
-   "Poné CP = 0."
+   "Pon CP = 0."
   ],
   "relacion_con_la_materia": "LR, contadores",
   "deteccion": "estatica",
@@ -718,13 +718,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int CP, i;\n  float V, AP, PROMP;\n  AP = 0;\n  CP = 0;\n  for (i = 0; i < 3; i++) { scanf(\"%f\", &V); if (V > 0) { AP = AP + V; CP++; } }\n  if (CP > 0) { PROMP = AP / CP; printf(\"Prom +: %.2f\\n\", PROMP); }\n  else { printf(\"No hubo positivos\\n\"); }\n}",
   "entrada": "-1 -2 -3",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 6: si no ingresaste ningún positivo, CP vale 0 y la división da 'nan' o 'inf'. Antes de promediar, comprobá que el contador sea mayor que 0.",
+  "mensaje_editor": "Línea 6: si no ingresaste ningún positivo, CP vale 0 y la división da 'nan' o 'inf'. Antes de promediar, comprueba que el contador sea mayor que 0.",
   "explicacion": "Un promedio es la suma dividida por la cantidad de datos que se sumaron. Si no se sumó ninguno, la cantidad es 0 y no se puede dividir. Hay que decidir qué mostrar en ese caso.",
-  "como_arreglarlo": "Preguntá con un if si el contador es mayor que 0 antes de dividir, y mostrá un mensaje en el sino.",
+  "como_arreglarlo": "Pregunta con un if si el contador es mayor que 0 antes de dividir, y muestra un mensaje en el sino.",
   "pistas": [
    "Con todos negativos aparece algo raro en vez de un número. ¿Cuánto vale CP?",
    "No se puede dividir por la cantidad si no hubo datos.",
-   "Rodeá la división con un if (CP > 0)."
+   "Rodea la división con un if (CP > 0)."
   ],
   "relacion_con_la_materia": "LR, BC, promedios",
   "deteccion": "heuristica",
@@ -747,13 +747,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int N, V, i;\n  float PROM, S;\n  scanf(\"%d\", &N);\n  S = 0;\n  for (i = 0; i < N; i++) { scanf(\"%d\", &V); S = S + V; }\n  PROM = S / N;\n  printf(\"Promedio: %.2f\\n\", PROM);\n}",
   "entrada": "3\n7 8 8",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 7: S y N son enteros, entonces S / N descarta los decimales antes de guardarse en PROM. Declará el acumulador como float.",
+  "mensaje_editor": "Línea 7: S y N son enteros, entonces S / N descarta los decimales antes de guardarse en PROM. Declara el acumulador como float.",
   "explicacion": "Una división entre dos enteros da un entero, aunque el resultado se guarde en un float. Para conservar los decimales, el acumulador (o el contador) tiene que ser decimal.",
   "como_arreglarlo": "Declarar el acumulador de la suma como float.",
   "pistas": [
    "El promedio de 7, 8 y 8 muestra 7.00. ¿Qué tipos tienen S y N?",
    "Entero dividido entero da entero.",
-   "Declará S como float."
+   "Declara S como float."
   ],
   "relacion_con_la_materia": "LR, promedios, tipos",
   "deteccion": "estatica",
@@ -762,7 +762,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "la división es entre dos enteros y se trunca (7/2 da 3, no 3.5): guardarla en float no recupera los decimales; usá 7/2.0 o (float)7/2",
+  "mensaje_editor_actual": "la división es entre dos enteros y se trunca (7/2 da 3, no 3.5): guardarla en float no recupera los decimales; usa 7/2.0 o (float)7/2",
   "codigo_editor_actual": "W-division-entera",
   "verificado_editor_corrige": true,
   "solucion_ejercicio": true
@@ -776,13 +776,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int N, E, C, i;\n  float AE, PROM;\n  N = 4;\n  AE = 0;\n  C = 0;\n  for (i = 0; i < N; i++) { scanf(\"%d\", &E); if (E >= 18) { AE = AE + E; C++; } }\n  if (C > 0) { PROM = AE / C; printf(\"Edad promedio de mayores: %.2f\\n\", PROM); }\n  else { printf(\"No hubo mayores\\n\"); }\n}",
   "entrada": "20 15 30 17",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 8: dividís la suma de los mayores por N (todos los datos) en vez de por C (los que se sumaron). El promedio da menos de lo que corresponde.",
+  "mensaje_editor": "Línea 8: divides la suma de los mayores por N (todos los datos) en vez de por C (los que se sumaron). El promedio da menos de lo que corresponde.",
   "explicacion": "El promedio de un grupo se calcula dividiendo la suma del grupo por la cantidad de elementos del grupo, no por la cantidad total de datos leídos. Para eso existe el contador del grupo.",
-  "como_arreglarlo": "Dividí por el contador que cuenta solo los datos que se acumularon.",
+  "como_arreglarlo": "Divide por el contador que cuenta solo los datos que se acumularon.",
   "pistas": [
    "Con 20 y 30 como mayores el promedio debería ser 25. ¿Por cuánto estás dividiendo?",
    "Hay dos cantidades: la de todos los datos y la de los que se acumularon.",
-   "Dividí AE por C."
+   "Divide AE por C."
   ],
   "relacion_con_la_materia": "LR, promedios",
   "deteccion": "heuristica",
@@ -791,7 +791,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "dividís AE (la suma de los que cumplen) por N (todos los datos) en vez de por C (los que se sumaron). El promedio da menos de lo que corresponde.",
+  "mensaje_editor_actual": "divides AE (la suma de los que cumplen) por N (todos los datos) en vez de por C (los que se sumaron). El promedio da menos de lo que corresponde.",
   "codigo_editor_actual": "W-promedio-con-total",
   "verificado_editor_corrige": true,
   "solucion_ejercicio": true
@@ -807,11 +807,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 2: MENOR arranca en 0, que no es uno de los datos, y ningún positivo es menor que 0. El resultado es siempre 0.",
   "explicacion": "Para buscar el menor, la variable tiene que empezar con un valor que sí pertenezca a los datos, por ejemplo el primero que se lee. Un 0 inicial gana contra todos los valores positivos.",
-  "como_arreglarlo": "Inicializá MENOR con el primer dato leído y recorré los datos que faltan.",
+  "como_arreglarlo": "Inicializa MENOR con el primer dato leído y recorre los datos que faltan.",
   "pistas": [
    "Con datos todos positivos el menor sale 0. ¿Es uno de los datos?",
    "El valor inicial tiene que ser un dato real.",
-   "Leé el primer valor, guardalo en MENOR y recién después empezá el lazo."
+   "Lee el primer valor, guárdalo en MENOR y recién después empieza el lazo."
   ],
   "relacion_con_la_materia": "LR, mínimo",
   "deteccion": "estatica",
@@ -836,11 +836,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 2: MAYOR arranca en 0, y si todos los datos son negativos nunca se actualiza. El mayor que muestra no es uno de los datos.",
   "explicacion": "El máximo de un conjunto es siempre uno de sus datos. Empezar en 0 funciona solo cuando hay algún valor mayor que 0. Con datos negativos, el 0 gana y el resultado es falso.",
-  "como_arreglarlo": "Tomá el primer dato como valor inicial del máximo.",
+  "como_arreglarlo": "Toma el primer dato como valor inicial del máximo.",
   "pistas": [
    "Con -5, -2 y -9 el mayor sale 0. ¿Alguno de los datos vale 0?",
    "El máximo de los datos tiene que ser uno de los datos.",
-   "Leé el primer valor y guardalo en MAYOR antes del lazo."
+   "Lee el primer valor y guárdalo en MAYOR antes del lazo."
   ],
   "relacion_con_la_materia": "LR, máximo",
   "deteccion": "estatica",
@@ -863,13 +863,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int N, V, S, i;\n  scanf(\"%d\", &N);\n  S = 0;\n  for (i = 0; i < N; i++) {\n    scanf(\"%d\", &V);\n    S = S + V;\n  }\n  printf(\"Suma: %d\\n\", S);\n}",
   "entrada": "3\n1 2 3",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 7: mostrás la suma en cada vuelta y no al final. Salen tres resultados parciales en lugar de uno solo.",
+  "mensaje_editor": "Línea 7: muestras la suma en cada vuelta y no al final. Salen tres resultados parciales en lugar de uno solo.",
   "explicacion": "Un printf dentro del lazo se ejecuta una vez por vuelta. El resultado final se muestra cuando el lazo ya terminó, después de la llave que lo cierra.",
-  "como_arreglarlo": "Sacá el printf del cuerpo del lazo y ponelo después de la llave de cierre.",
+  "como_arreglarlo": "Saca el printf del cuerpo del lazo y ponlo después de la llave de cierre.",
   "pistas": [
    "Aparecen varias líneas con la suma. ¿Cuántas veces se ejecuta el printf?",
    "El resultado final se muestra cuando terminó de repetir.",
-   "Poné el printf después de la llave que cierra el for."
+   "Pon el printf después de la llave que cierra el for."
   ],
   "relacion_con_la_materia": "LR, acumuladores",
   "deteccion": "heuristica",
@@ -891,13 +891,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int N, V, CN, i;\n  scanf(\"%d\", &N);\n  CN = 0;\n  for (i = 0; i < N; i++) {\n    scanf(\"%d\", &V);\n    if (V < 0) { printf(\"Negativo\\n\"); CN++; }\n  }\n  printf(\"Cantidad de negativos: %d\\n\", CN);\n}",
   "entrada": "4\n5 -2 3 -4",
   "que_dice_gcc": "archivo.c:8: warning: this 'if' clause does not guard... [-Wmisleading-indentation]",
-  "mensaje_editor": "Línea 6: sin llaves, el if solo controla el printf, y CN++ se ejecuta en todas las vueltas. Poné llaves para agrupar lo que depende de la condición.",
+  "mensaje_editor": "Línea 6: sin llaves, el if solo controla el printf, y CN++ se ejecuta en todas las vueltas. Pon llaves para agrupar lo que depende de la condición.",
   "explicacion": "Cuando un if no tiene llaves, solo controla la instrucción que viene inmediatamente después. Lo que sigue se ejecuta siempre, aunque esté escrito en el mismo renglón o con sangría.",
-  "como_arreglarlo": "Poné llaves alrededor de todas las instrucciones que dependen del if.",
+  "como_arreglarlo": "Pon llaves alrededor de todas las instrucciones que dependen del if.",
   "pistas": [
-   "El contador cuenta todos los datos, no solo los negativos. Mirá qué controla el if.",
+   "El contador cuenta todos los datos, no solo los negativos. Mira qué controla el if.",
    "Sin llaves el if controla solo una instrucción.",
-   "Poné { } alrededor del printf y de CN++."
+   "Pon { } alrededor del printf y de CN++."
   ],
   "relacion_con_la_materia": "BC, contadores",
   "deteccion": "estatica",
@@ -906,7 +906,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "sin llaves, el if solo controla la primera instrucción, y lo que sigue en la misma línea (CN++) se ejecuta siempre. Poné llaves para agrupar lo que depende de la condición.",
+  "mensaje_editor_actual": "sin llaves, el if solo controla la primera instrucción, y lo que sigue en la misma línea (CN++) se ejecuta siempre. Pon llaves para agrupar lo que depende de la condición.",
   "codigo_editor_actual": "W-if-sin-llaves",
   "verificado_editor_corrige": true,
   "solucion_ejercicio": true
@@ -920,13 +920,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int N, V, S, i;\n  scanf(\"%d\", &N);\n  S = 0;\n  for (i = 0; i < N; i++)\n  {\n    scanf(\"%d\", &V);\n    S = S + V;\n  }\n  printf(\"Suma: %d\\n\", S);\n}",
   "entrada": "3\n1 2 3",
   "que_dice_gcc": "archivo.c:6: warning: this 'for' clause does not guard... [-Wmisleading-indentation]",
-  "mensaje_editor": "Línea 4: el ; al final del for hace que el lazo repita una instrucción vacía, y el bloque de abajo se ejecuta una sola vez. Sacá el punto y coma.",
-  "explicacion": "Un ; solo es una instrucción que no hace nada. Si lo ponés justo después del for, el lazo repite eso y el bloque que viene después queda como un bloque suelto que se ejecuta una vez.",
-  "como_arreglarlo": "Sacá el ; que está inmediatamente después del paréntesis del for.",
+  "mensaje_editor": "Línea 4: el ; al final del for hace que el lazo repita una instrucción vacía, y el bloque de abajo se ejecuta una sola vez. Saca el punto y coma.",
+  "explicacion": "Un ; solo es una instrucción que no hace nada. Si lo pones justo después del for, el lazo repite eso y el bloque que viene después queda como un bloque suelto que se ejecuta una vez.",
+  "como_arreglarlo": "Saca el ; que está inmediatamente después del paréntesis del for.",
   "pistas": [
-   "Lee un solo dato aunque pediste tres. Mirá el final de la línea del for.",
+   "Lee un solo dato aunque pediste tres. Mira el final de la línea del for.",
    "Un ; solo cuenta como una instrucción vacía.",
-   "Borrá el ; después de i++)."
+   "Borra el ; después de i++)."
   ],
   "relacion_con_la_materia": "LR",
   "deteccion": "estatica",
@@ -948,13 +948,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int N, V, CN, i;\n  scanf(\"%d\", &N);\n  CN = 0;\n  for (i = 0; i < N; i++) {\n    scanf(\"%d\", &V);\n    if (V < 0) { CN++; }\n  }\n  printf(\"Negativos: %d\\n\", CN);\n}",
   "entrada": "3\n-1 -2 -3",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 6: sin llaves, el for repite solo el scanf, y el if se evalúa una sola vez con el último dato. Encerrá todo el cuerpo del lazo entre llaves.",
+  "mensaje_editor": "Línea 6: sin llaves, el for repite solo el scanf, y el if se evalúa una sola vez con el último dato. Encierra todo el cuerpo del lazo entre llaves.",
   "explicacion": "Un for sin llaves repite una sola instrucción. Aunque las líneas siguientes estén sangradas, no forman parte del lazo. Para repetir varias instrucciones hacen falta llaves.",
-  "como_arreglarlo": "Poné llaves alrededor de todo lo que debe repetirse.",
+  "como_arreglarlo": "Pon llaves alrededor de todo lo que debe repetirse.",
   "pistas": [
    "Cuenta 1 negativo en vez de 3. ¿Cuántas instrucciones repite el for?",
    "Sin llaves, el for repite solo la primera instrucción.",
-   "Abrí una llave después del for y cerrála después del if."
+   "Abre una llave después del for y ciérrala después del if."
   ],
   "relacion_con_la_materia": "LR, contadores",
   "deteccion": "estatica",
@@ -963,7 +963,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "sin llaves, el for repite solo el scanf, y lo que sigue (if (V < 0)) se hace una sola vez con el último dato. Encerrá todo el cuerpo del lazo entre llaves.",
+  "mensaje_editor_actual": "sin llaves, el for repite solo el scanf, y lo que sigue (if (V < 0)) se hace una sola vez con el último dato. Encierra todo el cuerpo del lazo entre llaves.",
   "codigo_editor_actual": "W-for-sin-llaves",
   "verificado_editor_corrige": true,
   "solucion_ejercicio": true
@@ -977,13 +977,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int N, V, A, i;\n  scanf(\"%d\", &N);\n  A = 0;\n  for (i = 0; i < N; i++) {\n    scanf(\"%d\", &V);\n    A = A + V;\n  }\n  printf(\"Suma: %d\\n\", A);\n}",
   "entrada": "3\n10 20 30",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 6: sumás i (el número de vuelta) en lugar de V (el dato leído). V se lee pero no se usa.",
+  "mensaje_editor": "Línea 6: sumas i (el número de vuelta) en lugar de V (el dato leído). V se lee pero no se usa.",
   "explicacion": "La variable del for solo cuenta vueltas. El dato que se ingresó está en otra variable, y esa es la que se acumula. Confundirlas da una suma que depende solo de N.",
-  "como_arreglarlo": "Acumulá la variable donde se guardó el dato leído.",
+  "como_arreglarlo": "Acumula la variable donde se guardó el dato leído.",
   "pistas": [
-   "La suma no depende de los datos que ingresás. Probá con otros valores.",
+   "La suma no depende de los datos que ingresas. Prueba con otros valores.",
    "¿Qué guarda i y qué guarda V?",
-   "Cambiá i por V en la suma."
+   "Cambia i por V en la suma."
   ],
   "relacion_con_la_materia": "LR, acumuladores",
   "deteccion": "estatica",
@@ -992,7 +992,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "sumás i (el número de vuelta) en lugar del dato leído V: V se lee pero no se usa.",
+  "mensaje_editor_actual": "sumas i (el número de vuelta) en lugar del dato leído V: V se lee pero no se usa.",
   "codigo_editor_actual": "W-contador-como-dato",
   "verificado_editor_corrige": true
  },
@@ -1007,11 +1007,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 6: CP suma el valor de V en lugar de sumar 1, así que ya no cuenta positivos sino que los acumula. Un contador crece de a uno.",
   "explicacion": "Un contador y un acumulador se parecen pero hacen cosas distintas: el contador suma 1 cada vez que pasa algo; el acumulador suma el valor del dato. Si se mezclan, el resultado no cuenta lo que se quería.",
-  "como_arreglarlo": "Para contar, incrementá de a uno; para sumar valores, usá otra variable.",
+  "como_arreglarlo": "Para contar, incrementa de a uno; para sumar valores, usa otra variable.",
   "pistas": [
    "Con dos positivos muestra 12. ¿Qué está sumando CP?",
    "Contar es sumar 1; acumular es sumar el dato.",
-   "Escribí CP++."
+   "Escribe CP++."
   ],
   "relacion_con_la_materia": "LR, contadores",
   "deteccion": "heuristica",
@@ -1035,11 +1035,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 6: A suma 1 en cada vuelta, así que cuenta datos en lugar de sumarlos. El dato V se lee y no se usa.",
   "explicacion": "Para totalizar valores, el acumulador suma el dato leído. Sumar siempre 1 es contar, y el resultado siempre es N.",
-  "como_arreglarlo": "Sumá a A el valor leído en lugar de 1.",
+  "como_arreglarlo": "Suma a A el valor leído en lugar de 1.",
   "pistas": [
    "La suma siempre da la cantidad de datos. ¿Qué número se suma en cada vuelta?",
    "¿Qué diferencia hay entre contar y sumar?",
-   "Escribí A = A + V."
+   "Escribe A = A + V."
   ],
   "relacion_con_la_materia": "LR, acumuladores",
   "deteccion": "estatica",
@@ -1063,11 +1063,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 6: con E > 18 el que tiene justo 18 queda afuera. Si 18 cuenta como mayor de edad, la comparación tiene que incluir el 18.",
   "explicacion": "> deja afuera el valor límite y >= lo incluye. Cuando el enunciado dice 'desde 18' o '18 o más', el 18 tiene que entrar; cuando dice 'más de 18', no entra. Hay que probar siempre con el valor justo del límite.",
-  "como_arreglarlo": "Probá el programa con el valor exacto del límite y elegí > o >= según lo que pide el enunciado.",
+  "como_arreglarlo": "Prueba el programa con el valor exacto del límite y elige > o >= según lo que pide el enunciado.",
   "pistas": [
-   "Con 18, 17 y 20 cuenta uno solo. Mirá el 18.",
+   "Con 18, 17 y 20 cuenta uno solo. Mira el 18.",
    "¿El 18 es mayor de edad? ¿Qué operador deja entrar al 18?",
-   "Usá >=."
+   "Usa >=."
   ],
   "relacion_con_la_materia": "BC, LR",
   "deteccion": "no_detectable",
@@ -1092,11 +1092,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "El lazo while no termina: V no cambia dentro del lazo. Falta leer el próximo dato al final de cada vuelta.",
   "explicacion": "La condición del while mira el valor de V. Si dentro del lazo nada modifica V, la condición vale siempre lo mismo y el lazo no termina. En la lectura adelantada, el scanf del siguiente dato va al final de la vuelta.",
-  "como_arreglarlo": "Agregá, como última instrucción dentro del lazo, la lectura del siguiente dato.",
+  "como_arreglarlo": "Agrega, como última instrucción dentro del lazo, la lectura del siguiente dato.",
   "pistas": [
    "El programa se queda trabado. ¿Qué cambia dentro del lazo?",
    "La condición solo depende de V; ¿quién cambia V?",
-   "Poné scanf al final del cuerpo del while."
+   "Pon scanf al final del cuerpo del while."
   ],
   "relacion_con_la_materia": "LC",
   "deteccion": "estatica",
@@ -1105,7 +1105,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "en este while ninguna variable de la condición (V) cambia dentro del bucle: es probable que nunca termine",
+  "mensaje_editor_actual": "en este while ninguna variable de la condición (V) cambia dentro del lazo: es probable que nunca termine",
   "codigo_editor_actual": "W-bucle-infinito",
   "verificado_editor_corrige": true,
   "notas": "Con la entrada de arriba el programa no termina: la validación lo corta por tiempo."
@@ -1121,11 +1121,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 3: V arranca valiendo 0, que es el valor de corte, y el lazo no se ejecuta ni una vez. El valor inicial forzado tiene que hacer verdadera la condición.",
   "explicacion": "En el método del valor inicial forzado, se le da a la variable un valor cualquiera que no sea el centinela para poder entrar al lazo. Si se le da justo el valor de corte, la condición es falsa de entrada.",
-  "como_arreglarlo": "Forzá un valor inicial que sea distinto del valor de corte.",
+  "como_arreglarlo": "Fuerza un valor inicial que sea distinto del valor de corte.",
   "pistas": [
    "Muestra 0 sin leer nada. ¿Cuánto vale V al llegar al while?",
    "Para entrar la primera vez, la condición debe ser verdadera.",
-   "Inicializá V con un valor distinto de 0."
+   "Inicializa V con un valor distinto de 0."
   ],
   "relacion_con_la_materia": "LC (valor inicial forzado)",
   "deteccion": "estatica",
@@ -1149,11 +1149,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Líneas 6 y 7: cuando se lee el 0 de corte, igual se suma y se cuenta como un dato más. El 0 final baja el promedio.",
   "explicacion": "Con valor inicial forzado, el scanf va dentro del lazo y se ejecuta también cuando llega el valor de corte. Hay que preguntar si lo leído es el centinela antes de procesarlo.",
-  "como_arreglarlo": "Dentro del lazo, procesá el dato solo si es distinto del valor de corte.",
+  "como_arreglarlo": "Dentro del lazo, procesa el dato solo si es distinto del valor de corte.",
   "pistas": [
    "El contador cuenta uno más de los datos reales. ¿Cuándo se lee el 0?",
    "Después de leer, el 0 final también se procesa.",
-   "Poné un if (V != 0) alrededor de lo que acumula y cuenta."
+   "Pon un if (V != 0) alrededor de lo que acumula y cuenta."
   ],
   "relacion_con_la_materia": "LC (valor inicial forzado)",
   "deteccion": "heuristica",
@@ -1176,13 +1176,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int V, S;\n  S = 0;\n  scanf(\"%d\", &V);\n  while (V != 0) {\n    S = S + V;\n    scanf(\"%d\", &V);\n  }\n  printf(\"Suma: %d\\n\", S);\n}",
   "entrada": "5 3 0",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 5: leés el siguiente dato antes de procesar el actual, así que el primero (5) se pierde. Primero se procesa el dato que ya leíste y después se lee el siguiente.",
+  "mensaje_editor": "Línea 5: lees el siguiente dato antes de procesar el actual, así que el primero (5) se pierde. Primero se procesa el dato que ya leíste y después se lee el siguiente.",
   "explicacion": "En la lectura adelantada el dato ya está leído cuando se entra al lazo: se lo procesa, y al final de la vuelta se lee el que sigue. Si el scanf va al principio, el dato leído antes se descarta.",
-  "como_arreglarlo": "Mové la lectura al final del cuerpo del lazo.",
+  "como_arreglarlo": "Mueve la lectura al final del cuerpo del lazo.",
   "pistas": [
    "La suma no incluye el primer dato. ¿Qué pasa con el valor leído antes del while?",
    "Primero se usa el dato; después se lee el próximo.",
-   "Poné el scanf como última instrucción del lazo."
+   "Pon el scanf como última instrucción del lazo."
   ],
   "relacion_con_la_materia": "LC (lectura adelantada)",
   "deteccion": "heuristica",
@@ -1191,7 +1191,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "leés el siguiente dato con scanf antes de procesar el actual, así que el primero que leíste antes del while (línea 5) se pierde. Primero se procesa el dato leído y después se lee el siguiente.",
+  "mensaje_editor_actual": "lees el siguiente dato con scanf antes de procesar el actual, así que el primero que leíste antes del while (línea 5) se pierde. Primero se procesa el dato leído y después se lee el siguiente.",
   "codigo_editor_actual": "W-lectura-adelantada",
   "verificado_editor_corrige": true
  },
@@ -1206,11 +1206,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 4: con V > 0 el lazo termina en el primer negativo, no en el 0 de corte. El corte tiene que preguntar por el valor del centinela.",
   "explicacion": "La condición de un lazo condicional describe cuándo seguir. Si el corte es un valor puntual (el 0), la condición es 'distinto de ese valor'. Usar > 0 también corta con cualquier otro valor negativo.",
-  "como_arreglarlo": "Escribí la condición del lazo como 'distinto del valor de corte'.",
+  "como_arreglarlo": "Escribe la condición del lazo como 'distinto del valor de corte'.",
   "pistas": [
    "La suma se detiene antes del 0. ¿Qué otros valores hacen falsa la condición?",
    "El corte es un valor puntual, no un signo.",
-   "Usá != 0."
+   "Usa != 0."
   ],
   "relacion_con_la_materia": "LC",
   "deteccion": "heuristica",
@@ -1234,11 +1234,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 5: con || el lazo sigue mientras falte alguno de los dos cortes, y recién termina cuando se cumplen los dos. Para cortar con el primero que llegue, ambas condiciones de seguir se unen con &&.",
   "explicacion": "Si el programa termina con 5 negativos O 3 ceros, entonces sigue mientras no haya 5 negativos Y no haya 3 ceros. Al negar una condición con 'o', cambia a 'y' y cada comparación se invierte.",
-  "como_arreglarlo": "Pensá la condición de seguir como el contrario de la condición de cortar (ley de De Morgan).",
+  "como_arreglarlo": "Piensa la condición de seguir como el contrario de la condición de cortar (ley de De Morgan).",
   "pistas": [
    "Con 3 ceros el lazo debía terminar, pero sigue. ¿Cuándo es falsa una condición unida con ||?",
    "Cortar con A o con B es seguir mientras no A y no B.",
-   "Cambiá || por &&."
+   "Cambia || por &&."
   ],
   "relacion_con_la_materia": "LC (corte por contadores)",
   "deteccion": "heuristica",
@@ -1262,11 +1262,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 5: con R > DEN, cuando R vale justo DEN ya no resta, y 10 / 5 da cociente 1 y resto 5. El resto nunca puede ser igual al divisor.",
   "explicacion": "Se puede restar mientras lo que queda sea mayor o igual que el divisor. Cuando R es igual a DEN todavía entra una resta más. El resto correcto siempre es menor que DEN.",
-  "como_arreglarlo": "Probá con una división exacta, como 10 / 5, y fijate qué comparación permite restar una vez más.",
+  "como_arreglarlo": "Prueba con una división exacta, como 10 / 5, y fíjate qué comparación permite restar una vez más.",
   "pistas": [
    "10 / 5 da cociente 1 y resto 5. ¿Es razonable un resto igual al divisor?",
    "¿Se puede restar 5 de 5?",
-   "Cambiá > por >=."
+   "Cambia > por >=."
   ],
   "relacion_con_la_materia": "LC (división por restas)",
   "deteccion": "heuristica",
@@ -1275,7 +1275,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "con R > DEN, cuando R vale justo DEN ya no resta y el resto queda igual al divisor (10 / 5 da cociente 1 y resto 5). El resto nunca puede ser igual al divisor: probá con >=.",
+  "mensaje_editor_actual": "con R > DEN, cuando R vale justo DEN ya no resta y el resto queda igual al divisor (10 / 5 da cociente 1 y resto 5). El resto nunca puede ser igual al divisor: prueba con >=.",
   "codigo_editor_actual": "W-resto-igual-divisor",
   "verificado_editor_corrige": true,
   "solucion_ejercicio": true
@@ -1289,13 +1289,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int NUM, DEN, C, R;\n  scanf(\"%d %d\", &NUM, &DEN);\n  C = 0; R = NUM;\n  if (DEN > 0) {\n    while (R >= DEN) { R = R - DEN; C++; }\n    printf(\"Cociente: %d  Resto: %d\\n\", C, R);\n  } else { printf(\"El divisor debe ser mayor que cero\\n\"); }\n}",
   "entrada": "10 0",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 5: con DEN igual a 0, restar 0 no cambia R y el lazo no termina. Controlá el divisor antes de entrar al lazo.",
+  "mensaje_editor": "Línea 5: con DEN igual a 0, restar 0 no cambia R y el lazo no termina. Controla el divisor antes de entrar al lazo.",
   "explicacion": "En la división por restas sucesivas, cada vuelta tiene que acercar R a DEN. Si DEN es 0 (o negativo) la resta no achica a R y el lazo es infinito.",
-  "como_arreglarlo": "Antes del lazo, comprobá que el divisor sea mayor que 0 y avisá si no lo es.",
+  "como_arreglarlo": "Antes del lazo, comprueba que el divisor sea mayor que 0 y avisa si no lo es.",
   "pistas": [
    "Con divisor 0 el programa se queda trabado. ¿Cuánto valen R y C vuelta tras vuelta?",
-   "Si restás 0, ¿R se acerca a DEN?",
-   "Poné un if (DEN > 0) antes del while."
+   "Si restas 0, ¿R se acerca a DEN?",
+   "Pon un if (DEN > 0) antes del while."
   ],
   "relacion_con_la_materia": "LC (división por restas)",
   "deteccion": "ejecucion",
@@ -1313,19 +1313,19 @@
  {
   "id": "LOG-047",
   "categoria": "lógica del algoritmo",
-  "nombre_corto": "División por restas que pisa el dividendo",
+  "nombre_corto": "División por restas que sobrescribe el dividendo",
   "frecuencia": "media",
   "codigo_mal": "#include <stdio.h>\nint main() {\n  int NUM, DEN, C;\n  scanf(\"%d %d\", &NUM, &DEN);\n  C = 0;\n  while (NUM >= DEN) {\n    NUM = NUM - DEN;\n    C++;\n  }\n  printf(\"%d / %d = %d\\n\", NUM, DEN, C);\n}",
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int NUM, DEN, C, R;\n  scanf(\"%d %d\", &NUM, &DEN);\n  C = 0;\n  R = NUM;\n  while (R >= DEN) {\n    R = R - DEN;\n    C++;\n  }\n  printf(\"%d / %d = %d\\n\", NUM, DEN, C);\n}",
   "entrada": "17 5",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 8: NUM terminó valiendo el resto, no el dividendo original, y el mensaje sale '2 / 5 = 3'. Restá sobre una copia.",
+  "mensaje_editor": "Línea 8: NUM terminó valiendo el resto, no el dividendo original, y el mensaje sale '2 / 5 = 3'. Resta sobre una copia.",
   "explicacion": "Si el lazo modifica la variable que guarda el dato, el valor original se pierde. Para poder mostrarlo después hay que trabajar sobre otra variable (R) que arranque igual.",
-  "como_arreglarlo": "Copiá el dividendo en otra variable y hacé las restas sobre la copia.",
+  "como_arreglarlo": "Copia el dividendo en otra variable y haz las restas sobre la copia.",
   "pistas": [
    "El mensaje final muestra un dividendo distinto del que ingresaste. ¿Qué variable va cambiando?",
    "Un dato que se necesita después no debe modificarse en el lazo.",
-   "Usá R = NUM y restá sobre R."
+   "Usa R = NUM y resta sobre R."
   ],
   "relacion_con_la_materia": "LC (división por restas)",
   "deteccion": "heuristica",
@@ -1334,7 +1334,7 @@
   "nivel": "informacion",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "NUM terminó valiendo el resto, no el dividendo original, y el mensaje lo muestra como si fuera el dividendo. Restá sobre una copia de NUM.",
+  "mensaje_editor_actual": "NUM terminó valiendo el resto, no el dividendo original, y el mensaje lo muestra como si fuera el dividendo. Resta sobre una copia de NUM.",
   "codigo_editor_actual": "W-dividendo-pisado",
   "verificado_editor_corrige": true
  },
@@ -1349,11 +1349,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 3: con VE2 negativo el for no da ninguna vuelta y el producto sale 0. La cantidad de sumas tiene que ser un número no negativo.",
   "explicacion": "Multiplicar por sumas sucesivas repite VE2 veces la suma de VE1. Un for no puede repetir un número negativo de veces. Hay que repetir con el valor sin signo y después corregir el signo del resultado.",
-  "como_arreglarlo": "Usá la cantidad de sumas sin signo y devolvé el signo al resultado al final.",
+  "como_arreglarlo": "Usa la cantidad de sumas sin signo y devuelve el signo al resultado al final.",
   "pistas": [
    "4 * -3 da 0. ¿Cuántas vueltas da el for con N negativo?",
    "La cantidad de repeticiones nunca es negativa.",
-   "Trabajá con el valor sin signo de VE2 y cambiá el signo de A al final si VE2 era negativo."
+   "Trabaja con el valor sin signo de VE2 y cambia el signo de A al final si VE2 era negativo."
   ],
   "relacion_con_la_materia": "LR (sumas sucesivas)",
   "deteccion": "heuristica",
@@ -1378,12 +1378,12 @@
   "entrada": "4 3",
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 4: con i <= VE2 el lazo suma VE2 + 1 veces, y 4 * 3 da 16. El lazo debe repetir exactamente VE2 veces.",
-  "explicacion": "Multiplicar por 3 es sumar tres veces. Un for desde 0 con <= repite una vez de más. Comprobá siempre el lazo con un caso chico.",
-  "como_arreglarlo": "Repetí exactamente VE2 veces: i desde 0 con <.",
+  "explicacion": "Multiplicar por 3 es sumar tres veces. Un for desde 0 con <= repite una vez de más. Comprueba siempre el lazo con un caso pequeño.",
+  "como_arreglarlo": "Repite exactamente VE2 veces: i desde 0 con <.",
   "pistas": [
-   "4 * 3 da 16. Contá cuántas sumas hace.",
+   "4 * 3 da 16. Cuenta cuántas sumas hace.",
    "Desde 0 hasta VE2 incluido hay VE2 + 1 vueltas.",
-   "Cambiá <= por <."
+   "Cambia <= por <."
   ],
   "relacion_con_la_materia": "LR (sumas sucesivas)",
   "deteccion": "estatica",
@@ -1408,11 +1408,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 4: si A no es el mayor, queda por decidir entre B y C, pero el else asume que es B. Con 1, 2, 3 muestra 2.",
   "explicacion": "Cuando un if descarta a un candidato, quedan los otros dos y hay que compararlos entre sí. Un else directo da por hecho que gana uno sin comprobarlo.",
-  "como_arreglarlo": "En el else, agregá otra comparación para decidir entre los dos que quedan.",
+  "como_arreglarlo": "En el else, agrega otra comparación para decidir entre los dos que quedan.",
   "pistas": [
    "Con 1, 2 y 3 dice que el mayor es 2. ¿Qué compararon el if y el else?",
    "Si A no es el mayor, ¿quién queda y contra quién hay que compararlo?",
-   "Agregá un if que compare B con C dentro del else."
+   "Agrega un if que compare B con C dentro del else."
   ],
   "relacion_con_la_materia": "BC anidada",
   "deteccion": "heuristica",
@@ -1435,13 +1435,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  float V;\n  scanf(\"%f\", &V);\n  if (V > 0.29 && V < 0.31) { printf(\"Es 0.3\\n\"); }\n  else { printf(\"No es 0.3\\n\"); }\n}",
   "entrada": "0.3",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 3: V == 0.3 da falso aunque hayas escrito 0.3: los decimales no se guardan exactamente. Comparalos con un margen.",
+  "mensaje_editor": "Línea 3: V == 0.3 da falso aunque hayas escrito 0.3: los decimales no se guardan exactamente. Compáralos con un margen.",
   "explicacion": "Un float guarda una aproximación del número, y la constante 0.3 es un double con otra aproximación; por eso no son iguales. Comparar decimales con == casi nunca funciona.",
-  "como_arreglarlo": "Compará con un rango pequeño alrededor del valor en lugar de usar ==.",
+  "como_arreglarlo": "Compara con un rango pequeño alrededor del valor en lugar de usar ==.",
   "pistas": [
-   "Ingresás 0.3 y dice que no es 0.3. ¿Se guardan los decimales de forma exacta?",
+   "Ingresas 0.3 y dice que no es 0.3. ¿Se guardan los decimales de forma exacta?",
    "El float y la constante 0.3 se aproximan distinto.",
-   "Compará con un margen: mayor que 0.29 y menor que 0.31."
+   "Compara con un margen: mayor que 0.29 y menor que 0.31."
   ],
   "relacion_con_la_materia": "tipos, BC",
   "deteccion": "estatica",
@@ -1463,13 +1463,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  float A, B, PORC;\n  scanf(\"%f %f\", &A, &B);\n  PORC = A / B * 100;\n  printf(\"Porcentaje: %.2f\\n\", PORC);\n}",
   "entrada": "3 4",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 4: A / B se hace con enteros y da 0 antes de multiplicar por 100. Declará los datos como float.",
+  "mensaje_editor": "Línea 4: A / B se hace con enteros y da 0 antes de multiplicar por 100. Declara los datos como float.",
   "explicacion": "Las operaciones se resuelven de izquierda a derecha: 3 / 4 entre enteros da 0, y 0 * 100 sigue siendo 0. Si los datos son decimales, la división conserva los decimales.",
   "como_arreglarlo": "Declarar los datos de la división como float, o multiplicar por 100 antes de dividir.",
   "pistas": [
    "3 de 4 es 75 por ciento y el programa muestra 0. ¿Cuánto vale 3 / 4 con enteros?",
    "Se hace primero la división, y da entero.",
-   "Declará A y B como float."
+   "Declara A y B como float."
   ],
   "relacion_con_la_materia": "SS, tipos",
   "deteccion": "estatica",
@@ -1491,13 +1491,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int N, V, S, i;\n  scanf(\"%d\", &N);\n  S = 0;\n  for (i = 0; i < N; i++) {\n    scanf(\"%d\", &V);\n    S = S + V;\n  }\n  printf(\"Suma: %d\\n\", S);\n}",
   "entrada": "4\n1 2 3 4",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 7: i++ dentro del cuerpo se suma a i++ del for, y el lazo da la mitad de las vueltas. Dejá que el for cuente solo.",
+  "mensaje_editor": "Línea 7: i++ dentro del cuerpo se suma a i++ del for, y el lazo da la mitad de las vueltas. Deja que el for cuente solo.",
   "explicacion": "El for ya incrementa i en cada vuelta. Un segundo i++ en el cuerpo hace que i avance de a dos y se saltee vueltas. Si el contador de vueltas se toca a mano, el lazo no repite N veces.",
-  "como_arreglarlo": "Sacá el incremento extra del cuerpo.",
+  "como_arreglarlo": "Saca el incremento extra del cuerpo.",
   "pistas": [
    "Lee solo la mitad de los datos. ¿Cuántas veces aumenta i en cada vuelta?",
-   "El for ya incrementa i por vos.",
-   "Borrá el i++ del cuerpo."
+   "El for ya incrementa i por ti.",
+   "Borra el i++ del cuerpo."
   ],
   "relacion_con_la_materia": "LR",
   "deteccion": "estatica",
@@ -1506,7 +1506,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "i++ dentro del cuerpo se suma al cambio que ya hace el for (i++), y el lazo da menos vueltas de las que esperás. Dejá que el for cuente solo.",
+  "mensaje_editor_actual": "i++ dentro del cuerpo se suma al cambio que ya hace el for (i++), y el lazo da menos vueltas de las que esperas. Deja que el for cuente solo.",
   "codigo_editor_actual": "W-for-variable-modificada",
   "verificado_editor_corrige": true
  }

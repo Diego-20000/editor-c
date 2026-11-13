@@ -18,7 +18,7 @@
     get(k, d) { try { const v = localStorage.getItem('editorc.' + k); return v === null ? d : v; } catch (e) { return d; } },
     set(k, v) {
       try { localStorage.setItem('editorc.' + k, v); }
-      catch (e) { if (!storeWarned) { storeWarned = true; toast('No se pudo guardar en este dispositivo (¿navegación privada o sin espacio?). Descargá el .c para no perder el trabajo.'); } }
+      catch (e) { if (!storeWarned) { storeWarned = true; toast('No se pudo guardar en este dispositivo (¿navegación privada o sin espacio?). Descarga el .c para no perder el trabajo.'); } }
     },
     json(k, d) { try { const v = JSON.parse(store.get(k, '')); return v === null || v === undefined ? d : v; } catch (e) { return d; } }
   };
@@ -648,7 +648,7 @@
       if (v >= total) return;
       if (confirmando) {
         const c = el('div', 'conf');
-        c.appendChild(el('span', '', 'Esta pista es casi la solución. ¿Probaste con las anteriores? ¿La querés ver igual?'));
+        c.appendChild(el('span', '', 'Esta pista es casi la solución. ¿Probaste con las anteriores? ¿La quieres ver igual?'));
         c.appendChild(btnEl('Sí, mostrarla', 'mini', () => { pistasEstado.set(clave, v + 1); pintar(false); }));
         const no = btnEl('Todavía no', 'mini', () => { pintar(false); act.querySelector('button').focus(); });
         c.appendChild(no); act.appendChild(c); no.focus();
@@ -724,13 +724,13 @@
       aSug.hidden = false; aSug.innerHTML = '';
       SUGERENCIAS.forEach((s) => aSug.appendChild(btnEl(s, 'mini', () => { mostrarResultados(s); aQ.focus(); })));
       (kbDatos().lecciones || []).forEach((l) => aList.appendChild(filaResultado({ tipo: 'leccion', titulo: l.titulo, resumen: '', entrada: l })));
-      aLive.textContent = 'Escribí una palabra o una pregunta, o elegí una lección.';
+      aLive.textContent = 'Escribe una palabra o una pregunta, o elige una lección.';
       return;
     }
     aSug.hidden = true;
     let res = []; try { res = K.buscar(q, { max: 12 }); } catch (e) { res = []; }
     res.forEach((r) => aList.appendChild(filaResultado(r)));
-    aLive.textContent = res.length ? res.length + (res.length === 1 ? ' resultado' : ' resultados') : 'No encontré nada para «' + q.trim().slice(0, 40) + '». Probá con otra palabra.';
+    aLive.textContent = res.length ? res.length + (res.length === 1 ? ' resultado' : ' resultados') : 'No encontré nada para «' + q.trim().slice(0, 40) + '». Prueba con otra palabra.';
   }
   function abrirEnEditor(codigo, entrada, nombre, tostada) {
     cerrarBurbuja();
@@ -789,7 +789,7 @@
       aDet.appendChild(btnEl('Buscar más sobre «' + e.elemento.slice(0, 20) + '»', 'mini', () => { mostrarResultados(e.elemento); aQ.focus(); }));
     } else {
       sec('Explicación', e.explicacion);
-      if (e.ejemplo) aDet.appendChild(bloqueCodigo('Ejemplo', e.ejemplo, [btnEl('Probar', 'mini primary', () => abrirEnEditor(e.ejemplo, e.entrada, 'Lección ' + (e.titulo || '').replace(/^\d+\.\s*/, '').slice(0, 28), 'Cargado como programa nuevo. Apretá Ejecutar para probarlo.'))]));
+      if (e.ejemplo) aDet.appendChild(bloqueCodigo('Ejemplo', e.ejemplo, [btnEl('Probar', 'mini primary', () => abrirEnEditor(e.ejemplo, e.entrada, 'Lección ' + (e.titulo || '').replace(/^\d+\.\s*/, '').slice(0, 28), 'Cargado como programa nuevo. Aprieta Ejecutar para probarlo.'))]));
       if (e.resultado) aDet.appendChild(bloqueCodigo('Resultado', e.resultado));
     }
     const rel = relacionados(v);
@@ -834,7 +834,7 @@
   function setWhat(on) {
     whatOn = !!on; whatBtn.setAttribute('aria-pressed', String(whatOn)); whatLay.hidden = !whatOn;
     if (!whatOn && !bubble.hidden) { bubble.hidden = true; bubble.innerHTML = ''; }
-    if (whatOn) toast('Tocá una palabra, un operador o un %d del código. Esc para salir.');
+    if (whatOn) toast('Toca una palabra, un operador o un %d del código. Esc para salir.');
   }
   whatBtn.addEventListener('click', () => setWhat(!whatOn));
   // carácter del textarea bajo un punto de la pantalla (fuente monoespaciada, tabulador de 4); null si cae fuera del texto
@@ -889,7 +889,7 @@
       bubble.appendChild(mas);
     } else {
       const h = el('h4'); h.appendChild(el('span', '', '¿Qué es esto?')); h.appendChild(cierre); bubble.appendChild(h);
-      bubble.appendChild(el('p', 'muted', K ? 'No tengo una explicación para eso: puede ser un número o un comentario. Probá tocando una palabra de C, un operador o un %d.' : 'La ayuda no está disponible en este momento.'));
+      bubble.appendChild(el('p', 'muted', K ? 'No tengo una explicación para eso: puede ser un número o un comentario. Prueba tocando una palabra de C, un operador o un %d.' : 'La ayuda no está disponible en este momento.'));
     }
     bubble.hidden = false;
     if (!coarse && window.innerWidth >= 700) {
@@ -953,7 +953,7 @@
     casosSelLista = sel;
     const wa = $('cWa'), cfgNum = (window.CONFIG && CONFIG.WHATSAPP_NUMERO) || '';
     if (!sel.length) {
-      casosTexto = ''; $('cPrev').textContent = '(elegí al menos un caso)'; $('cNota').textContent = '';
+      casosTexto = ''; $('cPrev').textContent = '(elige al menos un caso)'; $('cNota').textContent = '';
       wa.setAttribute('aria-disabled', 'true'); wa.removeAttribute('href'); $('cCopy').disabled = true; $('cDl').disabled = true;
       return;
     }
@@ -964,8 +964,8 @@
     $('cPrev').textContent = enviado;
     wa.setAttribute('href', url); wa.removeAttribute('aria-disabled'); $('cCopy').disabled = false; $('cDl').disabled = false;
     const notas = [];
-    if (!cfgNum) notas.push('Todavía no está configurado el número de Diego: WhatsApp se abre sin destinatario y elegís vos a quién mandarlo.');
-    if (Compartir.recortado) notas.push('El texto es largo y por WhatsApp va recortado (es lo que ves arriba). Usá «Copiar» para tener el texto completo.');
+    if (!cfgNum) notas.push('Todavía no está configurado el número de Diego: WhatsApp se abre sin destinatario y eliges tú a quién mandarlo.');
+    if (Compartir.recortado) notas.push('El texto es largo y por WhatsApp va recortado (es lo que ves arriba). Usa «Copiar» para tener el texto completo.');
     $('cNota').textContent = notas.join(' ');
   }
   $('cNota2').addEventListener('input', () => pintarVistaCasos());
@@ -980,8 +980,8 @@
   });
   $('cCopy').addEventListener('click', () => {
     copyText(casosTexto, dCasos).then((ok) => {
-      if (ok) { toast('Texto copiado. Pegalo en el chat que quieras.'); return; }
-      $('cNota').textContent = 'El navegador no dejó copiar. Tocá el texto de la vista previa, copialo a mano y pegalo en el chat.';
+      if (ok) { toast('Texto copiado. Pégalo en el chat que quieras.'); return; }
+      $('cNota').textContent = 'El navegador no dejó copiar. Toca el texto de la vista previa, cópialo a mano y pégalo en el chat.';
       const r = document.createRange(); r.selectNodeContents($('cPrev')); const s = window.getSelection(); s.removeAllRanges(); s.addRange(r); $('cPrev').focus();
     });
   });
@@ -989,7 +989,7 @@
     if (!casosSelLista.length) return;
     const d = new Date(), stamp = d.getFullYear() + pad2(d.getMonth() + 1) + pad2(d.getDate());
     download(new Blob([Compartir.exportarJSON(casosSelLista, { nota: $('cNota2').value })], { type: 'application/json' }), 'casos-editor-c-' + stamp + '.json');
-    toast('Archivo descargado. Mandalo vos si querés.');
+    toast('Archivo descargado. Envíalo tú si quieres.');
   });
   $('cDelAll').addEventListener('click', () => {
     const todos = casosLista();
@@ -1081,7 +1081,7 @@
     // cartel bien visible mientras algo corre o espera datos (no depende solo del color)
     const rb = $('runBar'), on = cls === 'run' || cls === 'wait';
     rb.hidden = !on; rb.className = 'runbar' + (cls === 'wait' ? ' wait' : '');
-    $('runBarTxt').textContent = cls === 'wait' ? 'Esperando datos: tipeá en la consola y apretá Enter' : txt === 'Compilando…' ? 'Compilando…' : 'Ejecutando… el programa está en marcha';
+    $('runBarTxt').textContent = cls === 'wait' ? 'Esperando datos: escribe en la consola y aprieta Enter' : txt === 'Compilando…' ? 'Compilando…' : 'Ejecutando… el programa está en marcha';
   }
   function clearConsole() { clearTimeout(outTimer); outTimer = null; outBuf = ''; out.textContent = ''; total = 0; }
   $('clear').addEventListener('click', () => { removeInput(); clearConsole(); if ((worker || main) && waiting) showInput(); });
@@ -1097,7 +1097,7 @@
   $('copy').addEventListener('click', () => {
     const s = consoleText().replace(/\n+$/, '');
     if (!s) { toast('No hay salida para copiar.'); return; }
-    copyText(s).then((ok) => toast(ok ? 'Salida copiada.' : 'No se pudo copiar: seleccioná el texto y copialo a mano.'));
+    copyText(s).then((ok) => toast(ok ? 'Salida copiada.' : 'No se pudo copiar: selecciona el texto y cópialo a mano.'));
   });
 
   /* datos de entrada precargados */
@@ -1205,8 +1205,8 @@ self.postMessage({ type: 'ready' });`;
     if (Date.now() - lastAct < cfg.slowMs) return;
     slowShown = true;
     $('slowTxt').textContent = phase === 'compiling'
-      ? 'Sigue compilando. Si tarda demasiado, apretá Detener.'
-      : 'El programa sigue ejecutándose. Si no lo esperabas, puede haber un bucle infinito: apretá Detener.';
+      ? 'Sigue compilando. Si tarda demasiado, aprieta Detener.'
+      : 'El programa sigue ejecutándose. Si no lo esperabas, puede haber un lazo infinito: aprieta Detener.';
     slowEl.hidden = false;
   }
   $('slowStop').addEventListener('click', () => stop());
@@ -1253,7 +1253,7 @@ self.postMessage({ type: 'ready' });`;
   function capped() {
     resetRun(); removeInput();
     if (!endsWithNewline()) appendText('\n');
-    appendText('— Salida cortada: demasiado texto (¿bucle infinito?) —\n', 'er'); setStatus('Detenido', 'err');
+    appendText('— Salida cortada: demasiado texto (¿lazo infinito?) —\n', 'er'); setStatus('Detenido', 'err');
   }
   // ayuda 1: solo el tipo general; ayuda 2: además el número de línea
   function mensajeNoCompilo(errs) {
@@ -1295,7 +1295,7 @@ self.postMessage({ type: 'ready' });`;
       write(s) {
         if (cancelled) return;
         pend += s; size += s.length;
-        if (size > CAP) { cancelled = true; flush(); appendText('\n— Salida cortada: demasiado texto (¿bucle infinito?) —\n', 'er'); }
+        if (size > CAP) { cancelled = true; flush(); appendText('\n— Salida cortada: demasiado texto (¿lazo infinito?) —\n', 'er'); }
       },
       readLine() { flush(); const l = nextPreset(); if (l !== null) { avisoComa(l); return Promise.resolve(l); } showInput(); return new Promise((r) => { resolver = r; }); }
     };
@@ -1308,7 +1308,7 @@ self.postMessage({ type: 'ready' });`;
     const n = (+store.get('nEjec', '0') || 0) + 1; store.set('nEjec', String(n));
     if (n < 3) return;
     store.set('avisoCierre', '1');
-    setTimeout(() => toast('¿Querés que las llaves, paréntesis y comillas se cierren solas? Se enciende en Ajustes.', 'Ajustes', () => $('settings').click()), 2500);
+    setTimeout(() => toast('¿Quieres que las llaves, paréntesis y comillas se cierren solas? Se enciende en Ajustes.', 'Ajustes', () => $('settings').click()), 2500);
   }
   function run() {
     comaAvisada = false;
@@ -1488,7 +1488,7 @@ self.postMessage({ type: 'ready' });`;
     if (opts.lado) { y = y0; xb = padX + leftW + gapX; wb = rightW; } else y += gap;
     if (inRows.length) { section('Entrada'); drawRows(inRows, xb + 12, false); y += gap; }
     section('Salida');
-    drawRows(outRows.length && (outRows.length > 1 || outRows[0].length) ? outRows : [[['dim', '(sin salida: ejecutá el programa antes de sacar la captura)']]], xb + 12, false);
+    drawRows(outRows.length && (outRows.length > 1 || outRows[0].length) ? outRows : [[['dim', '(sin salida: ejecuta el programa antes de sacar la captura)']]], xb + 12, false);
     if (opts.lado) { y = y0 + bodyH; xb = padX; wb = leftW; }
     // pie: cómo se escribió (si se incluye) y la marca, en letra chica
     ctx.font = '12px ' + UI; ctx.fillStyle = SUB;
@@ -1706,17 +1706,17 @@ self.postMessage({ type: 'ready' });`;
   }
   $('enlace').addEventListener('click', async () => {
     $('more').open = false; flushSave();
-    if (!/^https?:$/.test(location.protocol)) { toast('El enlace funciona desde la página publicada. Desde un archivo usá «Guardar .c».'); return; }
-    if (cur.code.length > MAX_ENLACE) { toast('El programa es demasiado largo para un enlace. Usá «Guardar .c».'); return; }
+    if (!/^https?:$/.test(location.protocol)) { toast('El enlace funciona desde la página publicada. Desde un archivo usa «Guardar .c».'); return; }
+    if (cur.code.length > MAX_ENLACE) { toast('El programa es demasiado largo para un enlace. Usa «Guardar .c».'); return; }
     let url;
     try { url = location.origin + location.pathname + '#p=' + await empaquetar({ v: 1, n: cur.name, c: cur.code, i: cur.input || '' }); } catch (e) { toast('No se pudo armar el enlace.'); return; }
     $('enlUrl').value = url;
-    $('enlTxt').textContent = 'Abrí este enlace en el otro dispositivo para traer «' + cur.name + '». Mandátelo a vos mismo, por ejemplo por WhatsApp.';
+    $('enlTxt').textContent = 'Abre este enlace en el otro dispositivo para traer «' + cur.name + '». Envíatelo a ti mismo, por ejemplo por WhatsApp.';
     $('enlShare').hidden = !navigator.share;
     $('dEnlace').showModal(); $('enlUrl').select();
   });
   $('enlCopy').addEventListener('click', () => {
-    copyText($('enlUrl').value, $('dEnlace')).then((ok) => { if (ok) toast('Enlace copiado.'); else { $('enlUrl').focus(); $('enlUrl').select(); toast('Tocá el enlace, copialo a mano y pegalo donde quieras.'); } });
+    copyText($('enlUrl').value, $('dEnlace')).then((ok) => { if (ok) toast('Enlace copiado.'); else { $('enlUrl').focus(); $('enlUrl').select(); toast('Toca el enlace, cópialo a mano y pégalo donde quieras.'); } });
   });
   $('enlShare').addEventListener('click', () => { navigator.share({ title: 'Programa de Editor C', url: $('enlUrl').value }).catch(() => {}); });
   let recibido = null;
@@ -1730,7 +1730,7 @@ self.postMessage({ type: 'ready' });`;
     try {
       recibido = await desempaquetar(m[1]);
       const lineas = recibido.code.split('\n').length;
-      $('recTxt').textContent = '«' + recibido.name + '» (' + lineas + (lineas === 1 ? ' línea' : ' líneas') + '). Revisá que lo esperabas antes de abrirlo.';
+      $('recTxt').textContent = '«' + recibido.name + '» (' + lineas + (lineas === 1 ? ' línea' : ' líneas') + '). Revisa que lo esperabas antes de abrirlo.';
       $('recPrev').textContent = recibido.code.split('\n').slice(0, 15).join('\n') + (lineas > 15 ? '\n…' : '');
       $('dRecibido').showModal();
     } catch (e) { toast('El enlace del programa no se pudo leer. Pide que te lo manden de nuevo.'); }
@@ -1797,7 +1797,7 @@ self.postMessage({ type: 'ready' });`;
       const li = (t) => { const x = document.createElement('li'); x.textContent = t; ul2.appendChild(x); };
       if (plan.add) li(plan.add + (plan.add === 1 ? ' programa nuevo se agrega.' : ' programas nuevos se agregan.'));
       if (plan.renamed) li(plan.renamed + (plan.renamed === 1 ? ' tiene el mismo nombre que uno tuyo pero otro contenido: se agrega con otro nombre ("… (importado)").' : ' tienen el mismo nombre que otros tuyos pero distinto contenido: se agregan con otro nombre ("… (importado)").'));
-      if (plan.dup) li(plan.dup + (plan.dup === 1 ? ' ya lo tenés igual: se omite.' : ' ya los tenés iguales: se omiten.'));
+      if (plan.dup) li(plan.dup + (plan.dup === 1 ? ' ya lo tienes igual: se omite.' : ' ya los tienes iguales: se omiten.'));
       if (pr.invalid) li(pr.invalid + (pr.invalid === 1 ? ' entrada inválida se ignora.' : ' entradas inválidas se ignoran.'));
       $('impOk').hidden = !(plan.add + plan.renamed);
       if ($('impOk').hidden) $('impTxt').textContent += ' No hay nada para agregar.';

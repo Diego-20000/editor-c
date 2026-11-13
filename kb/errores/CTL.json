@@ -10,11 +10,11 @@
   "que_dice_gcc": "archivo.c:4: warning: suggest braces around empty body in an 'if' statement [-Wempty-body]",
   "mensaje_editor": "Línea 4: el if termina en ';' y su cuerpo queda vacío: lo que sigue se ejecuta siempre. ¿Sobra ese ';'?",
   "explicacion": "El ; cierra la instrucción. Con if (A > 0); el if controla una instrucción vacía, y el printf de abajo ya no depende de la condición: se ejecuta siempre.",
-  "como_arreglarlo": "Sacá el ; después del paréntesis del if.",
+  "como_arreglarlo": "Saca el ; después del paréntesis del if.",
   "pistas": [
-   "Probalo con un valor que no cumpla la condición y mirá la salida.",
-   "Mirá cómo termina la línea del if.",
-   "Sacá el ; que está justo después del ')' del if."
+   "Pruébalo con un valor que no cumpla la condición y mira la salida.",
+   "Mira cómo termina la línea del if.",
+   "Saca el ; que está justo después del ')' del if."
   ],
   "relacion_con_la_materia": "BC",
   "deteccion": "estatica",
@@ -38,11 +38,11 @@
   "que_dice_gcc": "archivo.c:4: warning: this 'if' clause does not guard... [-Wmisleading-indentation]",
   "mensaje_editor": "Línea 5: el if sin llaves controla solo la primera instrucción: A = 0 se ejecuta siempre.",
   "explicacion": "Sin llaves, un if (o else, for, while) controla únicamente la instrucción siguiente. La sangría es solo visual: al compilador no le importa.",
-  "como_arreglarlo": "Encerrá entre llaves todas las instrucciones que dependen del if.",
+  "como_arreglarlo": "Encierra entre llaves todas las instrucciones que dependen del if.",
   "pistas": [
-   "Probalo con un valor que no cumpla la condición.",
+   "Pruébalo con un valor que no cumpla la condición.",
    "La sangría no agrupa instrucciones.",
-   "Poné { } alrededor de las dos líneas del cuerpo."
+   "Pon { } alrededor de las dos líneas del cuerpo."
   ],
   "relacion_con_la_materia": "BC",
   "deteccion": "estatica",
@@ -66,11 +66,11 @@
   "que_dice_gcc": "archivo.c:4: warning: this 'if' clause does not guard... [-Wmisleading-indentation]",
   "mensaje_editor": "Línea 7: este else no tiene su if: el if sin llaves terminó en la línea anterior.",
   "explicacion": "Sin llaves, el cuerpo del if es una sola instrucción. La segunda instrucción ya queda afuera, y el else queda sin un if inmediato.",
-  "como_arreglarlo": "Poné llaves en el cuerpo del if y del else.",
+  "como_arreglarlo": "Pon llaves en el cuerpo del if y del else.",
   "pistas": [
-   "Mirá qué instrucciones quedan debajo del if.",
+   "Mira qué instrucciones quedan debajo del if.",
    "El else tiene que venir justo después del cuerpo del if.",
-   "Encerrá las dos instrucciones entre llaves."
+   "Encierra las dos instrucciones entre llaves."
   ],
   "relacion_con_la_materia": "BC",
   "deteccion": "estatica",
@@ -79,7 +79,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "'else' sin su 'if' (revisá las llaves y los ';')",
+  "mensaje_editor_actual": "'else' sin su 'if' (revisa las llaves y los ';')",
   "codigo_editor_actual": "E-otro",
   "verificado_editor_corrige": true
  },
@@ -92,13 +92,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int A = -5;\n  if (A > 0) {\n    printf(\"positivo\\n\");\n  } else if (A < 0) {\n    printf(\"negativo\\n\");\n  }\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:6: warning: statement with no effect [-Wunused-value]",
-  "mensaje_editor": "Línea 6: después de else no va una condición: si querías otra condición escribí else if (...).",
+  "mensaje_editor": "Línea 6: después de else no va una condición: si querías otra condición escribe else if (...).",
   "explicacion": "else no tiene condición: se ejecuta cuando la del if fue falsa. Para probar otra condición hay que escribir else if.",
-  "como_arreglarlo": "Escribí else if (condición) o sacá la condición.",
+  "como_arreglarlo": "Escribe else if (condición) o saca la condición.",
   "pistas": [
-   "Mirá qué viene después de else.",
+   "Mira qué viene después de else.",
    "else no lleva condición propia.",
-   "Agregá if: else if (A < 0)."
+   "Agrega if: else if (A < 0)."
   ],
   "relacion_con_la_materia": "BC",
   "deteccion": "estatica",
@@ -107,7 +107,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "después de 'else' no va una condición: si querías otra condición escribí 'else if (…)'",
+  "mensaje_editor_actual": "después de 'else' no va una condición: si querías otra condición escribe 'else if (…)'",
   "codigo_editor_actual": "E-otro",
   "verificado_editor_corrige": true
  },
@@ -122,9 +122,9 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 5: este if es independiente del anterior: con A = 15 se muestran los dos mensajes.",
   "explicacion": "Cada if se evalúa por su cuenta. Para que se ejecute solo una rama entre varias, las condiciones se encadenan con else if.",
-  "como_arreglarlo": "Escribí else if en lugar de un nuevo if.",
+  "como_arreglarlo": "Escribe else if en lugar de un nuevo if.",
   "pistas": [
-   "Probalo con A = 15 y contá los mensajes.",
+   "Pruébalo con A = 15 y cuenta los mensajes.",
    "Los dos if se evalúan por separado.",
    "Unilos con else if."
   ],
@@ -150,11 +150,11 @@
   "que_dice_gcc": "archivo.c:4: warning: suggest explicit braces to avoid ambiguous 'else' [-Wdangling-else]",
   "mensaje_editor": "Línea 4: este else se une al if más cercano (el de B), no al de A.",
   "explicacion": "El else siempre pertenece al if anterior más cercano que todavía no tiene else, sin importar cómo esté sangrado. Con llaves se decide a cuál if pertenece.",
-  "como_arreglarlo": "Poné llaves para indicar a qué if corresponde cada else.",
+  "como_arreglarlo": "Pon llaves para indicar a qué if corresponde cada else.",
   "pistas": [
-   "Probalo con A positivo y B negativo.",
+   "Pruébalo con A positivo y B negativo.",
    "El else se asocia al if más cercano.",
-   "Poné llaves alrededor del if interno."
+   "Pon llaves alrededor del if interno."
   ],
   "relacion_con_la_materia": "BC anidada",
   "deteccion": "estatica",
@@ -163,7 +163,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "el else se pega al if más cercano (el de B > 0), no al de A > 0, aunque lo hayas escrito alineado con el primero. Usá llaves para decir a cuál pertenece.",
+  "mensaje_editor_actual": "el else se pega al if más cercano (el de B > 0), no al de A > 0, aunque lo hayas escrito alineado con el primero. Usa llaves para decir a cuál pertenece.",
   "codigo_editor_actual": "W-else-colgante",
   "verificado_editor_corrige": true
  },
@@ -178,11 +178,11 @@
   "que_dice_gcc": "archivo.c:5: warning: this statement may fall through [-Wimplicit-fallthrough=]",
   "mensaje_editor": "Línea 5: este grupo del switch sigue con el siguiente porque le falta un 'break;' (en C no se corta solo).",
   "explicacion": "Cuando el switch encuentra el case que coincide ejecuta todo lo que sigue hacia abajo, incluso los otros case, hasta un break o el final.",
-  "como_arreglarlo": "Agregá break; al final de cada case.",
+  "como_arreglarlo": "Agrega break; al final de cada case.",
   "pistas": [
-   "Probalo con A = 1 y mirá cuántos mensajes salen.",
+   "Pruébalo con A = 1 y mira cuántos mensajes salen.",
    "El switch no corta solo al terminar un case.",
-   "Agregá break; después de cada printf."
+   "Agrega break; después de cada printf."
   ],
   "relacion_con_la_materia": "SS, switch",
   "deteccion": "estatica",
@@ -206,11 +206,11 @@
   "que_dice_gcc": "archivo.c:6: error: duplicate case value",
   "mensaje_editor": "Línea 6: el valor case 1 está repetido en este switch.",
   "explicacion": "Cada valor de case tiene que ser único: si el selector coincidiera, C no sabría cuál de las dos ramas ejecutar.",
-  "como_arreglarlo": "Revisá los valores de los case y cambiá el repetido.",
+  "como_arreglarlo": "Revisa los valores de los case y cambia el repetido.",
   "pistas": [
-   "Mirá los valores que van después de cada case.",
+   "Mira los valores que van después de cada case.",
    "Dos case tienen el mismo valor.",
-   "Cambiá el segundo case 1 por el valor que corresponda."
+   "Cambia el segundo case 1 por el valor que corresponda."
   ],
   "relacion_con_la_materia": "SS, switch",
   "deteccion": "estatica",
@@ -234,11 +234,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 4: con un valor que no está en ningún case este switch no muestra nada.",
   "explicacion": "default es la rama que se ejecuta cuando ningún case coincide. Sin ella, un valor inesperado pasa sin ningún aviso.",
-  "como_arreglarlo": "Agregá default: al final con el mensaje que corresponda.",
+  "como_arreglarlo": "Agrega default: al final con el mensaje que corresponda.",
   "pistas": [
-   "Probalo con un valor que no esté en los case.",
+   "Pruébalo con un valor que no esté en los case.",
    "¿Qué pasa si ningún case coincide?",
-   "Agregá una rama default."
+   "Agrega una rama default."
   ],
   "relacion_con_la_materia": "SS, switch",
   "deteccion": "heuristica",
@@ -262,11 +262,11 @@
   "que_dice_gcc": "archivo.c:4: error: switch quantity not an integer",
   "mensaje_editor": "Línea 4: el switch necesita un valor entero: un float no sirve.",
   "explicacion": "switch solo compara enteros (int, char). Un float no se puede comparar así. Si hay que decidir según un decimal, se usan if y else if.",
-  "como_arreglarlo": "Usá una variable entera o reemplazá el switch por if.",
+  "como_arreglarlo": "Usa una variable entera o reemplaza el switch por if.",
   "pistas": [
-   "Mirá el tipo de la variable del switch.",
+   "Mira el tipo de la variable del switch.",
    "switch solo acepta enteros y caracteres.",
-   "Cambiá el tipo o usá if / else if."
+   "Cambia el tipo o usa if / else if."
   ],
   "relacion_con_la_materia": "SS, switch",
   "deteccion": "estatica",
@@ -290,11 +290,11 @@
   "que_dice_gcc": "archivo.c:5: error: case label does not reduce to an integer constant",
   "mensaje_editor": "Línea 5: después de case tiene que ir un valor fijo (un número o un carácter), no una variable.",
   "explicacion": "El case se resuelve al compilar, por eso admite solo constantes. Para comparar contra una variable se usa un if.",
-  "como_arreglarlo": "Escribí el valor fijo o usá if (A == B).",
+  "como_arreglarlo": "Escribe el valor fijo o usa if (A == B).",
   "pistas": [
-   "Mirá qué viene después de case.",
+   "Mira qué viene después de case.",
    "case no admite variables.",
-   "Usá un número fijo o un if."
+   "Usa un número fijo o un if."
   ],
   "relacion_con_la_materia": "SS, switch",
   "deteccion": "estatica",
@@ -318,11 +318,11 @@
   "que_dice_gcc": "archivo.c:5: error: pointers are not permitted as case values",
   "mensaje_editor": "Línea 5: un carácter se escribe con comillas simples ('S'): \"S\" es un texto y no sirve en un case.",
   "explicacion": "Las comillas dobles forman un texto (varios caracteres más el final). El switch compara un único carácter, que va entre comillas simples.",
-  "como_arreglarlo": "Cambiá las comillas dobles por simples.",
+  "como_arreglarlo": "Cambia las comillas dobles por simples.",
   "pistas": [
-   "Mirá las comillas del case.",
+   "Mira las comillas del case.",
    "Un carácter y un texto no se escriben igual.",
-   "Usá 'S'."
+   "Usa 'S'."
   ],
   "relacion_con_la_materia": "char, switch",
   "deteccion": "estatica",
@@ -344,13 +344,13 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int A = 2;\n  switch (A) {\n    case 1:\n    case 2: printf(\"uno o dos\\n\"); break;\n    default: printf(\"otro\\n\");\n  }\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:5: error: expected ':' or '...' before ',' token",
-  "mensaje_editor": "Línea 5: un case lleva un solo valor: para agrupar varios, escribí un case debajo del otro.",
+  "mensaje_editor": "Línea 5: un case lleva un solo valor: para agrupar varios, escribe un case debajo del otro.",
   "explicacion": "case admite un único valor. Como un case sin break sigue con el siguiente, poner un case debajo del otro hace que compartan la misma acción.",
-  "como_arreglarlo": "Escribí un case por valor, uno debajo del otro, con el break al final.",
+  "como_arreglarlo": "Escribe un case por valor, uno debajo del otro, con el break al final.",
   "pistas": [
-   "Mirá cuántos valores pusiste después de case.",
+   "Mira cuántos valores pusiste después de case.",
    "case no acepta listas.",
-   "Escribí case 1: y debajo case 2:."
+   "Escribe case 1: y debajo case 2:."
   ],
   "relacion_con_la_materia": "SS, switch",
   "deteccion": "estatica",
@@ -359,7 +359,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "un case lleva un solo valor: para agrupar varios, escribí un case debajo del otro",
+  "mensaje_editor_actual": "un case lleva un solo valor: para agrupar varios, escribe un case debajo del otro",
   "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },
@@ -374,11 +374,11 @@
   "que_dice_gcc": "archivo.c:5: error: expected ':' or '...' before ';' token",
   "mensaje_editor": "Línea 5: se esperaba ':' después del valor del case.",
   "explicacion": "case y default terminan con dos puntos (:), no con punto y coma.",
-  "como_arreglarlo": "Cambiá el ; por :",
+  "como_arreglarlo": "Cambia el ; por :",
   "pistas": [
-   "Mirá cómo termina el case.",
+   "Mira cómo termina el case.",
    "case lleva un signo distinto al de las instrucciones.",
-   "Poné : después de 1."
+   "Pon : después de 1."
   ],
   "relacion_con_la_materia": "SS, switch",
   "deteccion": "estatica",
@@ -400,17 +400,17 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int A = 1, B;\n  switch (A) {\n    case 1: B = 2; printf(\"%d\\n\", B); break;\n    default: break;\n  }\n}",
   "entrada": "",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 5: un case no debería empezar con una declaración (el C estándar no lo permite): declarala antes del switch.",
+  "mensaje_editor": "Línea 5: un case no debería empezar con una declaración (el C estándar no lo permite): decláralo antes del switch.",
   "explicacion": "En el C estándar una etiqueta (case) tiene que ir seguida de una instrucción, no de una declaración; gcc 13 lo deja pasar pero otros compiladores no. Por eso las variables se declaran antes del switch.",
-  "como_arreglarlo": "Declará la variable arriba y dejá solo la asignación dentro del case.",
+  "como_arreglarlo": "Declara la variable arriba y deja solo la asignación dentro del case.",
   "pistas": [
-   "Mirá qué hay inmediatamente después de case 1:.",
+   "Mira qué hay inmediatamente después de case 1:.",
    "Una declaración no es una instrucción.",
-   "Declará B arriba del switch."
+   "Declara B arriba del switch."
   ],
   "relacion_con_la_materia": "SS, switch",
   "deteccion": "estatica",
-  "como_detectarlo": "Declaración como primera sentencia tras case.",
+  "como_detectarlo": "Declaración como primera instrucción tras case.",
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
@@ -430,11 +430,11 @@
   "que_dice_gcc": "archivo.c:4: warning: this 'for' clause does not guard... [-Wmisleading-indentation]",
   "mensaje_editor": "Línea 4: el for termina en ';' y su cuerpo queda vacío: ¿sobra ese ';'?",
   "explicacion": "El ; después del paréntesis del for es una instrucción vacía: el for da todas sus vueltas sin hacer nada. La línea que sigue se ejecuta una sola vez, cuando el lazo ya terminó.",
-  "como_arreglarlo": "Sacá el ; que está después del ')' del for.",
+  "como_arreglarlo": "Saca el ; que está después del ')' del for.",
   "pistas": [
-   "Fijate cuántas veces se ejecuta la suma.",
-   "Mirá cómo termina la línea del for.",
-   "Sacá el ; después del paréntesis."
+   "Fíjate cuántas veces se ejecuta la suma.",
+   "Mira cómo termina la línea del for.",
+   "Saca el ; después del paréntesis."
   ],
   "relacion_con_la_materia": "LR",
   "deteccion": "estatica",
@@ -457,11 +457,11 @@
   "entrada": "",
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 4: este for empieza en 0 y usa <=: da N+1 vueltas.",
-  "explicacion": "Un for que empieza en 0 y usa I < N hace N vueltas (0, 1, ... N-1). Con I <= N hace una de más. Contá las vueltas con números chicos para elegir.",
-  "como_arreglarlo": "Usá I < N si empezás en 0, o I <= N si empezás en 1.",
+  "explicacion": "Un for que empieza en 0 y usa I < N hace N vueltas (0, 1, ... N-1). Con I <= N hace una de más. Cuenta las vueltas con números pequeños para elegir.",
+  "como_arreglarlo": "Usa I < N si empiezas en 0, o I <= N si empiezas en 1.",
   "pistas": [
-   "Probalo con N = 3 y contá las vueltas.",
-   "Fijate desde dónde empieza I y hasta dónde llega.",
+   "Pruébalo con N = 3 y cuenta las vueltas.",
+   "Fíjate desde dónde empieza I y hasta dónde llega.",
    "Con I = 0 la condición correcta es I < N."
   ],
   "relacion_con_la_materia": "LR",
@@ -485,12 +485,12 @@
   "entrada": "",
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 4: este for empieza en 1 y usa <: nunca llega a N, da N-1 vueltas.",
-  "explicacion": "Con I < N el lazo se corta cuando I vale N, antes de ejecutar esa vuelta. Si querés incluir a N, la condición es I <= N.",
-  "como_arreglarlo": "Cambiá < por <= si el último valor también cuenta.",
+  "explicacion": "Con I < N el lazo se corta cuando I vale N, antes de ejecutar esa vuelta. Si quieres incluir a N, la condición es I <= N.",
+  "como_arreglarlo": "Cambia < por <= si el último valor también cuenta.",
   "pistas": [
-   "Probalo con N = 4 y escribí qué valores toma I.",
+   "Pruébalo con N = 4 y escribe qué valores toma I.",
    "El último valor de I es uno menos que el que esperabas.",
-   "Usá <=."
+   "Usa <=."
   ],
   "relacion_con_la_materia": "LR",
   "deteccion": "heuristica",
@@ -514,11 +514,11 @@
   "que_dice_gcc": "archivo.c:4: warning: right-hand operand of comma expression has no effect [-Wunused-value]",
   "mensaje_editor": "Línea 4: las tres partes del for se separan con ';' y no con comas.",
   "explicacion": "El for tiene tres partes: inicio; condición; paso. Los separadores son punto y coma.",
-  "como_arreglarlo": "Reemplazá las comas por ;",
+  "como_arreglarlo": "Reemplaza las comas por ;",
   "pistas": [
-   "Mirá cómo separaste las tres partes del for.",
+   "Mira cómo separaste las tres partes del for.",
    "Las partes no se separan con comas.",
-   "Usá ; entre ellas."
+   "Usa ; entre ellas."
   ],
   "relacion_con_la_materia": "LR",
   "deteccion": "estatica",
@@ -542,11 +542,11 @@
   "que_dice_gcc": "archivo.c:4: error: expected ';' before ')' token",
   "mensaje_editor": "Línea 4: al for le falta una parte: se esperaba ';' antes de ')'.",
   "explicacion": "El for lleva siempre dos ; adentro del paréntesis, aunque alguna parte esté vacía.",
-  "como_arreglarlo": "Agregá el paso (por ejemplo I++) separado con ;",
+  "como_arreglarlo": "Agrega el paso (por ejemplo I++) separado con ;",
   "pistas": [
-   "Contá los ; dentro del paréntesis del for.",
+   "Cuenta los ; dentro del paréntesis del for.",
    "Falta la parte que hace avanzar a I.",
-   "Agregá ; I++ antes del ')'."
+   "Agrega ; I++ antes del ')'."
   ],
   "relacion_con_la_materia": "LR",
   "deteccion": "estatica",
@@ -570,11 +570,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 4: en este while ninguna variable de la condición (I) cambia dentro del lazo: nunca termina.",
   "explicacion": "El while repite mientras la condición sea verdadera. Si dentro del cuerpo nada modifica las variables de esa condición, siempre sigue siendo verdadera.",
-  "como_arreglarlo": "Agregá una instrucción que modifique I dentro del lazo.",
+  "como_arreglarlo": "Agrega una instrucción que modifique I dentro del lazo.",
   "pistas": [
-   "Preguntate qué haría que la condición se vuelva falsa.",
+   "Pregúntate qué haría que la condición se vuelva falsa.",
    "I no cambia dentro del lazo.",
-   "Agregá I = I + 1; dentro del while."
+   "Agrega I = I + 1; dentro del while."
   ],
   "relacion_con_la_materia": "LC",
   "deteccion": "estatica",
@@ -583,7 +583,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "en este while ninguna variable de la condición (I, N) cambia dentro del bucle: es probable que nunca termine",
+  "mensaje_editor_actual": "en este while ninguna variable de la condición (I, N) cambia dentro del lazo: es probable que nunca termine",
   "codigo_editor_actual": "W-bucle-infinito",
   "verificado_editor_corrige": true
  },
@@ -598,11 +598,11 @@
   "que_dice_gcc": "archivo.c:4: warning: this 'while' clause does not guard... [-Wmisleading-indentation]",
   "mensaje_editor": "Línea 4: el while termina en ';' y su cuerpo queda vacío: ¿sobra ese ';'?",
   "explicacion": "Con while (...); el lazo repite una instrucción vacía. Las llaves de abajo forman un bloque aparte que nunca se alcanza, y la condición no cambia nunca.",
-  "como_arreglarlo": "Sacá el ; después del paréntesis del while.",
+  "como_arreglarlo": "Saca el ; después del paréntesis del while.",
   "pistas": [
-   "El programa se queda trabado: mirá cómo termina el while.",
+   "El programa se queda trabado: mira cómo termina el while.",
    "Hay un signo que cierra el while antes de tiempo.",
-   "Sacá el ;"
+   "Saca el ;"
   ],
   "relacion_con_la_materia": "LC",
   "deteccion": "estatica",
@@ -626,11 +626,11 @@
   "que_dice_gcc": "archivo.c:6: error: expected ';' before 'printf'",
   "mensaje_editor": "Línea 6: falta un ';' al final del do-while.",
   "explicacion": "A diferencia del while, el do-while termina con ; después de la condición.",
-  "como_arreglarlo": "Poné ; después del paréntesis del while.",
+  "como_arreglarlo": "Pon ; después del paréntesis del while.",
   "pistas": [
-   "Mirá cómo termina el lazo.",
+   "Mira cómo termina el lazo.",
    "El do-while tiene una particularidad al final.",
-   "Agregá ; después de while (I < 3)."
+   "Agrega ; después de while (I < 3)."
   ],
   "relacion_con_la_materia": "LC",
   "deteccion": "estatica",
@@ -654,9 +654,9 @@
   "que_dice_gcc": "archivo.c:5: error: break statement not within loop or switch",
   "mensaje_editor": "Línea 5: 'break' solo se puede usar dentro de un for, while, do-while o switch.",
   "explicacion": "break corta el lazo o el switch donde está escrito. En un if suelto no hay nada que cortar.",
-  "como_arreglarlo": "Sacá el break o ponelo dentro de un lazo.",
+  "como_arreglarlo": "Saca el break o ponlo dentro de un lazo.",
   "pistas": [
-   "Mirá dónde está escrito el break.",
+   "Mira dónde está escrito el break.",
    "break necesita un lazo o un switch alrededor.",
    "Para no hacer algo, alcanza con la condición del if."
   ],
@@ -682,11 +682,11 @@
   "que_dice_gcc": "archivo.c:4: error: continue statement not within a loop",
   "mensaje_editor": "Línea 4: 'continue' solo se puede usar dentro de un for, while o do-while.",
   "explicacion": "continue salta a la próxima vuelta de un lazo. Fuera de un lazo no tiene sentido.",
-  "como_arreglarlo": "Sacalo, o usá un if que decida si se muestra o no.",
+  "como_arreglarlo": "Sácalo, o usa un if que decida si se muestra o no.",
   "pistas": [
-   "Mirá dónde está el continue.",
+   "Mira dónde está el continue.",
    "continue necesita estar dentro de un lazo.",
-   "Invertí la condición del if."
+   "Invierte la condición del if."
   ],
   "relacion_con_la_materia": "LC",
   "deteccion": "estatica",
@@ -710,11 +710,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 5: se lee dentro del lazo y después se cuenta: el 0 que corta también se cuenta.",
   "explicacion": "El valor de corte se lee antes de comprobarse en la condición. Si la lectura está al principio del cuerpo, el cuerpo procesa ese valor aunque sea el de corte. Hay que leer antes del lazo y volver a leer al final de cada vuelta.",
-  "como_arreglarlo": "Leé el primer dato antes del while y el siguiente al final del cuerpo.",
+  "como_arreglarlo": "Lee el primer dato antes del while y el siguiente al final del cuerpo.",
   "pistas": [
-   "Probalo con 5 7 0 y compará con lo que esperabas contar.",
+   "Pruébalo con 5 7 0 y compara con lo que esperabas contar.",
    "¿Cuándo se comprueba el 0?",
-   "Leé antes del lazo y de nuevo al final del cuerpo."
+   "Lee antes del lazo y de nuevo al final del cuerpo."
   ],
   "relacion_con_la_materia": "LC",
   "deteccion": "heuristica",
@@ -738,11 +738,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 5: en este while ninguna variable de la condición (A) cambia dentro del lazo: es probable que nunca termine.",
   "explicacion": "Si el dato se lee una sola vez antes del lazo y adentro no se vuelve a leer, A vale siempre lo mismo y la condición nunca cambia.",
-  "como_arreglarlo": "Agregá otro scanf al final del cuerpo del lazo.",
+  "como_arreglarlo": "Agrega otro scanf al final del cuerpo del lazo.",
   "pistas": [
-   "Preguntate cuándo vuelve a cambiar A.",
+   "Pregúntate cuándo vuelve a cambiar A.",
    "Falta algo dentro del lazo que cambie el dato.",
-   "Agregá scanf(\"%d\", &A); al final del cuerpo."
+   "Agrega scanf(\"%d\", &A); al final del cuerpo."
   ],
   "relacion_con_la_materia": "LC",
   "deteccion": "estatica",
@@ -751,7 +751,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "en este while ninguna variable de la condición (A) cambia dentro del bucle: es probable que nunca termine",
+  "mensaje_editor_actual": "en este while ninguna variable de la condición (A) cambia dentro del lazo: es probable que nunca termine",
   "codigo_editor_actual": "W-bucle-infinito",
   "verificado_editor_corrige": true
  },
@@ -766,11 +766,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 4: con I = 1 y N = 3 la condición I > N es falsa de entrada: el lazo no se ejecuta nunca.",
   "explicacion": "El while repite MIENTRAS la condición sea verdadera, no hasta que lo sea. La condición tiene que decir cuándo seguir y no cuándo cortar.",
-  "como_arreglarlo": "Escribí la condición para que sea verdadera mientras haya que repetir.",
+  "como_arreglarlo": "Escribe la condición para que sea verdadera mientras haya que repetir.",
   "pistas": [
-   "Probalo a mano con los valores iniciales.",
+   "Pruébalo a mano con los valores iniciales.",
    "La condición dice cuándo seguir, no cuándo parar.",
-   "Invertí el comparador: I <= N."
+   "Invierte el comparador: I <= N."
   ],
   "relacion_con_la_materia": "LC",
   "deteccion": "heuristica",
@@ -794,11 +794,11 @@
   "que_dice_gcc": "archivo.c:4: warning: suggest parentheses around assignment used as truth value [-Wparentheses]",
   "mensaje_editor": "Línea 4: hay una asignación '=' dentro de la condición: ¿querías comparar con '=='?",
   "explicacion": "= guarda un valor en la variable y vale lo que se guardó; == compara. if (A = 5) pone 5 en A y como 5 no es 0, la condición siempre es verdadera.",
-  "como_arreglarlo": "Usá == para comparar.",
+  "como_arreglarlo": "Usa == para comparar.",
   "pistas": [
-   "Fijate qué valor tiene A después del if.",
+   "Fíjate qué valor tiene A después del if.",
    "= y == hacen cosas distintas.",
-   "Cambiá = por == dentro del paréntesis."
+   "Cambia = por == dentro del paréntesis."
   ],
   "relacion_con_la_materia": "BC",
   "deteccion": "estatica",
@@ -822,11 +822,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 6: el printf está dentro del lazo: muestra el acumulado en cada vuelta, no solo el final.",
   "explicacion": "Lo que está dentro de las llaves se repite en cada vuelta. El resultado final se muestra una sola vez, después de cerrar el lazo.",
-  "como_arreglarlo": "Sacá el printf afuera, después de la llave de cierre.",
+  "como_arreglarlo": "Saca el printf afuera, después de la llave de cierre.",
   "pistas": [
-   "Contá cuántas veces sale el resultado.",
+   "Cuenta cuántas veces sale el resultado.",
    "Lo de adentro de las llaves se repite.",
-   "Movelo debajo de la llave de cierre."
+   "Muévelo debajo de la llave de cierre."
   ],
   "relacion_con_la_materia": "LR, LC",
   "deteccion": "heuristica",
@@ -850,11 +850,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 4: comparar un decimal con '==' puede fallar por redondeo (0.1 no se guarda exacto): conviene comparar con '<' o '>'.",
   "explicacion": "Un float guarda 0.1 con menos precisión que el 0.1 escrito en el programa (que es double), así que no son exactamente iguales. Los decimales se comparan por rango.",
-  "como_arreglarlo": "Compará con un rango chico: mayor que un valor y menor que otro.",
+  "como_arreglarlo": "Compara con un rango pequeño: mayor que un valor y menor que otro.",
   "pistas": [
-   "Probalo: ¿se muestra «igual»?",
+   "Pruébalo: ¿se muestra «igual»?",
    "Los decimales no siempre se guardan exactos.",
-   "Usá > y < con un margen."
+   "Usa > y < con un margen."
   ],
   "relacion_con_la_materia": "tipos, BC",
   "deteccion": "heuristica",
@@ -878,11 +878,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 8: comparar un decimal con '==' puede fallar por redondeo: diez veces 0.1 no da exactamente 1.0.",
   "explicacion": "Cada suma de 0.1 arrastra un error pequeño. Después de varias, el resultado queda cerca de 1.0 pero no es igual.",
-  "como_arreglarlo": "Comparalo con un margen en lugar de ==.",
+  "como_arreglarlo": "Compáralo con un margen en lugar de ==.",
   "pistas": [
-   "Mostrá S con muchos decimales (%.10f) para ver qué guardó.",
+   "Muestra S con muchos decimales (%.10f) para ver qué guardó.",
    "Los errores de redondeo se acumulan.",
-   "Usá un rango alrededor de 1.0."
+   "Usa un rango alrededor de 1.0."
   ],
   "relacion_con_la_materia": "tipos, LR",
   "deteccion": "heuristica",
@@ -906,11 +906,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 4: ningún número puede ser menor que 1 y mayor que 10 a la vez: para «fuera del rango» se usa ||.",
   "explicacion": "&& pide que se cumplan las dos condiciones juntas. «Fuera de rango» es una cosa o la otra, así que va ||.",
-  "como_arreglarlo": "Cambiá && por || y comprobalo con un valor dentro del rango y uno fuera.",
+  "como_arreglarlo": "Cambia && por || y compruébalo con un valor dentro del rango y uno fuera.",
   "pistas": [
-   "Probalo con un valor fuera del rango.",
-   "Pensá si las dos condiciones pueden ser verdaderas a la vez.",
-   "Usá ||."
+   "Pruébalo con un valor fuera del rango.",
+   "Piensa si las dos condiciones pueden ser verdaderas a la vez.",
+   "Usa ||."
   ],
   "relacion_con_la_materia": "BC",
   "deteccion": "heuristica",
@@ -934,11 +934,11 @@
   "que_dice_gcc": "archivo.c:4: warning: comparison of constant '10' with boolean expression is always true [-Wbool-compare]",
   "mensaje_editor": "Línea 4: 0 < A < 10 no comprueba un rango: C evalúa primero 0 < A (da 1 o 0) y compara ese resultado con 10.",
   "explicacion": "Una comparación da 1 si es verdadera y 0 si es falsa. Después se compara ese 0 o 1 con 10, y siempre es menor. Cada comparación se escribe por separado y se unen con &&.",
-  "como_arreglarlo": "Escribí las dos comparaciones unidas con &&.",
+  "como_arreglarlo": "Escribe las dos comparaciones unidas con &&.",
   "pistas": [
-   "Probalo con 15: ¿entra al if?",
+   "Pruébalo con 15: ¿entra al if?",
    "C no entiende comparaciones encadenadas.",
-   "Usá A > 0 && A < 10."
+   "Usa A > 0 && A < 10."
   ],
   "relacion_con_la_materia": "BC",
   "deteccion": "estatica",
@@ -947,7 +947,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "a < b < c no comprueba un rango: C evalúa primero la comparación de la izquierda (da 0 o 1). Escribilo con &&, por ejemplo: 0 < a && a < 3",
+  "mensaje_editor_actual": "a < b < c no comprueba un rango: C evalúa primero la comparación de la izquierda (da 0 o 1). Escríbelo con &&, por ejemplo: 0 < a && a < 3",
   "codigo_editor_actual": "W-comparacion",
   "verificado_editor_corrige": true
  },
@@ -962,11 +962,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 4: el 2 solo es una condición verdadera siempre: cada comparación necesita su variable (A == 2).",
   "explicacion": "|| une condiciones completas. El 2 solo vale como «verdadero» (cualquier número distinto de 0), por eso la condición se cumple siempre.",
-  "como_arreglarlo": "Repetí la variable en la segunda condición.",
+  "como_arreglarlo": "Repite la variable en la segunda condición.",
   "pistas": [
-   "Probalo con un valor que no sea 1 ni 2.",
+   "Pruébalo con un valor que no sea 1 ni 2.",
    "Cada lado de || tiene que ser una condición completa.",
-   "Escribí A == 2."
+   "Escribe A == 2."
   ],
   "relacion_con_la_materia": "BC",
   "deteccion": "heuristica",
@@ -975,7 +975,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "después de '||' hay solo el número 2, que siempre es verdadero: la condición siempre se cumple. Para comparar con dos valores escribí x == 1 || x == 2",
+  "mensaje_editor_actual": "después de '||' hay solo el número 2, que siempre es verdadero: la condición siempre se cumple. Para comparar con dos valores escribe x == 1 || x == 2",
   "codigo_editor_actual": "W-condicion-constante",
   "verificado_editor_corrige": true
  },
@@ -990,11 +990,11 @@
   "que_dice_gcc": "archivo.c:4: warning: suggest parentheses around '&&' within '||' [-Wparentheses]",
   "mensaje_editor": "Línea 4: && se evalúa antes que ||: sin paréntesis la condición se agrupa distinto de lo que parece.",
   "explicacion": "En C && tiene prioridad sobre ||, igual que × sobre + en matemática. Para forzar otro orden hay que usar paréntesis.",
-  "como_arreglarlo": "Poné paréntesis para agrupar lo que querés que se evalúe junto.",
+  "como_arreglarlo": "Pon paréntesis para agrupar lo que quieres que se evalúe junto.",
   "pistas": [
-   "Probalo con valores donde A cumpla y C no.",
+   "Pruébalo con valores donde A cumpla y C no.",
    "&& se calcula antes que ||.",
-   "Agrupá A == 1 || B == 1 entre paréntesis."
+   "Agrupa A == 1 || B == 1 entre paréntesis."
   ],
   "relacion_con_la_materia": "BC",
   "deteccion": "estatica",
@@ -1003,7 +1003,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "&& se calcula antes que ||, así que la condición se agrupa distinto a como la leés (A == 1 || B == 1 && C == 1). Usá paréntesis para dejarlo claro.",
+  "mensaje_editor_actual": "&& se calcula antes que ||, así que la condición se agrupa distinto a como la lees (A == 1 || B == 1 && C == 1). Usa paréntesis para dejarlo claro.",
   "codigo_editor_actual": "W-precedencia-and-or",
   "verificado_editor_corrige": true
  },
@@ -1018,11 +1018,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 4: A != 1 || A != 2 se cumple para cualquier valor; para «ni 1 ni 2» se usa &&.",
   "explicacion": "Un número siempre es distinto de alguno de los dos. «No es 1 y no es 2» pide que se cumplan ambas cosas juntas, o sea &&.",
-  "como_arreglarlo": "Cambiá || por &&.",
+  "como_arreglarlo": "Cambia || por &&.",
   "pistas": [
-   "Probalo con A = 2: ¿qué debería pasar?",
-   "Pensá si existe un número que no cumpla ninguna de las dos.",
-   "Usá &&."
+   "Pruébalo con A = 2: ¿qué debería pasar?",
+   "Piensa si existe un número que no cumpla ninguna de las dos.",
+   "Usa &&."
   ],
   "relacion_con_la_materia": "BC",
   "deteccion": "heuristica",
@@ -1031,7 +1031,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "A != 1 || A != 2 es siempre verdadera: cualquier número es distinto de 1 o distinto de 2. Para \"ni 1 ni 2\" usá &&.",
+  "mensaje_editor_actual": "A != 1 || A != 2 es siempre verdadera: cualquier número es distinto de 1 o distinto de 2. Para \"ni 1 ni 2\" usa &&.",
   "codigo_editor_actual": "W-siempre-verdadera",
   "verificado_editor_corrige": true
  },
@@ -1046,9 +1046,9 @@
   "que_dice_gcc": "archivo.c:4: error: expected expression before '>' token",
   "mensaje_editor": "Línea 4: «mayor o igual» se escribe '>=' (no '=>').",
   "explicacion": "En los operadores de comparación el signo > o < va primero y el = después: >=, <=.",
-  "como_arreglarlo": "Escribí >= .",
+  "como_arreglarlo": "Escribe >= .",
   "pistas": [
-   "Mirá el orden de los dos signos.",
+   "Mira el orden de los dos signos.",
    "El = va después.",
    "Es >=."
   ],
@@ -1074,9 +1074,9 @@
   "que_dice_gcc": "archivo.c:4: error: expected expression before '>' token",
   "mensaje_editor": "Línea 4: en C «distinto» se escribe '!=' (no '<>').",
   "explicacion": "<> existe en otros lenguajes, pero en C el operador de «distinto» es !=.",
-  "como_arreglarlo": "Escribí != .",
+  "como_arreglarlo": "Escribe != .",
   "pistas": [
-   "Mirá cómo escribiste «distinto».",
+   "Mira cómo escribiste «distinto».",
    "Ese operador no es de C.",
    "Es !=."
   ],
@@ -1102,9 +1102,9 @@
   "que_dice_gcc": "archivo.c:4: warning: suggest parentheses around assignment used as truth value [-Wparentheses]",
   "mensaje_editor": "Línea 4: A =!3 se lee como A = (!3), una asignación. «Distinto» se escribe con la exclamación primero: !=.",
   "explicacion": "A =! 3 se lee A = (!3). !3 vale 0 (negar un número distinto de cero), así que A queda en 0 y la condición es falsa.",
-  "como_arreglarlo": "Escribí != con el signo ! antes del =.",
+  "como_arreglarlo": "Escribe != con el signo ! antes del =.",
   "pistas": [
-   "Fijate qué valor tiene A después del if.",
+   "Fíjate qué valor tiene A después del if.",
    "Los dos signos están en el orden contrario.",
    "Es !=."
   ],
@@ -1130,11 +1130,11 @@
   "que_dice_gcc": "archivo.c:4: error: expected '(' before 'A'",
   "mensaje_editor": "Línea 4: se esperaba '(' después del if: la condición va entre paréntesis.",
   "explicacion": "En C la condición del if, while y switch siempre va entre paréntesis.",
-  "como_arreglarlo": "Encerrá la condición entre paréntesis.",
+  "como_arreglarlo": "Encierra la condición entre paréntesis.",
   "pistas": [
-   "Mirá cómo escribiste la condición.",
+   "Mira cómo escribiste la condición.",
    "Falta algo alrededor de A > 3.",
-   "Poné ( ) alrededor."
+   "Pon ( ) alrededor."
   ],
   "relacion_con_la_materia": "BC",
   "deteccion": "estatica",
@@ -1158,9 +1158,9 @@
   "que_dice_gcc": "archivo.c:6: warning: implicit declaration of function 'elif' [-Wimplicit-function-declaration]",
   "mensaje_editor": "Línea 6: 'elif' no existe en C: se escribe 'else if (condición)'.",
   "explicacion": "elif es de otros lenguajes. En C es la palabra else seguida de un nuevo if.",
-  "como_arreglarlo": "Escribí else if separado.",
+  "como_arreglarlo": "Escribe else if separado.",
   "pistas": [
-   "Mirá cómo escribiste la segunda condición.",
+   "Mira cómo escribiste la segunda condición.",
    "Esa palabra no es de C.",
    "Es else if."
   ],
@@ -1184,22 +1184,22 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int I, CONT = 0;\n  for (I = 0; I < 3; I++) {\n    CONT = CONT + 1;\n  }\n  printf(\"%d\\n\", CONT);\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:5: warning: statement with no effect [-Wunused-value]",
-  "mensaje_editor": "Línea 5: esta sentencia compara pero no guarda el resultado: no hace nada. ¿Querías asignar con '='?",
+  "mensaje_editor": "Línea 5: esta instrucción compara pero no guarda el resultado: no hace nada. ¿Querías asignar con '='?",
   "explicacion": "== compara y da 1 o 0, pero no cambia la variable. Para guardar un valor en CONT se usa =.",
-  "como_arreglarlo": "Usá un solo = para asignar.",
+  "como_arreglarlo": "Usa un solo = para asignar.",
   "pistas": [
-   "Fijate cuánto vale CONT al final.",
+   "Fíjate cuánto vale CONT al final.",
    "Esa línea no modifica a CONT.",
-   "Cambiá == por =."
+   "Cambia == por =."
   ],
   "relacion_con_la_materia": "LC",
   "deteccion": "estatica",
-  "como_detectarlo": "Expresión == usada como sentencia.",
+  "como_detectarlo": "Expresión == usada como instrucción.",
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "esta sentencia compara pero no guarda el resultado: no hace nada. ¿Querías asignar con '='?",
+  "mensaje_editor_actual": "esta instrucción compara pero no guarda el resultado: no hace nada. ¿Querías asignar con '='?",
   "codigo_editor_actual": "W-sin-efecto",
   "verificado_editor_corrige": true
  },
@@ -1214,11 +1214,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 5: S vuelve a 0 en cada vuelta, así que no acumula: la inicialización va antes del lazo.",
   "explicacion": "Todo lo que está dentro del lazo se repite. Si S se pone en 0 adentro, pierde lo acumulado en las vueltas anteriores.",
-  "como_arreglarlo": "Inicializá S una sola vez, antes del lazo.",
+  "como_arreglarlo": "Inicializa S una sola vez, antes del lazo.",
   "pistas": [
-   "Seguí S a mano en cada vuelta.",
+   "Sigue S a mano en cada vuelta.",
    "Hay una asignación a S que se repite.",
-   "Pasá S = 0 afuera, antes del for."
+   "Pasa S = 0 afuera, antes del for."
   ],
   "relacion_con_la_materia": "LR, LC",
   "deteccion": "heuristica",
@@ -1242,11 +1242,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 7: este break sale del switch, no del for: el lazo sigue con la vuelta siguiente.",
   "explicacion": "break corta el lazo o switch más cercano que lo rodea. Dentro de un switch que está en un for, corta el switch y el for sigue.",
-  "como_arreglarlo": "Si querés cortar el lazo, agregá la condición de corte en el for o en un while.",
+  "como_arreglarlo": "Si quieres cortar el lazo, agrega la condición de corte en el for o en un while.",
   "pistas": [
-   "Probalo con 5 0 7 y mirá si se detiene en el 0.",
+   "Pruébalo con 5 0 7 y mira si se detiene en el 0.",
    "break corta solo el bloque más interno.",
-   "Poné la condición de corte en el for."
+   "Pon la condición de corte en el for."
   ],
   "relacion_con_la_materia": "LC, switch",
   "deteccion": "heuristica",
@@ -1270,11 +1270,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 6: I se modifica dentro del cuerpo además del I++ del for: se saltean valores.",
   "explicacion": "El for ya incrementa I en cada vuelta. Si el cuerpo también lo cambia, I avanza de a dos y se saltean valores.",
-  "como_arreglarlo": "Dejá que el for sea el único que modifica al contador.",
+  "como_arreglarlo": "Deja que el for sea el único que modifica al contador.",
   "pistas": [
-   "Escribí los valores que toma I vuelta a vuelta.",
+   "Escribe los valores que toma I vuelta a vuelta.",
    "I cambia en dos lugares.",
-   "Sacá la línea que modifica I del cuerpo."
+   "Saca la línea que modifica I del cuerpo."
   ],
   "relacion_con_la_materia": "LR",
   "deteccion": "estatica",
@@ -1283,7 +1283,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "I = I + 1 dentro del cuerpo se suma al cambio que ya hace el for (I++), y el lazo da menos vueltas de las que esperás. Dejá que el for cuente solo.",
+  "mensaje_editor_actual": "I = I + 1 dentro del cuerpo se suma al cambio que ya hace el for (I++), y el lazo da menos vueltas de las que esperas. Deja que el for cuente solo.",
   "codigo_editor_actual": "W-for-variable-modificada",
   "verificado_editor_corrige": true
  },
@@ -1298,11 +1298,11 @@
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 5: I se incrementa antes de usarse: se suman 2, 3 y 4 en vez de 1, 2 y 3.",
   "explicacion": "En un while, la actualización del contador suele ir al final del cuerpo. Si va antes, el cuerpo trabaja con el valor ya adelantado.",
-  "como_arreglarlo": "Poné el incremento al final del cuerpo.",
+  "como_arreglarlo": "Pon el incremento al final del cuerpo.",
   "pistas": [
-   "Seguí I y S a mano en la primera vuelta.",
+   "Sigue I y S a mano en la primera vuelta.",
    "El orden de las dos líneas importa.",
-   "Intercambiá las dos líneas."
+   "Intercambia las dos líneas."
   ],
   "relacion_con_la_materia": "LC",
   "deteccion": "heuristica",
@@ -1326,11 +1326,11 @@
   "que_dice_gcc": "archivo.c:4: error: lvalue required as left operand of assignment",
   "mensaje_editor": "Línea 4: en la condición hay un '=' de asignación: para comparar se usa '=='.",
   "explicacion": "A % 2 es una cuenta, no una variable donde guardar algo, así que no se le puede asignar. Para comparar con 0 se escribe ==.",
-  "como_arreglarlo": "Cambiá = por ==.",
+  "como_arreglarlo": "Cambia = por ==.",
   "pistas": [
-   "Mirá el signo entre A % 2 y 0.",
+   "Mira el signo entre A % 2 y 0.",
    "= asigna, == compara.",
-   "Escribí A % 2 == 0."
+   "Escribe A % 2 == 0."
   ],
   "relacion_con_la_materia": "BC",
   "deteccion": "estatica",
@@ -1354,11 +1354,11 @@
   "que_dice_gcc": "archivo.c:5: warning: comparison between pointer and integer",
   "mensaje_editor": "Línea 5: un carácter se compara con comillas simples ('S'): \"S\" es un texto.",
   "explicacion": "Las comillas dobles forman un texto, que no se puede comparar con un char. Un carácter suelto va entre comillas simples.",
-  "como_arreglarlo": "Cambiá las comillas dobles por simples.",
+  "como_arreglarlo": "Cambia las comillas dobles por simples.",
   "pistas": [
-   "Mirá las comillas de la comparación.",
+   "Mira las comillas de la comparación.",
    "L es un carácter, no un texto.",
-   "Usá 'S'."
+   "Usa 'S'."
   ],
   "relacion_con_la_materia": "char, BC",
   "deteccion": "estatica",
@@ -1380,22 +1380,22 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int A = 0;\n  while (A < 3) {\n    A = A + 1;\n  }\n  printf(\"%d\\n\", A);\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:5: warning: statement with no effect [-Wunused-value]",
-  "mensaje_editor": "Línea 5: esta sentencia no hace nada: el resultado de la cuenta no se guarda en ninguna variable.",
+  "mensaje_editor": "Línea 5: esta instrucción no hace nada: el resultado de la cuenta no se guarda en ninguna variable.",
   "explicacion": "A + 1 calcula un valor y lo descarta. Para que A cambie hay que asignar el resultado: A = A + 1. Por eso el lazo no termina nunca.",
-  "como_arreglarlo": "Asigná el resultado a la variable.",
+  "como_arreglarlo": "Asigna el resultado a la variable.",
   "pistas": [
    "¿Cambia A dentro del lazo?",
    "La cuenta no se guarda en ningún lado.",
-   "Escribí A = A + 1;"
+   "Escribe A = A + 1;"
   ],
   "relacion_con_la_materia": "LC",
   "deteccion": "estatica",
-  "como_detectarlo": "Expresión aritmética usada como sentencia.",
+  "como_detectarlo": "Expresión aritmética usada como instrucción.",
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "en este while ninguna variable de la condición (A) cambia dentro del bucle: es probable que nunca termine",
+  "mensaje_editor_actual": "en este while ninguna variable de la condición (A) cambia dentro del lazo: es probable que nunca termine",
   "codigo_editor_actual": "W-bucle-infinito",
   "verificado_editor_corrige": true
  }

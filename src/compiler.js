@@ -60,8 +60,8 @@
       const c = text[i];
       if (c === '\n') { line++; i++; atStart = true; continue; }
       if (c === '\ufeff' && i === 0) { i++; continue; }
-      if (c === '\u00a0' || c === '\u200b' || c === '\ufeff') throw new CErr('hay un carácter invisible (' + (c === '\u00a0' ? 'espacio no separable' : c === '\u200b' ? 'espacio de ancho cero' : 'marca BOM') + ') en esta línea, seguramente por copiar y pegar: borrá el espacio y volvé a escribirlo', line, 'SIN-045');
-      if (c === '–' || c === '—' || c === '−') throw new CErr("el símbolo '" + c + "' no es el signo menos de C: escribí '-'", line, 'SIN-063');
+      if (c === '\u00a0' || c === '\u200b' || c === '\ufeff') throw new CErr('hay un carácter invisible (' + (c === '\u00a0' ? 'espacio no separable' : c === '\u200b' ? 'espacio de ancho cero' : 'marca BOM') + ') en esta línea, seguramente por copiar y pegar: borra el espacio y vuelve a escribirlo', line, 'SIN-045');
+      if (c === '–' || c === '—' || c === '−') throw new CErr("el símbolo '" + c + "' no es el signo menos de C: escribe '-'", line, 'SIN-063');
       if (c === '×' || c === '÷' || c === '≠' || c === '≤' || c === '≥') throw new CErr("el símbolo '" + c + "' no existe en C: " + ({ '×': "multiplicar es '*'", '÷': "dividir es '/'", '≠': "distinto es '!='", '≤': "menor o igual es '<='", '≥': "mayor o igual es '>='" })[c], line, c === '×' ? 'SIN-064' : undefined);
       if (c === ' ' || c === '\t' || c === '\r' || c === '\f' || c === '\v') { i++; continue; }
       if (c === '/' && text[i + 1] === '/') { while (i < n && text[i] !== '\n') i++; continue; }
@@ -99,7 +99,7 @@
               let prof = 0; for (const q of out) { if (q.t === 'op' && q.v === '{') prof++; else if (q.t === 'op' && q.v === '}') prof--; }
               const hm = /^[<"]([^>"\s]+)[>"]$/.exec(arg);
               if (prof > 0) includes.avisos.push({ line, kb: 'PRE-041', msg: 'el #include va al principio del programa, afuera de las funciones: acá adentro rompe el programa' });
-              else if (hm && HDR_FUNCS[hm[1]]) { const usada = out.find((q) => q.t === 'id' && HDR_FUNCS[hm[1]].indexOf(q.v) >= 0); if (usada) includes.avisos.push({ line, kb: 'PRE-042', msg: "usás " + usada.v + " antes de este #include: los #include van todos al principio, antes de usar sus funciones" }); }
+              else if (hm && HDR_FUNCS[hm[1]]) { const usada = out.find((q) => q.t === 'id' && HDR_FUNCS[hm[1]].indexOf(q.v) >= 0); if (usada) includes.avisos.push({ line, kb: 'PRE-042', msg: "usas " + usada.v + " antes de este #include: los #include van todos al principio, antes de usar sus funciones" }); }
             }
             if (/^(<[^>\s]+>|"[^"]+")$/.test(arg)) includes.push(arg); else includes.avisos.push({ line, kb: /;\s*$/.test(arg) ? 'PRE-018' : 'PRE-014', msg: 'el #include está mal escrito: tiene que ser #include <stdio.h> (con < y >) o #include "archivo.h"' }); }
           else if (dir === 'pragma' || dir === 'line' || dir === 'warning') { /* se ignora */ }
@@ -114,7 +114,7 @@
               const params = mp[1].split(',').map((x) => x.trim()).filter((x) => x.length);
               defines.set(m2[1], { params, body: tokenize(mp[2], line, false, includes, defines) });
             } else {
-              if (/;\s*$/.test(m2[2])) includes.avisos.push({ line, kb: 'PRE-019', msg: "el #define de " + m2[1] + " termina en ';': ese ';' se copia en cada uso y suele causar errores raros. Sacalo" });
+              if (/;\s*$/.test(m2[2])) includes.avisos.push({ line, kb: 'PRE-019', msg: "el #define de " + m2[1] + " termina en ';': ese ';' se copia en cada uso y suele causar errores raros. Sácalo" });
               defines.set(m2[1], tokenize(m2[2], line, false, includes, defines));
             }
           } else includes.avisos.push({ line, kb: /^include$/i.test(dir) ? 'PRE-016' : /^(inlcude|incldue|inculde|includ|includes|iclude|defin|deifne|defne|dfine)$/.test(dir) ? undefined : 'SIN-059', msg: "'#" + dir + "' no es una directiva de C" + (/^(inlcude|incldue|inculde|includ|includes|iclude)$/.test(dir) ? ': ¿quisiste escribir #include?' : (/^(defin|deifne|defne|dfine)$/.test(dir) ? ': ¿quisiste escribir #define?' : ' (los comentarios en C empiezan con // o /* */)')) });
@@ -146,7 +146,7 @@
             if (!/^[0-7]+$/.test(bd)) throw new CErr("el número '" + bd + "' no es válido: los números que empiezan con 0 son octales (solo dígitos del 0 al 7)", line, 'SIN-038');
             radix = 8; digits = bd.slice(1);
           }
-          if (!(radix === 16 ? /^[0-9a-fA-F]+$/ : radix === 2 ? /^[01]+$/ : /^[0-9]+$/).test(digits)) throw new CErr("el número '" + s + "' no es válido: un entero no lleva letras (para un decimal escribí 5.0f o 5.0)", line, 'SIN-024');
+          if (!(radix === 16 ? /^[0-9a-fA-F]+$/ : radix === 2 ? /^[01]+$/ : /^[0-9]+$/).test(digits)) throw new CErr("el número '" + s + "' no es válido: un entero no lleva letras (para un decimal escribe 5.0f o 5.0)", line, 'SIN-024');
           big = BigInt((radix === 16 ? '0x' : radix === 8 ? '0o' : radix === 2 ? '0b' : '') + digits);
           const u = suf.indexOf('u') >= 0, l = suf.indexOf('l') >= 0;
           const I = 0x7fffffffn, U = 0xffffffffn, L = 0x7fffffffffffffffn;
@@ -197,7 +197,7 @@
             else if (p1 && p1.v === '=' && p2 && p2.v === ']') kb = 'ARR-046';
             else kb = 'SIN-050';
           }
-          throw new CErr(cierra ? "entre comillas simples va un solo carácter: un texto lleva comillas dobles (\"Hola\")" : "falta cerrar la comilla simple del carácter (usá 'a' con un solo carácter)", line, kb);
+          throw new CErr(cierra ? "entre comillas simples va un solo carácter: un texto lleva comillas dobles (\"Hola\")" : "falta cerrar la comilla simple del carácter (usa 'a' con un solo carácter)", line, kb);
         }
         out.push({ t: 'num', v: s.charCodeAt(0), kind: 'int', line, ch: true }); i = j + 1; continue;
       }
@@ -207,17 +207,17 @@
       if (c === '\\') {
         const pv = out[out.length - 1], nx = /^\s*(\w)/.exec(text.slice(i + 1, i + 8));
         const entre = pv && (pv.t === 'id' || pv.t === 'num' || pv.v === ')') && nx;
-        throw new CErr(entre ? "la barra invertida '\\' no es la división: dividir es '/'" : "carácter no válido '\\': si querías escribir un texto, ponelo entre comillas, por ejemplo printf(\"Hola\\n\");", line, entre ? 'OPE-040' : 'SIN-044');
+        throw new CErr(entre ? "la barra invertida '\\' no es la división: dividir es '/'" : "carácter no válido '\\': si querías escribir un texto, ponlo entre comillas, por ejemplo printf(\"Hola\\n\");", line, entre ? 'OPE-040' : 'SIN-044');
       }
-      if (c === '“' || c === '”' || c === '‘' || c === '’') throw new CErr("las comillas tipográficas " + c + " no sirven en C: usá las comillas rectas " + (c === '“' || c === '”' ? '"' : "'"), line, c === '“' || c === '”' ? 'SIN-011' : 'SIN-012');
-      if (!op) throw new CErr("carácter no válido '" + c + "'" + (c === '\u037e' ? ': parece un punto y coma pero es otro carácter (viene de copiar y pegar); escribilo de nuevo' : ''), line, c === '\u037e' ? 'SIN-025' : /[\uff00-\uffef]/.test(c) ? 'SIN-047' : c === '@' ? 'SIN-046' : undefined);
+      if (c === '“' || c === '”' || c === '‘' || c === '’') throw new CErr("las comillas tipográficas " + c + " no sirven en C: usa las comillas rectas " + (c === '“' || c === '”' ? '"' : "'"), line, c === '“' || c === '”' ? 'SIN-011' : 'SIN-012');
+      if (!op) throw new CErr("carácter no válido '" + c + "'" + (c === '\u037e' ? ': parece un punto y coma pero es otro carácter (viene de copiar y pegar); escríbelo de nuevo' : ''), line, c === '\u037e' ? 'SIN-025' : /[\uff00-\uffef]/.test(c) ? 'SIN-047' : c === '@' ? 'SIN-046' : undefined);
       // OPE-016: «X =+ Y» / «X =- Y» (el signo pegado al = y separado del operando) no es += ni -=
       if ((op === '+' || op === '-') && out.length >= 2) {
         const eq = out[out.length - 1], nm = out[out.length - 2];
         if (eq.t === 'op' && eq.v === '=' && eq.e === i && (nm.t === 'id' || (nm.t === 'op' && nm.v === ']')) && (text[i + 1] === ' ' || text[i + 1] === '\t')) {
           const nom = nm.t === 'id' ? nm.v : 'variable';
           const mo = /^\s*([A-Za-z_]\w*|\d[\w.]*)/.exec(text.slice(i + 1, i + 40)); const opd = mo ? mo[1] : 'valor';
-          includes.avisos.push({ line, kb: 'OPE-016', msg: nom + ' =' + op + ' ' + opd + ' asigna ' + op + opd + ' en lugar de ' + (op === '+' ? 'sumar' : 'restar') + ". En C el operador es '" + op + "=', o escribí " + nom + ' = ' + nom + ' ' + op + ' ' + opd + '.' });
+          includes.avisos.push({ line, kb: 'OPE-016', msg: nom + ' =' + op + ' ' + opd + ' asigna ' + op + opd + ' en lugar de ' + (op === '+' ? 'sumar' : 'restar') + ". En C el operador es '" + op + "=', o escribe " + nom + ' = ' + nom + ' ' + op + ' ' + opd + '.' });
         }
       }
       out.push(op === '=' ? { t: 'op', v: op, line, e: i + 1, s: i } : { t: 'op', v: op, line, s: i }); i += op.length;
@@ -296,7 +296,7 @@
       const nl = t.line > pv.line;
       switch (cx.k) {
         case 'decl':
-          if (cx.fase === 'nombre' && t.t === 'op' && t.v === '(') return { kb: 'FUN-020', msg: "las funciones no se escriben dentro de otras: definí '" + pv.v + "' fuera de main" };
+          if (cx.fase === 'nombre' && t.t === 'op' && t.v === '(') return { kb: 'FUN-020', msg: "las funciones no se escriben dentro de otras: define '" + pv.v + "' fuera de main" };
           if (nl) return { kb: 'SIN-001' };
           if (cx.fase === 'nombre' && t.t === 'op' && t.v === '==') return { kb: 'DEC-027', msg: "para darle un valor inicial a '" + pv.v + "' se usa un solo '=': el '==' es para comparar" };
           if (cx.fase === 'nombre' && t.t === 'op' && t.v === '-') return { kb: 'DEC-019', msg: "el guion '-' es el operador resta: no puede ir en el nombre de una variable" };
@@ -323,7 +323,7 @@
       if (v === '(' && cx.k === 'if') return t.v === '{' ? { kb: 'SIN-060', msg: 'la condición del if va entre paréntesis ( ), no entre llaves { }' } : { kb: 'CTL-041', msg: "se esperaba '(' después del if: la condición va entre paréntesis" };
       if (v === ')' && cx.k === 'if') return { kb: 'SIN-006', msg: 'a la condición del if le falta cerrar el paréntesis' };
       if (v === ')' && cx.k === 'call') {
-        if (t.t === 'op' && t.v === ';') return t.mac ? { kb: 'PRE-025', msg: "el ';' del #define de '" + t.mac + "' se copia dentro de la cuenta: sacalo del #define" } : { kb: 'SIN-007', msg: 'a la llamada de ' + cx.name + ' le falta el paréntesis de cierre antes del ;' };
+        if (t.t === 'op' && t.v === ';') return t.mac ? { kb: 'PRE-025', msg: "el ';' del #define de '" + t.mac + "' se copia dentro de la cuenta: sácalo del #define" } : { kb: 'SIN-007', msg: 'a la llamada de ' + cx.name + ' le falta el paréntesis de cierre antes del ;' };
         if ((t.t === 'id' || t.t === 'num') && pv.t === 'str') {
           const nx = this.peek(1);
           return nx.t === 'str' ? { kb: 'PRF-034', msg: 'las comillas de adentro cierran el texto antes de tiempo: para mostrar comillas hay que escribir \\"' } : { kb: 'PRF-021', msg: "falta una coma entre el texto y '" + t.v + "'" };
@@ -333,7 +333,7 @@
       if (v === ')' && cx.k === 'params' && t.t === 'op' && t.v === ';') return { kb: 'FUN-034', msg: 'los parámetros de una función se separan con coma, no con punto y coma' };
       if (v === ']' && t.t === 'op' && t.v === ',') return { kb: 'ARR-020', msg: "una matriz se declara con un corchete por dimensión: int M[2][3], no M[2, 3]" };
       if (v === ']' && t.t === 'op' && t.v === ';') return { kb: 'SIN-010', msg: 'abriste un corchete y falta el ] que lo cierra' };
-      if (v === ':' && cx.k === 'case') return t.v === ',' ? { kb: 'CTL-013', msg: 'un case lleva un solo valor: para agrupar varios, escribí un case debajo del otro' } : t.v === ';' ? { kb: 'CTL-014', msg: "se esperaba ':' después del valor del case" } : { kb: 'SIN-034', msg: "después del valor del case falta el signo ':'" };
+      if (v === ':' && cx.k === 'case') return t.v === ',' ? { kb: 'CTL-013', msg: 'un case lleva un solo valor: para agrupar varios, escribe un case debajo del otro' } : t.v === ';' ? { kb: 'CTL-014', msg: "se esperaba ':' después del valor del case" } : { kb: 'SIN-034', msg: "después del valor del case falta el signo ':'" };
       if (v === ':' && cx.k === 'default') return { kb: 'SIN-034', msg: "después de default falta el signo ':'" };
       return null;
     }
@@ -342,7 +342,7 @@
       if (t.t !== 'id') {
         let kb, msg;
         if (cx === 'decl') {
-          if (t.mac) { kb = 'PRE-031'; msg = "'" + t.mac + "' está definida con #define: acá se reemplaza por su valor y queda un nombre inválido. Cambiá el nombre de la constante o el de la variable"; }
+          if (t.mac) { kb = 'PRE-031'; msg = "'" + t.mac + "' está definida con #define: acá se reemplaza por su valor y queda un nombre inválido. Cambia el nombre de la constante o el de la variable"; }
           else if (t.t === 'op' && t.v === '=') { kb = 'SIN-049'; msg = 'después del tipo tiene que venir el nombre de la variable, y acá aparece directamente el ='; }
           else if (t.t === 'op' && t.v === '(') { kb = 'NOS-019'; msg = 'los punteros a función todavía no están soportados en este editor'; }
           else if (t.t === 'num' && pv.v === ',' && this.t[this.p - 2] && this.t[this.p - 2].t === 'num' && this.t[this.p - 2].en === pv.s) { kb = 'DEC-015'; msg = 'los decimales se escriben con punto (12.5), no con coma: la coma separa variables'; }
@@ -375,7 +375,7 @@
       if (!seen) return null;
       if (base === 'time_t' || base === 'clock_t') return 'long';
       if (base === 'size_t') return 'ulong';
-      if (base === 'double' && longs > 0) throw new CErr('long double (un decimal de más precisión) todavía no está soportado en este editor: usá double', this.peek().line, 'NOS-016');
+      if (base === 'double' && longs > 0) throw new CErr('long double (un decimal de más precisión) todavía no está soportado en este editor: usa double', this.peek().line, 'NOS-016');
       if (base === 'double') return 'double';
       if (base === 'float') return 'float';
       if (base === 'char') return uns ? 'uchar' : 'char';
@@ -499,12 +499,12 @@
       if (this.isOp(';')) { this.next(); return { k: 'empty', line }; }
       if (this.isTypeStart()) { const type = this.typeSpec(); const st = this.sawStatic, cn = this.sawConst; const d = this.declRest(type, line); d.static = st; d.const = cn; return d; }
       if (t.t === 'id' && (t.v === 'elseif' || t.v === 'elif') && this.isOp('(', 1)) throw new CErr("'" + t.v + "' no existe en C: se escribe 'else if (condición)'", line, 'CTL-042');
-      if (t.t === 'id' && !RESERVED.has(t.v) && !TYPE_KW.has(t.v) && this.isOp(':', 1) && this.peek(2).t !== 'eof') throw new CErr("goto y las etiquetas ('" + t.v + ":') todavía no están soportados en este editor. Usá un while o un for para repetir", line, 'NOS-017');
+      if (t.t === 'id' && !RESERVED.has(t.v) && !TYPE_KW.has(t.v) && this.isOp(':', 1) && this.peek(2).t !== 'eof') throw new CErr("goto y las etiquetas ('" + t.v + ":') todavía no están soportados en este editor. Usa un while o un for para repetir", line, 'NOS-017');
       if (t.t === 'id' && !RESERVED.has(t.v) && !TYPE_KW.has(t.v) && this.peek(1).t === 'id' && !RESERVED.has(this.peek(1).v) && !TYPE_KW.has(this.peek(1).v)) {
         const tipos = ['int', 'float', 'double', 'char', 'void', 'long', 'short', 'unsigned'];
         const lev = (a, b) => { const d = []; for (let i = 0; i <= a.length; i++) d[i] = [i]; for (let j = 1; j <= b.length; j++) d[0][j] = j; for (let i = 1; i <= a.length; i++) for (let j = 1; j <= b.length; j++) d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)); return d[a.length][b.length]; };
         let best = null, bd = 99; for (const ty of tipos) { const dd = lev(t.v.toLowerCase(), ty); if (dd < bd) { bd = dd; best = ty; } }
-        if (t.v === 'string') throw new CErr("en C no existe 'string': para un carácter usá char (los textos completos todavía no están soportados en este editor)", line, 'SIN-051');
+        if (t.v === 'string') throw new CErr("en C no existe 'string': para un carácter usa char (los textos completos todavía no están soportados en este editor)", line, 'SIN-051');
         if (bd <= 2) throw new CErr("'" + t.v + "' no es un tipo de C: ¿quisiste escribir '" + best + "'? (C distingue mayúsculas y minúsculas)", line, t.v.toLowerCase() === best ? 'DEC-037' : 'SIN-023', t.v.toLowerCase() === best ? 'SIN-022' : undefined);
         if (t.v === 'then') throw new CErr("'then' no existe en C: el cuerpo del if va después de la condición, con llaves si son varias instrucciones", line, 'SIN-015');
         throw new CErr("no se entiende '" + t.v + ' ' + this.peek(1).v + "': ¿falta un operador, un ';' o es un tipo mal escrito?", line);
@@ -514,7 +514,7 @@
           case 'if': {
             this.next(); this.expect('(', { k: 'if' }); const c = this.expr(); this.expect(')', { k: 'if' });
             const a = this.stmt(); let b = null;
-            if (this.isId('else')) { this.next(); if (this.isOp('(')) throw new CErr("después de 'else' no va una condición: si querías otra condición escribí 'else if (…)'", this.peek().line, 'CTL-004'); b = this.stmt(); }
+            if (this.isId('else')) { this.next(); if (this.isOp('(')) throw new CErr("después de 'else' no va una condición: si querías otra condición escribe 'else if (…)'", this.peek().line, 'CTL-004'); b = this.stmt(); }
             return { k: 'if', c, a, b, line };
           }
           case 'while': {
@@ -558,7 +558,7 @@
             this.expect('}');
             return { k: 'switch', e, items, line };
           }
-          case 'else': throw new CErr("'else' sin su 'if' (revisá las llaves y los ';')", line, 'CTL-003');
+          case 'else': throw new CErr("'else' sin su 'if' (revisa las llaves y los ';')", line, 'CTL-003');
           case 'case': case 'default': throw new CErr("'" + t.v + "' fuera de un switch", line);
         }
       }
@@ -611,7 +611,7 @@
         if (t.v === '++' || t.v === '--') { this.next(); return { k: 'incdec', op: t.v, prefix: true, e: this.unary(), line: t.line }; }
         if (t.v === '-' || t.v === '+' || t.v === '!' || t.v === '~') { this.next(); return { k: 'un', op: t.v, e: this.unary(), line: t.line }; }
         if (t.v === '&') { this.next(); return { k: 'addr', e: this.unary(), line: t.line }; }
-        if (t.v === '*') { const pv = this.t[this.p - 1]; if (pv && pv.t === 'op' && pv.v === '*') throw new CErr("en C no existe '**' (potencia): usá pow(base, exponente) de <math.h>", t.line, 'OPE-032'); const mp = pv && pv.mac && pv.v === ';' ? pv.mac : null; if (mp || t.emptyMac) throw new CErr(mp ? "el ';' del #define de '" + mp + "' se copia en cada uso y deja una instrucción suelta: sacalo del #define" : "'" + t.emptyMac + "' está definida sin valor (#define " + t.emptyMac + ") y al usarla queda una cuenta incompleta", t.line, mp ? 'PRE-019' : 'PRE-021'); throw new CErr('los punteros todavía no están soportados en este editor', t.line); }
+        if (t.v === '*') { const pv = this.t[this.p - 1]; if (pv && pv.t === 'op' && pv.v === '*') throw new CErr("en C no existe '**' (potencia): usa pow(base, exponente) de <math.h>", t.line, 'OPE-032'); const mp = pv && pv.mac && pv.v === ';' ? pv.mac : null; if (mp || t.emptyMac) throw new CErr(mp ? "el ';' del #define de '" + mp + "' se copia en cada uso y deja una instrucción suelta: sácalo del #define" : "'" + t.emptyMac + "' está definida sin valor (#define " + t.emptyMac + ") y al usarla queda una cuenta incompleta", t.line, mp ? 'PRE-019' : 'PRE-021'); throw new CErr('los punteros todavía no están soportados en este editor', t.line); }
         if (t.v === '(' && this.isTypeStart(1)) {
           this.next(); const type = this.typeSpec();
           if (this.isOp('*')) throw new CErr('los punteros todavía no están soportados en este editor', this.peek().line);
@@ -670,7 +670,7 @@
       else if (t.t === 'op' && t.v === '=' && t.mac) { kb = 'PRE-020'; msg = "el #define de '" + t.mac + "' no lleva '=': es #define " + t.mac + ' valor'; }
       else if (t.t === 'op' && t.v === ')' && pv && pv.v === ',') { kb = 'SIN-031'; msg = 'hay una coma antes del paréntesis de cierre y después no hay ningún dato'; }
       else if (t.t === 'op' && t.v === ')' && pv && pv.v === ')') { kb = 'SIN-028'; msg = 'hay un paréntesis de cierre de más'; }
-      else if (t.t === 'op' && t.v === ';' && pv && pv.t === 'op' && pv.v === '=') { kb = 'SIN-029'; msg = "después del '=' falta el valor que querés guardar"; }
+      else if (t.t === 'op' && t.v === ';' && pv && pv.t === 'op' && pv.v === '=') { kb = 'SIN-029'; msg = "después del '=' falta el valor que quieres guardar"; }
       else if (t.t === 'op' && (t.v === '/' || t.v === '%') && pv && pv.t === 'op' && pv.v === '=') { kb = 'SIN-030'; msg = "la operación necesita un valor a la izquierda del '" + t.v + "' y otro a la derecha"; }
       else if (t.t === 'op' && REL_PARSE.has(t.v) && pv && (pv.v === '&&' || pv.v === '||')) { kb = 'OPE-012'; msg = "falta una expresión antes de '" + t.v + "': a cada lado del '" + pv.v + "' tiene que haber una comparación completa"; }
       else if (t.t === 'op' && t.v === '%' && pv && pv.v === '(' && this.t[this.p - 3] && this.t[this.p - 3].v === 'scanf') { kb = 'SCN-025'; msg = 'el formato de scanf va entre comillas: scanf("%d", ...)'; }
@@ -700,13 +700,13 @@
   // identificadores que no existen en C estándar y que la base explica por nombre: [caso, mensaje]
   const NOMBRES_KB = {
     cout: ['SIN-021', "'cout' es de C++ y no existe en C: para mostrar datos se usa printf"], cin: ['SIN-021', "'cin' es de C++ y no existe en C: para leer datos se usa scanf"],
-    FILE: ['NOS-010', 'FILE y el manejo de archivos (fopen, fclose) todavía no están soportados en este editor. Por ahora mostrá los datos con printf']
+    FILE: ['NOS-010', 'FILE y el manejo de archivos (fopen, fclose) todavía no están soportados en este editor. Por ahora muestra los datos con printf']
   };
   const FUNC_KB = {
     print: ['SIN-020', "la función 'print' no existe en C: para mostrar datos se usa printf"], Printf: ['PRF-023', "'Printf' no existe: en C todo se escribe en minúscula, la función es printf"], Scanf: ['SCN-027', "'Scanf' no existe: la función se escribe scanf, todo en minúscula"],
-    scanf_s: ['POR-023', "scanf_s es una función de Visual Studio y no existe en gcc (ni en Programiz ni en OnlineGDB). Usá scanf"], strrev: ['PRE-048', "strrev no existe en gcc (es de Windows)"], itoa: ['PRE-047', "itoa no es del estándar de C y no existe en gcc"],
+    scanf_s: ['POR-023', "scanf_s es una función de Visual Studio y no existe en gcc (ni en Programiz ni en OnlineGDB). Usa scanf"], strrev: ['PRE-048', "strrev no existe en gcc (es de Windows)"], itoa: ['PRE-047', "itoa no es del estándar de C y no existe en gcc"],
     clrscr: ['POR-004', "clrscr() es de Windows (conio.h) y no existe en Programiz ni en OnlineGDB"], Sleep: ['POR-017', "Sleep() es de Windows (windows.h) y no existe en Programiz ni en OnlineGDB"], delay: ['POR-019', "delay() es de Turbo C / DOS (dos.h) y no existe en Programiz ni en OnlineGDB"],
-    sscanf: ['NOS-015', 'sscanf (leer datos desde un texto) todavía no está soportada en este editor. Leé el número directamente con scanf'],
+    sscanf: ['NOS-015', 'sscanf (leer datos desde un texto) todavía no está soportada en este editor. Lee el número directamente con scanf'],
     fopen: ['NOS-010', 'el manejo de archivos (fopen, fclose, fscanf) todavía no está soportado en este editor'], fclose: ['NOS-010', 'el manejo de archivos (fopen, fclose, fscanf) todavía no está soportado en este editor'], fscanf: ['NOS-010', 'el manejo de archivos (fopen, fclose, fscanf) todavía no está soportado en este editor']
   };
   // función de biblioteca que necesita un #include: caso de la base
@@ -748,15 +748,15 @@
       const mio = fn && this.declInfo.get(fn);
       const dm = mio && mio.get(name);
       if (dm && dm.kind !== 'param') {
-        if (dm.kind === 'top') { kb = dm.line === line ? 'DEC-032' : 'DEC-011'; msg = kb === 'DEC-032' ? "'" + name + "' se usa antes de estar declarada: declarala antes en la lista" : "'" + name + "' se usa antes de declararla: la declaración tiene que estar antes de la primera línea que la usa"; }
+        if (dm.kind === 'top') { kb = dm.line === line ? 'DEC-032' : 'DEC-011'; msg = kb === 'DEC-032' ? "'" + name + "' se usa antes de estar declarada: decláralo antes en la lista" : "'" + name + "' se usa antes de declararla: la declaración tiene que estar antes de la primera línea que la usa"; }
         else { kb = dm.kind === 'for' ? 'DEC-008' : dm.kind === 'bucle' ? 'DEC-030' : 'DEC-007'; msg = "'" + name + "' no está declarada en este lugar: se declaró " + (dm.kind === 'for' ? 'dentro del for' : dm.kind === 'bucle' ? 'dentro del lazo' : 'entre llaves { }') + ' (línea ' + dm.line + ') y solo existe ahí'; }
       } else {
         let otra = null;
         for (const [f2, m2] of this.declInfo) if (f2 !== fn && m2.has(name) && !this.globalNames.has(name)) { otra = f2; if (f2 === 'main') break; }
-        if (otra) { kb = fn === 'main' ? 'FUN-018' : otra === 'main' ? 'FUN-019' : 'FUN-018'; msg = "'" + name + "' no existe en " + fn + ": es una variable local de " + otra + (fn === 'main' ? '' : '. Pasala como parámetro'); }
+        if (otra) { kb = fn === 'main' ? 'FUN-018' : otra === 'main' ? 'FUN-019' : 'FUN-018'; msg = "'" + name + "' no existe en " + fn + ": es una variable local de " + otra + (fn === 'main' ? '' : '. Pásala como parámetro'); }
         else if (ctx === 'for') { kb = 'DEC-029'; msg = "'" + name + "' no está declarada: el contador del for también hay que declararlo"; }
         else if (ctx === 'decl') { kb = 'DEC-023'; msg = "'" + name + "' no está declarada: en una declaración el '=' solo inicializa la variable que se declara"; }
-        else if (ctx === 'letra' && name.length === 1) { kb = 'PRF-044'; msg = "'" + name + "' no está declarada: si querías la letra " + name + " escribila entre comillas simples; si querías una variable, usá su nombre"; }
+        else if (ctx === 'letra' && name.length === 1) { kb = 'PRF-044'; msg = "'" + name + "' no está declarada: si querías la letra " + name + " escríbela entre comillas simples; si querías una variable, usa su nombre"; }
         else if (this.opts.defines && this.opts.defines.has(name)) { kb = 'PRE-030'; msg = "'" + name + "' se usa antes de su #define: el #define tiene que estar arriba del primer uso"; }
         else if (own(NOMBRES_KB, name)) { kb = NOMBRES_KB[name][0]; msg = NOMBRES_KB[name][1]; }
         else if (sug && sug.toLowerCase() === name.toLowerCase()) kb = 'DEC-003';
@@ -789,7 +789,7 @@
       const ok = ['stdio.h', 'math.h', 'stdlib.h', 'string.h', 'ctype.h', 'time.h', 'limits.h', 'stdbool.h', 'conio.h', 'float.h', 'stdint.h', 'stddef.h', 'assert.h', 'errno.h', 'locale.h', 'stdarg.h', 'inttypes.h', 'signal.h'];
       for (const h of (this.opts.includes || [])) {
         const nm = h.replace(/^[<"]|[>"]$/g, '');
-        if (nm === 'conio.h') this.warn("<conio.h> solo existe en Windows (Code::Blocks): en Programiz y OnlineGDB no compila. Para esperar una tecla usá getchar() o scanf", 1, 'PRE-037', 'POR-003');
+        if (nm === 'conio.h') this.warn("<conio.h> solo existe en Windows (Code::Blocks): en Programiz y OnlineGDB no compila. Para esperar una tecla usa getchar() o scanf", 1, 'PRE-037', 'POR-003');
         else if (ok.indexOf(nm) < 0) {
           const sg = nm === 'studio.h' || nm === 'stdoi.h' || nm === 'stido.h' || nm === 'stdio' ? 'stdio.h' : (nm === 'maths.h' || nm === 'math' ? 'math.h' : null);
           this.warn('no se conoce la biblioteca <' + nm + '>' + (sg ? ': ¿quisiste escribir <' + sg + '>?' : ''), 1, { 'studio.h': 'PRE-012', stdio: 'PRE-013', 'STDIO.H': 'PRE-017', 'stdafx.h': 'POR-024', 'windows.h': 'POR-017', 'dos.h': 'POR-019' }[nm]);
@@ -883,7 +883,7 @@
       for (const p of f.params) { this.declare(p.name, p.array ? { type: p.type, js: 'v_' + p.name, assigned: true, array: true, ndims: p.dims, param: true } : { type: p.type, js: 'v_' + p.name, assigned: true, scalar: true, param: true }, p.line); ps.push('v_' + p.name); }
       const body = this.stmtList(f.body.body);
       this.pop();
-      if (info.ret !== 'void' && f.name !== 'main' && !this.alwaysReturns(f.body)) { let hayRet = false; each(f.body, (x) => { if (x.k === 'return') hayRet = true; }); this.warn("la función '" + f.name + "' puede terminar sin ejecutar 'return' en algún caso: en C devuelve un valor basura. Agregá un return al final", f.body.end || f.line, hayRet ? 'FUN-012' : 'FUN-011'); }
+      if (info.ret !== 'void' && f.name !== 'main' && !this.alwaysReturns(f.body)) { let hayRet = false; each(f.body, (x) => { if (x.k === 'return') hayRet = true; }); this.warn("la función '" + f.name + "' puede terminar sin ejecutar 'return' en algún caso: en C devuelve un valor basura. Agrega un return al final", f.body.end || f.line, hayRet ? 'FUN-012' : 'FUN-011'); }
       this.cur = null;
       const tail = f.name === 'main' ? '\nreturn 0;' : '';
       if (f.name === 'main') ps.forEach((q, i) => { ps[i] = i === 0 ? q + '=1' : i === 1 ? q + '=[$.cstr("./a.out")]' : q; });
@@ -902,16 +902,16 @@
         case 'decl': return this.declCode(s, false);
         case 'expr': {
           const ek = s.e.k;
-          if (ek === 'id' && this.funcs.has(s.e.name) && !this.lookup(s.e.name)) { this.warn("'" + s.e.name + "' es una función: sin paréntesis no se llama y la sentencia no hace nada. ¿Faltan los '()'?", s.line, 'FUN-037'); return ';'; }
+          if (ek === 'id' && this.funcs.has(s.e.name) && !this.lookup(s.e.name)) { this.warn("'" + s.e.name + "' es una función: sin paréntesis no se llama y la instrucción no hace nada. ¿Faltan los '()'?", s.line, 'FUN-037'); return ';'; }
           if ((ek === 'bin' || ek === 'un' || ek === 'id' || ek === 'num' || ek === 'cond' || ek === 'idx') && !this.hasSideEffect(s.e)) {
-            if (ek === 'bin' && s.e.op === '==') this.warn("esta sentencia compara pero no guarda el resultado: no hace nada. ¿Querías asignar con '='?", s.line, 'CTL-043');
-            else this.warn('esta sentencia no hace nada: el resultado de la cuenta no se guarda en ninguna variable', s.line, 'OPE-020', this.loopStack.length ? 'CTL-050' : undefined);
+            if (ek === 'bin' && s.e.op === '==') this.warn("esta instrucción compara pero no guarda el resultado: no hace nada. ¿Querías asignar con '='?", s.line, 'CTL-043');
+            else this.warn('esta instrucción no hace nada: el resultado de la cuenta no se guarda en ninguna variable', s.line, 'OPE-020', this.loopStack.length ? 'CTL-050' : undefined);
           }
           return this.expr(s.e, true).c + ';';
         }
         case 'if': {
           this.checkCondAssign(s.c);
-          if (s.c.k === 'call' && (s.c.name === 'strcmp' || s.c.name === 'strncmp')) { const ss = []; each(s.a, (x) => { if (x.k === 'str') ss.push(x.v); }); if (ss.some((t) => /igual|coincid|mismo/i.test(t))) this.warn('strcmp devuelve 0 cuando los textos son iguales: usado solo, la condición se cumple cuando son DISTINTOS. Compará con 0', s.line, 'ARR-037'); }
+          if (s.c.k === 'call' && (s.c.name === 'strcmp' || s.c.name === 'strncmp')) { const ss = []; each(s.a, (x) => { if (x.k === 'str') ss.push(x.v); }); if (ss.some((t) => /igual|coincid|mismo/i.test(t))) this.warn('strcmp devuelve 0 cuando los textos son iguales: usado solo, la condición se cumple cuando son DISTINTOS. Compara con 0', s.line, 'ARR-037'); }
           const c = this.cond(s.c);
           const sa = this.assignLog.length;
           this.push(); const a = this.stmt(s.a); this.pop();
@@ -1064,7 +1064,7 @@
       scan(body); if (s.step) scan(s.step); scan(cond);
       if (salida) return;
       const siempre = !cond || this.esVerdadero(cond);
-      if (siempre) { this.warn(kind + ' sin condición de corte y sin \'break\' ni \'return\' adentro: el bucle no termina nunca', s.line); return; }
+      if (siempre) { this.warn(kind + ' sin condición de corte y sin \'break\' ni \'return\' adentro: el lazo no termina nunca', s.line); return; }
       const ids = []; let conCall = false;
       this.walk(cond, (x) => { if (x.k === 'id') ids.push(x.name); if (x.k === 'call') conCall = true; });
       if (conCall || !ids.length) return;
@@ -1074,7 +1074,7 @@
         let inutil = false; this.walk(body, (x) => { if (x.k === 'expr' && ['bin', 'un', 'id', 'num'].indexOf(x.e.k) >= 0 && !this.hasSideEffect(x.e) && ids.some((nm) => mentions(x.e, nm))) inutil = true; });
         if (inutil) kb = 'CTL-050';
         else if (sv && ids.some((nm) => sv.has(nm))) kb = 'CTL-027';
-        this.warn('en este ' + kind + ' ninguna variable de la condición (' + Array.from(new Set(ids)).join(', ') + ') cambia dentro del bucle: es probable que nunca termine', s.line, kb);
+        this.warn('en este ' + kind + ' ninguna variable de la condición (' + Array.from(new Set(ids)).join(', ') + ') cambia dentro del lazo: es probable que nunca termine', s.line, kb);
       }
     }
     bodyStmt(b) { this.loopDepth++; const r = this.stmt(b); this.loopDepth--; return r; }
@@ -1114,7 +1114,7 @@
     }
     zero(t) { return '0'; }
     checkIntDiv(r, to, line) {
-      if (r.intdiv && FLOATLIKE.has(to)) this.warn('la división es entre dos enteros y se trunca (7/2 da 3, no 3.5): guardarla en ' + to + ' no recupera los decimales; usá 7/2.0 o (float)7/2', line, 'TIP-001');
+      if (r.intdiv && FLOATLIKE.has(to)) this.warn('la división es entre dos enteros y se trunca (7/2 da 3, no 3.5): guardarla en ' + to + ' no recupera los decimales; usa 7/2.0 o (float)7/2', line, 'TIP-001');
     }
 
     declCode(d, global, inFor) {
@@ -1157,7 +1157,7 @@
             dimsCode.push(this.val(r));
             sizes.push(this.isConstExpr(v.dims[i]) ? Number(r.c) : null);
           }
-          if (v.init && v.init.k === 'list' && v.dims.some((x, i) => x !== null && sizes[i] === null && !this.isConstExpr(x))) { this.err('un arreglo cuyo tamaño no es un número fijo no se puede inicializar con llaves (una constante const no alcanza en C): usá un número o un #define', v.line, 'ARR-009'); ok = false; }
+          if (v.init && v.init.k === 'list' && v.dims.some((x, i) => x !== null && sizes[i] === null && !this.isConstExpr(x))) { this.err('un arreglo cuyo tamaño no es un número fijo no se puede inicializar con llaves (una constante const no alcanza en C): usa un número o un #define', v.line, 'ARR-009'); ok = false; }
           if (ok && v.init && v.init.k === 'list' && v.dims.length === 1 && sizes[0] !== null && Number.isFinite(sizes[0]) && v.init.items.length > sizes[0]) this.warn('el arreglo tiene ' + sizes[0] + ' lugares pero le diste ' + v.init.items.length + ' valores: los que sobran no entran', v.line, 'ARR-011');
           if (ok && v.init && v.init.k === 'str' && v.dims.length === 1 && sizes[0] !== null && Number.isFinite(sizes[0]) && new TextEncoder().encode(v.init.v).length > sizes[0]) this.warn('el texto tiene más letras (' + new TextEncoder().encode(v.init.v).length + ') que lugares el arreglo (' + sizes[0] + '): no entra', v.line, 'ARR-030');
           this.declare(v.name, { type: d.type, js, array: true, ndims: v.dims.length, assigned: true, isConst: !!d.const }, v.line);
@@ -1181,7 +1181,7 @@
             if (global && !this.isConstExpr(v.init)) this.err('el valor inicial de una variable global tiene que ser una constante (un número), no otra variable ni una llamada a función', v.line);
             const pi = this.inDeclInit, pc = this.copiaNode; this.inDeclInit = v.init; if (v.init.k === 'id') this.copiaNode = v.init;
             const r = this.expr(v.init); this.inDeclInit = pi; this.copiaNode = pc;
-            if (r.t === 'str' && (d.type === 'char' || d.type === 'uchar')) { this.warn("a un char le asignás un texto entre comillas dobles: ¿es lo que querías guardar ahí? Pensá qué guarda cada tipo", v.line, 'ARR-047', 'SIN-053'); init = '0'; }
+            if (r.t === 'str' && (d.type === 'char' || d.type === 'uchar')) { this.warn("a un char le asignas un texto entre comillas dobles: ¿es lo que querías guardar ahí? Piensa qué guarda cada tipo", v.line, 'ARR-047', 'SIN-053'); init = '0'; }
             else if (r.t === 'str' && INTLIKE.has(d.type)) { this.err('un ' + TNAME[d.type] + ' guarda un número, no un texto', v.line, 'ARR-045'); init = '0'; }
             else { this.checkIntDiv(r, d.type, v.line); init = this.conv(r, d.type); }
             assigned = true;
@@ -1315,14 +1315,14 @@
         this.undeclErr(n.name, n.line, this.printfArgNode === n && this.printfArgConv === 'c' ? 'letra' : 'read');
         return { c: '0', t: 'int' };
       }
-      if (info.array) { this.err("'" + n.name + "' es un arreglo: usá " + n.name + '[i] para acceder a una posición', n.line, this.printfArgNode === n ? 'ARR-015' : this.cmpArr ? (this.cmpArr === 'str' ? 'ARR-036' : 'ARR-021') : 'ARR-014'); return { c: '0', t: 'int' }; }
+      if (info.array) { this.err("'" + n.name + "' es un arreglo: usa " + n.name + '[i] para acceder a una posición', n.line, this.printfArgNode === n ? 'ARR-015' : this.cmpArr ? (this.cmpArr === 'str' ? 'ARR-036' : 'ARR-021') : 'ARR-014'); return { c: '0', t: 'int' }; }
       if (!info.assigned && !info.warned && !this.inSC && !info.quiet) { info.warned = true; this.warnUninit(n.name, info, n, 'leer', n.line); }
       return { c: info.js, t: info.type };
     }
     // aviso de variable sin valor: el contexto decide qué caso de la base lo explica
     warnUninit(name, info, n, how, line) {
       let kb;
-      const msg = "'" + name + "' se usa antes de darle un valor (en C su valor inicial es basura): asignale un valor inicial, por ejemplo " + name + ' = 0;';
+      const msg = "'" + name + "' se usa antes de darle un valor (en C su valor inicial es basura): asígnale un valor inicial, por ejemplo " + name + ' = 0;';
       const sv = this.cur && this.scanVars.get(this.cur.name);
       const cuenta = how === 'incdec' || (how === 'compuesta' && n.r.k === 'num' && n.r.v === 1) || (how === 'leer' && this.autoAcum === name && this.autoAcumUno);
       if (info.isConst) kb = 'DEC-026';
@@ -1368,7 +1368,7 @@
       if (n.k === 'id') {
         const info = this.lookup(n.name);
         if (!info) { this.undeclErr(n.name, n.line, this.inDeclInit ? 'decl' : this.inForInit ? 'for' : 'write'); return { c: 'v_' + n.name, t: 'int', bad: true }; }
-        if (info.array) { this.err("'" + n.name + "' es un arreglo: usá " + n.name + '[i] para acceder a una posición', n.line, this.enScanf ? 'ARR-016' : 'ARR-014'); return { c: info.js, t: info.type, bad: true }; }
+        if (info.array) { this.err("'" + n.name + "' es un arreglo: usa " + n.name + '[i] para acceder a una posición', n.line, this.enScanf ? 'ARR-016' : 'ARR-014'); return { c: info.js, t: info.type, bad: true }; }
         return { c: info.js, t: info.type, info };
       }
       if (n.k === 'idx') {
@@ -1399,7 +1399,7 @@
         });
         return { c: code, t: info.type, info, arrayElem: true };
       }
-      if (n.k === 'num' && n.mac) this.err(this.enScanf ? "'" + n.mac + "' es una constante #define, no una variable: no hay dónde guardar el dato. Declará una variable" : "'" + n.mac + "' es un valor que se copia (#define), no una variable: no se le puede asignar otro valor", n.line, this.enScanf ? 'PRE-029' : 'PRE-028');
+      if (n.k === 'num' && n.mac) this.err(this.enScanf ? "'" + n.mac + "' es una constante #define, no una variable: no hay dónde guardar el dato. Declara una variable" : "'" + n.mac + "' es un valor que se copia (#define), no una variable: no se le puede asignar otro valor", n.line, this.enScanf ? 'PRE-029' : 'PRE-028');
       else if (n.k === 'bin') this.err("a la izquierda del '=' tiene que haber una variable, y esto es una cuenta. Para comparar se usa '=='", n.line, 'CTL-048');
       else if (n.k === 'num') this.err("a la izquierda del '=' tiene que haber una variable, no un número", n.line, 'OPE-036');
       else this.err('a la izquierda del = tiene que haber una variable', n.line);
@@ -1428,15 +1428,15 @@
     }
     binOp(op, ln, rn, line) {
       if (op === '&&' || op === '||') {
-        if (op === '||' && rn.k === 'num' && rn.v !== 0 && ln.k === 'bin') this.warn("después de '||' hay solo el número " + rn.v + ", que siempre es verdadero: la condición siempre se cumple. Para comparar con dos valores escribí x == 1 || x == 2", line, 'CTL-035');
+        if (op === '||' && rn.k === 'num' && rn.v !== 0 && ln.k === 'bin') this.warn("después de '||' hay solo el número " + rn.v + ", que siempre es verdadero: la condición siempre se cumple. Para comparar con dos valores escribe x == 1 || x == 2", line, 'CTL-035');
         const a = this.cond(ln); this.inSC++; const b = this.cond(rn); this.inSC--;
         return { c: '(' + a + (op === '&&' ? '&&' : '||') + b + ')', t: 'int', b: true };
       }
       const REL = ['<', '>', '<=', '>=', '==', '!='];
       const esRel = (x) => x && x.k === 'bin' && REL.indexOf(x.op) >= 0;
       if ((op === '&' || op === '|') && (esRel(ln) || esRel(rn))) this.warn("usaste '" + op + "' (operación de bits); para " + (op === '&' ? '"y"' : '"o"') + " lógico se escribe '" + op + op + "'", line, 'OPE-005');
-      if (REL.indexOf(op) >= 0 && esRel(ln) && op !== '==' && op !== '!=') this.warn("a < b < c no comprueba un rango: C evalúa primero la comparación de la izquierda (da 0 o 1). Escribilo con &&, por ejemplo: 0 < a && a < 3", line, 'CTL-034');
-      if (op === '^') this.warn("en C, '^' no es potencia (es XOR de bits): 2 ^ 3 da 1. Para potencias usá pow(2, 3) de <math.h>", line, 'OPE-031');
+      if (REL.indexOf(op) >= 0 && esRel(ln) && op !== '==' && op !== '!=') this.warn("a < b < c no comprueba un rango: C evalúa primero la comparación de la izquierda (da 0 o 1). Escríbelo con &&, por ejemplo: 0 < a && a < 3", line, 'CTL-034');
+      if (op === '^') this.warn("en C, '^' no es potencia (es XOR de bits): 2 ^ 3 da 1. Para potencias usa pow(2, 3) de <math.h>", line, 'OPE-031');
       if ((op === '==' || op === '!=') && ((ln.k === 'call' && (ln.name === 'strcmp' || ln.name === 'strncmp') && (numVal(rn) === 1 || numVal(rn) === -1)) || (rn.k === 'call' && (rn.name === 'strcmp' || rn.name === 'strncmp') && (numVal(ln) === 1 || numVal(ln) === -1)))) this.warn('strcmp no devuelve 1 ni -1: devuelve cualquier número positivo o negativo según las letras. Se compara con 0, o con > 0 y < 0', line, 'ARR-038');
       const esArr = (x) => { const i = x.k === 'id' ? this.lookup(x.name) : null; return !!(i && i.array); };
       if ((op === '==' || op === '!=') && ((esArr(ln) && (esArr(rn) || rn.k === 'str')) || (esArr(rn) && ln.k === 'str'))) this.cmpArr = (rn.k === 'str' || ln.k === 'str') ? 'str' : 'arr';
@@ -1473,7 +1473,7 @@
           if (t === 'uint') return { c: this.wrapInt(t, '$.idiv(' + av + '>>>0,' + bv + '>>>0,' + line + ')'), t, intdiv: true };
           return { c: this.wrapInt(t, '$.idiv(' + av + ',' + bv + ',' + line + ')'), t, intdiv: true };
         case '%':
-          if (FLOATLIKE.has(t)) { this.err("'%' solo funciona con enteros (para decimales usá fmod)", line, 'OPE-021'); return { c: '0', t: 'int' }; }
+          if (FLOATLIKE.has(t)) { this.err("'%' solo funciona con enteros (para decimales usa fmod)", line, 'OPE-021'); return { c: '0', t: 'int' }; }
           if (BIG.has(t)) return { c: this.wrapInt(t, '$.lmod(' + av + ',' + bv + ',' + line + ')'), t };
           if (t === 'uint') return { c: this.wrapInt(t, '$.imod(' + av + '>>>0,' + bv + '>>>0,' + line + ')'), t };
           return { c: this.wrapInt(t, '$.imod(' + av + ',' + bv + ',' + line + ')'), t };
@@ -1485,7 +1485,7 @@
       throw new Error('bin ' + op);
     }
     assignOp(n) {
-      if (n.op === '=' && n.l.k === 'id') { const inf = this.lookup(n.l.name); if (inf && inf.array) { this.err(inf.type === 'char' ? "a un arreglo de char no se le asigna un texto con '=': para copiar usá strcpy(" + n.l.name + ', "texto");' : "a un arreglo no se le asigna con '=': hay que asignar posición por posición, " + n.l.name + '[i] = valor;', n.line, inf.type === 'char' ? 'ARR-039' : 'ARR-022'); if (!(n.r.k === 'id' && this.lookup(n.r.name) && this.lookup(n.r.name).array)) this.expr(n.r); return { c: '0', t: 'int' }; } }
+      if (n.op === '=' && n.l.k === 'id') { const inf = this.lookup(n.l.name); if (inf && inf.array) { this.err(inf.type === 'char' ? "a un arreglo de char no se le asigna un texto con '=': para copiar usa strcpy(" + n.l.name + ', "texto");' : "a un arreglo no se le asigna con '=': hay que asignar posición por posición, " + n.l.name + '[i] = valor;', n.line, inf.type === 'char' ? 'ARR-039' : 'ARR-022'); if (!(n.r.k === 'id' && this.lookup(n.r.name) && this.lookup(n.r.name).array)) this.expr(n.r); return { c: '0', t: 'int' }; } }
       const lv = this.lvalue(n.l, true, true);
       this.checkConst(lv, this.rootName(n.l), n.line);
       let valueCode;
@@ -1496,7 +1496,7 @@
         const r = this.expr(n.r);
         this.autoAcum = pa; this.autoAcumUno = pu; this.copiaNode = pc;
         if (r.t === 'str' && lv.arrayElem && (lv.t === 'char' || lv.t === 'uchar')) { this.err("un elemento de un arreglo de char guarda una sola letra: se escribe con comillas simples ('A'), no con comillas dobles", n.line, 'ARR-058'); return { c: '0', t: 'int' }; }
-        if (r.t === 'str' && (lv.t === 'char' || lv.t === 'uchar' || INTLIKE.has(lv.t)) && !lv.arrayElem) { (lv.t === 'char' || lv.t === 'uchar' ? this.warn : this.err).call(this, lv.t === 'char' || lv.t === 'uchar' ? "a un char le asignás un texto entre comillas dobles: ¿es lo que querías guardar ahí? Pensá qué guarda cada tipo" : 'un ' + TNAME[lv.t] + ' guarda un número, no un texto', n.line, lv.t === 'char' || lv.t === 'uchar' ? 'ARR-047' : 'ARR-045'); this.markAssigned(lv); return { c: '0', t: 'int' }; }
+        if (r.t === 'str' && (lv.t === 'char' || lv.t === 'uchar' || INTLIKE.has(lv.t)) && !lv.arrayElem) { (lv.t === 'char' || lv.t === 'uchar' ? this.warn : this.err).call(this, lv.t === 'char' || lv.t === 'uchar' ? "a un char le asignas un texto entre comillas dobles: ¿es lo que querías guardar ahí? Piensa qué guarda cada tipo" : 'un ' + TNAME[lv.t] + ' guarda un número, no un texto', n.line, lv.t === 'char' || lv.t === 'uchar' ? 'ARR-047' : 'ARR-045'); this.markAssigned(lv); return { c: '0', t: 'int' }; }
         if (r.t === 'str') { this.err('los textos (char arrays) todavía no están soportados: solo se usan dentro de printf', n.line); return { c: '0', t: 'int' }; }
         if (r.t === 'void') { this.err('esa función no devuelve ningún valor', n.line, 'FUN-013'); return { c: '0', t: 'int' }; }
         this.checkIntDiv(r, lv.t, n.line);
@@ -1530,21 +1530,21 @@
       const H = { 'stdio.h': ['printf', 'scanf', 'getchar', 'putchar', 'puts', 'fprintf', 'fputs', 'putc', 'fputc', 'sprintf', 'snprintf', 'fgets', 'gets'], 'string.h': ['strlen', 'strcpy', 'strncpy', 'strcat', 'strncat', 'strcmp', 'strncmp'], 'math.h': ['sqrt', 'pow', 'fabs', 'floor', 'ceil', 'round', 'trunc', 'sin', 'cos', 'tan', 'asin', 'acos', 'atan', 'atan2', 'exp', 'log', 'log10', 'log2', 'cbrt', 'sinh', 'cosh', 'tanh', 'asinh', 'acosh', 'atanh', 'exp2', 'expm1', 'log1p', 'isnan', 'isinf', 'isfinite', 'signbit', 'rint', 'nearbyint', 'lround', 'llround', 'copysign', 'fdim', 'fmod', 'fmax', 'fmin', 'hypot'], 'stdlib.h': ['rand', 'srand', 'abs', 'labs', 'exit', 'system', 'atoi', 'atol', 'atof'], 'ctype.h': ['isdigit', 'isalpha', 'isalnum', 'isspace', 'isupper', 'islower', 'ispunct', 'isprint', 'isgraph', 'iscntrl', 'isxdigit', 'isblank', 'toupper', 'tolower'], 'time.h': ['time', 'clock'], 'conio.h': ['getch', 'getche'] };
       for (const h in H) if (H[h].indexOf(name) >= 0 && !this.incl.has(h)) {
         const k = 'inc|' + h; if (this.undeclared.has(k)) return; this.undeclared.add(k);
-        this.err('usás ' + name + ' pero falta #include <' + h + '> al principio del programa', line, INC_KB[name]);
+        this.err('usas ' + name + ' pero falta #include <' + h + '> al principio del programa', line, INC_KB[name]);
       }
     }
     needIncludeConst(nm, line) {
       const h = /^M_/.test(nm) || nm === 'INFINITY' || nm === 'NAN' || nm === 'HUGE_VAL' ? 'math.h' : /^(RAND_MAX|EXIT_SUCCESS|EXIT_FAILURE)$/.test(nm) ? 'stdlib.h' : /^(INT_|UINT_|LONG_|ULONG_|LLONG_|ULLONG_|SHRT_|USHRT_|CHAR_|UCHAR_)/.test(nm) ? 'limits.h' : /^(DBL_|FLT_)/.test(nm) ? 'float.h' : nm === 'CLOCKS_PER_SEC' ? 'time.h' : null;
       if (!h || this.incl.has(h)) return;
       const k = 'inc|' + h; if (this.undeclared.has(k)) return; this.undeclared.add(k);
-      this.err('usás ' + nm + ' pero falta #include <' + h + '> al principio del programa', line, INC_KB[nm]);
+      this.err('usas ' + nm + ' pero falta #include <' + h + '> al principio del programa', line, INC_KB[nm]);
     }
     call(n) {
       const name = n.name;
       const args = n.args;
       const usr = this.funcs.get(name);
       const vv = this.lookup(name);
-      if (vv && !vv.array && vv.scalar && usr) { this.err("'" + name + "' es una variable en este lugar y tapa a la función del mismo nombre: no se la puede llamar. Cambiá el nombre de la variable", n.line, 'FUN-027'); args.forEach((a) => { if (a.k !== 'str') this.expr(a); }); return { c: '0', t: usr.ret === 'void' ? 'void' : usr.ret }; }
+      if (vv && !vv.array && vv.scalar && usr) { this.err("'" + name + "' es una variable en este lugar y tapa a la función del mismo nombre: no se la puede llamar. Cambia el nombre de la variable", n.line, 'FUN-027'); args.forEach((a) => { if (a.k !== 'str') this.expr(a); }); return { c: '0', t: usr.ret === 'void' ? 'void' : usr.ret }; }
       if (usr && usr.node) return this.callUser(n, name, args);
       this.needInclude(name, n.line);
       const MATH1 = { sqrt: 'Math.sqrt', fabs: 'Math.abs', floor: 'Math.floor', ceil: 'Math.ceil', round: '$.round', trunc: 'Math.trunc', sin: 'Math.sin', cos: 'Math.cos', tan: 'Math.tan', asin: 'Math.asin', acos: 'Math.acos', atan: 'Math.atan', exp: 'Math.exp', log: 'Math.log', log10: 'Math.log10', log2: 'Math.log2', cbrt: 'Math.cbrt', sinh: 'Math.sinh', cosh: 'Math.cosh', tanh: 'Math.tanh', asinh: 'Math.asinh', acosh: 'Math.acosh', atanh: 'Math.atanh', exp2: '((x)=>Math.pow(2,x))', expm1: 'Math.expm1', log1p: 'Math.log1p' };
@@ -1726,11 +1726,11 @@
           const c = target.conv, t = r.t, d = this.describe(a, k);
           const isInt = INTLIKE.has(t), isFl = FLOATLIKE.has(t);
           const usr = a.k === 'call' ? this.funcs.get(a.name) : null;
-          if ('diuxXoc'.indexOf(c) >= 0 && isFl) pend.push({ dir: 'f', msg: "printf: '%" + target.len + c + "' espera un entero, pero " + d + ' es ' + t + ": usá '%f' (o '%.2f' para 2 decimales)", kb: usr && usr.node ? 'FUN-038' : a.k === 'call' ? 'PRE-045' : a.k === 'id' ? 'TIP-023' : 'PRF-003' });
-          else if ('fFeEgG'.indexOf(c) >= 0 && (isInt || t === 'str')) pend.push({ dir: 'i', msg: "printf: '%" + c + "' espera un número decimal, pero " + d + ' es ' + (t === 'str' ? 'un texto' : t === 'char' ? 'char' : 'entero (' + t + ')') + ": usá '%d'", kb: t === 'str' ? 'PRF-038' : a.k === 'call' && a.name === 'abs' ? 'TIP-034' : a.k === 'bin' && a.op === '/' ? 'PRF-036' : 'PRF-002' });
-          else if (c === 's' && t !== 'str') this.warn("printf: '%s' es para textos (un arreglo de char) y " + d + ' es un número (' + t + "): usá '%d' o '%f'", n.line, a.k === 'id' && t === 'char' ? 'PRF-006' : undefined);
+          if ('diuxXoc'.indexOf(c) >= 0 && isFl) pend.push({ dir: 'f', msg: "printf: '%" + target.len + c + "' espera un entero, pero " + d + ' es ' + t + ": usa '%f' (o '%.2f' para 2 decimales)", kb: usr && usr.node ? 'FUN-038' : a.k === 'call' ? 'PRE-045' : a.k === 'id' ? 'TIP-023' : 'PRF-003' });
+          else if ('fFeEgG'.indexOf(c) >= 0 && (isInt || t === 'str')) pend.push({ dir: 'i', msg: "printf: '%" + c + "' espera un número decimal, pero " + d + ' es ' + (t === 'str' ? 'un texto' : t === 'char' ? 'char' : 'entero (' + t + ')') + ": usa '%d'", kb: t === 'str' ? 'PRF-038' : a.k === 'call' && a.name === 'abs' ? 'TIP-034' : a.k === 'bin' && a.op === '/' ? 'PRF-036' : 'PRF-002' });
+          else if (c === 's' && t !== 'str') this.warn("printf: '%s' es para textos (un arreglo de char) y " + d + ' es un número (' + t + "): usa '%d' o '%f'", n.line, a.k === 'id' && t === 'char' ? 'PRF-006' : undefined);
           else if (c === 'c' && isFl) this.warn("printf: '%c' espera un carácter, pero " + d + ' es ' + t, n.line);
-          else if ((c === 'd' || c === 'i') && t === 'long' && target.len !== 'l' && target.len !== 'll') this.warn("printf: para un long usá '%ld'", n.line, 'TIP-027');
+          else if ((c === 'd' || c === 'i') && t === 'long' && target.len !== 'l' && target.len !== 'll') this.warn("printf: para un long usa '%ld'", n.line, 'TIP-027');
           else if ((c === 'd' || c === 'i') && target.len === '' && a.k === 'sizeof') this.warn("printf: sizeof da un resultado sin signo y largo, que no es un int: hay un formato propio para ese tipo", n.line, 'PRF-039');
           else if ((c === 'd' || c === 'i') && (target.len === 'l' || target.len === 'll') && (t === 'int' || t === 'short' || t === 'char')) this.warn("printf: '%" + target.len + c + "' es para long y " + d + ' es ' + t, n.line, 'PRF-046');
           else if (c === 'd' && t === 'str') this.warn("printf: '%d' espera un entero pero recibe un texto", n.line, 'PRF-038');
@@ -1757,7 +1757,7 @@
       else if (/\n\s*$/.test(fmt)) this.warn("no pongas '\\n' al final del scanf: hace que el programa espere un Enter de más", n.line, 'SCN-013');
       if (rest.length < specs.length) this.err('scanf pide leer ' + specs.length + ' valor(es) (hay ' + specs.length + " '%') pero solo tiene " + rest.length + " variable(s): falta una variable con '&' (por ejemplo scanf(\"%d %d\", &a, &b);)", n.line, rest.length === 0 ? 'SCN-033' : 'SCN-015');
       else if (rest.length !== specs.length) this.warn('scanf lee ' + specs.length + ' valor(es) por los % del texto, pero recibe ' + rest.length + ' variable(s)', n.line, 'SCN-016');
-      { const dir = rest.filter((x) => x.k === 'addr' && x.e && x.e.k === 'id').map((x) => x.e.name); const rep2 = dir.find((nm, i) => dir.indexOf(nm) !== i); if (rep2) this.warn("scanf lee dos valores en la misma variable '" + rep2 + "': el segundo pisa al primero", n.line, 'SCN-062'); }
+      { const dir = rest.filter((x) => x.k === 'addr' && x.e && x.e.k === 'id').map((x) => x.e.name); const rep2 = dir.find((nm, i) => dir.indexOf(nm) !== i); if (rep2) this.warn("scanf lee dos valores en la misma variable '" + rep2 + "': el segundo sobrescribe al primero", n.line, 'SCN-062'); }
       if (/^%c/.test(fmt) && this.scanfPend) this.warn("este scanf con %c va después de otra lectura: el Enter que quedó sin leer entra como carácter", n.line, 'SCN-010', ['SCN-011', 'SCN-034']);
       rest.forEach((a, k) => {
         if (specs[k] && (specs[k].conv === 's' || specs[k].conv[0] === '[')) {
@@ -1781,13 +1781,13 @@
           const t = lv.t, nm = a.e.k === 'id' ? "'" + a.e.name + "'" : 'la variable';
           const c = sp.conv;
           if ((c === 'd' || c === 'i' || c === 'u') && sp.len === '' && !(t === 'int' || t === 'uint')) {
-            if (FLOATLIKE.has(t)) this.warn("scanf: '%" + c + "' lee un entero pero " + nm + ' es ' + t + ": usá '%" + (t === 'float' ? 'f' : 'lf') + "'", n.line, 'SCN-004');
+            if (FLOATLIKE.has(t)) this.warn("scanf: '%" + c + "' lee un entero pero " + nm + ' es ' + t + ": usa '%" + (t === 'float' ? 'f' : 'lf') + "'", n.line, 'SCN-004');
             else this.warn("scanf: '%" + c + "' no corresponde al tipo " + t + ' de ' + nm, n.line, t === 'long' ? 'SCN-031' : t === 'char' ? 'SCN-008' : undefined);
           } else if ((c === 'd' || c === 'i') && (sp.len === 'l' || sp.len === 'll') && t !== 'long') this.warn("scanf: '%" + sp.len + c + "' es para long y " + nm + ' es ' + t, n.line, 'SCN-030');
           else if ('feEgG'.indexOf(c) >= 0) {
-            if (sp.len === '' && t === 'double') this.warn("scanf: '%" + c + "' lee un float pero " + nm + " es double: usá '%lf'", n.line, 'SCN-006');
-            else if (sp.len === 'l' && t === 'float') this.warn("scanf: '%l" + c + "' es para double pero " + nm + " es float: usá '%f'", n.line, 'SCN-007');
-            else if (INTLIKE.has(t)) this.warn("scanf: '%" + c + "' lee un decimal pero " + nm + ' es ' + t + ": usá '%d'", n.line, 'SCN-005');
+            if (sp.len === '' && t === 'double') this.warn("scanf: '%" + c + "' lee un float pero " + nm + " es double: usa '%lf'", n.line, 'SCN-006');
+            else if (sp.len === 'l' && t === 'float') this.warn("scanf: '%l" + c + "' es para double pero " + nm + " es float: usa '%f'", n.line, 'SCN-007');
+            else if (INTLIKE.has(t)) this.warn("scanf: '%" + c + "' lee un decimal pero " + nm + ' es ' + t + ": usa '%d'", n.line, 'SCN-005');
           } else if (c === 'c' && !(t === 'char' || t === 'int')) this.warn("scanf: '%c' no corresponde al tipo " + t + ' de ' + nm, n.line);
           else if (c === 'c' && t === 'int') this.warn("scanf: '%c' lee un carácter y " + nm + ' es int', n.line, 'SCN-009');
         }
@@ -2050,11 +2050,11 @@
         case 'decl': for (const v of n.vars) if (v.init && v.init.k !== 'list') this.reglaInit(v.name, v.init, v.line, n.type, v.dims.length > 0 || v.ptr); break;
         case 'call': this.reglaCall(n, st); break;
         case 'cast': this.reglaCast(n); break;
-        case 'comma': if (st.cond && par && (par.k === 'if' || par.k === 'while' || par.k === 'do') && par.c === n && this.sinEfectos(n.l)) this.w('OPE-026', 'la coma descarta la primera condición y el ' + (par.k === 'if' ? 'if' : par.k) + ' solo mira la segunda (' + txt(n.r) + '). Para pedir las dos usá &&.', n.line); else this.reglaComa(n, par); break;
+        case 'comma': if (st.cond && par && (par.k === 'if' || par.k === 'while' || par.k === 'do') && par.c === n && this.sinEfectos(n.l)) this.w('OPE-026', 'la coma descarta la primera condición y el ' + (par.k === 'if' ? 'if' : par.k) + ' solo mira la segunda (' + txt(n.r) + '). Para pedir las dos usa &&.', n.line); else this.reglaComa(n, par); break;
         default:
       }
       if (n.k === 'while' && n.c.k === 'incdec' && n.c.op === '--' && n.c.e.k === 'id') this.w('OPE-046', txt(n.c) + ' resta 1 antes de entrar al cuerpo del while, así que adentro ' + n.c.e.name + ' ya vale uno menos (con ' + n.c.e.name + ' = 3 el cuerpo ve 2, 1, 0 y no 3, 2, 1).', n.line);
-      if (n.k === 'for' && n.step && ['bin', 'id', 'num'].indexOf(n.step.k) >= 0 && this.sinEfectos(n.step)) this.w('OPE-048', 'el tercer campo del for (' + txt(n.step) + ') calcula un valor pero no lo guarda, así que la variable nunca cambia. Usá ' + (n.step.k === 'bin' && n.step.l.k === 'id' ? n.step.l.name + '++' : 'i++') + ' o ' + (n.step.k === 'bin' && n.step.l.k === 'id' ? n.step.l.name + ' = ' + txt(n.step) : 'i = i + 1') + '.', n.line);
+      if (n.k === 'for' && n.step && ['bin', 'id', 'num'].indexOf(n.step.k) >= 0 && this.sinEfectos(n.step)) this.w('OPE-048', 'el tercer campo del for (' + txt(n.step) + ') calcula un valor pero no lo guarda, así que la variable nunca cambia. Usa ' + (n.step.k === 'bin' && n.step.l.k === 'id' ? n.step.l.name + '++' : 'i++') + ' o ' + (n.step.k === 'bin' && n.step.l.k === 'id' ? n.step.l.name + ' = ' + txt(n.step) : 'i = i + 1') + '.', n.line);
     }
     reglaComa(n, par) { // X = 3,5;  (coma en lugar de punto decimal)
       if (n.l.k === 'assign' && n.l.op === '=' && n.l.r.k === 'num' && n.r.k === 'num' && !n.r.ch && !n.l.r.ch && par && par.k === 'expr') {
@@ -2124,8 +2124,8 @@
         if (d && (d !== rhs || op !== '=') && !(esInit && d === rhs)) this.avisoDiv(d, line);
       } else if (this.entero(tipoDest) && tipoDest !== 'bool') {
         if (op !== '=') return;
-        if (rhs.k === 'id' && this.decimal(this.tipoDe(rhs.name)) && this.esEscalar(rhs.name) && this.escrituras(rhs.name, ['scanf']).length) this.w('TIP-018', 'al guardar el decimal ' + rhs.name + ' en el entero ' + nombre + ' se pierden los decimales sin redondear: 3.99 se guarda como 3. Si lo querés así, escribí el cast (int) para que se note.', line);
-        else if (rhs.k === 'bin' && rhs.op === '*' && ((rhs.l.k === 'id' && this.decimal(this.tipo(rhs.l)) && numVal(rhs.r) !== null && [10, 100, 1000].indexOf(numVal(rhs.r)) >= 0) || (rhs.r.k === 'id' && this.decimal(this.tipo(rhs.r)) && numVal(rhs.l) !== null && [10, 100, 1000].indexOf(numVal(rhs.l)) >= 0))) this.w('TIP-019', txt(rhs) + ' puede dar un número como 28.999999 y al guardarlo en un entero se corta a 28. Sumá 0.5 antes de guardarlo para redondear.', line);
+        if (rhs.k === 'id' && this.decimal(this.tipoDe(rhs.name)) && this.esEscalar(rhs.name) && this.escrituras(rhs.name, ['scanf']).length) this.w('TIP-018', 'al guardar el decimal ' + rhs.name + ' en el entero ' + nombre + ' se pierden los decimales sin redondear: 3.99 se guarda como 3. Si lo quieres así, escribe el cast (int) para que se note.', line);
+        else if (rhs.k === 'bin' && rhs.op === '*' && ((rhs.l.k === 'id' && this.decimal(this.tipo(rhs.l)) && numVal(rhs.r) !== null && [10, 100, 1000].indexOf(numVal(rhs.r)) >= 0) || (rhs.r.k === 'id' && this.decimal(this.tipo(rhs.r)) && numVal(rhs.l) !== null && [10, 100, 1000].indexOf(numVal(rhs.l)) >= 0))) this.w('TIP-019', txt(rhs) + ' puede dar un número como 28.999999 y al guardarlo en un entero se corta a 28. Suma 0.5 antes de guardarlo para redondear.', line);
         // TIP-010 va aparte (char)
       }
       if (tipoDest === 'char' && op === '=') {
@@ -2181,14 +2181,14 @@
       }
       // OPE-043: && dentro de || sin paréntesis
       if (op === '||' || op === '&&') {
-        if (op === '||' && mentionsAnyId(n)) for (const c of [l, r]) if (c.k === 'bin' && c.op === '&&' && !c.par) { this.w('OPE-043', '&& se calcula antes que ||, así que la condición se agrupa distinto a como la leés (' + txt(n) + '). Usá paréntesis para dejarlo claro.', n.line); break; }
+        if (op === '||' && mentionsAnyId(n)) for (const c of [l, r]) if (c.k === 'bin' && c.op === '&&' && !c.par) { this.w('OPE-043', '&& se calcula antes que ||, así que la condición se agrupa distinto a como la lees (' + txt(n) + '). Usa paréntesis para dejarlo claro.', n.line); break; }
         // OPE-047: variable sola junto a una comparación
         for (const [a, b] of [[l, r], [r, l]]) {
           if (a.k === 'id' && b.k === 'bin' && REL_OPS.indexOf(b.op) >= 0 && !b.par && this.esEscalar(a.name) && !this.esBandera(a.name)) {
             const ta = this.tipoDe(a.name);
             if (ta === null || !(this.entero(ta) || this.decimal(ta))) continue;
             const otra = b.l.k === 'id' ? b.l : (b.r.k === 'id' ? b.r : null);
-            if (otra && otra.name !== a.name && esLit(b.l.k === 'id' ? b.r : b.l)) { this.w('OPE-047', txt(n) + ' solo pregunta si ' + a.name + ' es distinto de 0, no si cumple la comparación de ' + otra.name + '. Repetí la comparación con cada variable.', n.line); break; }
+            if (otra && otra.name !== a.name && esLit(b.l.k === 'id' ? b.r : b.l)) { this.w('OPE-047', txt(n) + ' solo pregunta si ' + a.name + ' es distinto de 0, no si cumple la comparación de ' + otra.name + '. Repite la comparación con cada variable.', n.line); break; }
           }
         }
       }
@@ -2199,7 +2199,7 @@
       // OPE-014 / OPE-015: negación sin paréntesis
       if (REL_OPS.indexOf(op) >= 0) {
         const neg = (x) => x.k === 'un' && x.op === '!' && !x.par && (x.e.k === 'id');
-        if ((neg(l) && !(r.k === 'un' && r.op === '!') && r.k !== 'num') || (neg(r) && !(l.k === 'un' && l.op === '!') && l.k !== 'num')) this.w('OPE-014', 'la negación se aplica solo a ' + (neg(l) ? l.e.name : r.e.name) + ', no a la comparación completa (' + txt(n) + '). Poné la comparación entre paréntesis o usá !=.', n.line);
+        if ((neg(l) && !(r.k === 'un' && r.op === '!') && r.k !== 'num') || (neg(r) && !(l.k === 'un' && l.op === '!') && l.k !== 'num')) this.w('OPE-014', 'la negación se aplica solo a ' + (neg(l) ? l.e.name : r.e.name) + ', no a la comparación completa (' + txt(n) + '). Pon la comparación entre paréntesis o usa !=.', n.line);
       }
       if (op === '%' && l.k === 'un' && l.op === '!' && !l.par && l.e.k === 'id') this.w('OPE-015', txt(n) + ' se calcula como (' + txt(l) + ') % ' + txt(r) + ', no como !(' + txt(l.e) + ' % ' + txt(r) + ').', n.line);
       // OPE-024: dividir un decimal por cero
@@ -2210,8 +2210,8 @@
           if (esLit(b) && numVal(b) === 0 && !(b.k === 'un')) {
             const ta = a.k === 'id' ? this.tipoDe(a.name) : this.tipo(a);
             if (ta !== null && SIN_SIGNO.has(ta) && (a.k === 'id' || (a.k === 'bin' && '+-*/%'.indexOf(a.op) >= 0 && (ta === 'uint' || ta === 'ulong')))) {
-              if (o === '>=') { this.w('TIP-021', txt(a) + ' es unsigned y nunca es negativo, así que ' + txt(a) + ' >= 0 siempre es verdadero. Si es la condición de un bucle, no termina nunca: usá un int.', n.line); break; }
-              if (o === '<') { this.w('TIP-022', txt(a) + ' es unsigned y nunca es negativo, así que la condición ' + txt(a) + ' < 0 no se cumple jamás. Compará los valores directamente (por ejemplo A < B).', n.line); break; }
+              if (o === '>=') { this.w('TIP-021', txt(a) + ' es unsigned y nunca es negativo, así que ' + txt(a) + ' >= 0 siempre es verdadero. Si es la condición de un lazo, no termina nunca: usa un int.', n.line); break; }
+              if (o === '<') { this.w('TIP-022', txt(a) + ' es unsigned y nunca es negativo, así que la condición ' + txt(a) + ' < 0 no se cumple jamás. Compara los valores directamente (por ejemplo A < B).', n.line); break; }
             }
           }
         }
@@ -2220,7 +2220,7 @@
           if (a.k === 'id' && this.tipoDe(a.name) === 'char' && this.esEscalar(a.name) && esLit(b) && !(b.k === 'num' && b.ch) && o !== '==' && o !== '!=') {
             const k = numVal(b); const sempre = (o === '<' && k > 127) || (o === '<=' && k >= 127) || (o === '>' && k < -128) || (o === '>=' && k <= -128);
             const nunca = (o === '>' && k >= 127) || (o === '>=' && k > 127) || (o === '<' && k <= -128) || (o === '<=' && k < -128);
-            if (sempre || nunca) { this.w('TIP-039', a.name + ' es char y solo va de -128 a 127: ' + a.name + ' ' + o + ' ' + k + ' es ' + (sempre ? 'siempre verdadera' : 'siempre falsa') + '. Usá un int para este contador.', n.line); break; }
+            if (sempre || nunca) { this.w('TIP-039', a.name + ' es char y solo va de -128 a 127: ' + a.name + ' ' + o + ' ' + k + ' es ' + (sempre ? 'siempre verdadera' : 'siempre falsa') + '. Usa un int para este contador.', n.line); break; }
           }
         }
         // TIP-041: int contra unsigned
@@ -2232,7 +2232,7 @@
         const a = this.plegar(l), b = this.plegar(r);
         if (a !== null && b !== null) {
           const v = op === '+' ? a + b : op === '-' ? a - b : a * b;
-          if (v > 2147483647n || v < -2147483648n) this.w('TIP-036', txt(n) + ' no entra en un int (llega hasta 2147483647): el resultado se pasa del máximo y da un valor equivocado. Usá long o decimales.', n.line);
+          if (v > 2147483647n || v < -2147483648n) this.w('TIP-036', txt(n) + ' no entra en un int (llega hasta 2147483647): el resultado se pasa del máximo y da un valor equivocado. Usa long o decimales.', n.line);
         }
       }
       // división con / en vez de % para la paridad / múltiplos: N / 2 == 0
@@ -2280,7 +2280,7 @@
         const x = this.restoTermino(t); if (x) terms.push(x);
       }
       for (const a of terms) for (const b of terms) if (a.nz && !b.nz && a.key === b.key && b.m % a.m === 0) {
-        this.w('LOG-013', 'unidas por && las condiciones ' + txt(a.t) + ' y ' + txt(b.t) + ' no pueden cumplirse a la vez: un múltiplo de ' + b.m + ' siempre es múltiplo de ' + a.m + '. Revisá qué condiciones van con && y cuáles con ||.', n.line);
+        this.w('LOG-013', 'unidas por && las condiciones ' + txt(a.t) + ' y ' + txt(b.t) + ' no pueden cumplirse a la vez: un múltiplo de ' + b.m + ' siempre es múltiplo de ' + a.m + '. Revisa qué condiciones van con && y cuáles con ||.', n.line);
         return;
       }
     }
@@ -2296,7 +2296,7 @@
       const dj = this.disj(n); if (dj.length < 2) return;
       const dist = new Map();
       for (const t of dj) { const c = this.cmp(t); if (c && c.op === '!=') { if (!dist.has(c.v)) dist.set(c.v, new Set()); dist.get(c.v).add(c.k); } }
-      for (const [v, ks] of dist) if (ks.size >= 2) { const arr = Array.from(ks); this.w('OPE-011', v + ' != ' + arr[0] + ' || ' + v + ' != ' + arr[1] + ' es siempre verdadera: cualquier número es distinto de ' + arr[0] + ' o distinto de ' + arr[1] + '. Para "ni ' + arr[0] + ' ni ' + arr[1] + '" usá &&.', n.line); return; }
+      for (const [v, ks] of dist) if (ks.size >= 2) { const arr = Array.from(ks); this.w('OPE-011', v + ' != ' + arr[0] + ' || ' + v + ' != ' + arr[1] + ' es siempre verdadera: cualquier número es distinto de ' + arr[0] + ' o distinto de ' + arr[1] + '. Para "ni ' + arr[0] + ' ni ' + arr[1] + '" usa &&.', n.line); return; }
     }
     // ---------- if ----------
     reglaIf(s, st, par) {
@@ -2304,7 +2304,7 @@
       // LOG-008: lado verdadero vacío
       if (s.a.k === 'block' && s.a.body.length === 0 && s.b && s.b.k !== 'empty' && !(s.b.k === 'block' && s.b.body.length === 0)) this.w('LOG-008', 'el lado verdadero del if está vacío, así que cuando se cumple (' + txt(s.c) + ') no pasa nada. Falta decir qué hace el programa en ese caso.', s.line);
       // LOG-010: else colgante
-      if (s.a.k === 'if' && !s.b && s.a.b) this.w('LOG-010', 'el else se pega al if más cercano (el de ' + txt(s.a.c) + '), no al de ' + txt(s.c) + ', aunque lo hayas escrito alineado con el primero. Usá llaves para decir a cuál pertenece.', s.line);
+      if (s.a.k === 'if' && !s.b && s.a.b) this.w('LOG-010', 'el else se pega al if más cercano (el de ' + txt(s.a.c) + '), no al de ' + txt(s.c) + ', aunque lo hayas escrito alineado con el primero. Usa llaves para decir a cuál pertenece.', s.line);
       // LOG-011: rangos en orden incorrecto (cabeza de la cadena)
       if (!esElseIf && s.b && s.b.k === 'if') this.cadenaRangos(s);
       // LOG-007: condición invertida en mayor/menor
@@ -2313,8 +2313,8 @@
         const menor = cc.op[0] === '<' ? cc.l.name : cc.r.name, mayor = cc.op[0] === '<' ? cc.r.name : cc.l.name;
         const as = stmtsOf(s.a).length === 1 ? this.asigSimple(stmtsOf(s.a)[0]) : null;
         if (as && as.r.k === 'id') {
-          if (/^(MAYOR|MAX|MAXIMO)$/i.test(as.l.name) && as.r.name === menor) this.w('LOG-007', 'la condición ' + txt(cc) + ' es verdadera cuando ' + menor + ' es el menor, pero en ese caso guardás ' + menor + ' en ' + as.l.name + '. Los lados V y F están cruzados.', s.line);
-          else if (/^(MENOR|MIN|MINIMO)$/i.test(as.l.name) && as.r.name === mayor) this.w('LOG-007', 'la condición ' + txt(cc) + ' es verdadera cuando ' + mayor + ' es el mayor, pero en ese caso guardás ' + mayor + ' en ' + as.l.name + '. Los lados V y F están cruzados.', s.line);
+          if (/^(MAYOR|MAX|MAXIMO)$/i.test(as.l.name) && as.r.name === menor) this.w('LOG-007', 'la condición ' + txt(cc) + ' es verdadera cuando ' + menor + ' es el menor, pero en ese caso guardas ' + menor + ' en ' + as.l.name + '. Los lados V y F están cruzados.', s.line);
+          else if (/^(MENOR|MIN|MINIMO)$/i.test(as.l.name) && as.r.name === mayor) this.w('LOG-007', 'la condición ' + txt(cc) + ' es verdadera cuando ' + mayor + ' es el mayor, pero en ese caso guardas ' + mayor + ' en ' + as.l.name + '. Los lados V y F están cruzados.', s.line);
         }
       }
       // LOG-050: mayor de tres sin comparar los dos últimos
@@ -2335,7 +2335,7 @@
       }
       void igual0;
       const rem = cc.k === 'id' && this.fi.rem.has(cc.name) ? this.fi.rem.get(cc.name) : (cc.k === 'bin' && cc.op === '%' && numVal(cc.r) >= 2 && cc.l.k !== 'num' && cc.l.k !== 'un' ? { e: cc, m: numVal(cc.r), key: txt(cc.l) } : null);
-      if (rem && sT && MULT_TEXTO.test(sT) && !/\bno\b|impar/i.test(sT) && /\bno\b|impar/i.test(sF + ' ')) this.w('LOG-015', 'if (' + txt(cc) + ') es verdadero cuando el resto es distinto de 0, es decir, cuando NO es múltiplo. Comparalo con 0 para que se lea como lo pensaste.', s.line);
+      if (rem && sT && MULT_TEXTO.test(sT) && !/\bno\b|impar/i.test(sT) && /\bno\b|impar/i.test(sF + ' ')) this.w('LOG-015', 'if (' + txt(cc) + ') es verdadero cuando el resto es distinto de 0, es decir, cuando NO es múltiplo. Compáralo con 0 para que se lea como lo pensaste.', s.line);
       // LOG-009 va en lista(); LOG-011 en cadenaRangos
     }
     cadenaRangos(head) {
@@ -2345,7 +2345,7 @@
       for (let k = 1; k < ramas.length; k++) {
         if (!ivs[k] || ivVacio(ivs[k].iv)) continue;
         for (let j = 0; j < k; j++) if (ivs[j] && ivs[j].v === ivs[k].v && ivEn(ivs[k].iv, ivs[j].iv)) {
-          this.w('LOG-011', 'nunca se llega a ' + txt(ramas[k].c) + ', porque todo lo que cumple eso ya entró en ' + txt(ramas[j].c) + ' más arriba. Probá primero la condición más exigente.', ramas[k].line);
+          this.w('LOG-011', 'nunca se llega a ' + txt(ramas[k].c) + ', porque todo lo que cumple eso ya entró en ' + txt(ramas[j].c) + ' más arriba. Prueba primero la condición más exigente.', ramas[k].line);
           break;
         }
       }
@@ -2362,7 +2362,7 @@
         // LOG-032: if sin llaves y otra instrucción en la misma línea
         if (s.k === 'if' && nx && !(blk && blk.line === s.line) && !(i > 0 && L[i - 1].line === s.line)) {
           let last = s.b || s.a; while (last && last.k === 'if') last = last.b || last.a;
-          if (last && last.k === 'expr' && last.line === nx.line && last.line > 0) this.w('LOG-032', 'sin llaves, el if solo controla la primera instrucción, y lo que sigue en la misma línea (' + (nx.k === 'expr' ? txt(nx.e) : nx.k) + ') se ejecuta siempre. Poné llaves para agrupar lo que depende de la condición.', s.line);
+          if (last && last.k === 'expr' && last.line === nx.line && last.line > 0) this.w('LOG-032', 'sin llaves, el if solo controla la primera instrucción, y lo que sigue en la misma línea (' + (nx.k === 'expr' ? txt(nx.e) : nx.k) + ') se ejecuta siempre. Pon llaves para agrupar lo que depende de la condición.', s.line);
         }
         // LOG-009: ifs sueltos donde va else
         if (s.k === 'if' && !s.b && nx && nx.k === 'if' && nx.b) {
@@ -2374,7 +2374,7 @@
           const call = s.body.e.k === 'call' && s.body.e.name === 'scanf' ? s.body.e : null;
           if (call) for (const V of this.scanVars(call)) if (this.esEscalar(V)) {
             const usa = (nx.k === 'if' && mentions(nx.c, V)) || (nx.k === 'expr' && nx.e.k === 'assign' && mentions(nx.e.r, V));
-            if (usa) { this.w('LOG-034', 'sin llaves, el for repite solo el scanf, y lo que sigue (' + (nx.k === 'if' ? 'if (' + txt(nx.c) + ')' : txt(nx.e)) + ') se hace una sola vez con el último dato. Encerrá todo el cuerpo del lazo entre llaves.', s.line); break; }
+            if (usa) { this.w('LOG-034', 'sin llaves, el for repite solo el scanf, y lo que sigue (' + (nx.k === 'if' ? 'if (' + txt(nx.c) + ')' : txt(nx.e)) + ') se hace una sola vez con el último dato. Encierra todo el cuerpo del lazo entre llaves.', s.line); break; }
           }
         }
         // LOG-040: valor inicial que impide entrar al lazo
@@ -2401,7 +2401,7 @@
           for (const V of cuerpo.length && this.esExprCall(cuerpo[0], 'scanf') ? this.scanVars(cuerpo[0].e) : []) {
             if (!mentions(s.c, V) || !this.esEscalar(V)) continue;
             let prev = null; for (let m = i - 1; m >= 0; m--) if (mentions(L[m], V)) { prev = L[m]; break; }
-            if (prev && this.scanfDe(prev, V)) { this.w('LOG-042', 'leés el siguiente dato con scanf antes de procesar el actual, así que el primero que leíste antes del while (línea ' + prev.line + ') se pierde. Primero se procesa el dato leído y después se lee el siguiente.', cuerpo[0].line); break; }
+            if (prev && this.scanfDe(prev, V)) { this.w('LOG-042', 'lees el siguiente dato con scanf antes de procesar el actual, así que el primero que leíste antes del while (línea ' + prev.line + ') se pierde. Primero se procesa el dato leído y después se lee el siguiente.', cuerpo[0].line); break; }
           }
         }
         // LOG-041: centinela procesado como si fuera un dato
@@ -2425,7 +2425,7 @@
             if (a && a.l.k === 'id' && a.l.name === R && ((a.op === '-=' && a.r.k === 'id' && a.r.name === D) || (a.op === '=' && a.r.k === 'bin' && a.r.op === '-' && a.r.l.k === 'id' && a.r.l.name === R && a.r.r.k === 'id' && a.r.r.name === D))) resta = true;
             if (this.esInc(t)) cuenta = true;
           }
-          if (resta && cuenta) this.w('LOG-045', 'con ' + txt(s.c) + ', cuando ' + R + ' vale justo ' + D + ' ya no resta y el resto queda igual al divisor (10 / 5 da cociente 1 y resto 5). El resto nunca puede ser igual al divisor: probá con >=.', s.line);
+          if (resta && cuenta) this.w('LOG-045', 'con ' + txt(s.c) + ', cuando ' + R + ' vale justo ' + D + ' ya no resta y el resto queda igual al divisor (10 / 5 da cociente 1 y resto 5). El resto nunca puede ser igual al divisor: prueba con >=.', s.line);
         }
         // LOG-047: se pisa el dividendo y se muestra como si fuera el original
         if (s.k === 'while' && s.c.k === 'bin' && (s.c.op === '>=' || s.c.op === '>') && s.c.l.k === 'id' && s.c.r.k === 'id') {
@@ -2433,7 +2433,7 @@
           const pisa = stmtsOf(s.body).some((t) => { const a = t.k === 'expr' && t.e.k === 'assign' ? t.e : null; return a && a.l.k === 'id' && a.l.name === R && ((a.op === '-=' && a.r.k === 'id' && a.r.name === D) || (a.op === '=' && a.r.k === 'bin' && a.r.op === '-' && a.r.l.k === 'id' && a.r.l.name === R && a.r.r.k === 'id' && a.r.r.name === D)); });
           if (pisa && this.escrituras(R, ['scanf']).length && this.escrituras(R, ['scanf'])[0].seq < this.seqIni(s)) {
             for (let m = i + 1; m < L.length; m++) {
-              if (this.esExprCall(L[m], 'printf') && L[m].e.args[0].k === 'str' && L[m].e.args[1] && L[m].e.args[1].k === 'id' && L[m].e.args[1].name === R && L[m].e.args[2] && L[m].e.args[2].k === 'id' && L[m].e.args[2].name === D && /%\w*\s*\/\s*%/.test(L[m].e.args[0].v)) { this.w('LOG-047', R + ' terminó valiendo el resto, no el dividendo original, y el mensaje lo muestra como si fuera el dividendo. Restá sobre una copia de ' + R + '.', L[m].line); break; }
+              if (this.esExprCall(L[m], 'printf') && L[m].e.args[0].k === 'str' && L[m].e.args[1] && L[m].e.args[1].k === 'id' && L[m].e.args[1].name === R && L[m].e.args[2] && L[m].e.args[2].k === 'id' && L[m].e.args[2].name === D && /%\w*\s*\/\s*%/.test(L[m].e.args[0].v)) { this.w('LOG-047', R + ' terminó valiendo el resto, no el dividendo original, y el mensaje lo muestra como si fuera el dividendo. Resta sobre una copia de ' + R + '.', L[m].line); break; }
             }
           }
         }
@@ -2461,7 +2461,7 @@
           for (let j = i + 1; j < L.length; j++) {
             if (!mentions(L[j], V)) continue;
             const as = this.asigSimple(L[j]);
-            if (as && as.l.name === V && !mentions(as.r, V) && as.r.k === 'bin' && this.sinEfectos(as.r) && this.leidas(V, this.seqFin(L[j])) === 0 && this.escrituras(V).every((w) => w.seq <= this.seqFin(L[j]))) this.w('LOG-005', 'mostrás ' + V + ' antes de calcularla en la línea ' + L[j].line + ' (' + txt(as) + '), por eso aparece el valor viejo. Primero se calcula y después se muestra.', s.line);
+            if (as && as.l.name === V && !mentions(as.r, V) && as.r.k === 'bin' && this.sinEfectos(as.r) && this.leidas(V, this.seqFin(L[j])) === 0 && this.escrituras(V).every((w) => w.seq <= this.seqFin(L[j]))) this.w('LOG-005', 'muestras ' + V + ' antes de calcularla en la línea ' + L[j].line + ' (' + txt(as) + '), por eso aparece el valor viejo. Primero se calcula y después se muestra.', s.line);
             break;
           }
         }
@@ -2478,7 +2478,7 @@
           if (!leidos.length) continue;
           const antes = leidos.some((v) => this.escrituras(v, ['scanf']).some((w) => w.seq < this.seqIni(s)));
           const reasig = this.escrituras(S).some((w) => w.seq > this.seqFin(s));
-          if (!antes && !reasig && this.leidas(S, this.seqFin(L[j])) > 0) this.w('LOG-006', 'calculás ' + txt(as) + ' antes de leer ' + leidos.join(' y ') + ' con scanf (línea ' + L[j].line + '), por eso la cuenta usa los valores viejos. Leé los datos primero y calculá después.', s.line);
+          if (!antes && !reasig && this.leidas(S, this.seqFin(L[j])) > 0) this.w('LOG-006', 'calculas ' + txt(as) + ' antes de leer ' + leidos.join(' y ') + ' con scanf (línea ' + L[j].line + '), por eso la cuenta usa los valores viejos. Lee los datos primero y calcula después.', s.line);
           break;
         }
       }
@@ -2514,7 +2514,7 @@
       }
       // LOG-035: se suma i en lugar del dato leído
       if (fl && fl.sube && leidoEnLazo.length && leidoEnLazo.every((v) => this.leidas(v) === 0)) {
-        for (const t of stmtsOf(cuerpo)) { const ac = this.acum(t); if (ac && ac.e.k === 'id' && ac.e.name === fl.v) { this.w('LOG-035', 'sumás ' + fl.v + ' (el número de vuelta) en lugar del dato leído ' + leidoEnLazo[0] + ': ' + leidoEnLazo[0] + ' se lee pero no se usa.', t.line); break; } }
+        for (const t of stmtsOf(cuerpo)) { const ac = this.acum(t); if (ac && ac.e.k === 'id' && ac.e.name === fl.v) { this.w('LOG-035', 'sumas ' + fl.v + ' (el número de vuelta) en lugar del dato leído ' + leidoEnLazo[0] + ': ' + leidoEnLazo[0] + ' se lee pero no se usa.', t.line); break; } }
       }
       // LOG-037: se suma una constante en lugar del dato leído (cualquier lazo)
       if (leidoEnLazo.length && leidoEnLazo.every((v) => this.leidas(v) === 0)) {
@@ -2538,7 +2538,7 @@
           else if (x.k === 'assign' && x.l.k === 'id' && x.l.name === fl.v && (x.op === '+=' || x.op === '-=' || (x.op === '=' && x.r.k === 'bin' && (x.r.op === '+' || x.r.op === '-') && x.r.l.k === 'id' && x.r.l.name === fl.v))) l53 = x;
           return !l53;
         });
-        if (l53) this.w('LOG-053', txt(l53) + ' dentro del cuerpo se suma al cambio que ya hace el for (' + txt(s.step) + '), y el lazo da menos vueltas de las que esperás. Dejá que el for cuente solo.', l53.line);
+        if (l53) this.w('LOG-053', txt(l53) + ' dentro del cuerpo se suma al cambio que ya hace el for (' + txt(s.step) + '), y el lazo da menos vueltas de las que esperas. Deja que el for cuente solo.', l53.line);
       }
       // LOG-024: acumulador que se reinicia en cada vuelta
       if (cuerpo.k === 'block') {
@@ -2612,7 +2612,7 @@
       });
       for (const { acc, cnt } of pares) {
         each(this.fi.f.body, (x) => {
-          if (x.k === 'bin' && x.op === '/' && x.l.k === 'id' && x.l.name === acc && x.r.k === 'id' && x.r.name !== cnt && this.fi.sq.get(x) > this.seqFin(s) && mentions(s.c, x.r.name) && this.esEscalar(x.r.name)) this.w('LOG-028', 'dividís ' + acc + ' (la suma de los que cumplen) por ' + x.r.name + ' (todos los datos) en vez de por ' + cnt + ' (los que se sumaron). El promedio da menos de lo que corresponde.', x.line);
+          if (x.k === 'bin' && x.op === '/' && x.l.k === 'id' && x.l.name === acc && x.r.k === 'id' && x.r.name !== cnt && this.fi.sq.get(x) > this.seqFin(s) && mentions(s.c, x.r.name) && this.esEscalar(x.r.name)) this.w('LOG-028', 'divides ' + acc + ' (la suma de los que cumplen) por ' + x.r.name + ' (todos los datos) en vez de por ' + cnt + ' (los que se sumaron). El promedio da menos de lo que corresponde.', x.line);
         });
       }
     }
@@ -2629,7 +2629,7 @@
     [/no está declarada/, 'no-declarada'], [/ya fue declarada/, 'redeclarada'], [/antes de darle un valor/, 'sin-inicializar'],
     [/es const/, 'const-modificada'], [/asignación '='/, 'asignacion-en-condicion'], [/división es entre dos enteros/, 'division-entera'], [/división por cero/, 'division-cero'],
     [/falta #include|biblioteca <|conio\.h|#include|#define|directiva|#error|macro/, 'preprocesador'], [/char arrays|textos/, 'texto-no-soportado'], [/todavía no está soportado|todavía no están soportados/, 'no-soportado'], [/sin ejecutar 'return'/, 'sin-return'], [/prototipo/, 'prototipo'], [/antes de estar definida/, 'sin-prototipo'],
-    [/termina en ';'/, 'cuerpo-vacio'], [/esta sentencia/, 'sin-efecto'], [/'break'|'continue'/, 'break-fuera'], [/switch|'case'|'default'/, 'switch'],
+    [/termina en ';'/, 'cuerpo-vacio'], [/esta instrucción (compara|no hace nada)/, 'sin-efecto'], [/'break'|'continue'/, 'break-fuera'], [/switch|'case'|'default'/, 'switch'],
     [/siempre es verdadero/, 'condicion-constante'], [/arreglo|índice/, 'arreglo'], [/función|argumento/, 'funcion'],
     [/se esperaba|falta una expresión|carácter no válido|carácter invisible|no es un tipo|no existe en C|no se escribe|no se entiende|símbolo|número .* no es válido|literal/, 'sintaxis']
   ];
