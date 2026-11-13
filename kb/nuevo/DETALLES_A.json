@@ -1,0 +1,420 @@
+[
+ {
+  "elemento": "int",
+  "detalle": "Guarda números enteros, es decir, sin coma ni decimales: 0, 25, -7.\nSe usa para edades, cantidades, goles, contadores y todo lo que se cuenta de a uno.\nOcupa 4 bytes (el byte es la unidad con que se mide la memoria), por eso solo llega de -2147483648 a 2147483647.\nSi una cuenta se pasa de ese máximo, el resultado deja de ser confiable: suele aparecer un número negativo sin ningún aviso.\nDetalle que confunde: una división entre dos int da otro int. 7/2 da 3, no 3.5, porque se descarta la parte decimal.\nError típico: mostrar un int con %f. gcc avisa y en pantalla sale un número sin sentido; un int se muestra con %d.",
+  "ocasiones": [
+   {
+    "cuando": "Al dividir dos enteros.",
+    "que_es": "El resultado también es entero: se pierde la parte decimal.",
+    "ejemplo": "int A=7, B=2;\nprintf(\"%d\\n\",A/B);"
+   }
+  ],
+  "relacionados": [
+   "short",
+   "long",
+   "unsigned",
+   "%d",
+   "%f"
+  ]
+ },
+ {
+  "elemento": "float",
+  "detalle": "Guarda números con coma, como 36.5 o 1.75.\nOcupa 4 bytes y mantiene unas 6 o 7 cifras correctas; de ahí en adelante el número se redondea: 123456789.0 se guarda como 123456792.\nPor eso muchos decimales no quedan exactos. 0.1 se guarda como un valor muy cercano, y compararlo con == puede dar falso.\nPara mostrarlo se usa %f (o %.2f para dos decimales) y para leerlo con scanf también %f.\nDetalle que confunde: un número escrito en el programa, como 3.14, es de tipo double. Para que sea float se le agrega una f al final: 3.14f.\nError típico: leerlo con %lf en scanf. gcc avisa que el formato espera un double y el valor guardado queda mal.",
+  "ocasiones": [
+   {
+    "cuando": "Al comparar con un número escrito en el programa.",
+    "que_es": "El float 0.1 y el double 0.1 no son iguales, porque cada uno se redondea distinto.",
+    "ejemplo": "float T=0.1;\nprintf(\"%d %d\\n\",T==0.1,T==0.1f);"
+   }
+  ],
+  "relacionados": [
+   "double",
+   "%f",
+   "%lf",
+   "math.h"
+  ]
+ },
+ {
+  "elemento": "double",
+  "detalle": "Guarda números con coma, igual que float, pero con más precisión.\nOcupa 8 bytes y mantiene unas 15 o 16 cifras correctas, así que alcanza para casi cualquier cuenta de la materia.\nPara mostrarlo se usa %f, pero para leerlo con scanf hay que usar %lf: es la diferencia entre printf y scanf que más se olvida.\nDetalle que confunde: aun con tantas cifras hay números que no quedan exactos. 0.1+0.2 no es exactamente 0.3, y por eso comparar decimales con == es poco confiable.\nFunciones de math.h como sqrt o pow trabajan con double.\nError típico: escribir scanf(\"%f\",&PRECIO) con PRECIO double. gcc avisa que el formato espera un float y el valor queda mal.",
+  "ocasiones": [
+   {
+    "cuando": "Al comparar resultados de cuentas con decimales.",
+    "que_es": "La suma da un valor apenas distinto de 0.3, por lo que la comparación da falso.",
+    "ejemplo": "double A=0.1+0.2;\nprintf(\"%d\\n\",A==0.3);\nprintf(\"%.17f\\n\",A);"
+   }
+  ],
+  "relacionados": [
+   "float",
+   "%f",
+   "%lf",
+   "math.h"
+  ]
+ },
+ {
+  "elemento": "char",
+  "detalle": "Guarda un solo carácter: una letra, un dígito o un símbolo.\nPor dentro es un número de 1 byte: a cada carácter le toca un código (a la A le toca el 65). Con %c se muestra la letra y con %d el código.\nEl carácter se escribe entre comillas simples: 'A'. Las comillas dobles, \"A\", forman un texto, que es otra cosa.\nComo es un número, se puede sumar: 'A'+1 vale 66, que es el código de la B.\nCon scanf(\"%c\",&L) puede pasar que lea el Enter que quedó de una lectura anterior; escribir un espacio antes, \" %c\", lo saltea.\nError típico: char L=\"A\"; gcc avisa que se está guardando un texto en un char.",
+  "ocasiones": [
+   {
+    "cuando": "Para guardar una letra.",
+    "que_es": "Se muestra como letra con %c y como número con %d.",
+    "ejemplo": "char L='A';\nprintf(\"%c %d\\n\",L,L);"
+   },
+   {
+    "cuando": "Para hacer cuentas con letras.",
+    "que_es": "Sumarle 2 a la A da el código de la C.",
+    "ejemplo": "char L='A'+2;\nprintf(\"%c\\n\",L);"
+   }
+  ],
+  "relacionados": [
+   "%c",
+   "arreglo",
+   "texto"
+  ]
+ },
+ {
+  "elemento": "void",
+  "detalle": "Significa \"nada\" o \"sin valor\".\nSe escribe antes del nombre de una función para indicar que hace su trabajo (por ejemplo mostrar algo en pantalla) pero no devuelve ningún resultado.\nTambién puede ir entre los paréntesis, como en SALUDAR(void), para decir que la función no recibe datos; dejar los paréntesis vacíos, como en int main(), es lo habitual.\nDetalle que confunde: no existen variables de tipo void. Solo sirve para decir que una función no devuelve ni recibe nada.\nUna función void se llama como una instrucción suelta: SALUDAR(); no se puede guardar en una variable ni usar dentro de una cuenta.\nError típico: int X=SALUDAR(); gcc da error: \"void value not ignored as it ought to be\".",
+  "ocasiones": [
+   {
+    "cuando": "Antes del nombre de una función que no devuelve valor.",
+    "que_es": "La función muestra algo y termina; no entrega ningún resultado.",
+    "ejemplo": "void SALUDAR(){\n printf(\"Hola\\n\");\n}"
+   }
+  ],
+  "relacionados": [
+   "return",
+   "prototipo",
+   "main"
+  ]
+ },
+ {
+  "elemento": "short",
+  "detalle": "Guarda enteros más chicos que int: ocupa 2 bytes y va de -32768 a 32767.\nSirve para ahorrar memoria cuando hay muchísimos valores chicos; en un programa de la materia casi siempre alcanza con int.\nPara mostrarlo con printf alcanza con %d, y también se puede usar %hd. Para leerlo con scanf hay que usar %hd.\nDetalle que confunde: al pasarse del máximo el valor da la vuelta. 32767 más 1 queda en -32768, sin ningún aviso.\nError típico: leerlo con scanf(\"%d\",&T). gcc avisa que %d espera un int, y como un short es más chico, la lectura escribe de más en la memoria.",
+  "ocasiones": [
+   {
+    "cuando": "Al pasarse del máximo.",
+    "que_es": "El valor da la vuelta y pasa al otro extremo.",
+    "ejemplo": "short T=32767;\nT=T+1;\nprintf(\"%hd\\n\",T);"
+   }
+  ],
+  "relacionados": [
+   "int",
+   "unsigned",
+   "%hd",
+   "long"
+  ]
+ },
+ {
+  "elemento": "long",
+  "detalle": "Guarda enteros más grandes que int. En este editor (como gcc en Linux) ocupa 8 bytes y llega hasta 9223372036854775807.\nSe usa cuando una cuenta puede pasar los 2147483647 de un int, por ejemplo una cantidad de segundos de muchos años.\nSe muestra con %ld y se lee con %ld. Al escribir un número grande conviene agregar una L: 3000000000L.\nDetalle que confunde: el tamaño depende de la computadora. En Windows un long ocupa 4 bytes; en Linux, 8.\nOtro detalle: 100000*100000 son dos int, así que la cuenta se hace como int y se pasa de rango antes de guardarse en el long. gcc avisa del desborde; con 100000L*100000 la cuenta ya se hace como long.\nError típico: mostrarlo con %d. gcc avisa que %d espera un int y pueden salir valores equivocados.",
+  "ocasiones": [
+   {
+    "cuando": "Cuando la cuenta se hace entre dos int.",
+    "que_es": "El producto se calcula como int y se desborda antes de llegar al long.",
+    "ejemplo": "long A=100000*100000;\nlong B=100000L*100000;\nprintf(\"%ld %ld\\n\",A,B);"
+   }
+  ],
+  "relacionados": [
+   "int",
+   "long long",
+   "unsigned",
+   "%ld",
+   "%lu"
+  ]
+ },
+ {
+  "elemento": "long long",
+  "detalle": "Guarda enteros de al menos 8 bytes, hasta 9223372036854775807.\nSe usa cuando el número es demasiado grande para un int, como en los cálculos de muchos segundos o de montos enormes.\nSe muestra y se lee con %lld, y los números se escriben con LL al final: 3000000000LL.\nDetalle que confunde: en este editor ocupa lo mismo que long, pero no en todas las computadoras. El estándar de C garantiza al menos 8 bytes para long long, y para long solo garantiza 4.\nPor eso, si el programa tiene que andar igual en Windows, long long es la opción segura para valores grandes.\nError típico: usar %ld o %d para mostrarlo. gcc avisa que el formato no coincide.",
+  "ocasiones": [
+   {
+    "cuando": "Para una cuenta con valores muy grandes.",
+    "que_es": "Con LL la cuenta se hace con 8 bytes y no se desborda.",
+    "ejemplo": "long long TOTAL=3000000000LL*3;\nprintf(\"%lld\\n\",TOTAL);"
+   }
+  ],
+  "relacionados": [
+   "long",
+   "int",
+   "%lld"
+  ]
+ },
+ {
+  "elemento": "unsigned",
+  "detalle": "Se escribe antes de un tipo entero y significa \"sin signo\": solo guarda el cero y los positivos.\nComo no reserva lugar para el signo, llega al doble de alto: un unsigned int va de 0 a 4294967295.\nEscrito solo, unsigned equivale a unsigned int. Se muestra con %u (y %lu si es unsigned long).\nDetalle que confunde: restar de más no da un negativo. Con unsigned, 3-4 da 4294967295, porque el valor da la vuelta desde cero.\nPor eso -1<1u da falso: el -1 se convierte a unsigned y pasa a ser enorme. Mezclar con int en una comparación es fuente de errores.\nError típico: for(I=3;I>=0;I--) con I unsigned. Nunca es menor que cero, así que el lazo no termina; gcc avisa que la comparación siempre es verdadera.",
+  "ocasiones": [
+   {
+    "cuando": "Al restar más de lo que hay.",
+    "que_es": "El resultado da la vuelta y queda enorme en vez de negativo.",
+    "ejemplo": "unsigned N=3;\nN=N-4;\nprintf(\"%u\\n\",N);"
+   }
+  ],
+  "relacionados": [
+   "signed",
+   "int",
+   "long",
+   "%u",
+   "%lu"
+  ]
+ },
+ {
+  "elemento": "signed",
+  "detalle": "Se escribe antes de un tipo entero y significa \"con signo\": admite negativos y positivos.\nCasi nunca se escribe, porque int, short y long ya tienen signo: signed int es lo mismo que int, y signed solo equivale a int.\nSu único uso real es con char: según la computadora, un char puede tener signo o no. Con signed char se asegura que vaya de -128 a 127.\nDetalle que confunde: no agranda el rango ni cambia nada. Es lo contrario de unsigned.\nError típico: escribir signed y unsigned juntos, como unsigned signed int. gcc da error: \"both 'signed' and 'unsigned' in declaration specifiers\".",
+  "ocasiones": [
+   {
+    "cuando": "Con char, para asegurar que admita negativos.",
+    "que_es": "Un signed char llega hasta -128.",
+    "ejemplo": "signed char T=-128;\nprintf(\"%d\\n\",T);"
+   }
+  ],
+  "relacionados": [
+   "unsigned",
+   "int",
+   "short",
+   "long"
+  ]
+ },
+ {
+  "elemento": "bool",
+  "detalle": "Guarda una condición: true (verdadero, vale 1) o false (falso, vale 0).\nSe usa para banderas, como LISTO o ENCONTRADO, que cambian cuando pasa algo y después se consultan en un if o un lazo.\nPara usarlo hay que escribir #include <stdbool.h> al principio; sin eso, gcc da error: \"unknown type name 'bool'\".\nDetalle que confunde: un bool solo guarda 0 o 1. Si le asignas cualquier valor distinto de cero, como 5, queda guardado como 1.\nSe muestra con %d, porque no tiene un formato propio.\nError típico: olvidar el #include <stdbool.h>, o dar por hecho que un bool guarda el número que le asignaste.",
+  "ocasiones": [
+   {
+    "cuando": "Al asignarle un número distinto de cero.",
+    "que_es": "Cualquier valor distinto de cero se guarda como 1.",
+    "ejemplo": "bool LISTO=5;\nprintf(\"%d\\n\",LISTO);"
+   }
+  ],
+  "relacionados": [
+   "true",
+   "false",
+   "if",
+   "stdbool.h"
+  ]
+ },
+ {
+  "elemento": "if",
+  "detalle": "Ejecuta una instrucción solo si su condición es verdadera. Si es falsa, la salta.\nPara C, una condición es verdadera cuando vale cualquier número distinto de cero, y falsa cuando vale cero. Por eso if(N) equivale a if(N!=0).\nSin llaves, el if gobierna una sola instrucción: la que está justo después. Para varias hay que agruparlas entre { }.\nDetalle que confunde: la sangría (los espacios al inicio del renglón) no importa para C. Una segunda instrucción sin llaves se ejecuta siempre, aunque esté corrida a la derecha.\nOtro detalle: = guarda un valor y == compara. if(GOLES=2) cambia GOLES a 2 y entra siempre; gcc avisa que se usó una asignación como condición.\nError típico: poner ; después del paréntesis, como en if(T>30);. El if queda con cuerpo vacío y la instrucción siguiente se ejecuta siempre.",
+  "ocasiones": [
+   {
+    "cuando": "Con una sola instrucción, sin llaves.",
+    "que_es": "Solo la primera instrucción depende del if; la segunda se ejecuta siempre.",
+    "ejemplo": "int T=20;\nif(T>30) printf(\"Calor\\n\");\nprintf(\"Fin\\n\");"
+   },
+   {
+    "cuando": "Con varias instrucciones, entre llaves.",
+    "que_es": "Las llaves agrupan: las dos instrucciones dependen de la condición.",
+    "ejemplo": "int T=35;\nif(T>30){\n printf(\"Calor\\n\");\n printf(\"Toma agua\\n\");\n}"
+   }
+  ],
+  "relacionados": [
+   "else",
+   "else if",
+   "condición",
+   "=="
+  ]
+ },
+ {
+  "elemento": "else",
+  "detalle": "Indica qué hacer cuando la condición del if anterior es falsa. Nunca lleva condición propia.\nSe usa cuando hay dos caminos y siempre se toma uno: o se cumple la condición, o se hace lo del else, pero nunca los dos.\nVa siempre pegado a un if. No puede haber otra instrucción entre el cuerpo del if y el else.\nDetalle que confunde: cuando hay un if dentro de otro y faltan llaves, el else se une al if más cercano, no al de más afuera. La sangría no cambia eso.\nError típico: poner dos instrucciones sin llaves entre el if y el else. gcc da error: \"'else' without a previous 'if'\".",
+  "ocasiones": [
+   {
+    "cuando": "Después de un if, para el caso contrario.",
+    "que_es": "Se ejecuta solo uno de los dos caminos.",
+    "ejemplo": "int T=38;\nif(T>=38) printf(\"Fiebre\\n\");\nelse printf(\"Normal\\n\");"
+   },
+   {
+    "cuando": "En un if dentro de otro sin llaves.",
+    "que_es": "El else pertenece al if más cercano: con T=-5 no se muestra nada.",
+    "ejemplo": "int T=-5;\nif(T>0)\n if(T>100) printf(\"Hierve\\n\");\n else printf(\"Tibio\\n\");"
+   }
+  ],
+  "relacionados": [
+   "if",
+   "else if",
+   "condición"
+  ]
+ },
+ {
+  "elemento": "else if",
+  "detalle": "Encadena una condición nueva que solo se mira si todas las anteriores dieron falso.\nSe usa cuando hay varias alternativas y hay que elegir una sola, por ejemplo rangos de temperatura.\nNo es una palabra aparte: es un else cuyo cuerpo es otro if. Por eso se escribe como dos palabras.\nDetalle que confunde: el orden importa. C prueba de arriba hacia abajo y se queda con la primera que se cumple. Si pones T>=20 antes de T>=30, el segundo caso nunca se alcanza.\nUna serie de if separados no es lo mismo: en ese caso se miran todos y pueden cumplirse varios.\nError típico: escribir elif o elseif como en otros lenguajes. gcc se queja de la función \"elif\" y da un error de \";\" esperado.",
+  "ocasiones": [
+   {
+    "cuando": "Al elegir una opción entre varias.",
+    "que_es": "Se muestra solo el primer caso que se cumple.",
+    "ejemplo": "int T=35;\nif(T>=30) printf(\"Calor\\n\");\nelse if(T>=20) printf(\"Templado\\n\");\nelse printf(\"Frio\\n\");"
+   }
+  ],
+  "relacionados": [
+   "if",
+   "else",
+   "condición"
+  ]
+ },
+ {
+  "elemento": "for",
+  "detalle": "Es un lazo (instrucciones que se repiten) con tres partes entre paréntesis, separadas por ;: inicio, condición y avance.\nEl inicio se hace una sola vez. Antes de cada ciclo (cada vuelta) se mira la condición, y si es verdadera se ejecuta el cuerpo. Al terminar el cuerpo se hace el avance y se vuelve a mirar la condición.\nSe usa cuando se sabe cuántas veces repetir, o cuando hay un contador que sube o baja de forma regular.\nDetalle que confunde: al terminar el lazo, la variable no vale el último número que se mostró sino uno más. Con I<3 se muestra 0, 1 y 2, pero I queda valiendo 3.\nError típico: poner ; después del paréntesis, como en for(I=0;I<3;I++);. El lazo se repite con cuerpo vacío y la instrucción siguiente se ejecuta una sola vez. Otro: separar las partes con comas en vez de ;.",
+  "ocasiones": [
+   {
+    "cuando": "Para repetir un número de veces conocido.",
+    "que_es": "Cuenta de 0 a 2 y la variable queda valiendo 3 al terminar.",
+    "ejemplo": "for(I=0;I<3;I++) printf(\"%d\\n\",I);\nprintf(\"I=%d\\n\",I);"
+   }
+  ],
+  "relacionados": [
+   "while",
+   "contador",
+   "continue",
+   "break"
+  ]
+ },
+ {
+  "elemento": "while",
+  "detalle": "Repite su cuerpo mientras la condición sea verdadera.\nLa condición se mira antes de cada ciclo. Si ya es falsa al llegar, el cuerpo no se ejecuta ni una vez.\nSe usa cuando no se sabe cuántas veces repetir: hasta que algo cambie, como que baje una temperatura o se agote un valor.\nDetalle que confunde: la condición se evalúa de nuevo en cada ciclo, pero nada la modifica por sí solo. Algo del cuerpo tiene que cambiar la variable que se compara.\nError típico: olvidar ese cambio y que el lazo no termine nunca. También pasa con ; después del paréntesis, como en while(T>37);, porque el cuerpo queda vacío y T nunca cambia.",
+  "ocasiones": [
+   {
+    "cuando": "Cuando se repite hasta que algo cambie.",
+    "que_es": "Baja la temperatura de a un grado mientras sea mayor que 37.",
+    "ejemplo": "int T=40;\nwhile(T>37){\n T=T-1;\n}\nprintf(\"%d\\n\",T);"
+   }
+  ],
+  "relacionados": [
+   "do",
+   "for",
+   "break"
+  ]
+ },
+ {
+  "elemento": "do",
+  "detalle": "Abre un lazo do-while: el cuerpo se ejecuta primero y la condición se mira después, al final.\nEso lo diferencia de while: el cuerpo se ejecuta por lo menos una vez, aunque la condición sea falsa desde el principio.\nSe usa cuando algo tiene que hacerse una vez antes de poder decidir si se repite.\nLa forma es do { cuerpo } while(condición); y, a diferencia de los otros lazos, termina con ; después del paréntesis.\nError típico: olvidar ese ; final. gcc da error: \"expected ';' before\" lo que viene a continuación.",
+  "ocasiones": [
+   {
+    "cuando": "Cuando el cuerpo tiene que ejecutarse al menos una vez.",
+    "que_es": "Aunque la condición N>5 es falsa desde el inicio, se muestra el 5 una vez.",
+    "ejemplo": "int N=5;\ndo {\n printf(\"%d\\n\",N);\n N--;\n} while(N>5);"
+   }
+  ],
+  "relacionados": [
+   "while",
+   "for",
+   "condición"
+  ]
+ },
+ {
+  "elemento": "switch",
+  "detalle": "Elige entre varias opciones comparando el valor de una expresión con los valores de cada case.\nSe usa cuando una misma variable se compara con muchos valores fijos, como un número de opción o una letra. Es una alternativa más ordenada a una cadena larga de else if.\nLa expresión tiene que dar un entero o un carácter. Con un decimal o un texto, gcc da error: \"switch quantity not an integer\".\nDetalle que confunde: switch solo compara si es igual; no sirve para rangos como mayor que 10.\nOtro detalle: al encontrar el case que coincide, C sigue ejecutando todo lo que viene debajo, también los otros case, hasta llegar a un break.\nError típico: olvidar el break al final de un case y que se muestren también los mensajes de los casos siguientes.",
+  "ocasiones": [
+   {
+    "cuando": "Con un break al final de cada case.",
+    "que_es": "Se ejecuta solo el caso que coincide.",
+    "ejemplo": "int OP=2;\nswitch(OP){\n case 1: printf(\"Uno\\n\"); break;\n case 2: printf(\"Dos\\n\"); break;\n}"
+   },
+   {
+    "cuando": "Con varios case seguidos, sin break entre ellos.",
+    "que_es": "Dos valores comparten la misma instrucción.",
+    "ejemplo": "int D=6;\nswitch(D){\n case 6: case 7: printf(\"Fin de semana\\n\"); break;\n default: printf(\"Semana\\n\");\n}"
+   }
+  ],
+  "relacionados": [
+   "case",
+   "default",
+   "break",
+   "else if"
+  ]
+ },
+ {
+  "elemento": "case",
+  "detalle": "Es una etiqueta dentro de un switch: marca el punto desde donde se empieza a ejecutar cuando la expresión vale ese valor.\nLleva un valor fijo y termina con dos puntos: case 1: o case 'S':. Los caracteres van entre comillas simples.\nEl valor tiene que ser un número o un carácter escrito en el programa. No puede ser una variable ni una condición como case X>5.\nDetalle que confunde: case no es una instrucción que se ejecute sola, es solo una marca. Si no hay un break, la ejecución sigue hacia abajo y entra también al case siguiente.\nDos case con el mismo valor no se permiten: gcc da error \"duplicate case value\".\nError típico: usar una variable como valor. gcc da error: \"case label does not reduce to an integer constant\".",
+  "relacionados": [
+   "switch",
+   "break",
+   "default"
+  ]
+ },
+ {
+  "elemento": "default",
+  "detalle": "Es la opción del switch que se ejecuta cuando ningún case coincide con la expresión.\nSe usa para avisar de una opción inválida o para el resto de los casos que no tienen un tratamiento especial.\nEs opcional. Si no hay default y ningún case coincide, el switch no hace nada.\nDetalle que confunde: suele ir al final, pero puede ir en cualquier lugar. Si no es el último, necesita su propio break, porque si no la ejecución sigue hacia el case de abajo.\nAl final del switch no hace falta un break, porque ahí termina todo de todas formas.\nError típico: escribir default sin los dos puntos, o ponerlo antes de otros case y olvidar el break.",
+  "relacionados": [
+   "switch",
+   "case",
+   "break"
+  ]
+ },
+ {
+  "elemento": "break",
+  "detalle": "Sale de inmediato del switch o del lazo en el que está, y sigue con la instrucción que viene después.\nSe usa dentro de un switch para que no se ejecuten los case siguientes, y dentro de un lazo cuando ya no hace falta seguir repitiendo.\nDetalle que confunde: break sale solo del lazo más interno. Si hay un lazo dentro de otro, el de afuera sigue.\nOtro detalle: solo se puede usar dentro de un lazo o de un switch; en cualquier otro lugar gcc da error: \"break statement not within loop or switch\".\nError típico: olvidarlo al final de un case y que se ejecuten también los casos de abajo.",
+  "ocasiones": [
+   {
+    "cuando": "Dentro de un switch.",
+    "que_es": "Corta la ejecución al terminar el case.",
+    "ejemplo": "int OP=1;\nswitch(OP){\n case 1: printf(\"Uno\\n\"); break;\n case 2: printf(\"Dos\\n\");\n}"
+   },
+   {
+    "cuando": "Dentro de un lazo.",
+    "que_es": "Corta el lazo antes de terminar; el 3 ya no se muestra.",
+    "ejemplo": "for(I=0;I<10;I++){\n if(I==3) break;\n printf(\"%d\\n\",I);\n}"
+   }
+  ],
+  "relacionados": [
+   "for",
+   "while",
+   "do",
+   "switch",
+   "continue"
+  ]
+ },
+ {
+  "elemento": "continue",
+  "detalle": "Salta lo que falta del ciclo actual y pasa directo al siguiente ciclo del lazo.\nSe usa para saltear un caso puntual sin salir del lazo: se ignora un valor y se sigue con los demás.\nDetalle que confunde: en un for, después de continue se ejecuta igual el avance (el I++), y luego se mira la condición.\nEn un while no hay avance automático: continue vuelve directo a la condición. Si el cambio de la variable estaba después del continue, nunca se hace.\nSolo se puede usar dentro de un lazo. Dentro de un switch suelto, gcc da error: \"continue statement not within a loop\".\nError típico: usarlo en un while sin cambiar antes la variable, y que el lazo quede trabado.",
+  "ocasiones": [
+   {
+    "cuando": "Dentro de un for.",
+    "que_es": "Se saltea el 2, pero el lazo sigue con el 3 y el 4.",
+    "ejemplo": "for(I=0;I<5;I++){\n if(I==2) continue;\n printf(\"%d\\n\",I);\n}"
+   }
+  ],
+  "relacionados": [
+   "for",
+   "while",
+   "do",
+   "break"
+  ]
+ },
+ {
+  "elemento": "return",
+  "detalle": "Termina la función en ese mismo punto y devuelve el control a quien la llamó. Lo que haya escrito debajo ya no se ejecuta.\nSi la función es de un tipo como int o float, return entrega además un valor, que quien llamó puede guardar en una variable o usar en una cuenta.\nEn main no hace falta escribirlo: al llegar al final, el programa termina bien por sí solo.\nDetalle que confunde: devolver un valor no es lo mismo que mostrarlo. return no escribe nada en pantalla; el valor se muestra solo si quien llamó lo manda a printf.\nError típico: olvidar el return en una función que debe devolver un valor, o dejarlo en un camino del if pero no en otro. gcc avisa: \"control reaches end of non-void function\".",
+  "ocasiones": [
+   {
+    "cuando": "En una función que devuelve un valor.",
+    "que_es": "Entrega el resultado a quien llamó.",
+    "ejemplo": "int DOBLE(int N){\n return N*2;\n}"
+   },
+   {
+    "cuando": "En una función void.",
+    "que_es": "Se escribe solo return;, sin valor, para salir antes de tiempo.",
+    "ejemplo": "void AVISAR(int T){\n if(T<0) return;\n printf(\"%d\\n\",T);\n}"
+   }
+  ],
+  "relacionados": [
+   "void",
+   "main",
+   "prototipo",
+   "función"
+  ]
+ },
+ {
+  "elemento": "static",
+  "detalle": "Escrito en una variable dentro de una función, hace que conserve su valor entre una llamada y la siguiente.\nSin static, una variable local nace al empezar la función y desaparece al terminar. Con static, sigue existiendo y guarda lo último que tuvo.\nSe usa, por ejemplo, para contar cuántas veces se llamó a una función sin usar una variable global.\nDetalle que confunde: la línea static int VECES=0; no vuelve a poner el 0 en cada llamada. El valor inicial se asigna una sola vez, al empezar el programa.\nSi no se le da valor inicial, vale 0. Una variable local común, en cambio, empieza con basura.\nDelante de una variable o función global, static hace que solo la use ese archivo; en un programa de un solo archivo no cambia nada.\nError típico: static int X=N; con N una variable. gcc da error: \"initializer element is not constant\".",
+  "ocasiones": [
+   {
+    "cuando": "En una variable local de una función.",
+    "que_es": "Cada llamada continúa desde el valor anterior: muestra 1, 2 y 3.",
+    "ejemplo": "void CONTAR(){\n static int VECES=0;\n VECES++;\n printf(\"%d\\n\",VECES);\n}"
+   }
+  ],
+  "relacionados": [
+   "variable local",
+   "variable global",
+   "ámbito"
+  ]
+ }
+]
