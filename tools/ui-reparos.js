@@ -174,6 +174,36 @@ const check = (c, m) => { if (c) { ok++; console.log('  ok   ' + m); } else { fa
     check(!/se cierren solas/.test(await p10.evaluate(() => (document.getElementById('toast') || {}).textContent || '')), 'aviso del cierre automático: no se repite');
   }
 
+  // 11) «¿Qué es esto?» con un nombre propio: explica qué papel cumple la variable leyendo el código
+  {
+    const p11 = await (await br.newContext({ viewport: { width: 1100, height: 720 } })).newPage();
+    await p11.goto(url); await p11.waitForSelector('#code');
+    const prog = '#include <stdio.h>\nint main() {\n    int CP = 0, NOTA;\n    scanf("%d", &NOTA);\n    while (NOTA != 0) {\n        CP++;\n        scanf("%d", &NOTA);\n    }\n    return 0;\n}\n';
+    await p11.evaluate((sx) => { const t = document.getElementById('code'); t.value = sx; t.dispatchEvent(new Event('input', { bubbles: true })); }, prog);
+    await p11.evaluate((off) => { const t = document.getElementById('code'); t.focus(); t.setSelectionRange(off, off); }, prog.indexOf('CP++') + 1);
+    await p11.keyboard.press('F1'); await p11.waitForTimeout(300);
+    const tx = await p11.textContent('#bubble');
+    check(/Contador CP/.test(tx) && /línea 3/.test(tx), 'nombre propio: explica que CP es un contador y dónde se declara');
+    check(!/\{[A-Z_]+\}/.test(tx), 'nombre propio: no quedan marcadores sin completar');
+    await p11.click('#bubble button:has-text("Ver más")');
+    check(await p11.isVisible('#bubble .nbmas'), 'nombre propio: «Ver más» muestra el detalle');
+  }
+
+  // 12) «¿Qué es esto?» con un signo y un número: «Ver más» trae el uso que corresponde al lugar tocado
+  {
+    const p12 = await (await br.newContext({ viewport: { width: 1100, height: 720 } })).newPage();
+    await p12.goto(url); await p12.waitForSelector('#code');
+    const prog = 'int main() {\n    int A, B = 10;\n    for (A = 1; A < B; A++) {\n        B = B - 1;\n    }\n    return 0;\n}\n';
+    await p12.evaluate((sx) => { const t = document.getElementById('code'); t.value = sx; t.dispatchEvent(new Event('input', { bubbles: true })); }, prog);
+    const tocar = async (off) => { await p12.evaluate((o) => { const t = document.getElementById('code'); t.focus(); t.setSelectionRange(o, o); }, off); await p12.keyboard.press('F1'); await p12.waitForTimeout(300); return p12.textContent('#bubble'); };
+    const t1 = await tocar(prog.indexOf('; A <'));
+    check(/En este lugar/.test(t1) && /for/i.test(t1), 'signo ; dentro de un for: dice «En este lugar» y habla del for');
+    await p12.click('#bubble button:has-text("Ver más")');
+    check(await p12.isVisible('#bubble .nbmas') && (await p12.$$('#bubble .nbocas')).length >= 2, 'signo ;: «Ver más» lista los demás usos');
+    const t2 = await tocar(prog.indexOf('10;'));
+    check(/10/.test(t2) && /entero|número/i.test(t2), 'número 10: se explica como un literal entero');
+  }
+
   await br.close();
   console.log(ok + ' ok, ' + fallas + ' fallas');
   process.exit(fallas ? 1 : 0);

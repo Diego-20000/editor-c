@@ -359,7 +359,8 @@
         var q = c; i++;
         while (i < n && codigo[i] !== q && codigo[i] !== '\n') { if (codigo[i] === '\\') i++; i++; }
         var cierra = codigo[i] === q; var fin = cierra ? i + 1 : i; i = fin;
-        if (offset > ini && offset <= fin) return enLiteral(codigo.slice(ini + 1, cierra ? fin - 1 : fin), ini + 1, offset, q === "'");
+        if (offset > ini && offset < fin) { var lit = enLiteral(codigo.slice(ini + 1, cierra ? fin - 1 : fin), ini + 1, offset, q === "'"); if (lit) return lit; var kq = q === '"' ? '" "' : "' '"; return S && S.ayudaMap[kq] ? kq : null; }
+        if (offset === fin && cand === null) cand = { clave: null };
         continue;
       }
       if (c === '#') {
@@ -369,7 +370,7 @@
           if (offset >= ini && offset <= i) return '#' + m[1];
           if (m[1] === 'include') {
             var h = /^[ \t]*[<"]([^>"\n]*)[>"]/.exec(codigo.slice(i, i + 80));
-            if (h) { var hi = i + h[0].indexOf(h[1]); var he = hi + h[1].length; i += h[0].length; if (offset >= hi && offset <= he) return CABECERAS[h[1]] ? h[1] : '#include'; }
+            if (h) { var hi = i + h[0].indexOf(h[1]); var he = hi + h[1].length, h0 = i; i += h[0].length; if (offset >= hi && offset <= he) return CABECERAS[h[1]] ? h[1] : '#include'; if (offset >= h0 && offset < i) return '#include'; }
           }
           continue;
         }
@@ -377,7 +378,8 @@
       }
       if (/[0-9]/.test(c) || (c === '.' && /[0-9]/.test(codigo[i + 1] || ''))) {
         while (i < n && /[0-9A-Za-z_.]/.test(codigo[i])) { if ((codigo[i] === 'e' || codigo[i] === 'E') && /[+-]/.test(codigo[i + 1] || '')) i++; i++; }
-        if (offset >= ini && offset <= i) return null;
+        if (offset >= ini && offset < i) return claveNumero(codigo.slice(ini, i));
+        if (offset === i && cand === null) cand = { clave: claveNumero(codigo.slice(ini, i)) };
         continue;
       }
       if (/[A-Za-z_]/.test(c)) {
@@ -410,10 +412,21 @@
     }
     return cand ? cand.clave : null;
   }
+  // Qué entrada de ayuda explica un número escrito en el código, según cómo está escrito (solo si la base la tiene)
+  function claveNumero(t) {
+    var k;
+    if (/^0[xX][0-9a-fA-F]+[uUlL]*$/.test(t) || /^0[0-7]+[uUlL]*$/.test(t)) k = 'literal octal y hexadecimal';
+    else if (/^[0-9]+[uUlL]+$/.test(t) || /^[0-9.]+(?:[eE][+-]?[0-9]+)?[fFlL]$/.test(t) && !/^\d+$/.test(t)) k = 'sufijos de literales';
+    else if (/[.eE]/.test(t)) k = 'literal de punto flotante';
+    else if (t === '0' || t === '1') k = 'cero y uno';
+    else k = 'literal entero decimal';
+    return S && S.ayudaMap[k] ? k : null;
+  }
   function claveOperador(op) {
     if (op === '(' || op === ')') return '()';
     if (op === '{' || op === '}') return '{}';
     if (op === '[' || op === ']') return '[]';
+    if (op === ':' && S && S.ayudaMap[':']) return ':';
     if (op === '?' || op === ':') return '?:';
     if (op === '\\' || op === '@' || op === '$' || op === '`') return null;
     return op;

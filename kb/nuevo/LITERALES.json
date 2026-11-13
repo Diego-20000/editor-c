@@ -1,0 +1,1188 @@
+[
+  {
+    "elemento": "literal",
+    "tipo": "concepto",
+    "que_es": "Un literal es un valor escrito directamente en el código, sin leerlo de una variable ni pedirlo al usuario. Puede ser un número, un carácter o una cadena.",
+    "como_se_usa": "#include <stdio.h>\nint main(void){ int A=5; printf(\"%d %c %s\\n\",A,'A',\"hola\"); return 0; }",
+    "error_tipico": "Confundir el valor numérico 5, el carácter '5' y el texto \"5\": son tres cosas distintas.",
+    "en_la_materia": "Tipos, caracteres y textos",
+    "errores_ids": [
+      "TIP-036"
+    ],
+    "buscar": [
+      "literal",
+      "valor escrito en el código",
+      "constante literal",
+      "número directo",
+      "carácter entre comillas",
+      "texto entre comillas"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "En una asignación o inicialización, a la derecha del signo =.",
+        "que_es": "El literal proporciona el valor que recibe la variable.",
+        "ejemplo": "#include <stdio.h>\nint main(void){ int EDAD=18; printf(\"%d\\n\",EDAD); return 0; }",
+        "error_tipico": "Creer que el literal tiene el mismo tipo que la variable: C puede convertirlo al tipo de destino."
+      },
+      {
+        "cuando": "Como argumento de una función, por ejemplo dentro de printf.",
+        "que_es": "El literal se pasa directamente como dato; no hace falta crear una variable solo para usarlo una vez.",
+        "ejemplo": "#include <stdio.h>\nint main(void){ printf(\"%d\\n\",25); return 0; }",
+        "error_tipico": "Usar un especificador de formato que no corresponde al tipo del literal."
+      }
+    ],
+    "detalle": "Los literales son valores escritos en el propio programa, como 10, 2.5, 'A' o \"hola\".\nEl tipo depende de cómo se escribe el valor, no solo de su apariencia.\nUn número sin punto decimal suele ser un literal entero; uno con punto o exponente es decimal.\nLas comillas simples forman una constante de carácter; las dobles forman una cadena.\nEl signo menos no forma parte del literal entero: es el operador unario aplicado al número.\nUn literal no crea por sí solo una variable con nombre: se usa en una expresión o inicialización.\nRevisa las comillas, el punto decimal y los sufijos para saber qué tipo se está usando.",
+    "relacionados": [
+      "literal entero decimal",
+      "cero y uno",
+      "literal de punto flotante",
+      "' '",
+      "\" \"",
+      "sufijos de literales"
+    ],
+    "verificado_gcc13": false,
+    "amplia": true
+  },
+  {
+    "elemento": "literal entero decimal",
+    "tipo": "concepto",
+    "que_es": "Un número escrito en base diez sin punto decimal, como 0, 1, 10, 100 o 214.",
+    "como_se_usa": "#include <stdio.h>\nint main(void){ printf(\"%d %d\\n\",100,-5); return 0; }",
+    "error_tipico": "Esperar decimales en una división entre enteros: 5/2 produce 2, no 2.5.",
+    "en_la_materia": "Tipos y operadores",
+    "errores_ids": [],
+    "buscar": [
+      "literal entero",
+      "número entero escrito",
+      "10",
+      "100",
+      "-5",
+      "división 5/2",
+      "rango de int"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "En una asignación a una variable entera.",
+        "que_es": "El literal decimal sin sufijo tiene tipo int si su valor cabe en int; en el objetivo del editor ocupa 4 bytes.",
+        "ejemplo": "#include <stdio.h>\nint main(void){ int A=100; printf(\"%d\\n\",A); return 0; }",
+        "error_tipico": "Asignar un entero demasiado grande a int y perder el valor por conversión fuera de rango."
+      },
+      {
+        "cuando": "Con un signo menos al inicio de la expresión.",
+        "que_es": "-5 se interpreta como el operador menos aplicado al literal entero 5; el resultado es negativo.",
+        "ejemplo": "#include <stdio.h>\nint main(void){ printf(\"%d\\n\",-5); return 0; }",
+        "error_tipico": "Pensar que el signo forma parte de un literal diferente."
+      },
+      {
+        "cuando": "Como operandos del operador de división /.",
+        "que_es": "Si ambos operandos son enteros, el resultado es entero y se descarta la parte fraccionaria.",
+        "ejemplo": "#include <stdio.h>\nint main(void){ printf(\"%d %f\\n\",5/2,5/2.0); return 0; }",
+        "error_tipico": "Esperar 2.5 de 5/2; para obtener una división decimal, al menos un operando debe ser decimal."
+      }
+    ],
+    "detalle": "En este sistema, int ocupa 4 bytes y su rango es -2147483648 a 2147483647.\nEl literal decimal sin sufijo usa el primer tipo entero con signo que puede representar su valor: int, luego long y luego long long.\nEn el modelo LP64 del proyecto, short ocupa 2 bytes (-32768 a 32767), mientras que long y long long ocupan 8 bytes.\nEl rango de long y long long con signo es -9223372036854775808 a 9223372036854775807.\nEl valor negativo se forma aplicando el operador unario -, no escribiendo un literal con signo propio.\nPor eso 5/2 se calcula con enteros y da 2; 5/2.0 mezcla entero y double y da 2.5.\nUn valor que supera el rango de int no debe guardarse en int esperando que conserve todos sus dígitos.\nEl desbordamiento de un int con signo durante una operación es comportamiento indefinido en C.",
+    "relacionados": [
+      "int",
+      "short",
+      "long",
+      "long long",
+      "división entera",
+      "desborde",
+      "literal de punto flotante"
+    ],
+    "verificado_gcc13": false
+  },
+  {
+    "elemento": "cero y uno",
+    "tipo": "concepto",
+    "que_es": "Los literales 0 y 1 son enteros comunes, pero se usan mucho para representar falso y verdadero o para iniciar contadores y acumuladores.",
+    "como_se_usa": "#include <stdio.h>\nint main(void){ int ACTIVO=0,CONTADOR=1; if(ACTIVO==0) printf(\"apagado %d\\n\",CONTADOR); return 0; }",
+    "error_tipico": "Confundir una condición con una comparación: A=0 asigna cero; A==0 pregunta si A vale cero.",
+    "en_la_materia": "Condiciones, inicialización y lazos",
+    "errores_ids": [],
+    "buscar": [
+      "cero",
+      "uno",
+      "0 falso",
+      "1 verdadero",
+      "inicializar en cero",
+      "contador en uno",
+      "acumulador en cero",
+      "bandera"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "En una condición if o while, cuando se evalúa directamente el número.",
+        "que_es": "C considera falso al valor 0 y verdadero a cualquier valor distinto de cero, no solamente a 1.",
+        "ejemplo": "#include <stdio.h>\nint main(void){ if(0) puts(\"si\"); else puts(\"no\"); if(-5) puts(\"tambien\"); return 0; }",
+        "error_tipico": "Pensar que solamente 1 es verdadero; también lo son -1, 2 y cualquier otro valor no nulo."
+      },
+      {
+        "cuando": "Al inicializar una bandera o variable de estado.",
+        "que_es": "Se suele usar 0 para indicar que un evento todavía no ocurrió y 1 para indicar que ya ocurrió.",
+        "ejemplo": "#include <stdio.h>\nint main(void){ int ENCONTRADO=0; if(3==3) ENCONTRADO=1; printf(\"%d\\n\",ENCONTRADO); return 0; }",
+        "error_tipico": "No inicializar la bandera antes de consultarla."
+      },
+      {
+        "cuando": "Al declarar o preparar un contador de un lazo.",
+        "que_es": "El 0 o el 1 determina desde qué valor empieza el recorrido; no existe una regla universal para todos los lazos.",
+        "ejemplo": "#include <stdio.h>\nint main(void){ int I=1; for(;I<=3;I++) printf(\"%d \",I); return 0; }",
+        "error_tipico": "Empezar en 1 cuando el algoritmo necesita recorrer posiciones que comienzan en 0, o al revés."
+      },
+      {
+        "cuando": "Al iniciar un acumulador antes de sumar datos.",
+        "que_es": "El cero es el elemento neutro de la suma, por eso es el inicio habitual de una suma acumulada.",
+        "ejemplo": "#include <stdio.h>\nint main(void){ int SUMA=0; SUMA=SUMA+7; printf(\"%d\\n\",SUMA); return 0; }",
+        "error_tipico": "Iniciar una suma en 1 y alterar el total desde el primer dato."
+      }
+    ],
+    "detalle": "Tanto 0 como 1 tienen tipo int cuando se escriben solos, por lo que ocupan 4 bytes en el objetivo del proyecto.\nEn una condición C interpreta 0 como falso y cualquier valor diferente de cero como verdadero.\nEso significa que -5 también es verdadero si se usa directamente en if, aunque no sea igual a 1.\nAl asignar 0 o 1 a una variable bool, el valor queda convertido a falso o verdadero.\nEn la materia se usa mucho 0 para inicializar acumuladores y banderas, y 0 o 1 para iniciar contadores.\nEl valor inicial depende del algoritmo: un contador de posiciones puede comenzar en 0, mientras que uno de repeticiones puede comenzar en 1.\nUn acumulador de suma normalmente comienza en 0; uno de producto normalmente comienza en 1.",
+    "relacionados": [
+      "condición",
+      "bandera",
+      "inicialización",
+      "contador",
+      "acumulador",
+      "bool",
+      "true",
+      "false"
+    ],
+    "verificado_gcc13": false
+  },
+  {
+    "elemento": "literal de punto flotante",
+    "tipo": "concepto",
+    "que_es": "Un número escrito con punto decimal o exponente, como 0.0, 3.14, 2.5f o 1e3.",
+    "como_se_usa": "#include <stdio.h>\nint main(void){ double A=0.0,B=3.14,C=1e3; float D=2.5f; printf(\"%.1f %.2f %.0f %.1f\\n\",A,B,C,D); return 0; }",
+    "error_tipico": "Creer que 3.14 es float: sin sufijo, un literal decimal tiene tipo double.",
+    "en_la_materia": "Tipos y expresiones",
+    "errores_ids": [],
+    "buscar": [
+      "literal decimal",
+      "punto flotante",
+      "0.0",
+      "3.14",
+      "2.5f",
+      "1e3",
+      "notación científica",
+      "float literal",
+      "double literal"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "En una inicialización sin sufijo, como double PI=3.14.",
+        "que_es": "Un literal con punto decimal y sin sufijo tiene tipo double.",
+        "ejemplo": "#include <stdio.h>\nint main(void){ double PI=3.14; printf(\"%.2f\\n\",PI); return 0; }",
+        "error_tipico": "Suponer que todos los números con punto son float."
+      },
+      {
+        "cuando": "Con el sufijo f, como 2.5f, o con notación exponencial, como 1e3.",
+        "que_es": "El sufijo f convierte el literal en float; la notación e indica una potencia de diez y no cambia por sí misma el tipo double.",
+        "ejemplo": "#include <stdio.h>\nint main(void){ float A=2.5f; double B=1e3; printf(\"%.1f %.0f\\n\",A,B); return 0; }",
+        "error_tipico": "Escribir 2.5f esperando doble precisión o leer float con el formato de scanf para double."
+      }
+    ],
+    "detalle": "Un literal decimal sin sufijo, por ejemplo 3.14 o 1e3, tiene tipo double.\nEl sufijo f o F hace que el literal sea float; 2.5f representa el mismo valor decimal aproximado en precisión simple.\nEn el objetivo LP64 del proyecto, float ocupa 4 bytes y suele ofrecer unas 6 o 7 cifras significativas.\nDouble ocupa 8 bytes y suele ofrecer unas 15 o 16 cifras significativas.\nLos valores finitos aproximados llegan hasta 3.4×10^38 en float y 1.7×10^308 en double.\nEn 1e3, la e significa por diez elevado a tres: el valor matemático es 1000.\nLos números de punto flotante se almacenan en formato binario; muchos decimales, como 0.1, no tienen representación binaria exacta.",
+    "relacionados": [
+      "float",
+      "double",
+      "sufijos de literales",
+      "división entera",
+      "conversión de tipos"
+    ],
+    "verificado_gcc13": false
+  },
+  {
+    "elemento": "sufijos de literales",
+    "tipo": "concepto",
+    "que_es": "Son letras colocadas al final de un literal para indicar su tipo, tamaño o signo, como f, L, u y UL.",
+    "como_se_usa": "#include <stdio.h>\nint main(void){ float A=2.5f; long B=10L; unsigned C=10u; unsigned long D=10UL; printf(\"%.1f %ld %u %lu\\n\",A,B,C,D); return 0; }",
+    "error_tipico": "Usar 10f como si fuera un entero o creer que L significa lo mismo en cualquier literal.",
+    "en_la_materia": "Tipos y constantes",
+    "errores_ids": [],
+    "buscar": [
+      "sufijo f",
+      "sufijo L",
+      "sufijo u",
+      "sufijo UL",
+      "2.5f",
+      "10L",
+      "10u",
+      "10UL",
+      "3.14L"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "Al final de un literal decimal para indicar float.",
+        "que_es": "f o F hace que el literal decimal sea float de 4 bytes en este objetivo.",
+        "ejemplo": "#include <stdio.h>\nint main(void){ float NOTA=2.5f; printf(\"%.1f\\n\",NOTA); return 0; }",
+        "error_tipico": "Quitar la f y olvidar que 2.5 pasa a ser double antes de convertirse a float."
+      },
+      {
+        "cuando": "Al final de un literal entero para indicar long.",
+        "que_es": "L o l hace que el literal entero tenga tipo long cuando el valor cabe en ese tipo.",
+        "ejemplo": "#include <stdio.h>\nint main(void){ long N=10L; printf(\"%ld\\n\",N); return 0; }",
+        "error_tipico": "Mostrar un long con %d en lugar de %ld."
+      },
+      {
+        "cuando": "Al final de un literal entero para indicar unsigned.",
+        "que_es": "U o u indica que el literal se interpreta como entero sin signo.",
+        "ejemplo": "#include <stdio.h>\nint main(void){ unsigned N=10u; printf(\"%u\\n\",N); return 0; }",
+        "error_tipico": "Usar un valor negativo con un tipo sin signo y obtener un valor grande por conversión."
+      },
+      {
+        "cuando": "Al combinar U y L al final de un literal entero.",
+        "que_es": "UL, LU y sus variantes en minúscula indican unsigned long.",
+        "ejemplo": "#include <stdio.h>\nint main(void){ unsigned long N=10UL; printf(\"%lu\\n\",N); return 0; }",
+        "error_tipico": "Usar %ld o %d para mostrar un unsigned long."
+      }
+    ],
+    "detalle": "f y F se usan en literales de punto flotante y producen tipo float, de 4 bytes en este entorno.\nL y l en un literal entero indican tipo long; en el objetivo LP64 ocupa 8 bytes.\nEn un literal de punto flotante, L indica long double; el compilador gcc lo admite, pero el editor no implementa ese tipo.\nU y u indican un tipo entero sin signo; UL o LU combinan unsigned con long.\nUn unsigned short ocupa 2 bytes y va de 0 a 65535; un unsigned int ocupa 4 bytes y va de 0 a 4294967295.\nUn unsigned long ocupa 8 bytes y va de 0 a 18446744073709551615.\nEl sufijo no es parte del valor numérico: informa al compilador qué tipo debe asignar al literal.\nUn sufijo mal colocado, como 10f para un entero, provoca un error de escritura.",
+    "relacionados": [
+      "literal entero decimal",
+      "literal de punto flotante",
+      "int",
+      "short",
+      "long",
+      "unsigned",
+      "float"
+    ],
+    "verificado_gcc13": false
+  },
+  {
+    "elemento": "literal octal y hexadecimal",
+    "tipo": "concepto",
+    "que_es": "Son literales enteros escritos en bases distintas de diez: octal comienza con 0 y hexadecimal con 0x o 0X.",
+    "como_se_usa": "#include <stdio.h>\nint main(void){ printf(\"%d %d %d\\n\",010,0xFF,0X2A); return 0; }",
+    "error_tipico": "Leer 010 como diez: en C, el cero inicial lo convierte en octal y su valor es ocho.",
+    "en_la_materia": "Tipos y literales enteros",
+    "errores_ids": [],
+    "buscar": [
+      "octal",
+      "hexadecimal",
+      "010",
+      "0xFF",
+      "0X2A",
+      "base 8",
+      "base 16",
+      "08 inválido"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "En un número entero que comienza con cero, sin x.",
+        "que_es": "El literal se interpreta en base ocho; cada posición representa una potencia de ocho.",
+        "ejemplo": "#include <stdio.h>\nint main(void){ printf(\"%d\\n\",010); return 0; }",
+        "error_tipico": "Escribir 08 o 09: los dígitos 8 y 9 no existen en base ocho y el literal no es válido."
+      },
+      {
+        "cuando": "En un número que comienza con 0x o 0X.",
+        "que_es": "El literal se interpreta en hexadecimal, con dígitos de 0 a 9 y letras A a F.",
+        "ejemplo": "#include <stdio.h>\nint main(void){ printf(\"%d\\n\",0xFF); return 0; }",
+        "error_tipico": "Pensar que 0xFF es un texto o que su valor es 0."
+      }
+    ],
+    "detalle": "010 no significa diez: es octal y equivale a ocho en decimal.\n0xFF es hexadecimal y equivale a 255; las letras A a F representan los valores del diez al quince.\nLos prefijos 0x y 0X se aceptan para hexadecimal; las letras de sus dígitos pueden escribirse en mayúscula o minúscula.\nEstos valores siguen siendo literales enteros; si caben en int, su tipo suele ser int.\nUn int ocupa 4 bytes y va de -2147483648 a 2147483647 en el sistema de referencia.\nLos ceros iniciales pueden cambiar el valor sin que el número parezca distinto a primera vista.\nLos literales octales con 8 o 9 son inválidos; no deben usarse como si fueran decimales.",
+    "relacionados": [
+      "literal entero decimal",
+      "sufijos de literales",
+      "int",
+      "printf"
+    ],
+    "verificado_gcc13": false
+  },
+  {
+    "elemento": "' '",
+    "tipo": "símbolo",
+    "que_es": "Las comillas simples delimitan una constante de carácter, como 'A' o '0'. En C, una constante de carácter ordinaria tiene tipo int.",
+    "como_se_usa": "#include <stdio.h>\nint main(void){ char LETRA='A'; printf(\"%c %d\\n\",LETRA,LETRA); return 0; }",
+    "error_tipico": "Confundir '5' con el número 5, o escribir \"A\" cuando se necesita un único carácter.",
+    "en_la_materia": "Caracteres y tipos",
+    "errores_ids": [
+      "ARR-046",
+      "ARR-047",
+      "PRF-020",
+      "PRF-044",
+      "SIN-012",
+      "SIN-013",
+      "SIN-050",
+      "SIN-053"
+    ],
+    "buscar": [
+      "comillas simples",
+      "'A'",
+      "'0'",
+      "'5'",
+      "carácter",
+      "caracter literal",
+      "diferencia 0 y '0'"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "Al declarar o asignar un carácter a una variable char.",
+        "que_es": "La expresión entre comillas simples representa el código numérico del carácter; char guarda ese valor en un byte.",
+        "ejemplo": "#include <stdio.h>\nint main(void){ char C='5'; printf(\"%c %d\\n\",C,C); return 0; }",
+        "error_tipico": "Creer que '5' vale el número cinco; en ASCII su código es 53."
+      },
+      {
+        "cuando": "Al comparar un carácter digitado con un dígito concreto.",
+        "que_es": "Se compara el carácter con otra constante de carácter, no con un entero decimal.",
+        "ejemplo": "#include <stdio.h>\nint main(void){ char C='0'; printf(\"%d %d\\n\",C=='0',C==0); return 0; }",
+        "error_tipico": "Confundir el carácter '0' con el valor numérico 0: son valores diferentes."
+      },
+      {
+        "cuando": "Al escribir un carácter especial entre comillas simples.",
+        "que_es": "Una secuencia como '\\n' representa un único carácter de control.",
+        "ejemplo": "#include <stdio.h>\nint main(void){ char C='\\n'; printf(\"%d\\n\",C); return 0; }",
+        "error_tipico": "Poner dos caracteres ordinarios dentro de comillas simples: una constante multicaracter no es un char común."
+      }
+    ],
+    "detalle": "Las comillas simples delimitan una constante de carácter, pero su tipo en C es int, normalmente de 4 bytes.\nEn el objetivo Linux x86-64, 'A' tiene valor 65 y '0' tiene valor 48 porque se usa un conjunto compatible con ASCII.\nEl dígito '5' tiene código 53, mientras que el número entero 5 tiene valor numérico cinco.\nAl guardar un carácter en char, se almacena en un byte; char ocupa 1 byte y va de -128 a 127 en este objetivo.\nPor eso '0' no es igual a 0, y '5' no es igual al entero 5.\nUna constante de carácter con secuencia de escape, como '\\n' o '\\0', sigue representando un solo carácter.\nEvita escribir varios caracteres comunes entre comillas simples: su valor depende de la implementación y no es un char ordinario.",
+    "relacionados": [
+      "char",
+      "ASCII",
+      "\" \"",
+      "\\n",
+      "\\0",
+      "literal entero decimal"
+    ],
+    "verificado_gcc13": false,
+    "amplia": true
+  },
+  {
+    "elemento": "\" \"",
+    "tipo": "símbolo",
+    "que_es": "Las comillas dobles delimitan una cadena literal: una secuencia de caracteres que termina automáticamente con el carácter nulo '\\0'.",
+    "como_se_usa": "#include <stdio.h>\nint main(void){ char TEXTO[]=\"hola\"; puts(TEXTO); return 0; }",
+    "error_tipico": "Confundir \"A\" con 'A': la primera es una cadena que ocupa dos bytes; la segunda es una constante de carácter.",
+    "en_la_materia": "Textos y arreglos",
+    "errores_ids": [
+      "PRF-019",
+      "PRF-020",
+      "PRF-034",
+      "SIN-011",
+      "SIN-042",
+      "SIN-052",
+      "SIN-061"
+    ],
+    "buscar": [
+      "comillas dobles",
+      "cadena literal",
+      "hola",
+      "cadena vacía",
+      "texto vacio",
+      "%d dentro de texto",
+      "string"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "Al pasar un texto a printf, puts u otra función de salida.",
+        "que_es": "El contenido se pasa como cadena; puts muestra el texto sin interpretar marcas de formato.",
+        "ejemplo": "#include <stdio.h>\nint main(void){ puts(\"Dato: %d\"); return 0; }",
+        "error_tipico": "Creer que puts interpreta %d; muestra esos dos caracteres literalmente."
+      },
+      {
+        "cuando": "Al crear un arreglo de caracteres inicializado con una cadena.",
+        "que_es": "El compilador copia los bytes del texto y agrega un byte nulo al final.",
+        "ejemplo": "#include <stdio.h>\nint main(void){ char T[]=\"hola\"; printf(\"%d\\n\",(int)sizeof(T)); return 0; }",
+        "error_tipico": "Reservar espacio para las letras pero olvidar el byte extra del terminador."
+      },
+      {
+        "cuando": "Al usar una cadena vacía, escrita como dos comillas juntas.",
+        "que_es": "La cadena vacía no tiene letras, pero sigue conteniendo el terminador nulo.",
+        "ejemplo": "#include <stdio.h>\nint main(void){ char T[]=\"\"; printf(\"%d\\n\",(int)sizeof(T)); return 0; }",
+        "error_tipico": "Pensar que una cadena vacía no ocupa memoria: ocupa un byte para '\\0'."
+      },
+      {
+        "cuando": "Cuando el texto de printf contiene %d como parte del formato.",
+        "que_es": "printf interpreta %d como una conversión y espera un argumento int; puts no interpreta formatos.",
+        "ejemplo": "#include <stdio.h>\nint main(void){ printf(\"Valor: %d\\n\",7); return 0; }",
+        "error_tipico": "Dejar %d en printf sin proporcionar el entero correspondiente."
+      }
+    ],
+    "detalle": "Una cadena literal es una secuencia de caracteres entre comillas dobles.\nEn C no existe un tipo string independiente: el texto se representa con caracteres char y un terminador '\\0'.\nLa cadena \"hola\" tiene cinco bytes en ASCII: cuatro letras y el byte final nulo.\nLa cadena vacía \"\" tiene un byte: solo el terminador.\nEl arreglo char T[]=\"hola\" reserva el espacio necesario para las letras y el terminador.\nEl texto \"Dato: %d\" no se interpreta por sí solo; printf sí interpreta %d como formato, mientras que puts lo muestra literalmente.\nLas cadenas no deben modificarse si son literales directos; para cambiar caracteres, usa un arreglo char inicializado con el texto.",
+    "relacionados": [
+      "' '",
+      "char",
+      "texto",
+      "terminador",
+      "\\0",
+      "printf",
+      "puts"
+    ],
+    "verificado_gcc13": false,
+    "amplia": true
+  },
+  {
+    "elemento": "\\n",
+    "tipo": "secuencia de escape",
+    "que_es": "Representa el carácter de nueva línea: al imprimirlo, el cursor pasa al renglón siguiente.",
+    "como_se_usa": "#include <stdio.h>\nint main(void){ printf(\"Uno\\nDos\\n\"); return 0; }",
+    "error_tipico": "Confundir la secuencia \\n con dos caracteres visibles, una barra y una n.",
+    "en_la_materia": "Caracteres de control y printf",
+    "errores_ids": [
+      "PRF-013",
+      "PRF-014",
+      "PRF-015",
+      "SIN-042"
+    ],
+    "buscar": [
+      "\\n",
+      "salto de línea",
+      "nueva linea",
+      "enter",
+      "renglón",
+      "newline"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "Dentro de una cadena literal, en el punto donde debe terminar un renglón.",
+        "que_es": "La barra invertida y la letra n forman un solo carácter de control.",
+        "ejemplo": "#include <stdio.h>\nint main(void){ printf(\"Uno\\nDos\\n\"); return 0; }",
+        "error_tipico": "Escribir una n común o pulsar Enter dentro de las comillas en lugar de escribir la secuencia."
+      }
+    ],
+    "detalle": "La secuencia tiene dos caracteres escritos en el código: barra invertida y n.\nDurante la compilación se convierte en un solo carácter de nueva línea.\nAl usarla en printf, el texto siguiente aparece en el renglón posterior.\nEn una constante de carácter se escribe '\\n'; en una cadena se escribe \"\\n\".\nEn el objetivo ASCII su código es 10 y puede guardarse en un char de 1 byte.\nNo es lo mismo que \\r, que vuelve al inicio del renglón sin avanzar a la línea siguiente.\nSe usa con frecuencia al final de una salida para dejar el cursor preparado para el siguiente mensaje.",
+    "relacionados": [
+      "\\r",
+      "\\t",
+      "char",
+      "printf",
+      "secuencia de escape"
+    ],
+    "verificado_gcc13": false,
+    "amplia": true
+  },
+  {
+    "elemento": "\\t",
+    "tipo": "secuencia de escape",
+    "que_es": "Representa un tabulador horizontal: avanza hasta la siguiente posición de tabulación.",
+    "como_se_usa": "#include <stdio.h>\nint main(void){ printf(\"Nombre\\tEdad\\nAna\\t18\\n\"); return 0; }",
+    "error_tipico": "Suponer que \\t siempre equivale a una cantidad fija de espacios.",
+    "en_la_materia": "Caracteres de control y printf",
+    "errores_ids": [],
+    "buscar": [
+      "\\t",
+      "tabulador",
+      "tab",
+      "separar columnas",
+      "alinear texto"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "Dentro de una cadena, entre dos datos que se quieren separar visualmente.",
+        "que_es": "El tabulador desplaza la posición de escritura hasta una columna de tabulación.",
+        "ejemplo": "#include <stdio.h>\nint main(void){ printf(\"A\\tB\\n\"); return 0; }",
+        "error_tipico": "Esperar que en todas las terminales el tabulador ocupe exactamente cuatro u ocho espacios."
+      }
+    ],
+    "detalle": "La secuencia \\t se escribe con una barra invertida y la letra t.\nEl compilador la convierte en un carácter de tabulación horizontal.\nPuede ayudar a separar columnas en una salida de texto.\nEl ancho visual depende de los puntos de tabulación de la terminal o del entorno.\nEn el objetivo de referencia se almacena en un char de 1 byte cuando se asigna a esa variable.\nNo equivale a escribir una cantidad específica de espacios.\nEn una cadena se coloca en el punto exacto donde debe avanzar el cursor.",
+    "relacionados": [
+      "\\n",
+      "char",
+      "printf",
+      "secuencia de escape"
+    ],
+    "verificado_gcc13": false,
+    "amplia": true
+  },
+  {
+    "elemento": "\\\\",
+    "tipo": "secuencia de escape",
+    "que_es": "Representa una barra invertida literal. Se escribe doble porque una barra invertida inicia las secuencias de escape.",
+    "como_se_usa": "#include <stdio.h>\nint main(void){ printf(\"C:\\\\Datos\\\\Archivo.txt\\n\"); return 0; }",
+    "error_tipico": "Escribir una sola barra invertida dentro del texto y formar accidentalmente una secuencia de escape distinta.",
+    "en_la_materia": "Caracteres de control y cadenas",
+    "errores_ids": [
+      "PRF-015",
+      "SIN-043",
+      "SIN-044"
+    ],
+    "buscar": [
+      "\\\\",
+      "barra invertida",
+      "backslash",
+      "ruta",
+      "barra doble"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "Dentro de una cadena literal cuando se necesita mostrar una barra invertida.",
+        "que_es": "Dos barras escritas en el código producen una sola barra en el valor de la cadena.",
+        "ejemplo": "#include <stdio.h>\nint main(void){ puts(\"C:\\\\Datos\"); return 0; }",
+        "error_tipico": "Poner una sola barra antes de una letra y crear otro escape, o una secuencia inválida."
+      }
+    ],
+    "detalle": "La barra invertida tiene una función especial dentro de los literales de C.\nPara obtener una barra invertida como dato, se escribe \\\\ dentro del código.\nEl compilador convierte esos dos caracteres escritos en uno solo al construir la cadena.\nSe utiliza, por ejemplo, al representar rutas que contienen barras invertidas.\nSi la barra aparece seguida de n, t o 0, el compilador interpreta un escape distinto.\nEn una cadena el resultado ocupa un byte en el entorno de referencia.\nRecuerda distinguir la escritura del código del carácter que finalmente se guarda o imprime.",
+    "relacionados": [
+      "\\n",
+      "\\t",
+      "\" \"",
+      "cadena literal",
+      "secuencia de escape"
+    ],
+    "verificado_gcc13": false,
+    "amplia": true
+  },
+  {
+    "elemento": "\\\"",
+    "tipo": "secuencia de escape",
+    "que_es": "Permite incluir una comilla doble dentro de una cadena literal sin cerrar esa cadena.",
+    "como_se_usa": "#include <stdio.h>\nint main(void){ puts(\"Dijo: \\\"hola\\\"\"); return 0; }",
+    "error_tipico": "Escribir una comilla doble sin escape dentro de la cadena y cerrar el texto antes de tiempo.",
+    "en_la_materia": "Caracteres y cadenas",
+    "errores_ids": [
+      "PRF-034",
+      "SIN-061"
+    ],
+    "buscar": [
+      "\\\"",
+      "comilla doble escapada",
+      "comillas dentro de printf",
+      "texto con comillas"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "Dentro de una cadena literal, cuando se quiere mostrar una comilla doble.",
+        "que_es": "La secuencia evita que la comilla funcione como delimitador de fin de cadena.",
+        "ejemplo": "#include <stdio.h>\nint main(void){ puts(\"Dijo: \\\"hola\\\"\"); return 0; }",
+        "error_tipico": "Escribir la comilla doble directamente y dejar la cadena dividida en partes inválidas."
+      }
+    ],
+    "detalle": "Las comillas dobles marcan el comienzo y el final de una cadena literal.\nPara que una comilla doble forme parte del texto, se escribe con una barra invertida delante.\nEl resultado almacenado es una comilla doble normal, sin la barra invertida.\nSe utiliza dentro de printf, puts y otros textos del programa.\nEn un literal de carácter, las comillas dobles no necesitan escape porque el delimitador es la comilla simple.\nEl escape no agrega un byte extra por sí mismo: representa el carácter de comilla.\nComprueba qué comilla abre y cierra el literal antes de agregar escapes.",
+    "relacionados": [
+      "\" \"",
+      "' '",
+      "cadena literal",
+      "\\\\",
+      "secuencia de escape"
+    ],
+    "verificado_gcc13": false,
+    "amplia": true
+  },
+  {
+    "elemento": "\\'",
+    "tipo": "secuencia de escape",
+    "que_es": "Representa una comilla simple en un literal de carácter. En una cadena de comillas dobles, la comilla simple no necesita escape.",
+    "como_se_usa": "#include <stdio.h>\nint main(void){ char C='\\''; printf(\"%c\\n\",C); return 0; }",
+    "error_tipico": "Escribir tres comillas simples seguidas sin escapar la que forma parte del carácter.",
+    "en_la_materia": "Caracteres",
+    "errores_ids": [],
+    "buscar": [
+      "\\'",
+      "comilla simple escapada",
+      "apostrofe",
+      "carácter comilla"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "Dentro de una constante de carácter delimitada por comillas simples.",
+        "que_es": "La barra permite que la comilla simple sea el dato y no el cierre del literal.",
+        "ejemplo": "#include <stdio.h>\nint main(void){ char C='\\''; printf(\"%c\\n\",C); return 0; }",
+        "error_tipico": "Olvidar la barra y terminar el literal antes de representar el carácter."
+      }
+    ],
+    "detalle": "La secuencia se utiliza cuando el dato es precisamente una comilla simple.\nEn una constante de carácter, las comillas simples delimitan el literal, por eso la comilla que es dato necesita escape.\nEn una cadena delimitada por comillas dobles, una comilla simple puede escribirse directamente.\nEl valor resultante es un carácter común, no los dos símbolos barra y comilla.\nAl guardarse en char ocupa 1 byte en el objetivo del proyecto.\nSu uso es menos frecuente que \\n, pero resulta útil al representar apóstrofos.\nComprueba siempre cuál es el delimitador del literal para decidir si hace falta escapar la comilla.",
+    "relacionados": [
+      "' '",
+      "\" \"",
+      "char",
+      "cadena literal",
+      "secuencia de escape"
+    ],
+    "verificado_gcc13": false,
+    "amplia": true
+  },
+  {
+    "elemento": "\\0",
+    "tipo": "secuencia de escape",
+    "que_es": "Representa el carácter nulo, cuyo valor es cero. En las cadenas se usa como terminador para indicar dónde termina el texto.",
+    "como_se_usa": "#include <stdio.h>\nint main(void){ char C='\\0'; printf(\"%d\\n\",C); return 0; }",
+    "error_tipico": "Confundir '\\0' con '0': el primero vale cero y el segundo es el carácter del dígito.",
+    "en_la_materia": "Caracteres y textos",
+    "errores_ids": [
+      "ARR-029",
+      "ARR-060"
+    ],
+    "buscar": [
+      "\\0",
+      "barra cero",
+      "nulo",
+      "terminador",
+      "fin de cadena",
+      "diferencia 0 y '0'"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "En una constante de carácter que debe valer cero.",
+        "que_es": "La secuencia forma un carácter nulo que puede guardarse en un char.",
+        "ejemplo": "#include <stdio.h>\nint main(void){ char C='\\0'; printf(\"%d\\n\",C); return 0; }",
+        "error_tipico": "Confundirlo con el dígito '0', cuyo código en ASCII es 48."
+      },
+      {
+        "cuando": "Dentro de una cadena o arreglo de char, para marcar el fin del texto.",
+        "que_es": "La primera aparición de '\\0' indica a funciones como printf con %s dónde termina la cadena.",
+        "ejemplo": "#include <stdio.h>\nint main(void){ char T[]=\"A\\0B\"; printf(\"%s %d\\n\",T,(int)sizeof(T)); return 0; }",
+        "error_tipico": "Incluir un '\\0' antes de tiempo y luego preguntarse por qué las letras posteriores no aparecen al imprimir con %s."
+      }
+    ],
+    "detalle": "La secuencia \\0 representa un único carácter cuyo valor numérico es 0.\nEn un char ocupa un byte y en el entorno de referencia se representa con todos sus bits en cero.\nEn una cadena C, el carácter nulo marca el final del texto.\nEl literal \"A\" ya incluye un terminador automáticamente, aunque no se escriba en el código.\nEl literal \"A\\0B\" contiene bytes después del primer nulo, pero printf con %s muestra solo el tramo anterior.\n'0' es el carácter del dígito y vale 48 en ASCII; '\\0' vale cero.\nUna cadena vacía \"\" contiene solamente un terminador nulo.",
+    "relacionados": [
+      "terminador",
+      "\" \"",
+      "' '",
+      "ASCII",
+      "cadena literal"
+    ],
+    "verificado_gcc13": false,
+    "amplia": true
+  },
+  {
+    "elemento": "\\a",
+    "tipo": "secuencia de escape",
+    "que_es": "Representa el carácter de alerta, históricamente asociado a una campanilla o señal sonora.",
+    "como_se_usa": "#include <stdio.h>\nint main(void){ printf(\"Aviso\\a\\n\"); return 0; }",
+    "error_tipico": "Esperar que siempre se escuche un sonido: la terminal o el navegador pueden ignorar la alerta.",
+    "en_la_materia": "Caracteres de control",
+    "errores_ids": [],
+    "buscar": [
+      "\\a",
+      "alerta",
+      "campana",
+      "beep",
+      "sonido"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "Dentro de una cadena cuando se quiere emitir una señal de alerta.",
+        "que_es": "El carácter se envía a la salida estándar; el entorno decide si produce sonido u otra señal.",
+        "ejemplo": "#include <stdio.h>\nint main(void){ printf(\"Aviso\\a\\n\"); return 0; }",
+        "error_tipico": "Dar por hecho que todos los dispositivos reproducen un sonido audible."
+      }
+    ],
+    "detalle": "La secuencia \\a representa el carácter de alerta del conjunto de caracteres de ejecución.\nEn el código se escribe con una barra invertida seguida de la letra a.\nPuede provocar una campanilla en algunas terminales antiguas.\nEn terminales modernas, navegadores o salidas capturadas puede no producir ningún sonido.\nNo debe utilizarse como mecanismo confiable para avisar al usuario.\nAl guardarse como char ocupa un byte en el objetivo de referencia.\nEl programa puede compilar correctamente aunque no se perciba ningún efecto.",
+    "relacionados": [
+      "\\n",
+      "\\r",
+      "char",
+      "secuencia de escape"
+    ],
+    "verificado_gcc13": false,
+    "amplia": true
+  },
+  {
+    "elemento": "\\r",
+    "tipo": "secuencia de escape",
+    "que_es": "Representa el retorno de carro: mueve el cursor al comienzo de la línea actual sin avanzar a la siguiente.",
+    "como_se_usa": "#include <stdio.h>\nint main(void){ printf(\"ABC\\rX\\n\"); return 0; }",
+    "error_tipico": "Confundir retorno de carro con nueva línea: \\r y \\n son caracteres distintos.",
+    "en_la_materia": "Caracteres de control y printf",
+    "errores_ids": [],
+    "buscar": [
+      "\\r",
+      "retorno de carro",
+      "carriage return",
+      "volver al inicio",
+      "sobrescribir línea"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "Dentro de una cadena donde se necesita volver al inicio del renglón actual.",
+        "que_es": "El cursor regresa a la columna inicial; lo que se escriba después puede sobrescribir caracteres visibles.",
+        "ejemplo": "#include <stdio.h>\nint main(void){ printf(\"ABC\\rX\\n\"); return 0; }",
+        "error_tipico": "Suponer que \\r baja una línea como \\n."
+      }
+    ],
+    "detalle": "La secuencia \\r representa el retorno de carro.\nEn el objetivo de referencia su código es 13 y se puede guardar en un char de un byte.\nVuelve el cursor al comienzo de la línea actual, pero no genera por sí sola una nueva línea.\n\\n representa la nueva línea y tiene un efecto distinto.\nAl imprimir más caracteres después de \\r, algunos entornos pueden sobrescribir lo que ya estaba en esa línea.\nEl aspecto exacto depende de cómo la terminal o el navegador interprete el retorno de carro.\nSe usa menos que \\n, pero aparece en ejemplos de control de salida.",
+    "relacionados": [
+      "\\n",
+      "\\t",
+      "char",
+      "secuencia de escape"
+    ],
+    "verificado_gcc13": false,
+    "amplia": true
+  },
+  {
+    "elemento": "INT_MAX",
+    "tipo": "constante",
+    "que_es": "Es una macro de limits.h que representa el mayor valor que puede guardar un int; en el objetivo del proyecto vale 2147483647.",
+    "como_se_usa": "#include <stdio.h>\n#include <limits.h>\nint main(void){ printf(\"%d\\n\",INT_MAX); return 0; }",
+    "error_tipico": "Sumarle 1 y creer que se obtiene un entero válido mayor: el desbordamiento de int con signo es comportamiento indefinido.",
+    "en_la_materia": "limits.h y tipos enteros",
+    "errores_ids": [
+      "EJE-012",
+      "TIP-008"
+    ],
+    "buscar": [
+      "INT_MAX",
+      "máximo int",
+      "maximo entero",
+      "límite int",
+      "2147483647",
+      "desborde"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "Al consultar el límite superior del tipo int.",
+        "que_es": "La macro permite conocer el máximo representable por int sin escribir el número a mano.",
+        "ejemplo": "#include <stdio.h>\n#include <limits.h>\nint main(void){ printf(\"%d\\n\",INT_MAX); return 0; }",
+        "error_tipico": "Olvidar incluir limits.h o escribir INT_MAX con una capitalización diferente."
+      },
+      {
+        "cuando": "Al comprobar si un resultado cabe antes de una operación.",
+        "que_es": "Se puede comparar el valor actual con INT_MAX antes de sumarle otro número positivo.",
+        "ejemplo": "#include <stdio.h>\n#include <limits.h>\nint main(void){ int A=INT_MAX; printf(\"%d\\n\",A); return 0; }",
+        "error_tipico": "Realizar primero la suma que puede desbordar y comprobar después."
+      }
+    ],
+    "detalle": "INT_MAX es una macro de la cabecera <limits.h>.\nEn el modelo Linux x86-64 del proyecto, int ocupa 4 bytes (32 bits) y su máximo es 2147483647.\nEl valor mínimo del mismo tipo es -2147483648.\nLa macro tiene un valor compatible con el tipo int y se puede mostrar con %d.\nNo es una variable que se pueda modificar: el preprocesador proporciona un valor fijo.\nSumar uno a INT_MAX en un int con signo produce desbordamiento, cuyo resultado no está definido por C.\nUsa long si el cálculo necesita un rango mayor y verifica también el límite de ese tipo.",
+    "relacionados": [
+      "INT_MIN",
+      "int",
+      "limits.h",
+      "desborde",
+      "literal entero decimal"
+    ],
+    "verificado_gcc13": false,
+    "amplia": true
+  },
+  {
+    "elemento": "INT_MIN",
+    "tipo": "constante",
+    "que_es": "Es una macro de limits.h que representa el menor valor que puede guardar un int; en el objetivo del proyecto vale -2147483648.",
+    "como_se_usa": "#include <stdio.h>\n#include <limits.h>\nint main(void){ printf(\"%d\\n\",INT_MIN); return 0; }",
+    "error_tipico": "Suponer que el rango positivo y negativo es simétrico: int puede representar un valor negativo cuyo módulo es mayor que INT_MAX.",
+    "en_la_materia": "limits.h y tipos enteros",
+    "errores_ids": [
+      "EJE-018"
+    ],
+    "buscar": [
+      "INT_MIN",
+      "mínimo int",
+      "minimo entero",
+      "límite inferior int",
+      "-2147483648"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "Al consultar el límite inferior de int.",
+        "que_es": "La macro indica el número entero más negativo representable por el tipo.",
+        "ejemplo": "#include <stdio.h>\n#include <limits.h>\nint main(void){ printf(\"%d\\n\",INT_MIN); return 0; }",
+        "error_tipico": "Olvidar limits.h o escribir la macro con letras minúsculas."
+      },
+      {
+        "cuando": "Al revisar si una resta puede superar el rango del tipo.",
+        "que_es": "Se compara el valor actual con INT_MIN antes de realizar una resta negativa.",
+        "ejemplo": "#include <stdio.h>\n#include <limits.h>\nint main(void){ int A=INT_MIN; printf(\"%d\\n\",A); return 0; }",
+        "error_tipico": "Ejecutar la resta potencialmente desbordada antes de revisar el límite."
+      }
+    ],
+    "detalle": "INT_MIN pertenece a la cabecera <limits.h>.\nEn el objetivo del proyecto, int ocupa 4 bytes y su rango completo va de -2147483648 a 2147483647.\nEl rango no es simétrico: existe un valor negativo adicional en magnitud.\nINT_MIN tiene tipo int y se muestra con %d.\nLa macro sirve para conocer el límite sin memorizar ni copiar el número.\nNegar INT_MIN en un int no produce un valor representable; ese caso puede causar comportamiento indefinido.\nCuando el cálculo puede superar el rango de int, se debe elegir un tipo apropiado antes de realizar la operación.",
+    "relacionados": [
+      "INT_MAX",
+      "int",
+      "limits.h",
+      "desborde"
+    ],
+    "verificado_gcc13": false,
+    "amplia": true
+  },
+  {
+    "elemento": "M_PI",
+    "tipo": "constante",
+    "que_es": "Es una macro disponible en math.h en el entorno GNU del proyecto y representa una aproximación de pi como valor double.",
+    "como_se_usa": "#include <stdio.h>\n#include <math.h>\nint main(void){ printf(\"%.5f\\n\",M_PI); return 0; }",
+    "error_tipico": "Usarla sin incluir math.h o suponer que M_PI forma parte de todas las versiones estrictas del estándar ANSI C.",
+    "en_la_materia": "math.h y constantes matemáticas",
+    "errores_ids": [
+      "PRE-036"
+    ],
+    "buscar": [
+      "M_PI",
+      "pi",
+      "3.14159",
+      "numero pi",
+      "circunferencia"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "En una fórmula matemática que necesita el valor de pi.",
+        "que_es": "La macro proporciona un valor decimal de precisión double para usar en expresiones.",
+        "ejemplo": "#include <stdio.h>\n#include <math.h>\nint main(void){ double R=2.0; printf(\"%.5f\\n\",M_PI*R); return 0; }",
+        "error_tipico": "Escribir PI o m_pi: el nombre de la macro distingue mayúsculas y minúsculas."
+      }
+    ],
+    "detalle": "M_PI representa la constante matemática pi, aproximadamente 3.141592653589793.\nEn el objetivo Linux con gcc 13 en modo gnu99, math.h la proporciona como extensión de GNU.\nSu expresión tiene tipo double, que ocupa 8 bytes en el entorno del proyecto.\nEl valor se almacena como punto flotante binario y por eso es una aproximación, no una expansión decimal infinita.\nSe utiliza en fórmulas de circunferencia, área y otras expresiones matemáticas.\nEn C estrictamente ANSI, M_PI no está garantizada por el estándar; depende de la biblioteca y sus extensiones.\nEscribe exactamente M_PI y agrega #include <math.h> antes de utilizarla.",
+    "relacionados": [
+      "math.h",
+      "double",
+      "literal de punto flotante",
+      "constante"
+    ],
+    "verificado_gcc13": false,
+    "amplia": true
+  },
+  {
+    "elemento": "RAND_MAX",
+    "tipo": "constante",
+    "que_es": "Es una macro de stdlib.h que indica el mayor valor que puede devolver rand(); en glibc vale 2147483647.",
+    "como_se_usa": "#include <stdio.h>\n#include <stdlib.h>\nint main(void){ printf(\"%d\\n\",RAND_MAX); return 0; }",
+    "error_tipico": "Suponer que rand() puede devolver un número mayor que RAND_MAX o que el máximo es igual en todas las bibliotecas.",
+    "en_la_materia": "stdlib.h y números seudoaleatorios",
+    "errores_ids": [],
+    "buscar": [
+      "RAND_MAX",
+      "máximo rand",
+      "maximo rand",
+      "rango rand",
+      "límite del azar"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "Al consultar el límite superior del resultado de rand().",
+        "que_es": "RAND_MAX permite conocer el máximo que la biblioteca promete para esa función.",
+        "ejemplo": "#include <stdio.h>\n#include <stdlib.h>\nint main(void){ printf(\"%d\\n\",RAND_MAX); return 0; }",
+        "error_tipico": "Olvidar stdlib.h o asumir un valor idéntico en cualquier sistema."
+      }
+    ],
+    "detalle": "RAND_MAX es una macro definida por <stdlib.h>.\nSu tipo es int y en el entorno glibc de referencia su valor es 2147483647.\nEl int utilizado ocupa 4 bytes y tiene rango -2147483648 a 2147483647.\nrand() devuelve un entero entre cero y RAND_MAX, incluidos ambos extremos.\nEl valor exacto de RAND_MAX puede variar entre implementaciones de C.\nLa macro informa el límite, pero no hace que los resultados de rand() sean verdaderamente aleatorios.\nAl calcular rangos, recuerda que RAND_MAX es un límite inclusivo.",
+    "relacionados": [
+      "rand",
+      "stdlib.h",
+      "int",
+      "constante"
+    ],
+    "verificado_gcc13": false,
+    "amplia": true
+  },
+  {
+    "elemento": "NULL",
+    "tipo": "constante",
+    "que_es": "Es una macro que representa una constante de puntero nulo: indica que un puntero no señala a un objeto o función.",
+    "como_se_usa": "#include <stdio.h>\n#include <stddef.h>\nint main(void){ void *P=NULL; printf(\"%d\\n\",P==NULL); return 0; }",
+    "error_tipico": "Confundir NULL con el carácter '\\0' o con una cadena vacía: representan conceptos diferentes.",
+    "en_la_materia": "Bibliotecas, punteros y textos",
+    "errores_ids": [],
+    "buscar": [
+      "NULL",
+      "puntero nulo",
+      "nulo",
+      "diferencia NULL y \\0",
+      "dirección vacía"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "Al inicializar un puntero para indicar que todavía no apunta a un objeto.",
+        "que_es": "NULL representa una constante de puntero nulo; la forma concreta de la macro depende de la implementación.",
+        "ejemplo": "#include <stdio.h>\n#include <stddef.h>\nint main(void){ void *P=NULL; printf(\"%d\\n\",P==NULL); return 0; }",
+        "error_tipico": "Usar NULL como si fuera un carácter o el contenido de una cadena."
+      },
+      {
+        "cuando": "Al comparar un puntero con la ausencia de una dirección válida.",
+        "que_es": "La comparación permite comprobar si el puntero tiene el valor nulo.",
+        "ejemplo": "#include <stdio.h>\n#include <stddef.h>\nint main(void){ int *P=NULL; printf(\"%d\\n\",P==NULL); return 0; }",
+        "error_tipico": "Comparar el puntero con una cadena vacía o con el carácter '\\0'."
+      }
+    ],
+    "detalle": "NULL es una macro, no un tipo de dato ni una variable que ocupe memoria por sí misma.\nRepresenta una constante de puntero nulo y se define en cabeceras como <stddef.h> y otras bibliotecas.\nEn glibc suele expandirse como una expresión equivalente a un puntero nulo.\nEn el modelo LP64, los punteros de datos ocupan 8 bytes, pero NULL no debe interpretarse como un número ordinario.\nNo significa lo mismo que '\\0', que es un carácter con valor cero usado para terminar cadenas.\nTampoco significa lo mismo que \"\", que es una cadena que contiene únicamente el terminador.\nEl editor todavía no admite punteros generales, por lo que los ejemplos con NULL no se pueden ejecutar allí aunque sean C válido para gcc.",
+    "relacionados": [
+      "\\0",
+      "terminador",
+      "cadena literal",
+      "punteros",
+      "stddef.h"
+    ],
+    "verificado_gcc13": false,
+    "amplia": true
+  },
+  {
+    "elemento": "EOF",
+    "tipo": "constante",
+    "que_es": "Es una macro de stdio.h que indica fin de archivo o fin de entrada cuando una función de lectura ya no puede obtener otro carácter.",
+    "como_se_usa": "#include <stdio.h>\nint main(void){ int C=EOF; printf(\"%d\\n\",C); return 0; }",
+    "error_tipico": "Guardar el resultado de getchar() en char: EOF es un int negativo y puede no representarse correctamente en char.",
+    "en_la_materia": "stdio.h y entrada de datos",
+    "errores_ids": [],
+    "buscar": [
+      "EOF",
+      "fin de archivo",
+      "fin de entrada",
+      "end of file",
+      "getchar devuelve -1"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "Al comparar el resultado de getchar() con el fin de la entrada.",
+        "que_es": "getchar devuelve un int para poder representar todos los caracteres y también EOF.",
+        "ejemplo": "#include <stdio.h>\nint main(void){ int C=getchar(); if(C==EOF) puts(\"Fin\"); return 0; }",
+        "error_tipico": "Guardar getchar() en char y perder la posibilidad de distinguir EOF de un carácter válido."
+      }
+    ],
+    "detalle": "EOF se define en <stdio.h> y su tipo es int.\nEn glibc su valor es -1, aunque el estándar exige que sea un valor negativo y no obliga a que todas las bibliotecas elijan exactamente el mismo.\nSe utiliza como resultado especial de funciones de lectura cuando ya no hay más datos o aparece una condición de error.\ngetchar() devuelve int, no char, precisamente para representar todos los valores posibles de un carácter y además EOF.\nPor eso la variable que recibe getchar() debe ser int.\nEOF no es el carácter '\\0' y tampoco significa que se haya leído el dígito cero.\nEl editor admite getchar(), pero el ejemplo con una entrada interactiva debe probarse con el final de entrada del entorno.",
+    "relacionados": [
+      "getchar",
+      "stdio.h",
+      "int",
+      "\\0",
+      "buffer de entrada"
+    ],
+    "verificado_gcc13": false,
+    "amplia": true
+  },
+  {
+    "elemento": "true",
+    "tipo": "constante",
+    "que_es": "Es la macro de stdbool.h que representa verdadero; en C99 se expande al entero 1.",
+    "como_se_usa": "#include <stdio.h>\n#include <stdbool.h>\nint main(void){ bool LISTO=true; printf(\"%d\\n\",LISTO); return 0; }",
+    "error_tipico": "Escribir True o TRUE: C distingue mayúsculas y minúsculas y esas grafías no son la macro true.",
+    "en_la_materia": "Condiciones y stdbool.h",
+    "errores_ids": [],
+    "buscar": [
+      "true",
+      "verdadero",
+      "bool verdadero",
+      "1 verdadero"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "Al inicializar una variable bool que debe comenzar en verdadero.",
+        "que_es": "La macro true se convierte al valor lógico verdadero de tipo bool al asignarse.",
+        "ejemplo": "#include <stdio.h>\n#include <stdbool.h>\nint main(void){ bool ACTIVO=true; printf(\"%d\\n\",ACTIVO); return 0; }",
+        "error_tipico": "Olvidar #include <stdbool.h> o escribir el nombre con mayúsculas."
+      }
+    ],
+    "detalle": "true se define en <stdbool.h> para C99.\nLa macro true se expande al entero 1; no es una palabra reservada del lenguaje.\nAl asignarse a una variable bool, el valor se convierte al tipo _Bool.\nEn el objetivo del proyecto, bool ocupa 1 byte y solo almacena los valores 0 o 1.\nEn una condición, true se comporta como verdadero y permite entrar en la rama del if.\nEl literal 1 también es verdadero, pero su tipo original es int y ocupa 4 bytes.\nEscribe true en minúsculas y agrega la cabecera correspondiente.",
+    "relacionados": [
+      "false",
+      "bool",
+      "\\0",
+      "cero y uno",
+      "stdbool.h"
+    ],
+    "verificado_gcc13": false,
+    "amplia": true
+  },
+  {
+    "elemento": "false",
+    "tipo": "constante",
+    "que_es": "Es la macro de stdbool.h que representa falso; en C99 se expande al entero 0.",
+    "como_se_usa": "#include <stdio.h>\n#include <stdbool.h>\nint main(void){ bool LISTO=false; printf(\"%d\\n\",LISTO); return 0; }",
+    "error_tipico": "Pensar que false vale -1: en C99 la macro false representa el entero 0.",
+    "en_la_materia": "Condiciones y stdbool.h",
+    "errores_ids": [],
+    "buscar": [
+      "false",
+      "falso",
+      "bool falso",
+      "0 falso"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "Al inicializar una variable bool que debe comenzar en falso.",
+        "que_es": "La macro false se convierte al valor lógico falso al asignarse a bool.",
+        "ejemplo": "#include <stdio.h>\n#include <stdbool.h>\nint main(void){ bool TERMINADO=false; printf(\"%d\\n\",TERMINADO); return 0; }",
+        "error_tipico": "Usar False o FALSE en vez de false."
+      }
+    ],
+    "detalle": "false se define en <stdbool.h> para C99.\nLa macro false se expande al entero 0 y no es una palabra reservada del lenguaje.\nAl asignarse a bool, se convierte al tipo _Bool, que ocupa 1 byte en el objetivo del proyecto.\nUna variable bool puede almacenar solo 0 o 1: falso o verdadero.\nEn una condición, false impide entrar en la rama del if, salvo que la expresión se combine con otros operadores.\nEl literal 0 también es falso, pero su tipo original es int y ocupa 4 bytes.\nEscribe false en minúsculas y no confundas la macro con una variable llamada FALSE.",
+    "relacionados": [
+      "true",
+      "bool",
+      "cero y uno",
+      "condición",
+      "stdbool.h"
+    ],
+    "verificado_gcc13": false,
+    "amplia": true
+  },
+  {
+    "elemento": "ASCII",
+    "tipo": "concepto",
+    "que_es": "ASCII es una codificación que asocia números con caracteres; en el objetivo del proyecto 'A' vale 65 y '0' vale 48.",
+    "como_se_usa": "#include <stdio.h>\nint main(void){ printf(\"%d %d\\n\",'A','0'); return 0; }",
+    "error_tipico": "Confundir el código del carácter '5' (53) con el valor entero 5.",
+    "en_la_materia": "Caracteres y códigos",
+    "errores_ids": [
+      "TIP-012",
+      "TIP-030"
+    ],
+    "buscar": [
+      "ASCII",
+      "código ASCII",
+      "codigo de caracter",
+      "A vale 65",
+      "0 vale 48",
+      "carácter número"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "Al mostrar un carácter con %d en lugar de %c.",
+        "que_es": "La constante de carácter se promociona a int y se muestra su código numérico.",
+        "ejemplo": "#include <stdio.h>\nint main(void){ printf(\"%d %d\\n\",'A','5'); return 0; }",
+        "error_tipico": "Esperar que %d muestre la letra en vez de su número de código."
+      },
+      {
+        "cuando": "Al transformar un dígito escrito como carácter en su valor numérico.",
+        "que_es": "La diferencia entre el carácter del dígito y '0' permite obtener el entero correspondiente en ASCII.",
+        "ejemplo": "#include <stdio.h>\nint main(void){ char C='5'; printf(\"%d\\n\",C-'0'); return 0; }",
+        "error_tipico": "Usar C-0 en lugar de C-'0': el carácter cero no es el entero cero."
+      }
+    ],
+    "detalle": "ASCII asigna números a letras, dígitos y símbolos.\nEn el entorno Linux x86-64 de referencia, 'A' tiene código 65, 'a' tiene 97 y '0' tiene 48.\nUn char ocupa 1 byte y guarda el valor numérico del carácter.\nAl usar una constante de carácter como 'A' en una expresión, su tipo es int.\nPor eso printf con %d muestra el código, mientras que %c muestra el carácter.\nEn C estándar el conjunto de ejecución no tiene por qué ser ASCII en todas las plataformas; estos valores corresponden al objetivo del proyecto.\nPara convertir un dígito char como '5' en el entero 5, se resta el carácter '0'.",
+    "relacionados": [
+      "' '",
+      "char",
+      "literal entero decimal",
+      "\\0",
+      "cero y uno"
+    ],
+    "verificado_gcc13": false,
+    "amplia": true
+  },
+  {
+    "elemento": "#define",
+    "tipo": "directiva",
+    "que_es": "Es una directiva del preprocesador que reemplaza un nombre por un texto antes de compilar; se usa mucho para definir constantes simbólicas.",
+    "como_se_usa": "#include <stdio.h>\n#define TOPE 100\nint main(void){ printf(\"%d\\n\",TOPE); return 0; }",
+    "error_tipico": "Poner un punto y coma al final de la directiva: ese punto y coma también se reemplaza y puede alterar la expresión.",
+    "en_la_materia": "Preprocesador y constantes",
+    "errores_ids": [
+      "PRE-019",
+      "PRE-020",
+      "PRE-021",
+      "PRE-025",
+      "PRE-028",
+      "PRE-029",
+      "PRE-031",
+      "PRE-032",
+      "PRE-033",
+      "PRE-034"
+    ],
+    "buscar": [
+      "#define",
+      "constante simbólica",
+      "macro",
+      "definir valor fijo",
+      "nombre en mayúsculas"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "Al comienzo del archivo, antes de main, para definir un valor fijo con nombre.",
+        "que_es": "El preprocesador sustituye cada aparición de TOPE por el texto 100.",
+        "ejemplo": "#include <stdio.h>\n#define TOPE 100\nint main(void){ printf(\"%d\\n\",TOPE); return 0; }",
+        "error_tipico": "Escribir #define TOPE = 100 o agregar ; al final."
+      },
+      {
+        "cuando": "Al definir un valor decimal que se reutiliza en varias expresiones.",
+        "que_es": "El reemplazo puede ser una constante decimal; el tipo aparece cuando el compilador interpreta el valor reemplazado.",
+        "ejemplo": "#include <stdio.h>\n#define PI 3.14159\nint main(void){ double A=PI; printf(\"%.5f\\n\",A); return 0; }",
+        "error_tipico": "Creer que #define crea automáticamente una variable tipada o reserva memoria."
+      }
+    ],
+    "detalle": "La directiva #define se procesa antes de la compilación, durante el preprocesamiento.\nEl nombre de una constante simbólica suele escribirse en MAYÚSCULAS para reconocerlo con facilidad.\nLa directiva no lleva signo igual ni punto y coma al final.\nEl preprocesador reemplaza el nombre por el texto indicado; no crea por sí mismo una variable ni reserva memoria.\nPor eso una macro #define TOPE 100 no tiene un tipo propio: el 100 reemplazado se interpreta como int.\nSi el reemplazo es una expresión, conviene escribirla entre paréntesis para evitar problemas de precedencia.\nA diferencia de const, #define no tiene el control de tipo de una declaración de variable.",
+    "relacionados": [
+      "const",
+      "constante",
+      "literal entero decimal",
+      "literal de punto flotante",
+      "preprocesador"
+    ],
+    "verificado_gcc13": false,
+    "amplia": true
+  },
+  {
+    "elemento": "const",
+    "tipo": "palabra clave",
+    "que_es": "Es un calificador que indica que un objeto no puede modificarse a través de ese nombre después de inicializarlo.",
+    "como_se_usa": "#include <stdio.h>\nint main(void){ const int TOPE=10; printf(\"%d\\n\",TOPE); return 0; }",
+    "error_tipico": "Intentar asignar otro valor a la variable const después de inicializarla.",
+    "en_la_materia": "Variables y constantes",
+    "errores_ids": [
+      "DEC-010",
+      "DEC-026",
+      "PRE-028"
+    ],
+    "buscar": [
+      "const",
+      "constante tipada",
+      "valor fijo",
+      "no se puede modificar"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "En una declaración, delante del tipo de una variable.",
+        "que_es": "El objeto conserva el tipo declarado, pero el programa no puede modificarlo mediante ese identificador.",
+        "ejemplo": "#include <stdio.h>\nint main(void){ const int EDAD=18; printf(\"%d\\n\",EDAD); return 0; }",
+        "error_tipico": "Intentar hacer EDAD=19 después de la declaración."
+      },
+      {
+        "cuando": "Al compartir un valor fijo con una función mediante un parámetro const.",
+        "que_es": "La calificación indica que la función no debe modificar el objeto a través de ese parámetro.",
+        "ejemplo": "#include <stdio.h>\nint MOSTRAR(const int N){ return N; }\nint main(void){ printf(\"%d\\n\",MOSTRAR(5)); return 0; }",
+        "error_tipico": "Creer que const cambia el tipo base o el tamaño del objeto."
+      }
+    ],
+    "detalle": "const no es una macro: forma parte de la declaración de un objeto y conserva su tipo.\nUna variable const int ocupa lo mismo que int: 4 bytes en el objetivo del proyecto.\nUna variable const float ocupa 4 bytes y una const double ocupa 8 bytes.\nEl valor debe inicializarse al declarar un objeto const local, porque después no se puede asignar otro valor.\nEl calificador impide modificar el objeto a través de ese identificador, pero no convierte cualquier expresión en una constante de compilación.\nEn C, una variable const int local no sustituye en todos los contextos a una constante entera de #define.\nSe usa para documentar y proteger valores que el programa debe tratar como fijos.",
+    "relacionados": [
+      "#define",
+      "constante",
+      "int",
+      "float",
+      "double"
+    ],
+    "verificado_gcc13": false,
+    "amplia": true
+  },
+  {
+    "elemento": "constante",
+    "tipo": "concepto",
+    "que_es": "Una constante es un valor que el programa trata como fijo; puede escribirse directamente, declararse con const o definirse con #define.",
+    "como_se_usa": "#include <stdio.h>\n#define MAXIMO 100\nint main(void){ const int MINIMO=1; printf(\"%d %d\\n\",MINIMO,MAXIMO); return 0; }",
+    "error_tipico": "Creer que literal, const y #define son exactamente lo mismo: sus tipos y su forma de almacenamiento son diferentes.",
+    "en_la_materia": "Constantes y preprocesador",
+    "errores_ids": [
+      "DEC-010",
+      "DEC-026",
+      "PRE-028"
+    ],
+    "buscar": [
+      "constante",
+      "valor fijo",
+      "const",
+      "#define",
+      "literal",
+      "constante simbólica"
+    ],
+    "ocasiones": [
+      {
+        "cuando": "Al escribir un valor directamente en una expresión.",
+        "que_es": "El literal representa el valor en el punto donde se escribe, sin declarar un objeto con nombre.",
+        "ejemplo": "#include <stdio.h>\nint main(void){ printf(\"%d\\n\",100); return 0; }",
+        "error_tipico": "Confundir el literal con una variable que puede modificarse."
+      },
+      {
+        "cuando": "Al declarar un objeto con const.",
+        "que_es": "El objeto tiene un tipo declarado y no se puede modificar a través de ese nombre.",
+        "ejemplo": "#include <stdio.h>\nint main(void){ const int MAXIMO=100; printf(\"%d\\n\",MAXIMO); return 0; }",
+        "error_tipico": "Intentar asignar otro valor después de inicializarlo."
+      },
+      {
+        "cuando": "Al usar #define para dar un nombre a un valor.",
+        "que_es": "El preprocesador reemplaza el nombre por el texto indicado y no crea un objeto tipado.",
+        "ejemplo": "#include <stdio.h>\n#define MAXIMO 100\nint main(void){ printf(\"%d\\n\",MAXIMO); return 0; }",
+        "error_tipico": "Agregar ; al final del #define o creer que la macro ocupa memoria por sí misma."
+      }
+    ],
+    "detalle": "Un literal es el propio valor escrito, como 10, 3.14, 'A' o \"hola\".\nUna variable const es un objeto con tipo definido cuya modificación está restringida.\nUna macro #define es un reemplazo de texto que ocurre antes de compilar y no reserva memoria por sí misma.\nEl valor 10 escrito directamente tiene tipo int, que ocupa 4 bytes en el objetivo de referencia.\nUna declaración const int también ocupa 4 bytes; const no cambia el tamaño del tipo.\nEl reemplazo #define TOPE 10 no tiene tipo independiente: el 10 se interpreta como int donde se usa.\nEscoger entre las tres formas depende de si necesitas un valor anónimo, un objeto tipado o un nombre de reemplazo del preprocesador.",
+    "relacionados": [
+      "literal",
+      "const",
+      "#define",
+      "int",
+      "float",
+      "double"
+    ],
+    "verificado_gcc13": false,
+    "amplia": true
+  }
+]
