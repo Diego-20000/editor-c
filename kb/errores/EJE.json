@@ -147,7 +147,7 @@
   "codigo_mal": "#include <stdio.h>\nint CONTAR(int N);\nint main() {\n  printf(\"%d\\n\", CONTAR(1));\n}\nint CONTAR(int N) {\n  return CONTAR(N + 1) + 1;\n}",
   "codigo_bien": "#include <stdio.h>\nint CONTAR(int N);\nint main() {\n  printf(\"%d\\n\", CONTAR(1));\n}\nint CONTAR(int N) {\n  if (N >= 10) { return 0; }\n  return CONTAR(N + 1) + 1;\n}",
   "entrada": "",
-  "que_dice_gcc": "archivo.c:7: warning: infinite recursion detected [-Winfinite-recursion]",
+  "que_dice_gcc": "archivo.c:6: warning: infinite recursion detected [-Winfinite-recursion]",
   "mensaje_editor": "La función CONTAR se llama a sí misma sin parar y el programa se queda sin memoria. Toda función recursiva necesita un caso en el que no se vuelve a llamar.",
   "explicacion": "Cada llamada a una función ocupa un lugar en la pila de memoria; si la función siempre se vuelve a llamar, la pila se llena y el programa se corta ('Segmentation fault'). Una función recursiva necesita una condición de corte que devuelva un valor sin llamarse de nuevo.",
   "como_arreglarlo": "Agregá al principio de la función un if que devuelva un valor cuando se llegó al límite, antes de la llamada recursiva.",

@@ -1117,6 +1117,7 @@
   function nextPreset() {
     if (!presetQ.length) return null;
     const l = presetQ.shift();
+    avisoComa(l);
     removeInput(); appendText(l + '\n', 'in');
     return l;
   }

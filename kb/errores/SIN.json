@@ -232,8 +232,8 @@
   "codigo_mal": "#include <stdio.h>\nint main(){\n printf(\"Hola\\n\");\n}}",
   "codigo_bien": "#include <stdio.h>\nint main(){\n printf(\"Hola\\n\");\n}",
   "entrada": "",
-  "que_dice_gcc": "archivo.c:5: error: expected identifier or '(' before '}' token",
-  "mensaje_editor": "Línea 5: hay una } de más: main ya estaba cerrado. Borrá la que sobra.",
+  "que_dice_gcc": "archivo.c:4: error: expected identifier or '(' before '}' token",
+  "mensaje_editor": "Línea 4: hay una } de más: main ya estaba cerrado. Borrá la que sobra.",
   "explicacion": "Cada } cierra el bloque que abrió la { más cercana sin cerrar. Cuando main ya terminó, una } extra no cierra nada y C no sabe qué hacer con ella.",
   "como_arreglarlo": "Contá las llaves de apertura y de cierre y sacá la que sobra.",
   "pistas": [

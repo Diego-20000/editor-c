@@ -63,8 +63,8 @@
   "codigo_mal": "#include <stdio.h>\nint SUMA(int A, int B);\nint main()\n{\n  printf(\"%d\\n\", SUMA(2, 3));\n}\nint SUMA(float A, float B)\n{\n  return (int)(A + B);\n}",
   "codigo_bien": "#include <stdio.h>\nint SUMA(int A, int B);\nint main()\n{\n  printf(\"%d\\n\", SUMA(2, 3));\n}\nint SUMA(int A, int B)\n{\n  return A + B;\n}",
   "entrada": "",
-  "que_dice_gcc": "archivo.c:8: error: conflicting types for 'SUMA'; have 'int(float, float)'",
-  "mensaje_editor": "Línea 8: la definición de SUMA no coincide con su prototipo (int en uno, float en el otro).",
+  "que_dice_gcc": "archivo.c:7: error: conflicting types for 'SUMA'; have 'int(float, float)'",
+  "mensaje_editor": "Línea 7: la definición de SUMA no coincide con su prototipo (int en uno, float en el otro).",
   "explicacion": "El prototipo y la definición tienen que ser idénticos en tipo de retorno, cantidad y tipo de parámetros. Si difieren, para C son dos funciones incompatibles con el mismo nombre.",
   "como_arreglarlo": "Dejá el mismo tipo de cada parámetro en el prototipo y en la definición.",
   "pistas": [
@@ -91,8 +91,8 @@
   "codigo_mal": "#include <stdio.h>\nint AREA(int L);\nint main()\n{\n  printf(\"%d\\n\", AREA(3));\n}\nfloat AREA(int L)\n{\n  return L * L * 1.5f;\n}",
   "codigo_bien": "#include <stdio.h>\nfloat AREA(int L);\nint main()\n{\n  printf(\"%.2f\\n\", AREA(3));\n}\nfloat AREA(int L)\n{\n  return L * L * 1.5f;\n}",
   "entrada": "",
-  "que_dice_gcc": "archivo.c:8: error: conflicting types for 'AREA'; have 'float(int)'",
-  "mensaje_editor": "Línea 8: AREA devuelve float acá pero el prototipo dice int.",
+  "que_dice_gcc": "archivo.c:7: error: conflicting types for 'AREA'; have 'float(int)'",
+  "mensaje_editor": "Línea 7: AREA devuelve float acá pero el prototipo dice int.",
   "explicacion": "El tipo de retorno forma parte de la firma de la función. El prototipo y la definición deben declarar el mismo, si no el compilador rechaza el programa.",
   "como_arreglarlo": "Cambiá el prototipo o la definición para que devuelvan el mismo tipo, y usá el %f si es float.",
   "pistas": [
@@ -119,8 +119,8 @@
   "codigo_mal": "#include <stdio.h>\nint RESTA(int A);\nint main()\n{\n  printf(\"%d\\n\", RESTA(5));\n}\nint RESTA(int A, int B)\n{\n  return A - B;\n}",
   "codigo_bien": "#include <stdio.h>\nint RESTA(int A, int B);\nint main()\n{\n  printf(\"%d\\n\", RESTA(5, 2));\n}\nint RESTA(int A, int B)\n{\n  return A - B;\n}",
   "entrada": "",
-  "que_dice_gcc": "archivo.c:8: error: conflicting types for 'RESTA'; have 'int(int, int)'",
-  "mensaje_editor": "Línea 8: la definición de RESTA tiene 2 parámetros y el prototipo 1.",
+  "que_dice_gcc": "archivo.c:7: error: conflicting types for 'RESTA'; have 'int(int, int)'",
+  "mensaje_editor": "Línea 7: la definición de RESTA tiene 2 parámetros y el prototipo 1.",
   "explicacion": "Una función se identifica por su tipo de retorno y por sus parámetros. Si el prototipo anuncia una cantidad y la definición otra, no son la misma función.",
   "como_arreglarlo": "Igualá los parámetros del prototipo con los de la definición y llamala con esa cantidad de argumentos.",
   "pistas": [
