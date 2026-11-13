@@ -14,7 +14,6 @@ Editor de C que corre en el navegador del alumno, en español, sin cuentas, sin 
 |---|---|
 | `…/editor-c/` (o `?ayuda=1`) | **Ayuda apagada.** Solo dice que no compiló o falló y de qué tipo general. El alumno tiene que encontrar el error mirando el código. |
 | `…/editor-c/?ayuda=2` | **Indica la línea** del problema y nada más. Sin explicaciones ni pistas. |
-| `…/editor-c/?practica=1` | **Modo práctica:** no se puede pegar código, solo escribir. Se puede combinar: `?ayuda=2&practica=1`. |
 
 El alumno también puede cambiar la ayuda en Ajustes, y queda guardado en su dispositivo. El enlace decide el punto de partida.
 

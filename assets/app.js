@@ -77,19 +77,17 @@
     clearTimeout(saveTimer); saveTimer = null;
     if (!cur) return;
     cur.code = ta.value; cur.input = inTxt.value; cur.t = Date.now();
-    try { cur.proc = proc.serializar() || undefined; } catch (e) { /* sin evidencia de proceso: el programa se guarda igual */ }
     persist();
   }
   window.addEventListener('pagehide', flushSave);
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flushSave(); });
   window.addEventListener('beforeunload', flushSave);
 
-  // origen: de dónde viene el texto si el programa no trae datos de proceso ('c' archivo o ejemplo, 'a' plantilla, 'u' programa de antes)
+  // origen: de dónde viene el texto ('c' archivo o ejemplo, 'a' plantilla, 'u' programa de antes); hoy no se usa
   function showProgram(p, origen) {
     cur = p;
     stopRun(true);
     ta.value = p.code; inTxt.value = p.input || '';
-    try { if (p.proc) proc.restaurar(p.proc, p.code); else proc.marcarCargado(p.code, origen || 'u'); } catch (e) { proc.marcarCargado(p.code, 'u'); }
     cerrarBurbuja();
     ta.scrollTop = 0; ta.scrollLeft = 0;
     clearProblems(); clearConsole(); setStatus('Listo');
@@ -224,19 +222,7 @@
     }
     paint(brEl, v, m < 0 ? [{ s: pos, e: pos + 1, c: 'bu' }] : [{ s: pos, e: pos + 1, c: 'bm' }, { s: m, e: m + 1, c: 'bm' }]);
   }
-  /* evidencia de proceso: mide de dónde viene cada carácter (tipeado, pegado, automático, cargado). Todo queda en este dispositivo. */
-  const PROC_NULO = { marcarAuto(fn) { return fn(); }, marcarCargado() {}, restaurar() {}, serializar() { return null; }, resumen() { return null; }, linea() { return ''; }, ejecutar() {} };
-  let proc = PROC_NULO, practica = false;
-  try {
-    if (window.Proceso) {
-      practica = Proceso.politicaDesdeEnlace(location.search, () => toast('Modo práctica: en este enlace no se puede pegar. Escribe el código tú mismo.'));
-      proc = Proceso.conectar(ta, { tipoInicial: 'u' });
-    }
-  } catch (e) { proc = PROC_NULO; practica = false; }
-  $('practica').hidden = !practica;
-  // en modo práctica no se puede pegar: tampoco por el campo «Reemplazar con» de buscar y reemplazar
-  if (practica) { ['fr', 'frep', 'frepall'].forEach((id) => { const e = $(id); if (e) { e.disabled = true; e.title = 'No disponible en modo práctica'; } }); }
-  const auto = (fn, o) => proc.marcarAuto(fn, o);
+  const auto = (fn) => fn();   // las inserciones automáticas del editor pasan por acá
   /* cierre automático de llaves, paréntesis y comillas: apagado por defecto (que el alumno tipee todo) */
   let autoCierre = store.get('autocierre', '') === '1';
 
@@ -1017,7 +1003,7 @@
   }
   window.__seg = { get: segGet, set: segSet };
 
-  /* ---------- ajustes: ayuda, escritura, evidencia de proceso ---------- */
+  /* ---------- ajustes: ayuda y escritura ---------- */
   function sincronizarAjustesNuevos() {
     segSet($('ayudaSel'), String(nivelAyuda)); $('ayudaDesc').textContent = NIVELES_TXT[nivelAyuda];
     $('autoCierre').checked = autoCierre;
@@ -1317,7 +1303,6 @@ self.postMessage({ type: 'ready' });`;
     resetRun();
     removeInput(); clearConsole(); clearProblems();
     flushSave();
-    proc.ejecutar();
     avisoCierre();
     const src = ta.value;
     if (tabMode()) setTab('co');
@@ -1567,7 +1552,7 @@ self.postMessage({ type: 'ready' });`;
   }
   function abrirEjemplo(i) {
     const ex = EXAMPLES[i]; if (!ex) return;
-    if (isPristine(ta.value)) { cur.name = nextName(ex.t); cur.code = ex.c; cur.input = ex.e || ''; cur.proc = undefined; showProgram(cur, 'c'); }
+    if (isPristine(ta.value)) { cur.name = nextName(ex.t); cur.code = ex.c; cur.input = ex.e || ''; showProgram(cur, 'c'); }
     else { newProgram(ex.t, ex.c, ex.e || ''); toast('Ejemplo abierto como programa nuevo; el anterior sigue en "Programas".'); }
     dEj.close();
   }
@@ -1775,8 +1760,7 @@ self.postMessage({ type: 'ready' });`;
       if (sim.some((x) => x.name === name)) { name = nm(p.name + ' (importado)'); res.renamed++; } else res.add++;
       sim.push({ name, code: p.code });
       if (commit) {
-        let pr; try { pr = window.Proceso ? Proceso.nuevo(p.code, 'c').serializar() : undefined; } catch (e) { pr = undefined; }
-        progs.push({ id: uid(), name, code: p.code, input: p.input, t: p.t, proc: pr });
+        progs.push({ id: uid(), name, code: p.code, input: p.input, t: p.t });
       }
     });
     return res;
@@ -1948,5 +1932,5 @@ self.postMessage({ type: 'ready' });`;
     if (!store.get('seen', '')) { store.set('seen', '1'); }
   })();
   recibirEnlace();
-  window.__editorc = { run, cfg, proceso: () => proc.resumen(), procLinea: () => proc.linea(), nivelAyuda: () => nivelAyuda, setNivel: (n) => { nivelAyuda = +n === 2 ? 2 : 1; store.set('ayuda', String(nivelAyuda)); segSet($('ayudaSel'), String(nivelAyuda)); $('ayudaDesc').textContent = NIVELES_TXT[nivelAyuda]; }, setCode: (s) => { ta.value = s; proc.marcarCargado(s, 'c'); refresh(); scheduleSave(); }, compile: (s) => CCompiler.compile(s), showDiag: (r) => { lastRes = r; showDiag(r); } };
+  window.__editorc = { run, cfg, nivelAyuda: () => nivelAyuda, setNivel: (n) => { nivelAyuda = +n === 2 ? 2 : 1; store.set('ayuda', String(nivelAyuda)); segSet($('ayudaSel'), String(nivelAyuda)); $('ayudaDesc').textContent = NIVELES_TXT[nivelAyuda]; }, setCode: (s) => { ta.value = s; refresh(); scheduleSave(); }, compile: (s) => CCompiler.compile(s), showDiag: (r) => { lastRes = r; showDiag(r); } };
 })();

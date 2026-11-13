@@ -14,7 +14,6 @@ Editor de C **sin anuncios** que corre en tu navegador. Escribes, ejecutas y pru
 - **Panel «Ayuda»** (botón en la barra): buscador interno (sin modelo ni red) que mezcla errores, ayuda de cada elemento de C y lecciones; detalle con pistas por demanda, ejemplo en un programa nuevo («Abrir en el editor», «Probar») y navegación entre temas relacionados. Teclado: foco en la búsqueda al abrir, flechas para los resultados, `Esc` cierra.
 - **«¿Qué es esto?»**: botón `?` del editor (o `Alt`+clic, o `F1` sobre lo que está bajo el cursor): tocar una palabra, un operador o un `%d` abre una burbuja con su explicación, sin mover el cursor ni modificar el código.
 - **Casos para enviar** (Ajustes): los casos sin explicación quedan solo en el dispositivo; el alumno ve la vista previa exacta y **elige** mandarlos por WhatsApp (`src/config.js`, `WHATSAPP_NUMERO`), copiarlos o descargarlos como `.json`. Sin nombre ni datos personales y nunca de forma automática.
-- **Cómo se escribió el programa**: el editor mide, solo en el dispositivo, cuánto se escribió y cuánto se pegó o abrió desde un archivo, el tiempo y las ejecuciones; aparece como una línea opcional al pie de la captura. **Modo práctica**: con `?practica=1` en el enlace no se puede pegar ni soltar texto en el editor (cartel fijo visible).
 - **Datos de entrada** opcionales para precargar lo que lee `scanf` y repetir pruebas sin volver a escribir.
 - **Captura**: vista previa antes de descargar (con la opción de incluir u omitir los datos de entrada) y descarga de una imagen PNG con la cabecera (tus datos), el código y la salida, lista para entregar.
 - **Programas**: guarda varios en tu dispositivo (con recuperación automática si cierras sin querer), renombrar, borrar con deshacer, abrir y guardar `.c`. **Exportar todo** / **Importar** en un único `.json` (copia de seguridad): el archivo se valida y nunca sobrescribe lo que ya tienes; antes de importar muestra qué se agrega, qué se omite y qué se renombra.
@@ -42,7 +41,7 @@ Avisos y errores en español con el número de línea, entre ellos: variable sin
 
 Qué se promete y qué no: ver [docs/COMPATIBILIDAD.md](docs/COMPATIBILIDAD.md).
 
-Para docentes (cómo usarlo en clase, la ayuda por enlace y el modo práctica): [docs/PARA_DOCENTES.md](docs/PARA_DOCENTES.md).
+Para docentes (cómo usarlo en clase, la ayuda por enlace): [docs/PARA_DOCENTES.md](docs/PARA_DOCENTES.md).
 
 Contexto y reglas del proyecto (sitio estático en GitHub Pages, sin servidor, sin IA, sin conexión): ver [CLAUDE.md](CLAUDE.md).
 
@@ -60,7 +59,7 @@ bash test/fuzz_run.sh    # programas aleatorios contra gcc
 
 `build.js` produce, y se suben al repositorio:
 
-- `index.html` + `assets/` (`styles.css`, `compiler.js`, `runtime.js`, `examples.js`, `proceso.js`, `app.js`, `kb-data.js`, `config.js`, `kb.js`, `compartir.js`, íconos): scripts clásicos, sin módulos ni bundlers. Funciona con doble clic (`file://`) y en GitHub Pages desde la raíz.
+- `index.html` + `assets/` (`styles.css`, `compiler.js`, `runtime.js`, `examples.js`, `app.js`, `kb-data.js`, `config.js`, `kb.js`, `compartir.js`, íconos): scripts clásicos, sin módulos ni bundlers. Funciona con doble clic (`file://`) y en GitHub Pages desde la raíz.
 - `manifest.webmanifest` y `sw.js`: app instalable y uso sin conexión. La versión de la caché (`editor-c-<hash>`) es el hash del contenido de todo lo que se precachea, calculado en cada build; si no cambia nada, no hay "versión nueva". Los íconos PNG los genera el propio build (sin dependencias).
 - `dist/editor-c.html`: lo mismo en un solo archivo, para compartir sin internet (sin manifest ni service worker).
 
@@ -70,7 +69,7 @@ Fuentes en `src/`:
 - `runtime.js`: `printf`/`scanf` y utilidades.
 - El build agrega al final de `assets/compiler.js` y `assets/runtime.js` sus propios textos (`CC_SRC`, `RT_SRC`): con ellos la página arma el Worker desde un Blob (con `file://` no hay `fetch`). El Worker recibe el código fuente, compila y ejecuta; la página solo recibe diagnósticos y salida. Si el navegador no deja crear el Worker, se compila y ejecuta en la página (los lazos ceden el control, pero la compilación sí bloquea).
 - `sw.js`: plantilla del service worker (el build completa versión y lista de archivos).
-- `app.js`, `app.css`, `template.html`, `examples.js`: interfaz (también `tools/ui-smoke.js` y `tools/ui-reparos.js`). `kb.js`, `compartir.js`, `proceso.js`, `config.js` y `kb/`: el entrenador, los casos sin respuesta y la evidencia de proceso (ver `kb/README.md` y `docs/PROCESO.md`).
+- `app.js`, `app.css`, `template.html`, `examples.js`: interfaz (también `tools/ui-smoke.js` y `tools/ui-reparos.js`). `kb.js`, `compartir.js`, `config.js` y `kb/`: el entrenador y los casos sin respuesta (ver `kb/README.md`).
 - `test/`: `diff.sh` compara la salida contra gcc (`./test/diff.sh test/cases/fmt.c`) y `fuzz.py` genera expresiones aleatorias.
 
 Después de tocar algo en `src/`, corre `node build.js` y sube también los archivos generados.

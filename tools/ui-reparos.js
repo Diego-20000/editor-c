@@ -90,7 +90,6 @@ const check = (c, m) => { if (c) { ok++; console.log('  ok   ' + m); } else { fa
     await pm.click('#symbar button[aria-label="Símbolo {"]'); await pm.click('#symbar button[aria-label="Símbolo ;"]');
     check((await pm.inputValue('#code')) === '{;', 'barra de símbolos: cada toque escribe un solo símbolo, sin completar nada');
     check((await pm.evaluate(() => document.activeElement.id)) === 'code', 'barra de símbolos: el código no pierde el foco (el teclado sigue abierto)');
-    check(/100 % tipeado/.test(await pm.evaluate(() => window.__editorc.procLinea())), 'barra de símbolos: lo escrito con la barra cuenta como tipeado');
     const r = await pm.evaluate(() => ({ p: document.documentElement.scrollWidth, w: innerWidth }));
     check(r.p <= r.w + 1, 'barra de símbolos: no ensancha la página en celular');
   }

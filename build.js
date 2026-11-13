@@ -30,7 +30,6 @@ const JS = [
   ['compiler.js', compiler + '\nvar CC_SRC = ' + json(compiler) + ';\n'],
   ['runtime.js', runtime + '\nvar RT_SRC = ' + json(runtime) + ';\n'],
   ['examples.js', R('examples.js')],
-  ['proceso.js', R('proceso.js')],   // evidencia de proceso: antes de app.js, que lo conecta al editor
   ['app.js', R('app.js')]
 ];
 // fuente del código: Source Code Pro (Adobe, licencia SIL OFL 1.1; el texto está en src/fuentes/). Viaja con el sitio, sin pedidos a terceros.
@@ -134,7 +133,7 @@ W('index.html', conIconos(tpl)
   .replace('<!--@@JS@@-->', () => JS.map(([n]) => '<script src="assets/' + n + '"></script>').concat(KB_JS.map(([n]) => '<script defer src="assets/' + n + '"></script>')).join('\n')));
 
 // 2) service worker: la versión es el hash del contenido de todo lo que precachea
-const PRECACHE = ['./', 'index.html', 'manifest.webmanifest', 'assets/styles.css', 'assets/compiler.js', 'assets/runtime.js', 'assets/examples.js', 'assets/proceso.js', 'assets/app.js',
+const PRECACHE = ['./', 'index.html', 'manifest.webmanifest', 'assets/styles.css', 'assets/compiler.js', 'assets/runtime.js', 'assets/examples.js', 'assets/app.js',
   'assets/SourceCodePro.ttf', 'assets/kb-data.js', 'assets/config.js', 'assets/kb.js', 'assets/compartir.js', 'assets/nombres.js', 'assets/favicon.svg', 'assets/favicon-32.png', 'assets/favicon.ico'].concat(APP.filter((n) => !/^(favicon|splash)/.test(n)).map((n) => 'assets/' + n));
 const hash = crypto.createHash('sha256');
 // config.js lleva la versión adentro: se calcula con su texto sin completar

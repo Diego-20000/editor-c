@@ -20,7 +20,6 @@ const srv = http.createServer((q, r) => { let f = path.join(root, decodeURICompo
   
   await p2.click('#recOk'); await p2.waitForTimeout(500);
   check((await p2.inputValue('#code')).includes('hola ñandú'), 'el programa llega completo, con acentos');
-  check(/abri/i.test(await p2.evaluate(() => window.__editorc.procLinea())), 'el código recibido cuenta como abierto, no como tipeado');
   // enlace dañado
   const p3 = await (await br.newContext()).newPage(); await p3.goto('http://localhost:8765/index.html#p=z.AAAA'); await p3.waitForTimeout(800);
   check(!(await p3.evaluate(() => !!document.querySelector('#dRecibido[open]'))), 'un enlace dañado no abre nada');
