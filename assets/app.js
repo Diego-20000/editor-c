@@ -239,6 +239,7 @@
   const auto = (fn, o) => proc.marcarAuto(fn, o);
   /* cierre automático de llaves, paréntesis y comillas: apagado por defecto (que el alumno tipee todo) */
   let autoCierre = store.get('autocierre', '') === '1';
+  let gccIngles = store.get('gccingles', '') === '1';
 
   ta.addEventListener('scroll', syncScroll);
   ta.addEventListener('input', () => {
@@ -1020,7 +1021,7 @@
   /* ---------- ajustes: ayuda, escritura, evidencia de proceso ---------- */
   function sincronizarAjustesNuevos() {
     segSet($('ayudaSel'), String(nivelAyuda)); $('ayudaDesc').textContent = NIVELES_TXT[nivelAyuda];
-    $('autoCierre').checked = autoCierre;
+    $('autoCierre').checked = autoCierre; $('gccIngles').checked = gccIngles;
     $('tabSel').value = String(SANG); $('wsChk').checked = verEsp;
     const n = casosLista().length;
     $('casosBtn').textContent = 'Casos para enviar' + (n ? ' (' + n + ')' : '');
@@ -1031,6 +1032,7 @@
   });
   $('symChk').checked = simbolos;
   $('symChk').addEventListener('change', () => { simbolos = $('symChk').checked; store.set('simbolos', simbolos ? '1' : '0'); mostrarBarraSimbolos(); });
+  $('gccIngles').addEventListener('change', () => { gccIngles = $('gccIngles').checked; store.set('gccingles', gccIngles ? '1' : '0'); });
   $('autoCierre').addEventListener('change', () => { autoCierre = $('autoCierre').checked; store.set('autocierre', autoCierre ? '1' : '0'); });
   $('tabSel').addEventListener('change', () => { SANG = +$('tabSel').value; store.set('sang', String(SANG)); aplicarVista(); refresh(); });
   $('wsChk').addEventListener('change', () => { verEsp = $('wsChk').checked; store.set('ws', verEsp ? '1' : '0'); refresh(); });
@@ -1263,12 +1265,33 @@ self.postMessage({ type: 'ready' });`;
     const ls = errs.map((e) => e.line).filter((l, i, a) => l && a.indexOf(l) === i);
     return 'No se pudo ejecutar: el programa no compiló (' + tipo + ')' + (ls.length ? (ls.length === 1 ? ' en la línea ' + ls[0] : ' en las líneas ' + ls.join(', ')) : '') + '. Corrígelo y vuelve a ejecutar.';
   }
+  // Cómo lo diría gcc 13 (en inglés), solo para los errores más comunes; los textos están comprobados con gcc. Los demás no muestran nada (no se inventa).
+  function textoGcc(errs) {
+    const src = ta.value.split('\n'), out = [];
+    errs.forEach((e) => {
+      const c = String(e.code || '').replace(/^[EW]-/, ''), m = e.msg || '', q = /'([^']+)'/.exec(m), id = q ? q[1] : '';
+      let t = null, sig;
+      if (c === 'no-declarada' && id) t = /^la función/.test(m) ? "warning: implicit declaration of function '" + id + "' [-Wimplicit-function-declaration]" : "error: '" + id + "' undeclared (first use in this function)";
+      else if (c === 'redeclarada' && id) t = "error: redefinition of '" + id + "'";
+      else if (c === 'const-modificada' && id) t = "error: assignment of read-only variable '" + id + "'";
+      else if (c === 'sin-inicializar' && id) t = "warning: '" + id + "' is used uninitialized [-Wuninitialized]";
+      else if (c === 'falta-punto-coma' && e.line && (sig = (/antes de '([^']+)'/.exec(m) || [])[1])) t = /^\s*(int|float|double|char|long|short|unsigned|const)\b/.test(src[e.line - 1] || '') ? "error: expected ',' or ';' before '" + sig + "'" : "error: expected ';' before '" + sig + "'";
+      else if (c === 'llave-sin-cerrar') t = 'error: expected declaration or statement at end of input';
+      else if (c === 'preprocesador' && /usas (\w+)/.test(m)) t = "warning: implicit declaration of function '" + /usas (\w+)/.exec(m)[1] + "' [-Wimplicit-function-declaration]";
+      else if (c === 'break-fuera') t = 'error: break statement not within loop or switch';
+      else if (c === 'sin-return') t = 'warning: control reaches end of non-void function [-Wreturn-type]';
+      else if (c === 'division-cero') t = 'warning: division by zero [-Wdiv-by-zero]';
+      if (t && out.indexOf(t) < 0 && out.length < 3) out.push(t);
+    });
+    return out;
+  }
   // devuelve true si había errores (y ya los mostró)
   function reportCompile(res) {
     lastRes = res; showDiag(res);
     if (res.errors.length) {
       const n = res.errors.length;
       appendText(mensajeNoCompilo(res.errors) + '\n', 'er');
+      if (gccIngles && nivelAyuda >= 2) textoGcc(res.errors).forEach((t) => appendText('  gcc: ' + t + '\n', 'er'));
       setStatus('No compiló', 'err');
       return true;
     }
