@@ -330,7 +330,7 @@
  },
  {
   "elemento": "identificador",
-  "detalle": "Un identificador es el nombre que eliges para una variable o una función.\nPuede tener letras, números y guion bajo (_). No puede empezar con un número y no puede ser una palabra reservada de C, como int, if o return.\nEn la materia las variables se escriben en MAYÚSCULAS, y para nombres de varias palabras se usa el guion bajo: TOTAL_FINAL.\nUn buen nombre dice qué guarda: PRECIO, CANT, TEMP. Con nombres como X1 o AUX2 pronto no sabrás qué era cada uno.\nLo que confunde: C distingue mayúsculas de minúsculas, así que TOTAL y Total son dos nombres distintos. Tampoco puedes repetir un nombre dentro del mismo lugar.\nError típico: usar guion medio. TOTAL-FINAL no es un nombre: C lo lee como la resta de TOTAL menos FINAL. Otro error es empezar con un número, como 2DA_NOTA.",
+  "detalle": "Un identificador es el nombre que eliges para una variable o una función.\nPuede tener letras, números y guion bajo (_). No puede empezar con un número y no puede ser una palabra reservada de C, como int, if o return.\nEn la materia las variables se escriben en MAYÚSCULAS, y para nombres de varias palabras se usa el guion bajo: TOTAL_FINAL.\nUn buen nombre dice qué guarda: PRECIO, CANT, TEMP. Con nombres como X1 o AUX2 es fácil perder el rastro de qué era cada uno.\nLo que confunde: C distingue mayúsculas de minúsculas, así que TOTAL y Total son dos nombres distintos. Tampoco puedes repetir un nombre dentro del mismo lugar.\nError típico: usar guion medio. TOTAL-FINAL no es un nombre: C lo lee como la resta de TOTAL menos FINAL. Otro error es empezar con un número, como 2DA_NOTA.",
   "ocasiones": [
    {
     "cuando": "Un nombre válido.",
@@ -347,7 +347,6 @@
    "variable",
    "mayúsculas y minúsculas",
    "función",
-   "_",
    "constante",
    "int"
   ]
@@ -382,7 +381,7 @@
    {
     "cuando": "Que no devuelve nada.",
     "que_es": "Cuenta hacia atrás: muestra el número y se llama con uno menos.",
-    "ejemplo": "void CUENTA(int N){\n if(N==0) return;\n printf(\"%d \",N);\n CUENTA(N-1);\n}  // CUENTA(3) muestra: 3 2 1"
+    "ejemplo": "void CUENTA(int N){\n if(N>0){ printf(\"%d \",N); CUENTA(N-1); }\n}  // CUENTA(3) muestra: 3 2 1"
    }
   ],
   "relacionados": [
@@ -401,12 +400,12 @@
    {
     "cuando": "Leer un char con %c después de un número.",
     "que_es": "Toma el Enter que quedó pendiente: el char vale 10.",
-    "ejemplo": "int A;\nchar C;\nscanf(\"%d\",&A);\nscanf(\"%c\",&C);\nprintf(\"%d\\n\",C);  // con 25, Enter y x, muestra: 10"
+    "ejemplo": "int A;\nchar C;\nscanf(\"%d\",&A); scanf(\"%c\",&C);\nprintf(\"%d\\n\",C);  // con 25, Enter y x, muestra: 10"
    },
    {
     "cuando": "Leer el char con un espacio antes de %c.",
     "que_es": "El espacio salta el Enter pendiente y se lee la x.",
-    "ejemplo": "int A;\nchar C;\nscanf(\"%d\",&A);\nscanf(\" %c\",&C);\nprintf(\"%d\\n\",C);  // con 25, Enter y x, muestra: 120"
+    "ejemplo": "int A;\nchar C;\nscanf(\"%d\",&A); scanf(\" %c\",&C);\nprintf(\"%d\\n\",C);  // con 25, Enter y x, muestra: 120"
    }
   ],
   "relacionados": [
