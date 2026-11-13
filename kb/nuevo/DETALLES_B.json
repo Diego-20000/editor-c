@@ -1,0 +1,522 @@
+[
+ {
+  "elemento": "main",
+  "detalle": "main es la función por la que empieza a ejecutarse el programa: al correrlo, el sistema entra ahí y sigue las instrucciones de arriba hacia abajo.\nSirve de punto de partida. Un programa tiene un solo main; las demás funciones solo se ejecutan si main (o otra función) las llama.\nSe ve así: int main() y, a continuación, unas llaves { } que encierran todas las instrucciones del programa.\nEl int de adelante indica que main devuelve un número entero al sistema; en la materia se escribe sin return al final.\nLo que suele confundir: el orden en que escribes las funciones no cambia por dónde se empieza. Aunque main esté al final del archivo, es lo primero que se ejecuta.\nError típico: no escribir main, o escribirlo distinto (por ejemplo Main, que para C es otro nombre). El programa no se puede armar y gcc termina con undefined reference to `main'.",
+  "ocasiones": [
+   {
+    "cuando": "main llama a otras funciones.",
+    "que_es": "Primero se ejecuta main; la otra función corre solo cuando main la llama. Se muestra 1 y después 2.",
+    "ejemplo": "void SEGUNDO(){ printf(\"2\\n\"); }\nint main(){ printf(\"1\\n\"); SEGUNDO(); }"
+   }
+  ],
+  "relacionados": [
+   "función",
+   "return",
+   "prototipo",
+   "instrucción"
+  ]
+ },
+ {
+  "elemento": "variable",
+  "detalle": "Una variable es un lugar de la memoria con nombre donde el programa guarda un dato. Imagina una cajita con una etiqueta: la etiqueta es el nombre y lo que hay adentro es el valor.\nSirve para guardar lo que cambia mientras el programa corre: lo que escribe el usuario, el resultado de una cuenta, un conteo.\nSe declara con su tipo y su nombre, y puede recibir un valor desde el principio: int DIAS=3; o float PRECIO=12.5;. El tipo decide qué clase de dato entra (entero, con decimales, un carácter).\nLo que suele confundir: el signo = no es una igualdad de matemática. En DIAS=DIAS+1 se toma el valor viejo, se le suma 1 y el resultado se guarda en la misma cajita.\nOtro detalle: declarar solo reserva el lugar, no le pone valor. Hasta que no le des uno, la cajita tiene lo que hubiera antes en la memoria (basura).\nError típico: usar la variable en una cuenta o en un printf antes de darle un valor. El programa compila, pero el resultado es impredecible.",
+  "ocasiones": [
+   {
+    "cuando": "Cambiar el valor de una variable.",
+    "que_es": "Se lee el valor actual, se calcula y se guarda el nuevo. Muestra 4.",
+    "ejemplo": "int DIAS=3;\nDIAS=DIAS+1;\nprintf(\"%d\\n\",DIAS);"
+   },
+   {
+    "cuando": "Variable con decimales.",
+    "que_es": "Un float guarda decimales; %.2f los muestra con dos cifras. Muestra 12.50.",
+    "ejemplo": "float PRECIO=12.5;\nprintf(\"%.2f\\n\",PRECIO);"
+   }
+  ],
+  "relacionados": [
+   "int",
+   "float",
+   "inicialización",
+   "contador",
+   "acumulador",
+   "variable local",
+   "variable global"
+  ]
+ },
+ {
+  "elemento": "función",
+  "detalle": "Una función es un bloque de instrucciones con nombre. Cuando la llamas, el programa va a ese bloque, lo ejecuta y vuelve al lugar desde donde la llamaste.\nSirve para no repetir las mismas instrucciones y para dividir un problema grande en partes pequeñas, cada una con un nombre que dice qué hace.\nSe ve así: tipo de retorno, nombre, parámetros entre paréntesis y el cuerpo entre llaves. Se llama escribiendo el nombre con los datos entre paréntesis: R=DOBLE(5);\nLo que suele confundir: escribir la función no la ejecuta; solo corre cuando alguien la llama. Además, printf y scanf también son funciones: ya vienen hechas y por eso se incluye stdio.h.\nOtro detalle: si la función devuelve un valor y no lo guardas ni lo muestras, se pierde. DOBLE(5); solo, en una línea, no muestra nada en pantalla.\nError típico: llamar a la función antes de definirla sin haber escrito su prototipo. gcc avisa implicit declaration of function y, si el tipo no coincide, da error.",
+  "ocasiones": [
+   {
+    "cuando": "Función que devuelve un valor.",
+    "que_es": "Recibe un dato, calcula y lo entrega con return. Muestra 10.",
+    "ejemplo": "int DOBLE(int X){ return X*2; }\nint main(){ printf(\"%d\\n\",DOBLE(5)); }"
+   },
+   {
+    "cuando": "Función que no devuelve nada.",
+    "que_es": "Con void solo hace una tarea (mostrar). Muestra el texto una vez por llamada.",
+    "ejemplo": "void SALUDAR(){ printf(\"Hola\\n\"); }\nint main(){ SALUDAR(); }"
+   }
+  ],
+  "relacionados": [
+   "main",
+   "prototipo",
+   "parámetro",
+   "argumento",
+   "retorno",
+   "return",
+   "void"
+  ]
+ },
+ {
+  "elemento": "prototipo",
+  "detalle": "Un prototipo es el encabezado de una función copiado antes de usarla y terminado con punto y coma. Dice el tipo de retorno, el nombre y el tipo de cada parámetro, pero no trae las instrucciones.\nSirve para avisarle al compilador cómo es una función que se define más abajo. El compilador lee el archivo de arriba hacia abajo y, si main llama a una función que todavía no conoce, no sabe si la llamada está bien.\nSe ve así: int DOBLE(int); o con nombre de parámetro, int DOBLE(int X);. Los dos valen. Suele ir antes de main; la definición completa va después.\nLo que suele confundir: el #include de una cabecera hace lo mismo para las funciones de la biblioteca. Los prototipos de printf y scanf están en stdio.h, y por eso hace falta incluirlo.\nOtro detalle: no reemplaza a la definición. Si prometes una función con prototipo y nunca la escribes, el programa no se puede armar.\nError típico: que el prototipo no coincida con la definición (otro tipo de retorno o de parámetro). gcc dice conflicting types for 'DOBLE'. También es común olvidar el ; del final.",
+  "ocasiones": [
+   {
+    "cuando": "Prototipo arriba y definición abajo.",
+    "que_es": "main puede llamar a DOBLE aunque esté escrita después. Muestra 8.",
+    "ejemplo": "int DOBLE(int);\nint main(){ printf(\"%d\\n\",DOBLE(4)); }\nint DOBLE(int X){ return X*2; }"
+   }
+  ],
+  "relacionados": [
+   "función",
+   "parámetro",
+   "retorno",
+   "#include",
+   "main"
+  ]
+ },
+ {
+  "elemento": "argumento",
+  "detalle": "Un argumento es el dato concreto que escribes entre paréntesis al llamar a una función. Es lo que la función recibe para trabajar.\nSirve para que la misma función se use con datos distintos: DOBLE(5) y DOBLE(20) ejecutan las mismas instrucciones con datos diferentes.\nPuede ser un número, una variable o una cuenta: DOBLE(5), DOBLE(A) o DOBLE(A+1). Primero se calcula su valor y después se entrega.\nLo que suele confundir: argumento y parámetro no son lo mismo. El argumento está en la llamada; el parámetro está en la definición y recibe una copia del argumento.\nComo es una copia, la función no cambia la variable original: si pasas A y la función modifica su parámetro, A sigue valiendo lo mismo.\nError típico: pasar más o menos argumentos que parámetros (gcc: too many arguments / too few arguments) o pasarlos en otro orden, algo que importa en cuentas como una resta.",
+  "ocasiones": [
+   {
+    "cuando": "La función trabaja con una copia.",
+    "que_es": "A no cambia aunque la función modifique su parámetro. Muestra 5 15.",
+    "ejemplo": "int AGREGAR(int X){ X=X+10; return X; }\nint main(){ int A=5; int R=AGREGAR(A); printf(\"%d %d\\n\",A,R); }"
+   },
+   {
+    "cuando": "El orden de los argumentos importa.",
+    "que_es": "El primero va al primer parámetro y el segundo al segundo. Muestra 7 y -7.",
+    "ejemplo": "int RESTA(int A,int B){ return A-B; }\nint main(){ printf(\"%d %d\\n\",RESTA(10,3),RESTA(3,10)); }"
+   }
+  ],
+  "relacionados": [
+   "parámetro",
+   "función",
+   "prototipo",
+   "retorno"
+  ]
+ },
+ {
+  "elemento": "parámetro",
+  "detalle": "Un parámetro es la variable que aparece entre paréntesis en la definición de una función. Recibe una copia del argumento cada vez que la llamas.\nSirve para que la función reciba datos de afuera sin depender de otras variables del programa.\nSe ve así: int SUMA(int A,int B){ ... }. Cada parámetro lleva su propio tipo, aunque sean iguales, y se separan con comas.\nLo que suele confundir: su nombre no tiene que coincidir con el del argumento. Puedes llamar SUMA(X,Y) y adentro se llaman A y B; no son las mismas variables, solo tienen el mismo valor en ese momento.\nUn parámetro es una variable local: nace cuando se llama a la función y desaparece cuando termina.\nError típico: usar el nombre del parámetro fuera de la función (gcc: 'A' undeclared) o escribir int SUMA(int A,B) sin el tipo del segundo (gcc: unknown type name 'B').",
+  "ocasiones": [
+   {
+    "cuando": "El nombre del parámetro es propio de la función.",
+    "que_es": "En main la variable se llama LARGO; adentro de AREA los datos se llaman B y H. Muestra 12.",
+    "ejemplo": "int AREA(int B,int H){ return B*H; }\nint main(){ int LARGO=4; printf(\"%d\\n\",AREA(LARGO,3)); }"
+   }
+  ],
+  "relacionados": [
+   "argumento",
+   "función",
+   "variable local",
+   "ámbito",
+   "retorno"
+  ]
+ },
+ {
+  "elemento": "retorno",
+  "detalle": "El retorno es el valor que una función entrega a quien la llamó, y se escribe con return. El tipo que va antes del nombre de la función es el tipo de ese valor.\nSirve para que la función le devuelva un resultado a main: algo que luego se guarda en una variable o se usa dentro de una cuenta.\nSe ve así: return SUMA; Quien llama lo recibe donde escribió la llamada: R=DOBLE(5); guarda 10 en R.\nLo que suele confundir: return no muestra nada en pantalla; para ver el valor hay que usar printf. Y return corta la función en el acto: lo que esté escrito después no se ejecuta.\nOtro detalle: el valor se convierte al tipo anunciado. Si la función es int y haces return 2.9, devuelve 2 (los decimales se pierden).\nError típico: no escribir return en una función que debe devolver un valor, o dejar algún camino sin return. gcc avisa control reaches end of non-void function y el valor devuelto es basura.",
+  "ocasiones": [
+   {
+    "cuando": "return corta la función.",
+    "que_es": "Cuando X es negativo se devuelve -1 y la función termina ahí. Muestra -1.",
+    "ejemplo": "int CLASE(int X){ if(X<0){ return -1; } return 1; }\nint main(){ printf(\"%d\\n\",CLASE(-7)); }"
+   },
+   {
+    "cuando": "El valor se convierte al tipo de la función.",
+    "que_es": "La función es int y devuelve 2.9: llega 2. Muestra 2.",
+    "ejemplo": "int PARTE(){ return 2.9; }\nint main(){ printf(\"%d\\n\",PARTE()); }"
+   }
+  ],
+  "relacionados": [
+   "return",
+   "función",
+   "void",
+   "parámetro",
+   "argumento"
+  ]
+ },
+ {
+  "elemento": "ámbito",
+  "detalle": "El ámbito de un nombre es la parte del programa donde ese nombre existe y se puede usar. Una variable nace en la línea donde se declara y deja de existir al cerrarse la llave } del bloque donde está.\nSirve para que las funciones no se pisen entre sí: cada una puede tener su propia variable I sin que se mezclen.\nSe ve en las llaves: lo declarado dentro de { } solo se ve ahí adentro (y en los bloques que estén más adentro todavía).\nLo que suele confundir: desde adentro de un bloque puedes ver lo de afuera, pero desde afuera no ves lo de adentro. Y si repites un nombre adentro, el nuevo tapa al de afuera mientras dure el bloque.\nError típico: declarar una variable dentro de un bloque y usarla después de cerrarlo. gcc dice 'B' undeclared (first use in this function), como si nunca la hubieras declarado.",
+  "ocasiones": [
+   {
+    "cuando": "Adentro se ve lo de afuera.",
+    "que_es": "Dentro del bloque se usan A (de afuera) y B (propia del bloque). Muestra 1 2.",
+    "ejemplo": "int A=1;\n{ int B=2; printf(\"%d %d\\n\",A,B); }"
+   },
+   {
+    "cuando": "Un nombre repetido tapa al de afuera.",
+    "que_es": "Adentro vale 5; al cerrar el bloque, A vuelve a valer 1. Muestra 5 y luego 1.",
+    "ejemplo": "int A=1;\n{ int A=5; printf(\"%d\\n\",A); }\nprintf(\"%d\\n\",A);"
+   }
+  ],
+  "relacionados": [
+   "variable local",
+   "variable global",
+   "bloque",
+   "{}",
+   "parámetro"
+  ]
+ },
+ {
+  "elemento": "variable local",
+  "detalle": "Una variable local es la que declaras dentro de una función o de un bloque. Existe solo mientras esa función (o bloque) se está ejecutando y solo se ve ahí adentro.\nSirve para guardar datos de trabajo de una función sin molestar al resto del programa. Los parámetros también son variables locales.\nSe ve así: está declarada entre las llaves de la función, por ejemplo int N=0; en la primera línea de su cuerpo.\nLo que suele confundir: cada vez que se llama a la función, sus variables locales se crean de nuevo y las anteriores se pierden. No guardan lo que pasó en la llamada anterior.\nOtro detalle: si no le das valor inicial, una variable local tiene basura. Las variables globales, en cambio, empiezan en 0.\nError típico: esperar que una local recuerde su valor entre llamadas, como si fuera un contador de cuántas veces se llamó a la función.",
+  "ocasiones": [
+   {
+    "cuando": "Se crea de nuevo en cada llamada.",
+    "que_es": "N siempre arranca en 0, así que las dos llamadas dan 1. Muestra 1 1.",
+    "ejemplo": "int SUBIR(){ int N=0; N=N+1; return N; }\nint main(){ int A=SUBIR(); int B=SUBIR(); printf(\"%d %d\\n\",A,B); }"
+   }
+  ],
+  "relacionados": [
+   "ámbito",
+   "variable global",
+   "parámetro",
+   "variable",
+   "inicialización"
+  ]
+ },
+ {
+  "elemento": "variable global",
+  "detalle": "Una variable global es la que declaras fuera de todas las funciones, normalmente arriba de main. Todas las funciones del programa la ven y la pueden cambiar.\nSirve para compartir un dato entre varias funciones sin pasarlo como parámetro. Por eso es tentadora, pero en la materia conviene evitarla.\nSe ve así: int TOTAL=0; escrita antes de main, sin sangría. Si no le das valor, empieza en 0.\nLo que suele confundir: si una función declara una variable local con el mismo nombre, esa local tapa a la global y los cambios no llegan a la global.\nOtro detalle: con globales es difícil saber qué función cambió el valor. Con parámetros y retorno, cada dato entra y sale por un lugar visible.\nError típico: repetir el nombre de la global dentro de una función con su tipo adelante (int TOTAL=0;) y esperar que se modifique la global.",
+  "ocasiones": [
+   {
+    "cuando": "Varias funciones comparten el dato.",
+    "que_es": "SUMAR cambia la global TOTAL y main ve el resultado. Muestra 12.",
+    "ejemplo": "int TOTAL=0;\nvoid SUMAR(int X){ TOTAL=TOTAL+X; }\nint main(){ SUMAR(5); SUMAR(7); printf(\"%d\\n\",TOTAL); }"
+   },
+   {
+    "cuando": "Una local con el mismo nombre la tapa.",
+    "que_es": "Adentro de MOSTRAR se usa la local (3); la global sigue valiendo 10. Muestra 3 y luego 10.",
+    "ejemplo": "int TOTAL=10;\nvoid MOSTRAR(){ int TOTAL=3; printf(\"%d\\n\",TOTAL); }\nint main(){ MOSTRAR(); printf(\"%d\\n\",TOTAL); }"
+   }
+  ],
+  "relacionados": [
+   "variable local",
+   "ámbito",
+   "parámetro",
+   "función",
+   "variable"
+  ]
+ },
+ {
+  "elemento": "contador",
+  "detalle": "Un contador es una variable que cuenta cuántas veces ocurre algo. Sube siempre la misma cantidad (casi siempre de a 1) cada vez que se cumple el hecho que interesa.\nSirve para responder preguntas del tipo ¿cuántos?: cuántos días llovió, cuántos goles se hicieron, cuántos precios superan un valor.\nSe ve en tres pasos: se inicia antes del lazo (CONT=0;), se incrementa dentro (CONT=CONT+1;) y se usa después. También puede bajar: CONT=CONT-1; para una cuenta regresiva.\nLo que suele confundir: el contador cuenta hechos, no suma datos. Si lo que sumas es el dato mismo (el precio, los milímetros) eso es un acumulador.\nOtro detalle: un contador también puede decidir cuándo termina un lazo condicional, por ejemplo cuando llegó a cierta cantidad.\nError típico: iniciarlo dentro del lazo. Se pone en 0 en cada vuelta y al final siempre vale 1 (o 0).",
+  "ocasiones": [
+   {
+    "cuando": "Contar los días que cumplen una condición.",
+    "que_es": "El contador sube solo cuando el dato es mayor que 0. Hay 3 días de lluvia en el arreglo, y se muestra 3.",
+    "ejemplo": "int MM[5]={0,12,0,3,8};\nint I, LLUVIA=0;\nfor(I=0;I<5;I++){ if(MM[I]>0){ LLUVIA=LLUVIA+1; } }\nprintf(\"%d\\n\",LLUVIA);"
+   },
+   {
+    "cuando": "Contador que baja.",
+    "que_es": "Cuenta regresiva: se resta 1 en cada vuelta hasta llegar a 0. Muestra 3, 2 y 1.",
+    "ejemplo": "int FALTAN=3;\nwhile(FALTAN>0){ printf(\"%d\\n\",FALTAN); FALTAN=FALTAN-1; }"
+   },
+   {
+    "cuando": "Error: iniciarlo adentro del lazo.",
+    "que_es": "Se vuelve a poner en 0 en cada vuelta; solo queda lo que cuenta la última. Muestra 1, aunque hay 3 días de lluvia.",
+    "ejemplo": "int MM[5]={0,12,0,3,8};\nint I, LLUVIA;\nfor(I=0;I<5;I++){ LLUVIA=0; if(MM[I]>0){ LLUVIA=LLUVIA+1; } }\nprintf(\"%d\\n\",LLUVIA);"
+   }
+  ],
+  "relacionados": [
+   "acumulador",
+   "lazo",
+   "lazo condicional",
+   "lazo repetitivo",
+   "variable",
+   "inicialización"
+  ]
+ },
+ {
+  "elemento": "acumulador",
+  "detalle": "Un acumulador es una variable en la que se va juntando un resultado: en cada vuelta se le suma (o se le multiplica) el dato que corresponde, y el valor total queda al final.\nSirve para obtener totales: la plata de una compra, los goles de un torneo, los milímetros de lluvia de un mes.\nSe ve en tres pasos: se inicia antes del lazo, se actualiza adentro (TOTAL=TOTAL+PRECIO;) y se usa al terminar. Para sumar se inicia en 0; para multiplicar, en 1.\nLo que suele confundir: contador y acumulador se parecen. El contador suma siempre lo mismo (+1); el acumulador suma el dato, que cambia en cada vuelta.\nOtro detalle: con float las sumas pueden tener una diferencia mínima (sumar diez veces 0.1 puede dar 1.0000001 si se muestran 7 decimales). Por eso se muestra con %.2f y no con todos los decimales.\nError típico: iniciar en 0 un acumulador de productos (todo da 0) o no iniciarlo (arranca en basura).",
+  "ocasiones": [
+   {
+    "cuando": "Acumulador de suma.",
+    "que_es": "Se suma cada precio al total. 12.5 + 8 + 20.25 + 5 da 45.75.",
+    "ejemplo": "float PRECIO[4]={12.5,8,20.25,5};\nfloat TOTAL=0; int I;\nfor(I=0;I<4;I++){ TOTAL=TOTAL+PRECIO[I]; }\nprintf(\"%.2f\\n\",TOTAL);"
+   },
+   {
+    "cuando": "Acumulador de producto.",
+    "que_es": "Se inicia en 1 y se multiplica en cada vuelta: 1x2x3x4 da 24. Muestra 24.",
+    "ejemplo": "int P=1, I;\nfor(I=1;I<=4;I++){ P=P*I; }\nprintf(\"%d\\n\",P);"
+   }
+  ],
+  "relacionados": [
+   "contador",
+   "lazo",
+   "lazo repetitivo",
+   "variable",
+   "inicialización",
+   "float"
+  ]
+ },
+ {
+  "elemento": "centinela",
+  "detalle": "Un centinela es un valor especial que marca el final de una serie de datos. No es un dato más: es la señal de que ya no hay más para procesar.\nSirve cuando no se sabe de antemano cuántos datos habrá. Se recorre la serie hasta encontrar el valor de corte, que no puede confundirse con un dato válido.\nSe ve en la condición del lazo, que compara contra el centinela: while(DATO!=-99). Mientras sea distinto, se sigue; cuando coincide, se sale.\nLo que suele confundir: el centinela no se procesa. No se suma, no se cuenta ni entra en un promedio. Por eso se compara antes de usar el dato; en la materia, la lectura adelantada (Opción B) lee antes del lazo y vuelve a leer al final de cada vuelta, y la Opción A fuerza un valor inicial para poder entrar.\nElegirlo bien importa: debe ser un valor imposible como dato. Para temperaturas de una ciudad sirve -99; para goles no sirve 0, porque un partido puede terminar 0 a 0.\nError típico: procesar el centinela como si fuera un dato (por ejemplo, sumarlo al total) o elegir como centinela un valor que sí puede aparecer.",
+  "ocasiones": [
+   {
+    "cuando": "Recorrer hasta el valor de corte.",
+    "que_es": "Con datos fijos: el lazo se detiene en -99 y el 30 de después no se procesa. Muestra 21, 24 y 19.",
+    "ejemplo": "int T[5]={21,24,19,-99,30};\nint I=0;\nwhile(T[I]!=-99){ printf(\"%d\\n\",T[I]); I=I+1; }"
+   },
+   {
+    "cuando": "Elegir un centinela que no sea dato válido.",
+    "que_es": "Con goles, 0 es un dato posible (un 0 a 0), así que no sirve de corte; -1 sí. El 0 se procesa y el lazo sigue. Muestra 2, 0 y 3.",
+    "ejemplo": "int G[4]={2,0,3,-1};\nint I=0;\nwhile(G[I]!=-1){ printf(\"%d\\n\",G[I]); I=I+1; }"
+   }
+  ],
+  "relacionados": [
+   "lazo condicional",
+   "contador",
+   "acumulador",
+   "lazo",
+   "bucle infinito"
+  ]
+ },
+ {
+  "elemento": "lazo",
+  "detalle": "Un lazo es una estructura que repite un grupo de instrucciones. Cada repetición se llama vuelta o ciclo.\nSirve para no escribir lo mismo muchas veces: mostrar 100 números, sumar una lista, repetir hasta que pase algo.\nEn C se escribe con for o con while. El for junta en un solo renglón el inicio, la condición y el paso: for(I=1;I<=3;I++). El while lleva solo la condición, y lo demás se escribe aparte.\nEn la materia hay dos clases: el lazo repetitivo (LR), con cantidad de vueltas conocida, y el lazo condicional (LC), que repite mientras se cumpla una condición.\nLo que suele confundir: la condición se evalúa antes de cada vuelta. Si es falsa de entrada, el lazo no se ejecuta ni una vez.\nError típico: poner un ; justo después del for o del while. Ese ; es el cuerpo vacío, así que el lazo da todas sus vueltas sin hacer nada y las instrucciones de abajo se ejecutan una sola vez.",
+  "ocasiones": [
+   {
+    "cuando": "for básico.",
+    "que_es": "Tres partes: inicio (I=1), condición (I<=3) y paso (I++). Muestra 1, 4 y 9.",
+    "ejemplo": "int I;\nfor(I=1;I<=3;I++){ printf(\"%d\\n\",I*I); }"
+   },
+   {
+    "cuando": "Cero vueltas.",
+    "que_es": "La condición es falsa desde el principio, así que no se muestra nada.",
+    "ejemplo": "int I=10;\nwhile(I<5){ printf(\"%d\\n\",I); I=I+1; }"
+   },
+   {
+    "cuando": "Error: ; después del for.",
+    "que_es": "El lazo da 3 vueltas vacías y el printf se ejecuta una sola vez, con I valiendo 3. Muestra 3.",
+    "ejemplo": "int I;\nfor(I=0;I<3;I++);\nprintf(\"%d\\n\",I);"
+   }
+  ],
+  "relacionados": [
+   "lazo repetitivo",
+   "lazo condicional",
+   "bucle infinito",
+   "for",
+   "while",
+   "contador",
+   "acumulador"
+  ]
+ },
+ {
+  "elemento": "lazo repetitivo",
+  "detalle": "El lazo repetitivo (LR) es el lazo que repite un grupo de instrucciones una cantidad de veces que se conoce antes de empezar. Se resuelve con for.\nSirve cuando el enunciado dice cuántas veces: repetir 5 veces, hacerlo para cada uno de los 7 días, recorrer las posiciones de un arreglo.\nSe ve así: for(I=1;I<=5;I++){ ... }. La variable I lleva la cuenta de la vuelta, la condición decide si sigue y el paso la hace avanzar.\nLo que suele confundir: la cantidad puede ser un número fijo o un dato que ya tienes guardado antes de entrar al lazo (N). Lo que lo hace repetitivo es que sabes cuántas vueltas habrá antes de la primera.\nOtro detalle: el paso no siempre es +1. Puede ser I=I+5 o I-- para ir hacia atrás.\nError típico: equivocarse en un límite. Con I<=3 desde I=0 hay 4 vueltas, no 3; con I<3 hay 3. Si el enunciado habla de datos que se leen hasta un valor de corte, ya no es un LR sino un LC.",
+  "ocasiones": [
+   {
+    "cuando": "Paso distinto de 1.",
+    "que_es": "Se avanza de a 5, así que son 3 vueltas. Muestra 0, 5 y 10.",
+    "ejemplo": "int I;\nfor(I=0;I<=10;I=I+5){ printf(\"%d\\n\",I); }"
+   },
+   {
+    "cuando": "Contar las vueltas.",
+    "que_es": "Con <= se hace una vuelta más que con <. Muestra 3 y 4.",
+    "ejemplo": "int I, A=0, B=0;\nfor(I=0;I<3;I++){ A=A+1; }\nfor(I=0;I<=3;I++){ B=B+1; }\nprintf(\"%d %d\\n\",A,B);"
+   }
+  ],
+  "relacionados": [
+   "lazo",
+   "lazo condicional",
+   "for",
+   "contador",
+   "arreglo",
+   "índice"
+  ]
+ },
+ {
+  "elemento": "lazo condicional",
+  "detalle": "El lazo condicional (LC) es el lazo que repite mientras se cumpla una condición, sin saber de antemano cuántas vueltas serán. Se resuelve con while.\nSirve cuando el final depende de lo que va pasando: hasta que llegue un valor de corte, hasta juntar cierta cantidad, hasta que un total pase un límite.\nSe ve así: while(CONDICION){ ... }. La condición se revisa antes de cada vuelta, y adentro tiene que cambiar algo que acerque el momento de salir.\nEn la materia hay tres formas: con centinela y lectura adelantada (Opción B), con valor inicial forzado (Opción A), y por contadores o acumuladores, donde la condición usa variables ya iniciadas y no hace falta leer antes.\nLo que suele confundir: puede dar cero vueltas. Si la condición es falsa la primera vez, el cuerpo no se ejecuta nunca.\nError típico: no cambiar dentro del lazo la variable que aparece en la condición. Si nada la modifica, la condición nunca deja de ser verdadera y el lazo no termina.",
+  "ocasiones": [
+   {
+    "cuando": "Corte por acumulador.",
+    "que_es": "Se ahorra hasta llegar a 100: la condición usa AHORRO, que cambia en cada vuelta. Muestra 4 120.",
+    "ejemplo": "int AHORRO=0, SEMANAS=0;\nwhile(AHORRO<100){ AHORRO=AHORRO+30; SEMANAS=SEMANAS+1; }\nprintf(\"%d %d\\n\",SEMANAS,AHORRO);"
+   },
+   {
+    "cuando": "Puede no entrar nunca.",
+    "que_es": "AHORRO ya supera el límite: cero vueltas. Muestra 0.",
+    "ejemplo": "int AHORRO=150, SEMANAS=0;\nwhile(AHORRO<100){ AHORRO=AHORRO+30; SEMANAS=SEMANAS+1; }\nprintf(\"%d\\n\",SEMANAS);"
+   }
+  ],
+  "relacionados": [
+   "lazo",
+   "lazo repetitivo",
+   "centinela",
+   "contador",
+   "acumulador",
+   "bucle infinito",
+   "while"
+  ]
+ },
+ {
+  "elemento": "bucle infinito",
+  "detalle": "Un lazo infinito es un lazo cuya condición nunca deja de ser verdadera, así que el programa no termina por sí solo.\nCasi siempre es un error y el programa parece trabado: la pantalla repite lo mismo sin parar o no muestra nada y no responde.\nSe ve cuando la condición no depende de nada que cambie, como while(1), o cuando lo que cambia no acerca al final.\nCausas típicas: no actualizar la variable de la condición, actualizarla en sentido contrario (contar hacia arriba cuando se espera bajar) o poner un ; justo después del while, que lo deja con el cuerpo vacío.\nLo que suele confundir: el compilador no lo detecta, porque escrito así es válido. Solo se nota al ejecutar. A veces se escribe a propósito con while(1) y se sale con break.\nError típico: escribir while(I<3){ printf(...); } sin I=I+1;. I siempre vale lo mismo y el lazo no termina.",
+  "ocasiones": [
+   {
+    "cuando": "Error: no se actualiza la variable.",
+    "que_es": "I nunca cambia, así que 0<3 es siempre verdadero y se muestra 0 sin parar. Compila, pero no debe ejecutarse sin detenerlo.",
+    "ejemplo": "int I=0;\nwhile(I<3){ printf(\"%d\\n\",I); }"
+   },
+   {
+    "cuando": "Lazo infinito a propósito, con salida.",
+    "que_es": "while(1) no termina solo, pero break lo corta cuando I llega a 3. Muestra 3.",
+    "ejemplo": "int I=0;\nwhile(1){ I=I+1; if(I==3){ break; } }\nprintf(\"%d\\n\",I);"
+   }
+  ],
+  "relacionados": [
+   "lazo",
+   "lazo condicional",
+   "while",
+   "break",
+   "contador"
+  ]
+ },
+ {
+  "elemento": "arreglo",
+  "detalle": "Un arreglo es un conjunto de variables del mismo tipo que comparten un nombre. Cada una se elige con un número, el índice, que empieza en 0.\nSirve para guardar varios datos parecidos (5 notas, 7 temperaturas) sin tener que inventar un nombre distinto para cada uno.\nSe declara con el tamaño entre corchetes: int NOTAS[4]; y puede llevar valores desde el inicio: int NOTAS[4]={7,9,6,10};. Se usa con NOTAS[2], que es el tercer elemento.\nLo que suele confundir: el número de la declaración es la cantidad, pero el número al usarlo es la posición. En int NOTAS[4] las posiciones válidas son 0, 1, 2 y 3; NOTAS[4] ya está fuera.\nOtro detalle: si das menos valores que el tamaño, el resto queda en 0. Si no das ninguno y es local, tiene basura.\nError típico: copiar un arreglo con B=A; (gcc: assignment to expression with array type) o usar un índice igual al tamaño, que se sale del arreglo.",
+  "ocasiones": [
+   {
+    "cuando": "Leer un elemento.",
+    "que_es": "La posición 2 es el tercer valor. Muestra 6.",
+    "ejemplo": "int NOTAS[4]={7,9,6,10};\nprintf(\"%d\\n\",NOTAS[2]);"
+   },
+   {
+    "cuando": "Menos valores que el tamaño.",
+    "que_es": "Los que no se escriben quedan en 0. Muestra 1 2 0 0 0.",
+    "ejemplo": "int V[5]={1,2};\nint I;\nfor(I=0;I<5;I++){ printf(\"%d \",V[I]); }"
+   }
+  ],
+  "relacionados": [
+   "índice",
+   "[]",
+   "texto",
+   "lazo repetitivo",
+   "comportamiento indefinido",
+   "int"
+  ]
+ },
+ {
+  "elemento": "índice",
+  "detalle": "El índice es el número que elige un elemento de un arreglo. Va entre corchetes, y el primer elemento es el 0.\nSirve para llegar a cualquier posición directamente y para recorrer todas con un lazo, usando como índice la variable del for.\nPara un arreglo de N elementos, los índices válidos van de 0 a N-1. En V[3], el último es V[2].\nLo que suele confundir: el índice puede ser un número, una variable o una cuenta: V[2], V[I] o V[I-1]. Tiene que ser un entero; V[1.5] da error (gcc: array subscript is not an integer).\nOtro detalle: C no comprueba el índice. Con V[7] en un arreglo de 3 el programa no se detiene: lee o escribe memoria que no es del arreglo (comportamiento indefinido).\nError típico: recorrer con I<=N en vez de I<N. La última vuelta usa el índice N, que está fuera.",
+  "ocasiones": [
+   {
+    "cuando": "Índice con variable y con cuenta.",
+    "que_es": "I vale 2: V[I] es el tercer elemento y V[I-1] el segundo. Muestra 30 y 20.",
+    "ejemplo": "int V[3]={10,20,30};\nint I=2;\nprintf(\"%d %d\\n\",V[I],V[I-1]);"
+   },
+   {
+    "cuando": "Recorrido correcto.",
+    "que_es": "Con I<3 se usan los índices 0, 1 y 2. Muestra 10, 20 y 30.",
+    "ejemplo": "int V[3]={10,20,30};\nint I;\nfor(I=0;I<3;I++){ printf(\"%d\\n\",V[I]); }"
+   }
+  ],
+  "relacionados": [
+   "arreglo",
+   "[]",
+   "lazo repetitivo",
+   "comportamiento indefinido"
+  ]
+ },
+ {
+  "elemento": "texto",
+  "detalle": "En C no existe un tipo texto. Un texto (cadena de caracteres) es un arreglo de char que termina en el carácter especial '\\0'.\nSirve para guardar nombres, palabras o frases. Se escribe entre comillas dobles: char T[]=\"Hola\"; y se muestra con %s.\nLo que suele confundir: \"Hola\" ocupa 5 lugares, no 4: las cuatro letras más el '\\0' del final. Y las comillas importan: 'A' es un solo carácter (char); \"A\" es un texto de dos lugares (la A y el '\\0').\nOtro detalle: un texto es un arreglo, así que cada letra se elige con índice: T[0] es 'H'. Las funciones como strlen y printf con %s recorren el texto hasta encontrar el '\\0'.\nError típico: comparar textos con == (gcc avisa con -Waddress: el resultado no está especificado) o copiarlos con =. Para eso existen strcmp y strcpy, de string.h.",
+  "ocasiones": [
+   {
+    "cuando": "Tamaño de un texto.",
+    "que_es": "El arreglo reserva 5 lugares: 4 letras y el terminador. Muestra 5.",
+    "ejemplo": "char T[]=\"Hola\";\nprintf(\"%d\\n\",(int)sizeof(T));"
+   },
+   {
+    "cuando": "Recorrer hasta el terminador.",
+    "que_es": "Se cuentan las letras hasta encontrar '\\0'. Muestra 3.",
+    "ejemplo": "char T[]=\"Sol\";\nint N=0;\nwhile(T[N]!='\\0'){ N=N+1; }\nprintf(\"%d\\n\",N);"
+   },
+   {
+    "cuando": "Carácter y texto no son lo mismo.",
+    "que_es": "Un char guarda una letra y ocupa 1 lugar; el texto \"A\" ocupa 2 (la A y el terminador). Muestra 1 2.",
+    "ejemplo": "char C='A';\nchar T[]=\"A\";\nprintf(\"%d %d\\n\",(int)sizeof(C),(int)sizeof(T));"
+   }
+  ],
+  "relacionados": [
+   "terminador",
+   "\\0",
+   "char",
+   "%s",
+   "strlen",
+   "strcmp",
+   "strcpy",
+   "arreglo"
+  ]
+ },
+ {
+  "elemento": "terminador",
+  "detalle": "El terminador es el carácter '\\0', cuyo código es 0. Se guarda al final de todo texto para marcar dónde termina.\nSirve porque un arreglo no sabe cuánto mide el texto que tiene adentro. Funciones como strlen y printf con %s avanzan letra por letra hasta encontrar el '\\0'.\nNo se ve en pantalla, pero está en el arreglo: en char T[]=\"Hi\"; hay tres elementos, 'H', 'i' y '\\0'.\nLo que suele confundir: '\\0' no es la letra '0'. El carácter '0' vale 48 y el terminador vale 0. Además, el '\\0' ocupa un lugar: un texto de N letras necesita un arreglo de N+1.\nOtro detalle: si pones '\\0' en el medio, el texto se acorta, porque %s se detiene ahí.\nError típico: declarar el arreglo del largo justo, como char T[4]=\"Hola\";. El '\\0' no entra, y %s sigue leyendo memoria que no es del arreglo (comportamiento indefinido).",
+  "ocasiones": [
+   {
+    "cuando": "Ver el terminador.",
+    "que_es": "Se muestran los códigos de cada elemento: 72 es la H, 105 la i y 0 el terminador. Muestra 72 105 0.",
+    "ejemplo": "char T[]=\"Hi\";\nprintf(\"%d %d %d\\n\",T[0],T[1],T[2]);"
+   },
+   {
+    "cuando": "Acortar un texto.",
+    "que_es": "Al poner '\\0' en la posición 2, %s se detiene ahí. Muestra Ho.",
+    "ejemplo": "char T[]=\"Hola\";\nT[2]='\\0';\nprintf(\"%s\\n\",T);"
+   },
+   {
+    "cuando": "'\\0' no es '0'.",
+    "que_es": "El carácter '0' vale 48 y el terminador vale 0. Muestra 48 0.",
+    "ejemplo": "printf(\"%d %d\\n\",'0','\\0');"
+   }
+  ],
+  "relacionados": [
+   "texto",
+   "\\0",
+   "arreglo",
+   "strlen",
+   "%s",
+   "comportamiento indefinido"
+  ]
+ },
+ {
+  "elemento": "comportamiento indefinido",
+  "detalle": "Comportamiento indefinido es lo que ocurre cuando el programa hace algo para lo que C no define resultado. El lenguaje no dice qué pasa: puede mostrar un número cualquiera, dar el resultado esperado o cortar el programa.\nImporta porque el programa compila igual y a veces parece funcionar. El problema aparece después: con otro compilador, otras opciones, otro día o los mismos datos en otra computadora.\nLos casos más comunes: usar una variable sin valor, salirse de un arreglo, dividir un entero por 0, desbordar un int (pasarse del valor máximo) y mostrar con un formato que no corresponde al tipo.\nLo que suele confundir: que a ti te haya andado no prueba nada. Un resultado que hoy sale bien puede ser casualidad de lo que había en la memoria en ese momento.\nPor eso se avisa: gcc con -Wall detecta algunos casos (no todos) y conviene leer sus avisos. Lo seguro es no escribir el código que depende de ese resultado.\nError típico: decir en la prueba de escritorio o al entregar \"a mí me dio tal número\" cuando ese número viene de una variable sin iniciar o de un índice fuera del arreglo.",
+  "ocasiones": [
+   {
+    "cuando": "Leer fuera del arreglo.",
+    "que_es": "V tiene 3 elementos y V[5] no existe. El programa compila (gcc puede no avisar), pero el valor mostrado no está definido: no se debe confiar en él.",
+    "ejemplo": "int V[3]={1,2,3};\nprintf(\"%d\\n\",V[5]);"
+   },
+   {
+    "cuando": "Dividir un entero por 0.",
+    "que_es": "En C no está definido. En esta computadora el programa se corta con Floating point exception, pero C no lo promete.",
+    "ejemplo": "int A=0;\nprintf(\"%d\\n\",5/A);"
+   }
+  ],
+  "relacionados": [
+   "índice",
+   "arreglo",
+   "desborde",
+   "división entera",
+   "inicialización",
+   "variable"
+  ]
+ }
+]
