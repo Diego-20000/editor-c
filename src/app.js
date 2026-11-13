@@ -579,7 +579,7 @@
   const KBx = () => (window.KB && window.KB.cargado ? window.KB : null);
   const kbDatos = () => (window.KB_DATA && typeof window.KB_DATA === 'object' ? window.KB_DATA : { errores: [], ayuda: [], lecciones: [], nombres: [] });
   const asLista = (v) => (Array.isArray(v) ? v.filter((x) => typeof x === 'string') : typeof v === 'string' && v ? [v] : []);
-  const NIVELES_TXT = { 1: 'Apagada: al ejecutar con un error solo se dice que no compiló y de qué tipo es. Encontrarlo es tu trabajo.', 2: 'Línea: además se marca el número de línea donde hay un problema. Nada más: sin mensaje, sin sugerencias y sin pistas.' };
+  const NIVELES_TXT = { 1: 'Apagada: al ejecutar con un error solo se dice que no compiló y de qué tipo es. Encontrarlo es parte del ejercicio.', 2: 'Línea: además se marca el número de línea donde hay un problema. Nada más: sin mensaje, sin sugerencias y sin pistas.' };
   // nivel de ayuda: ?ayuda=1|2 en el enlace (se recuerda en el dispositivo) > lo guardado > 1 (apagada). Solo hay dos niveles.
   let nivelAyuda = (function () {
     let q = null; try { q = new URLSearchParams(location.search).get('ayuda'); } catch (e) { q = null; }
@@ -648,7 +648,7 @@
       if (v >= total) return;
       if (confirmando) {
         const c = el('div', 'conf');
-        c.appendChild(el('span', '', 'Esta pista es casi la solución. ¿Probaste con las anteriores? ¿La quieres ver igual?'));
+        c.appendChild(el('span', '', 'Esta pista casi da la solución. ¿Quieres verla de todos modos?'));
         c.appendChild(btnEl('Sí, mostrarla', 'mini', () => { pistasEstado.set(clave, v + 1); pintar(false); }));
         const no = btnEl('Todavía no', 'mini', () => { pintar(false); act.querySelector('button').focus(); });
         c.appendChild(no); act.appendChild(c); no.focus();

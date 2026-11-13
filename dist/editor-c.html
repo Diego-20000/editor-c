@@ -5619,7 +5619,7 @@ int main() {
   const KBx = () => (window.KB && window.KB.cargado ? window.KB : null);
   const kbDatos = () => (window.KB_DATA && typeof window.KB_DATA === 'object' ? window.KB_DATA : { errores: [], ayuda: [], lecciones: [], nombres: [] });
   const asLista = (v) => (Array.isArray(v) ? v.filter((x) => typeof x === 'string') : typeof v === 'string' && v ? [v] : []);
-  const NIVELES_TXT = { 1: 'Apagada: al ejecutar con un error solo se dice que no compiló y de qué tipo es. Encontrarlo es tu trabajo.', 2: 'Línea: además se marca el número de línea donde hay un problema. Nada más: sin mensaje, sin sugerencias y sin pistas.' };
+  const NIVELES_TXT = { 1: 'Apagada: al ejecutar con un error solo se dice que no compiló y de qué tipo es. Encontrarlo es parte del ejercicio.', 2: 'Línea: además se marca el número de línea donde hay un problema. Nada más: sin mensaje, sin sugerencias y sin pistas.' };
   // nivel de ayuda: ?ayuda=1|2 en el enlace (se recuerda en el dispositivo) > lo guardado > 1 (apagada). Solo hay dos niveles.
   let nivelAyuda = (function () {
     let q = null; try { q = new URLSearchParams(location.search).get('ayuda'); } catch (e) { q = null; }
@@ -5688,7 +5688,7 @@ int main() {
       if (v >= total) return;
       if (confirmando) {
         const c = el('div', 'conf');
-        c.appendChild(el('span', '', 'Esta pista es casi la solución. ¿Probaste con las anteriores? ¿La quieres ver igual?'));
+        c.appendChild(el('span', '', 'Esta pista casi da la solución. ¿Quieres verla de todos modos?'));
         c.appendChild(btnEl('Sí, mostrarla', 'mini', () => { pistasEstado.set(clave, v + 1); pintar(false); }));
         const no = btnEl('Todavía no', 'mini', () => { pintar(false); act.querySelector('button').focus(); });
         c.appendChild(no); act.appendChild(c); no.focus();
@@ -6998,7 +6998,7 @@ window.KB_DATA={"errores":[{"id":"ARR-001","categoria":"arreglos y textos","nomb
    (por ejemplo '5491112345678'). Vacío = el botón abre WhatsApp sin destinatario. */
 (function (root) {
   'use strict';
-  var CONFIG = { WHATSAPP_NUMERO: '5491137781528', VERSION: '28909318aa30' };
+  var CONFIG = { WHATSAPP_NUMERO: '5491137781528', VERSION: '5efc07188bf8' };
   if (typeof module !== 'undefined' && module.exports) module.exports = CONFIG;
   else root.CONFIG = CONFIG;
 })(typeof self !== 'undefined' ? self : this);
@@ -7599,7 +7599,7 @@ window.KB_DATA={"errores":[{"id":"ARR-001","categoria":"arreglos y textos","nomb
     var ver = casos.length && casos[0].version ? casos[0].version : '';
     var datos = 'Versión: ' + (ver || 's/d') + ' · ' + casos.length + (casos.length === 1 ? ' caso' : ' casos');
     // si el alumno escribió algo, su mensaje va primero con sus palabras; si no, queda el encabezado simple
-    var t = nota ? ['Mensaje del alumno:', nota, '', '--- Datos del programa (Editor C) ---', datos, ''] : ['Caso para el entrenador del Editor C', datos, ''];
+    var t = nota ? ['Mensaje del alumno:', nota, '', '--- Datos del programa (Editor C) ---', datos, ''] : ['Caso para Diego (Editor C)', datos, ''];
     casos.forEach(function (c, i) {
       var d = c.diag || {};
       t.push('--- Caso ' + (i + 1) + ' ---');

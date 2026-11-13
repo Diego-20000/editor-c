@@ -200,7 +200,7 @@ t('almacén: tolera fallas, datos rotos y sin almacén', () => {
 });
 t('mensajeWhatsApp: título, versión, diagnóstico, código y línea de datos', () => {
   const c = Compartir.nuevoCaso(CASO), m = Compartir.mensajeWhatsApp([c]);
-  ok(m.startsWith('Caso para el entrenador del Editor C')); ok(m.includes('abc123') && m.includes("falta '&'") && m.includes('línea 2'));
+  ok(m.startsWith('Caso para Diego (Editor C)')); ok(m.includes('abc123') && m.includes("falta '&'") && m.includes('línea 2'));
   ok(m.includes('```c\n' + c.codigo + '\n```')); const ult = m.split('\n').pop(); ok(ult.startsWith('#DATOS {')); eq(JSON.parse(ult.slice(7)).casos[0].codigo, c.codigo);
   ok(Compartir.mensajeWhatsApp([c, c]).includes('Caso 2') && Compartir.mensajeWhatsApp([c, c]).includes('2 casos'));
 });
@@ -217,7 +217,7 @@ t('urlWhatsApp: texto largo se recorta con aviso y queda en ~1800', () => {
   const m = Compartir.mensajeWhatsApp([Compartir.nuevoCaso({ codigo: '#include <stdio.h>\n' + 'printf("lineaañ %d\\n", 1);\n'.repeat(120), diag: { msg: 'm', line: 3 }, version: 'v1' })]);
   const u = Compartir.urlWhatsApp(m, ''), enc = u.split('?text=')[1], txt = decodeURIComponent(enc);
   ok(enc.length <= 1800, 'quedó en ' + enc.length); ok(txt.endsWith('(recortado: copia el resto con Copiar)')); ok(Compartir.recortado); eq(Compartir.textoCompleto, m);
-  ok(txt.includes('Caso para el entrenador') && txt.includes('```c'), 'conserva el encabezado y el bloque de código');
+  ok(txt.includes('Caso para Diego') && txt.includes('```c'), 'conserva el encabezado y el bloque de código');
 });
 t('urlWhatsApp: corte duro con un mensaje enorme', () => {
   const u = Compartir.urlWhatsApp('ñ'.repeat(5000), '549'), enc = u.split('?text=')[1]; ok(enc.length <= 1800); ok(decodeURIComponent(enc).endsWith('Copiar)'));
@@ -290,8 +290,8 @@ t('herramienta: archivo malo o sin uso → error y no escribe', () => {
 
 t('mensajeWhatsApp: la nota del alumno va primero y el encabezado fijo se reemplaza', () => {
   const c = Compartir.nuevoCaso(CASO), m = Compartir.mensajeWhatsApp([c], '  Me da 2 y esperaba 2.5  ');
-  ok(m.indexOf('Mensaje del alumno:\nMe da 2 y esperaba 2.5') === 0 && !m.includes('Caso para el entrenador'));
-  ok(Compartir.mensajeWhatsApp([c], '').startsWith('Caso para el entrenador del Editor C'));
+  ok(m.indexOf('Mensaje del alumno:\nMe da 2 y esperaba 2.5') === 0 && !m.includes('Caso para Diego'));
+  ok(Compartir.mensajeWhatsApp([c], '').startsWith('Caso para Diego (Editor C)'));
   ok(JSON.parse(Compartir.exportarJSON([c], { nota: 'hola' })).nota === 'hola' && !('nota' in JSON.parse(Compartir.exportarJSON([c]))));
   ok(Compartir.mensajeWhatsApp([Compartir.nuevoCaso(Object.assign({}, CASO, { diag: { msg: '', line: 0 } }))]).includes('sin mensaje del compilador'));
   eq(Compartir.importarJSON(m).casos, [c], 'el mensaje con nota se sigue pudiendo importar');

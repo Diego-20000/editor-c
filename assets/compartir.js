@@ -94,7 +94,7 @@
     var ver = casos.length && casos[0].version ? casos[0].version : '';
     var datos = 'Versión: ' + (ver || 's/d') + ' · ' + casos.length + (casos.length === 1 ? ' caso' : ' casos');
     // si el alumno escribió algo, su mensaje va primero con sus palabras; si no, queda el encabezado simple
-    var t = nota ? ['Mensaje del alumno:', nota, '', '--- Datos del programa (Editor C) ---', datos, ''] : ['Caso para el entrenador del Editor C', datos, ''];
+    var t = nota ? ['Mensaje del alumno:', nota, '', '--- Datos del programa (Editor C) ---', datos, ''] : ['Caso para Diego (Editor C)', datos, ''];
     casos.forEach(function (c, i) {
       var d = c.diag || {};
       t.push('--- Caso ' + (i + 1) + ' ---');
