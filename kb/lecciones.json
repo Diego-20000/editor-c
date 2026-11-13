@@ -358,9 +358,9 @@
  },
  {
   "id": "L-012",
-  "titulo": "Precedencia y paréntesis",
+  "titulo": "Prioridad y paréntesis",
   "explicacion": [
-   "C sigue reglas de precedencia para decidir qué operación hacer primero.",
+   "C sigue reglas de prioridad para decidir qué operación hacer primero.",
    "La multiplicación y la división tienen mayor prioridad que la suma y la resta.",
    "Las comparaciones se realizan después de resolver las expresiones aritméticas que contienen.",
    "Los paréntesis permiten dejar explícito el orden que quieres.",
@@ -462,7 +462,7 @@
   "explicacion": [
    "printf muestra texto y valores en la salida estándar.",
    "Su primer argumento es una cadena de formato entre comillas dobles.",
-   "Cada especificador % indica qué tipo de dato se va a mostrar.",
+   "Cada formato % indica qué tipo de dato se va a mostrar.",
    "Los argumentos después de la cadena deben coincidir en cantidad y tipo.",
    "Para mostrar un signo porcentaje literal escribe %%."
   ],

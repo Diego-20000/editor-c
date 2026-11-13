@@ -24,6 +24,7 @@ Estos casos no tienen resultado garantizado en C, así que el editor no promete 
 ## Límites propios del editor
 - Los textos y la entrada son **bytes UTF-8**, como en glibc: `strlen`, los anchos de `%s`, `%c`, `getchar`, `fgets` y `%[...]` cuentan bytes, y lo que se imprime de a un byte (`%c`, `putchar`) se junta como UTF-8 (dos llamadas con los bytes de una `é` muestran una `é`). Lo único que no se reproduce igual: una secuencia UTF-8 incompleta o inválida (por ejemplo cortar una `é` por la mitad con un ancho) se muestra como «�» en lugar de imprimir el byte suelto, porque la salida del editor es texto.
 - Arreglos de hasta 20 millones de elementos; ancho y precisión de formato hasta 100000.
+- Un `NaN` que se lee con `scanf` (`nan`) se imprime como `-nan`; gcc imprime `nan` (el editor no distingue el signo de un NaN).
 - La recursión se corta antes que en gcc (el límite depende del navegador).
 - `%e`/`%g` con 15 o más cifras cerca de potencias de 10 y funciones de `math.h` pueden diferir en 1 ulp de glibc.
 

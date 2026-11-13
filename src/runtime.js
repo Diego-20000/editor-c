@@ -153,7 +153,7 @@
         else {
           const pp = p < 0 ? 6 : p;
           if (conv === 'f' || conv === 'F') { body = fixedExact(v, pp); if (alt && pp === 0) body += '.'; }
-          else if (conv === 'e' || conv === 'E') body = expForm(v, pp, upper);
+          else if (conv === 'e' || conv === 'E') { body = expForm(v, pp, upper); if (alt && pp === 0) body = body.replace(/^(-?\d)(e|E)/, '$1.$2'); }
           else body = gForm(v, pp, alt, upper);
         }
         if (isSpecial) zero = false;
@@ -265,6 +265,15 @@
     }
 
     // refs: [[get,set],...]  types: ['int','float',...]
+    // decimal escrito en hexadecimal (0x1F, 0x1.8p3), como lo lee strtod de glibc
+    function hexFloat(t) {
+      const neg = t[0] === '-', m = /^[+-]?0[xX]([0-9a-fA-F]*)\.?([0-9a-fA-F]*)(?:[pP]([+-]?\d+))?/.exec(t);
+      let v = 0; const ent = m[1], fr = m[2];
+      for (const c of ent) v = v * 16 + parseInt(c, 16);
+      let esc = 1 / 16; for (const c of fr) { v += parseInt(c, 16) * esc; esc /= 16; }
+      if (m[3]) v *= Math.pow(2, parseInt(m[3], 10));
+      return neg ? -v : v;
+    }
     async function scanf(fmt, refs, types, line) {
       fmt = aBin(fmt);   // el formato también son bytes: los literales y los %[...] con letras acentuadas se comparan byte a byte
       let count = 0, ri = 0, i = 0;
@@ -323,7 +332,7 @@
             const rest = buf.slice(pos);
             const re = (sp === 'x' || sp === 'X') ? /^[+-]?(0[xX])?[0-9a-fA-F]+/ : (sp === 'o' ? /^[+-]?[0-7]+/ : (sp === 'i' ? /^[+-]?(0[xX][0-9a-fA-F]+|0[0-7]*|[1-9][0-9]*)/ : /^[+-]?[0-9]+/));
             const m = re.exec(rest.slice(0, isFinite(maxw) ? maxw : undefined));
-            if (!m) return count;
+            if (!m) { if (/^[+-]/.test(rest) && maxw >= 1) pos += 1; return count; }
             pos += m[0].length;
             let txt = m[0], neg = false;
             if (txt[0] === '+' || txt[0] === '-') { neg = txt[0] === '-'; txt = txt.slice(1); }
@@ -342,10 +351,11 @@
             const c0 = await skipWs();
             if (c0 < 0) return count === 0 ? -1 : count;
             const rest = buf.slice(pos);
-            const m = /^[+-]?(\d+\.?\d*([eE][+-]?\d+)?|\.\d+([eE][+-]?\d+)?|inf(inity)?|nan)/i.exec(rest.slice(0, isFinite(maxw) ? maxw : undefined));
-            if (!m) return count;
+            const m = /^[+-]?(0[xX]([0-9a-fA-F]+\.?[0-9a-fA-F]*|\.[0-9a-fA-F]+)([pP][+-]?\d+)?|\d+\.?\d*([eE][+-]?\d+)?|\.\d+([eE][+-]?\d+)?|inf(inity)?|nan)/i.exec(rest.slice(0, isFinite(maxw) ? maxw : undefined));
+            if (!m) { if (/^[+-]/.test(rest) && maxw >= 1) pos += 1; return count; }
             pos += m[0].length;
-            const v = /inf/i.test(m[0]) ? (m[0][0] === '-' ? -Infinity : Infinity) : (/nan/i.test(m[0]) ? NaN : parseFloat(m[0]));
+            const hx = /^[+-]?0[xX]/.exec(m[0]);
+            const v = /inf/i.test(m[0]) ? (m[0][0] === '-' ? -Infinity : Infinity) : (/nan/i.test(m[0]) ? NaN : (hx ? hexFloat(m[0]) : parseFloat(m[0])));
             if (!suppress) { const r = refs[ri], t = types[ri]; ri++; r[1](conv(t, v)); count++; }
             first = false; continue;
           }

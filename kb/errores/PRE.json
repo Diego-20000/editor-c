@@ -597,7 +597,7 @@
   "entrada": "",
   "que_dice_gcc": "nada",
   "mensaje_editor": "Línea 5: DOBLE(1 + 2) se expande a 1 + 2 * 2, que da 5 y no 6. Pon paréntesis alrededor de X.",
-  "explicacion": "Una macro copia el texto del argumento. Sin paréntesis, la precedencia de los operadores cambia el resultado.",
+  "explicacion": "Una macro copia el texto del argumento. Sin paréntesis, la prioridad de los operadores cambia el resultado.",
   "como_arreglarlo": "Pon paréntesis alrededor de cada parámetro y alrededor de todo el resultado.",
   "pistas": [
    "Reemplaza X por 1 + 2 a mano.",
@@ -634,7 +634,7 @@
   ],
   "relacion_con_la_materia": "macros",
   "deteccion": "heuristica",
-  "como_detectarlo": "Cuerpo de macro con operador de menor precedencia que * o / sin paréntesis externos.",
+  "como_detectarlo": "Cuerpo de macro con operador de menor prioridad que * o / sin paréntesis externos.",
   "riesgo_falso_positivo": "ninguno",
   "nivel": "aviso",
   "verificado_gcc13": true,
