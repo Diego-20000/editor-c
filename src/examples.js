@@ -5,7 +5,6 @@ var EXAMPLES = [
 
 int main() {
     printf("Hola, mundo!\\n");
-    return 0;
 }
 ` },
   { g: 'Primeros pasos', t: 'Área de un círculo', d: 'Lee un número con decimales y calcula con una fórmula.', e: `2.5
@@ -19,7 +18,6 @@ int main() {
 
     AREA = 3.14159 * RADIO * RADIO;
     printf("El área es %.2f\\n", AREA);
-    return 0;
 }
 ` },
   { g: 'Primeros pasos', t: 'De Celsius a Fahrenheit', d: 'Una conversión de unidades con float.', e: `36.5
@@ -33,7 +31,6 @@ int main() {
 
     FAHRENHEIT = CELSIUS * 9 / 5 + 32;
     printf("%.1f C equivalen a %.1f F\\n", CELSIUS, FAHRENHEIT);
-    return 0;
 }
 ` },
   { g: 'Operadores', t: 'División entera y resto', d: 'Por qué 7 / 2 da 3 y cómo se obtiene el resto con %.', e: '', c: `#include <stdio.h>
@@ -44,7 +41,6 @@ int main() {
     printf("7 / 2.0 = %.2f\\n", 7 / 2.0);
     printf("-7 / 2  = %d\\n", -7 / 2);
     printf("-7 %% 2  = %d\\n", -7 % 2);
-    return 0;
 }
 ` },
   { g: 'Operadores', t: 'Cambio en billetes', d: 'Usa / y % para repartir un monto en billetes.', e: `380
@@ -67,7 +63,6 @@ int main() {
     printf("Billetes de 50:  %d\\n", B50);
     printf("Billetes de 10:  %d\\n", B10);
     printf("Sobran:          %d\\n", RESTO);
-    return 0;
 }
 ` },
   { g: 'Operadores', t: 'Comparaciones y lógicos', d: 'Cada comparación vale 1 (verdadero) o 0 (falso).', e: '', c: `#include <stdio.h>
@@ -80,7 +75,6 @@ int main() {
     printf("A < B && B < 10 -> %d\\n", A < B && B < 10);
     printf("A > B || B == 8 -> %d\\n", A > B || B == 8);
     printf("!(A == 5)      -> %d\\n", !(A == 5));
-    return 0;
 }
 ` },
   { g: 'Salida con formato', t: 'Formatos de printf', d: 'Ancho, relleno con ceros, alineación y decimales.', e: '', c: `#include <stdio.h>
@@ -97,7 +91,6 @@ int main() {
     printf("[%.2f]\\n", X);
     printf("[%8.3f]\\n", X);
     printf("[%c]\\n", 'A');
-    return 0;
 }
 ` },
   { g: 'Salida con formato', t: 'Tabla de cuadrados y cubos', d: 'Columnas alineadas con un for y anchos en printf.', e: '', c: `#include <stdio.h>
@@ -109,7 +102,6 @@ int main() {
     for (I = 1; I <= 8; I++) {
         printf("%2d %8d %6d\\n", I, I * I, I * I * I);
     }
-    return 0;
 }
 ` },
   { g: 'Condicionales', t: 'Precio con descuento', d: 'Un if simple: descuento del 10 % desde 1000.', e: `1500
@@ -127,7 +119,6 @@ int main() {
 
     printf("Descuento: %.2f\\n", DESCUENTO);
     printf("A pagar:   %.2f\\n", TOTAL - DESCUENTO);
-    return 0;
 }
 ` },
   { g: 'Condicionales', t: 'Tipo de triángulo', d: 'if / else if con varias condiciones.', e: `5 5 8
@@ -146,7 +137,6 @@ int main() {
     } else {
         printf("Escaleno\\n");
     }
-    return 0;
 }
 ` },
   { g: 'Condicionales', t: 'Categoría por edad', d: 'Una cadena de else if que se corta en la primera verdadera.', e: `16
@@ -167,7 +157,6 @@ int main() {
     } else {
         printf("Persona mayor\\n");
     }
-    return 0;
 }
 ` },
   { g: 'Condicionales', t: 'Calculadora con switch', d: 'switch con char y un caso que evita dividir por cero.', e: `12 * 4
@@ -190,7 +179,6 @@ int main() {
             break;
         default: printf("Operación desconocida\\n");
     }
-    return 0;
 }
 ` },
   { g: 'Repetitivas', t: 'Cuenta regresiva', d: 'for que cuenta hacia atrás.', e: `5
@@ -206,7 +194,6 @@ int main() {
         printf("%d\\n", I);
     }
     printf("Despegue!\\n");
-    return 0;
 }
 ` },
   { g: 'Repetitivas', t: 'Suma de los dígitos', d: 'while con / y % para separar cifras.', e: `4825
@@ -223,7 +210,6 @@ int main() {
         N = N / 10;
     }
     printf("La suma de los dígitos es %d\\n", SUMA);
-    return 0;
 }
 ` },
   { g: 'Repetitivas', t: 'Potencias de 2 hasta 1000', d: 'while con una condición sobre el valor que crece.', e: '', c: `#include <stdio.h>
@@ -236,7 +222,6 @@ int main() {
         P = P * 2;
     }
     printf("\\n");
-    return 0;
 }
 ` },
   { g: 'Repetitivas', t: 'Repetir mientras diga s', d: 'do-while: el cuerpo se ejecuta al menos una vez.', e: `10
@@ -260,7 +245,6 @@ int main() {
     } while (OTRO == 's');
 
     printf("Suma total: %d\\n", SUMA);
-    return 0;
 }
 ` },
   { g: 'Repetitivas', t: 'Ahorro año a año', d: 'for que acumula un resultado en cada vuelta.', e: `1000
@@ -277,7 +261,6 @@ int main() {
         CAPITAL = CAPITAL * 1.05;
         printf("Año %d: %.2f\\n", ANIO, CAPITAL);
     }
-    return 0;
 }
 ` },
   { g: 'Funciones', t: 'Función con retorno', d: 'Prototipo, definición y llamada de una función.', e: `6 4
@@ -292,7 +275,6 @@ int main() {
     scanf("%d %d", &B, &H);
 
     printf("El área es %d\\n", AREA(B, H));
-    return 0;
 }
 
 int AREA(int BASE, int ALTURA) {
@@ -313,7 +295,6 @@ int main() {
     LINEA(N);
     printf(" Editor C \\n");
     LINEA(N);
-    return 0;
 }
 
 void LINEA(int LARGO) {
@@ -336,7 +317,6 @@ int main() {
     scanf("%d", &N);
 
     printf("%d! = %ld\\n", N, FACTORIAL(N));
-    return 0;
 }
 
 long FACTORIAL(int N) {
@@ -358,7 +338,6 @@ int main() {
     scanf("%d %d", &B, &E);
 
     printf("%d elevado a %d es %d\\n", B, E, POTENCIA(B, E));
-    return 0;
 }
 
 int POTENCIA(int BASE, int EXPONENTE) {
@@ -390,7 +369,6 @@ int main() {
     }
     printf("Promedio: %.2f\\n", PROMEDIO);
     printf("Superan el promedio: %d\\n", CANT);
-    return 0;
 }
 ` },
   { g: 'Arreglos', t: 'Invertir un arreglo', d: 'Recorrer un arreglo de atrás hacia adelante.', e: `1 2 3 4 5 6
@@ -409,7 +387,6 @@ int main() {
         printf("%d ", V[I]);
     }
     printf("\\n");
-    return 0;
 }
 ` },
   { g: 'Textos', t: 'Contar vocales', d: 'Un texto es un arreglo de char terminado en cero.', e: `Hola mundo de C
@@ -430,7 +407,6 @@ int main() {
         }
     }
     printf("Tiene %d vocales\\n", VOCALES);
-    return 0;
 }
 ` },
   { g: 'Textos', t: 'Largo y mayúsculas', d: 'strlen y toupper sobre un texto leído con scanf.', e: `editor
@@ -450,7 +426,6 @@ int main() {
         PALABRA[I] = toupper(PALABRA[I]);
     }
     printf("En mayúsculas: %s\\n", PALABRA);
-    return 0;
 }
 ` },
   { g: 'Matemática (math.h)', t: 'Hipotenusa', d: 'sqrt y pow de math.h.', e: `3 4
@@ -465,7 +440,6 @@ int main() {
 
     H = sqrt(pow(A, 2) + pow(B, 2));
     printf("La hipotenusa mide %.2f\\n", H);
-    return 0;
 }
 ` },
   { g: 'Matemática (math.h)', t: 'Redondeos', d: 'floor, ceil y fabs sobre el mismo número.', e: '', c: `#include <stdio.h>
@@ -478,26 +452,31 @@ int main() {
     printf("floor(X) = %.1f\\n", floor(X));
     printf("ceil(X)  = %.1f\\n", ceil(X));
     printf("fabs(X)  = %.1f\\n", fabs(X));
-    return 0;
 }
 ` },
-  { g: 'Para practicar errores', t: 'Error: falta un ;', d: 'No compila: encontrá la línea.', e: '', c: `#include <stdio.h>
+  { g: 'Para practicar errores', t: 'Error: falta un ;', d: 'No compila: encuentra la línea.', e: '', c: `#include <stdio.h>
 
 int main() {
     int A = 5
     printf("%d\\n", A);
-    return 0;
 }
 ` },
-  { g: 'Para practicar errores', t: 'Avisos: scanf sin & y %d con float', d: 'Compila con avisos y anda mal: ¿qué pasa?', e: '', c: `#include <stdio.h>
+  { g: 'Para practicar errores', t: 'Error: scanf sin &', d: 'No compila en el editor: ¿qué le falta a scanf?', e: '', c: `#include <stdio.h>
 
 int main() {
     int A;
-    float B = 2.5;
 
     scanf("%d", A);
-    printf("%d\\n", B);
-    return 0;
+    printf("%d\\n", A);
+}
+` },
+  { g: 'Para practicar errores', t: 'Aviso: = dentro de un if', d: 'Compila con aviso: ¿por qué siempre dice tres?', e: '', c: `#include <stdio.h>
+
+int main() {
+    int A = 5;
+
+    if (A = 3) printf("tres\\n");
+    else printf("otro\\n");
 }
 ` },
   { g: 'Para practicar errores', t: 'Aviso: if con ; al final', d: 'Compila, pero el if no hace lo que parece.', e: `-3
@@ -509,7 +488,6 @@ int main() {
     scanf("%d", &A);
     if (A > 0);
         printf("positivo\\n");
-    return 0;
 }
 ` },
 ];

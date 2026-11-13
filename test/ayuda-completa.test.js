@@ -36,6 +36,12 @@ t('«;» dentro de un for explica el uso del for', () => {
   const o2 = N.ocasionAqui(a, P, P.indexOf('B - 1;') + 5);
   ok(!o2 || !/for/i.test(o2.cuando), 'un «;» fuera del encabezado no debería decir for: ' + (o2 && o2.cuando));
 });
+t('la llave de main habla de la función y la de un for del for (no de listas de valores)', () => {
+  const a = AYUDA.find((x) => x.elemento === '{}');
+  const o1 = N.ocasionAqui(a, P, P.indexOf('{ A = 1') === -1 ? P.indexOf('{') : P.indexOf('{')), o2 = N.ocasionAqui(a, P, P.indexOf('{ B = B'));
+  ok(o1 && /funci/i.test(o1.cuando), 'main: ' + JSON.stringify(o1));
+  ok(o2 && /for|while/i.test(o2.cuando), 'for: ' + JSON.stringify(o2));
+});
 t('«:» se explica por sí mismo', () => { ok(KB.elementoEnPosicion('switch (A) { case 1: break; }', 'switch (A) { case 1'.length) === ':'); });
 
 t('cobertura: en los programas de prueba casi nada queda sin explicación', () => {

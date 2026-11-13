@@ -455,7 +455,10 @@ a.btn { text-decoration: none; }
 /* ---------- modo práctica, ajustes ---------- */
 .practica { padding: 8px 16px; background: color-mix(in srgb, var(--warn) 18%, var(--bg)); color: var(--text); border-bottom: 1px solid var(--line); font: 600 14px var(--ui); text-align: center; }
 .wsel { width: auto; max-width: 60%; background: transparent; padding-right: 0; color: var(--accent); justify-content: flex-end; text-align-last: right; }
-@media (max-width: 560px) { #ayudaBtn span { display: none; } #ayudaBtn { padding: 0; min-width: 44px; } }
+/* celular: el botón Detener aparece solo mientras corre el programa, «Ayuda» lleva su texto y la posición del cursor no le quita lugar al nombre del programa */
+@media (max-width: 560px) { #stop:disabled { display: none; } .pane-head .hint { display: none; } }
+@media (max-width: 440px) { .brand h1 { display: none; } }
+@media (max-width: 340px) { #ayudaBtn span { display: none; } #ayudaBtn { padding: 0; min-width: 44px; } }
 @media (pointer: coarse) { .alist button { min-height: 48px; } #aQ { height: 48px; } .clist label { min-height: 48px; } }
 .adet > .btn, .adet > .row { justify-self: start; }
 
