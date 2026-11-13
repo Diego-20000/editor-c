@@ -11,6 +11,22 @@
   /* ---------- formato de números como glibc ---------- */
 
   function signBit(x) { return x < 0 || Object.is(x, -0); }
+  // Signo de un NaN, como en gcc para x86-64: una cuenta inválida (0.0/0.0, sqrt(-1)) da «-nan», y NAN, atof("nan") o scanf("nan") dan «nan».
+  // JavaScript no distingue el signo de un NaN (y según el motor la cuenta 0/0 puede salir con uno u otro bit), así que el «nan» sin signo se marca
+  // con una huella en la parte baja del NaN, que viaja con el valor (el hardware la conserva al sumar, restar, etc.). Todo NaN sin huella es «-nan».
+  // Si el navegador no conserva la huella, todos salen «-nan» (lo que ya pasaba antes).
+  const NANF = new Float64Array(1), NANU = new Uint32Array(NANF.buffer);
+  const NAN_POS = (function () { NANU[0] = 1; NANU[1] = 0x7FF80000; return NANF[0]; })();
+  const NAN_NEG = NaN;
+  const NAN_OK = (function () {
+    try {
+      const id = Function('a', 'return a'), ng = Function('a', 'return -a'), sm = Function('a', 'return a + 1');
+      const huella = (v) => { NANF[0] = v; return (NANU[0] & 1) === 1 && (NANU[1] & 0x7FF80000) === 0x7FF80000; };
+      return huella(NAN_POS) && huella(id(NAN_POS)) && huella(ng(NAN_POS)) && huella(sm(NAN_POS)) && !((NANF[0] = NAN_NEG), (NANU[0] & 1));
+    } catch (e) { return false; }
+  })();
+  function nanNegativo(v) { if (!NAN_OK) return true; NANF[0] = v; if ((NANU[0] & 1) !== 1) return true; return (NANU[1] >>> 31) === 1; }
+
 
   // |x| con p decimales, redondeo exacto "half-even" (igual que glibc)
   function fixedExact(x, p) {
@@ -146,7 +162,7 @@
         if (alt && bv !== 0n) { if (conv === 'x') body = '0x' + body; else if (conv === 'X') body = '0X' + body; else if (conv === 'o' && body[0] !== '0') body = '0' + body; }
       } else if ('fFeEgG'.indexOf(conv) >= 0) {
         const v = typeof arg === 'number' ? arg : (typeof arg === 'bigint' ? Number(arg) : 0);
-        const neg = Number.isNaN(v) ? true : signBit(v);
+        const neg = Number.isNaN(v) ? nanNegativo(v) : signBit(v);
         sign = neg ? '-' : (plus ? '+' : (space ? ' ' : ''));
         if (Number.isNaN(v)) { body = upper ? 'NAN' : 'nan'; isSpecial = true; }
         else if (!isFinite(v)) { body = upper ? 'INF' : 'inf'; isSpecial = true; }
@@ -355,7 +371,7 @@
             if (!m) { if (/^[+-]/.test(rest) && maxw >= 1) pos += 1; return count; }
             pos += m[0].length;
             const hx = /^[+-]?0[xX]/.exec(m[0]);
-            const v = /inf/i.test(m[0]) ? (m[0][0] === '-' ? -Infinity : Infinity) : (/nan/i.test(m[0]) ? NaN : (hx ? hexFloat(m[0]) : parseFloat(m[0])));
+            const v = /inf/i.test(m[0]) ? (m[0][0] === '-' ? -Infinity : Infinity) : (/nan/i.test(m[0]) ? (m[0][0] === '-' ? NAN_NEG : NAN_POS) : (hx ? hexFloat(m[0]) : parseFloat(m[0])));
             if (!suppress) { const r = refs[ri], t = types[ri]; ri++; r[1](conv(t, v)); count++; }
             first = false; continue;
           }
@@ -413,7 +429,24 @@
       strncmp(a, b, n) { const x = aBytes(a), y = aBytes(b); n = Number(n); for (let i = 0; i < n; i++) { const p = i < x.length ? x[i] : 0, q = i < y.length ? y[i] : 0; if (p !== q) return p - q; if (p === 0) return 0; } return 0; },
       atoi(a) { const m = /^\s*[+-]?\d+/.exec(tostr(a)); return m ? Number(BigInt.asIntN(32, BigInt(m[0].trim()))) : 0; },
       atol(a) { const m = /^\s*[+-]?\d+/.exec(tostr(a)); return m ? BigInt.asIntN(64, BigInt(m[0].trim())) : 0n; },
-      atof(a) { const m = /^\s*[+-]?(\d+\.?\d*([eE][+-]?\d+)?|\.\d+([eE][+-]?\d+)?)/.exec(tostr(a)); return m ? parseFloat(m[0]) : 0; },
+      atof(a) {
+        const t = tostr(a), z = /^\s*([+-]?)(inf(?:inity)?|nan)/i.exec(t);
+        if (z) return /nan/i.test(z[2]) ? (z[1] === '-' ? NAN_NEG : NAN_POS) : (z[1] === '-' ? -Infinity : Infinity);
+        const h = /^\s*[+-]?0[xX](?:[0-9a-fA-F]+\.?[0-9a-fA-F]*|\.[0-9a-fA-F]+)(?:[pP][+-]?\d+)?/.exec(t); if (h) return hexFloat(h[0].trim());
+        const m = /^\s*[+-]?(\d+\.?\d*([eE][+-]?\d+)?|\.\d+([eE][+-]?\d+)?)/.exec(t); return m ? parseFloat(m[0]) : 0;
+      },
+      NANP: NAN_POS,
+      neg: (v) => (v !== v ? (nanNegativo(v) ? NAN_POS : NAN_NEG) : -v),
+      // las funciones de math.h de JavaScript devuelven un NaN «sin signo»: si el resultado es NaN, se le da el signo que le da glibc
+      // (el de la entrada, si la entrada ya era NaN; si no, «-nan», como una cuenta inválida)
+      nn(f, ...a) { const r = f(...a); if (r === r) return r; for (let i = 0; i < a.length; i++) if (a[i] !== a[i]) return a[i]; return NAN_NEG; },
+      fabs(x) { return x !== x ? NAN_POS : Math.abs(x); },
+      fmax(a, b) { return a !== a ? b : (b !== b ? a : Math.max(a, b)); },
+      fmin(a, b) { return a !== a ? b : (b !== b ? a : Math.min(a, b)); },
+      // glibc devuelve «nan» (sin signo) fuera del dominio de estas tres; el resto de las cuentas inválidas dan «-nan»
+      asin(x) { return Math.abs(x) > 1 ? NAN_POS : Math.asin(x); },
+      acos(x) { return Math.abs(x) > 1 ? NAN_POS : Math.acos(x); },
+      log10(x) { return x < 0 ? NAN_POS : Math.log10(x); },
       sprintf(dst, fmt, args, line) { const s = cformat(fmt, args); const b = aBytes(s); escribir(dst, b, true, 'sprintf', line); return b.length; },
       snprintf(dst, n, fmt, args, line) {
         n = Number(n); const s = cformat(fmt, args); const b = aBytes(s);
