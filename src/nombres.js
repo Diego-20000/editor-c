@@ -432,9 +432,13 @@
     if (dentro(A.switches, 'a', 'h')) tags['switch'] = 1;
     if (A.switches.some(function (x) { return k >= x.bodyA && k <= x.bodyB; })) tags['switch'] = 1;
     if (A.llamada[k]) { tags['llamada'] = 1; tags[A.llamada[k]] = 1; }
-    if (A.funcs.some(function (f) { return k > f.range[0] && f.params.length >= 0 && k < (f.bodyStart > 0 ? f.bodyStart : f.range[1]); })) tags['funcion'] = 1;
+    if (A.funcs.some(function (f) { return k > f.range[0] && k <= (f.bodyStart > 0 ? f.bodyStart : f.range[1]); }) || A.funcs.some(function (f) { return f.def && k === f.bodyEnd; })) tags['funcion'] = 1;
+    // la llave que abre o cierra el cuerpo de un if / for / while / switch
+    [['if', A.ifs], ['for', A.fors], ['while', A.whiles], ['switch', A.switches]].forEach(function (par) {
+      par[1].forEach(function (x) { if ((k === x.bodyA && esOp(T[k], '{')) || (k === x.bodyB && esOp(T[k], '}'))) tags[par[0]] = 1; });
+    });
     var d = 0; for (i = k - 1; i >= 0; i--) { var u = T[i]; if (u.t !== 'op') continue; if (u.v === ']') d++; else if (u.v === '[') { if (d === 0) { tags['arreglo'] = 1; break; } d--; } else if (u.v === ';' || u.v === '{' || u.v === '}') break; }
-    for (i = k - 1; i >= -1; i--) { if (i < 0 || (T[i].t === 'op' && (T[i].v === ';' || T[i].v === '{' || T[i].v === '}'))) { if (esTipo(T[i + 1])) tags['declaracion'] = 1; break; } }
+    if (!tags['funcion']) for (i = k - 1; i >= -1; i--) { if (i < 0 || (T[i].t === 'op' && (T[i].v === ';' || T[i].v === '{' || T[i].v === '}'))) { if (esTipo(T[i + 1])) tags['declaracion'] = 1; break; } }
     if (T[k].t === 'str') tags['cadena'] = 1;
     return tags;
   }

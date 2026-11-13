@@ -204,6 +204,28 @@ const check = (c, m) => { if (c) { ok++; console.log('  ok   ' + m); } else { fa
     check(/10/.test(t2) && /entero|número/i.test(t2), 'número 10: se explica como un literal entero');
   }
 
+  // 13) tanda 1 de la revisión: familia del error, aviso de la coma, enlace dañado, captura sin texto viejo
+  {
+    const p13 = await (await br.newContext({ viewport: { width: 1100, height: 720 } })).newPage();
+    await p13.goto(url); await p13.waitForSelector('#code');
+    const prog = '#include <stdio.h>\nint main() {\n    int A = 5;\n    B = A + 1;\n    printf("%d\\n", B);\n}\n';
+    await p13.evaluate((sx) => { const t = document.getElementById('code'); t.value = sx; t.dispatchEvent(new Event('input', { bubbles: true })); }, prog);
+    await p13.click('#run'); await p13.waitForTimeout(600);
+    const cons = await p13.textContent('#out');
+    check(/error de declaración/i.test(cons) && !/sintaxis/i.test(cons), 'variable sin declarar: se dice «error de declaración» y no «sintaxis»');
+    await p13.click('#shot'); await p13.waitForSelector('#dShot[open]');
+    check(!/dentro del archivo PNG/.test(await p13.textContent('#dShot')), 'captura: ya no queda el texto viejo sobre datos dentro del PNG');
+    check(await p13.isVisible('#shotFalta'), 'captura: avisa que faltan el nombre y el curso');
+    await p13.keyboard.press('Escape');
+    const prog2 = '#include <stdio.h>\nint main() {\n    float N;\n    scanf("%f", &N);\n    printf("%.1f\\n", N);\n}\n';
+    await p13.evaluate((sx) => { const t = document.getElementById('code'); t.value = sx; t.dispatchEvent(new Event('input', { bubbles: true })); const i = document.getElementById('inTxt'); if (i) { i.value = '8,5\\n'; i.dispatchEvent(new Event('input', { bubbles: true })); } }, prog2);
+    await p13.click('#run'); await p13.waitForTimeout(700);
+    check(/decimales llevan punto/.test(await p13.evaluate(() => (document.getElementById('toast') || {}).textContent || '')), 'coma decimal: el editor avisa que van con punto');
+    const p14 = await (await br.newContext({ viewport: { width: 1100, height: 720 } })).newPage();
+    await p14.goto(url + '#p=z.@@@@'); await p14.waitForSelector('#code'); await p14.waitForTimeout(800);
+    check(/dañado o incompleto/.test(await p14.evaluate(() => (document.getElementById('toast') || {}).textContent || '')), 'enlace dañado: se avisa en vez de no hacer nada');
+  }
+
   await br.close();
   console.log(ok + ' ok, ' + fallas + ' fallas');
   process.exit(fallas ? 1 : 0);

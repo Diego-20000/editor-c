@@ -229,11 +229,13 @@
   let proc = PROC_NULO, practica = false;
   try {
     if (window.Proceso) {
-      practica = Proceso.politicaDesdeEnlace(location.search, () => toast('Modo práctica: en este enlace no se puede pegar. Escribilo vos.'));
+      practica = Proceso.politicaDesdeEnlace(location.search, () => toast('Modo práctica: en este enlace no se puede pegar. Escribe el código tú mismo.'));
       proc = Proceso.conectar(ta, { tipoInicial: 'u' });
     }
   } catch (e) { proc = PROC_NULO; practica = false; }
   $('practica').hidden = !practica;
+  // en modo práctica no se puede pegar: tampoco por el campo «Reemplazar con» de buscar y reemplazar
+  if (practica) { ['fr', 'frep', 'frepall'].forEach((id) => { const e = $(id); if (e) { e.disabled = true; e.title = 'No disponible en modo práctica'; } }); }
   const auto = (fn, o) => proc.marcarAuto(fn, o);
   /* cierre automático de llaves, paréntesis y comillas: apagado por defecto (que el alumno tipee todo) */
   let autoCierre = store.get('autocierre', '') === '1';
@@ -554,7 +556,20 @@
     if (conLinea && first && !noScroll) scrollToPos(lineOffset(first.line), false);
   }
   // tipo general del problema, sin detalle (ayuda apagada) y como rótulo (ayuda con línea)
-  function tipoGeneral(it) { return it.k === 'w' ? 'Aviso' : it.rt ? 'Error al ejecutar' : 'Error de sintaxis'; }
+  // familia del error, sin decir cuál es el elemento (la ayuda apagada no entrega la solución, pero tampoco manda a buscar en el lugar equivocado)
+  function familiaError(code) {
+    const c = String(code || '').replace(/^[EW]-/, '');
+    if (/^(sintaxis|falta-punto-coma|llave-sin-cerrar)$/.test(c)) return 'error de sintaxis';
+    if (/^(no-declarada|redeclarada|const-modificada)$/.test(c)) return 'error de declaración';
+    if (/^(prototipo|sin-prototipo|sin-tipo-retorno|preprocesador|funcion)$/.test(c)) return 'error de funciones o cabeceras';
+    if (/^(scanf|printf)/.test(c)) return 'error en una llamada';
+    if (/^(switch|break-fuera)$/.test(c)) return 'error de estructura';
+    if (c === 'arreglo') return 'error en un arreglo';
+    if (/no-soportado/.test(c)) return 'todavía no soportado por el editor';
+    return 'error de compilación';
+  }
+  const mayus = (t) => t.charAt(0).toUpperCase() + t.slice(1);
+  function tipoGeneral(it) { return it.k === 'w' ? 'Aviso' : it.rt ? 'Error al ejecutar' : mayus(familiaError(it.code)); }
   function lineOffset(n) { const l = ta.value.split('\n'); let p = 0; for (let i = 0; i < n - 1 && i < l.length; i++) p += l[i].length + 1; return p; }
 
   /* ---------- ayuda por niveles, panel «Ayuda», «¿Qué es esto?» y casos sin respuesta ----------
@@ -1102,6 +1117,7 @@
   function nextPreset() {
     if (!presetQ.length) return null;
     const l = presetQ.shift();
+    avisoComa(l);
     removeInput(); appendText(l + '\n', 'in');
     return l;
   }
@@ -1124,13 +1140,16 @@
     const fit = () => { inp.style.width = Math.max(1, inp.value.length + 1) + 'ch'; };
     inp.addEventListener('input', fit);
     inp.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') { e.preventDefault(); const s = inp.value; removeInput(); waiting = false; finEspera(); appendText(s + '\n', 'in'); setStatus('Ejecutando…', 'run'); send({ type: 'line', s }); }
+      if (e.key === 'Enter') { e.preventDefault(); const s = inp.value; removeInput(); waiting = false; finEspera(); avisoComa(s); appendText(s + '\n', 'in'); setStatus('Ejecutando…', 'run'); send({ type: 'line', s }); }
       else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'd') { e.preventDefault(); sendEOF(); }
     });
     fit(); setStatus('Esperando datos…', 'wait');
     inp.focus({ preventScroll: true });
     ensureInputVisible();
   }
+  // un número con coma (8,5) no es un decimal en C: scanf lee el 8 y se detiene en la coma
+  let comaAvisada = false;
+  function avisoComa(s) { if (!comaAvisada && /\d,\d/.test(String(s))) { comaAvisada = true; toast('En C los decimales llevan punto: se escribe 8.5, no 8,5.'); } }
   function sendEOF() { removeInput(); waiting = false; finEspera(); appendText('^D\n', 'dim'); setStatus('Ejecutando…', 'run'); send({ type: 'eof' }); }
   cons.addEventListener('click', () => { const i = out.querySelector('.stdin input'); if (i && !window.getSelection().toString()) i.focus({ preventScroll: true }); });
 
@@ -1239,9 +1258,10 @@ self.postMessage({ type: 'ready' });`;
   }
   // ayuda 1: solo el tipo general; ayuda 2: además el número de línea
   function mensajeNoCompilo(errs) {
-    if (nivelAyuda < 2) return 'No se pudo ejecutar: el programa no compiló (error de sintaxis). Revisá el código y volvé a ejecutar.';
+    const fam = errs.map((e) => familiaError(e.code)).filter((f, i, a) => a.indexOf(f) === i), tipo = fam.length === 1 ? fam[0] : 'error de compilación';
+    if (nivelAyuda < 2) return 'No se pudo ejecutar: el programa no compiló (' + tipo + '). Revisa el código y vuelve a ejecutar.';
     const ls = errs.map((e) => e.line).filter((l, i, a) => l && a.indexOf(l) === i);
-    return 'No se pudo ejecutar: el programa no compiló (error de sintaxis)' + (ls.length ? (ls.length === 1 ? ' en la línea ' + ls[0] : ' en las líneas ' + ls.join(', ')) : '') + '. Corregí y volvé a ejecutar.';
+    return 'No se pudo ejecutar: el programa no compiló (' + tipo + ')' + (ls.length ? (ls.length === 1 ? ' en la línea ' + ls[0] : ' en las líneas ' + ls.join(', ')) : '') + '. Corrígelo y vuelve a ejecutar.';
   }
   // devuelve true si había errores (y ya los mostró)
   function reportCompile(res) {
@@ -1278,7 +1298,7 @@ self.postMessage({ type: 'ready' });`;
         pend += s; size += s.length;
         if (size > CAP) { cancelled = true; flush(); appendText('\n— Salida cortada: demasiado texto (¿bucle infinito?) —\n', 'er'); }
       },
-      readLine() { flush(); const l = nextPreset(); if (l !== null) return Promise.resolve(l); showInput(); return new Promise((r) => { resolver = r; }); }
+      readLine() { flush(); const l = nextPreset(); if (l !== null) { avisoComa(l); return Promise.resolve(l); } showInput(); return new Promise((r) => { resolver = r; }); }
     };
     CRT.runProgram(res.js, io).then((r) => { flush(); if (main === me) finish(r); });
   }
@@ -1292,6 +1312,7 @@ self.postMessage({ type: 'ready' });`;
     setTimeout(() => toast('¿Querés que las llaves, paréntesis y comillas se cierren solas? Se enciende en Ajustes.', 'Ajustes', () => $('settings').click()), 2500);
   }
   function run() {
+    comaAvisada = false;
     tRun0 = performance.now(); tEspera = 0; tEsperaIni = 0;
     resetRun();
     removeInput(); clearConsole(); clearProblems();
@@ -1394,6 +1415,8 @@ self.postMessage({ type: 'ready' });`;
     });
     lineSegs.push(curSegs);
     lineSegs.forEach((segs, i) => { rowsOf(segs, cols).forEach((r, j) => codeRows.push({ n: j === 0 ? i + 1 : '', r })); });
+    // un programa larguísimo no cabe en una imagen: se muestran el principio y el final
+    if (codeRows.length > 600) { const om = codeRows.length - 500; codeRows.splice(400, om, { n: '', r: [['dim', '… (' + om + ' líneas omitidas) …']] }); }
     const outSegs = [];
     out.childNodes.forEach((n) => {
       if (n.nodeType === 3) outSegs.push([null, n.textContent]);
@@ -1496,6 +1519,7 @@ self.postMessage({ type: 'ready' });`;
   }
   $('shot').addEventListener('click', () => {
     const hasIn = !!inTxt.value.trim();
+    $('shotFalta').hidden = !!(user.name && user.curso);
     $('shotInRow').hidden = !hasIn; $('shotIn').checked = hasIn;
     const canShare = !!(coarse && typeof File === 'function' && navigator.canShare && navigator.canShare({ files: [new File([new Blob(['x'])], 'a.png', { type: 'image/png' })] }));
     $('shotShare').hidden = !canShare;
@@ -1598,6 +1622,9 @@ self.postMessage({ type: 'ready' });`;
 
   /* ---------- ajustes, tema, letra ---------- */
   document.querySelectorAll('dialog').forEach((d) => {
+    // en pantallas táctiles, al abrir una hoja no se enfoca ningún campo: el teclado no tiene que taparla
+    const abrir = d.showModal.bind(d);
+    d.showModal = function () { abrir(); if (coarse) { const a = document.activeElement; if (a && a !== d && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) a.blur(); } };
     d.addEventListener('click', (e) => {
       if (e.target.closest && e.target.closest('[data-close]')) { d.close(); return; }
       if (e.target === d) { const r = d.getBoundingClientRect(); if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) d.close(); }
@@ -1667,7 +1694,12 @@ self.postMessage({ type: 'ready' });`;
   }
   async function desempaquetar(s) {
     let u = unb64u(s.slice(2));
-    if (s.slice(0, 2) === 'z.') u = new Uint8Array(await new Response(new Blob([u]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).arrayBuffer());
+    if (s.slice(0, 2) === 'z.') {
+      // se descomprime de a pedazos y se corta al pasar el tope: un enlace chico no puede llenar la memoria
+      const lector = new Blob([u]).stream().pipeThrough(new DecompressionStream('deflate-raw')).getReader(), partes = []; let total = 0;
+      for (;;) { const r = await lector.read(); if (r.done) break; total += r.value.length; if (total > 512 * 1024) { lector.cancel().catch(() => {}); throw new Error('tamaño'); } partes.push(r.value); }
+      u = new Uint8Array(total); let pos = 0; partes.forEach((x) => { u.set(x, pos); pos += x.length; });
+    }
     else if (s.slice(0, 2) !== 'r.') throw new Error('formato');
     const o = JSON.parse(new TextDecoder().decode(u));
     if (!o || typeof o.c !== 'string' || o.c.length > MAX_ENLACE * 4) throw new Error('datos');
@@ -1691,7 +1723,10 @@ self.postMessage({ type: 'ready' });`;
   let recibido = null;
   async function recibirEnlace() {
     const m = /^#p=([zr]\.[A-Za-z0-9_-]+)$/.exec(location.hash);
-    if (!m) return;
+    if (!m) {
+      if (/^#p=/.test(location.hash)) { try { history.replaceState(null, '', location.pathname + location.search); } catch (e) { /* nada */ } toast('El enlace del programa está dañado o incompleto. Pide que te lo manden de nuevo.'); }
+      return;
+    }
     try { history.replaceState(null, '', location.pathname + location.search); } catch (e) { /* nada */ }
     try {
       recibido = await desempaquetar(m[1]);
@@ -1699,7 +1734,7 @@ self.postMessage({ type: 'ready' });`;
       $('recTxt').textContent = '«' + recibido.name + '» (' + lineas + (lineas === 1 ? ' línea' : ' líneas') + '). Revisá que lo esperabas antes de abrirlo.';
       $('recPrev').textContent = recibido.code.split('\n').slice(0, 15).join('\n') + (lineas > 15 ? '\n…' : '');
       $('dRecibido').showModal();
-    } catch (e) { toast('El enlace del programa no se pudo leer. Pedí que te lo manden de nuevo.'); }
+    } catch (e) { toast('El enlace del programa no se pudo leer. Pide que te lo manden de nuevo.'); }
   }
   $('recOk').addEventListener('click', () => { if (!recibido) return; newProgram(recibido.name, recibido.code, recibido.input); recibido = null; $('dRecibido').close(); toast('Programa abierto.'); });
 

@@ -161,8 +161,8 @@
   <input id="shotName" type="text" maxlength="60" autocomplete="off" placeholder="Por ejemplo: Ej18-Prueba-1">
   <div class="group">
     <label class="chk" id="shotInRow"><input type="checkbox" id="shotIn" role="switch" checked> Incluir los datos de entrada</label>
-    <label class="chk" id="shotLayRow">Disposición <select id="shotLay" class="btn sel" aria-label="Disposición de la imagen"><option value="abajo">Código arriba, salida abajo</option><option value="lado">Código y salida lado a lado</option></select></label>
-    <p class="fine">Esa línea también queda guardada dentro del archivo PNG, como dato de la imagen que no se ve a simple vista. Si la desactivás, no se incluye en ningún lado.</p>
+    <label class="chk" id="shotLayRow">Disposición <select id="shotLay" class="btn sel" aria-label="Disposición de la imagen"><option value="abajo">Una debajo de otra</option><option value="lado">Lado a lado</option></select></label>
+    <p class="fine" id="shotFalta" hidden>Falta tu nombre o tu curso: se cargan una sola vez en Ajustes y salen en la cabecera de la captura.</p>
   </div>
   <div class="shotbox" id="shotBox"><div class="carga" aria-live="polite">Armando la imagen…</div><img id="shotImg" decoding="async" alt="Vista previa de la captura: cabecera, código, entrada y salida"></div>
   <div class="drow"><button id="shotDl" class="btn primary" type="button"><svg class="i" aria-hidden="true"><use href="#i-descargar"/></svg>Descargar PNG</button><button id="shotShare" class="btn" type="button" hidden><svg class="i" aria-hidden="true"><use href="#i-compartir"/></svg>Compartir</button><button class="btn" type="button" data-close>Cancelar</button></div>

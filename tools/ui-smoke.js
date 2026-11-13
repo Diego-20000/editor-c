@@ -846,7 +846,7 @@ async function entrenadorSuite(browser, target, mobile) {
   ok((await page.evaluate(() => window.__editorc.nivelAyuda())) === 1, 'ayuda: el nivel por defecto es 1 (apagada)');
   await runShow(SCANF_MAL);
   const it0 = items('.e').first();
-  ok(/Error de sintaxis/.test(await it0.textContent()) && !/l[ií]nea|&|scanf/i.test(await it0.textContent()), 'apagada: solo el tipo general, sin línea ni mensaje (' + (await it0.textContent()).trim() + ')');
+  ok(/Error en una llamada/.test(await it0.textContent()) && !/l[ií]nea|&|scanf/i.test(await it0.textContent()), 'apagada: solo el tipo general, sin línea ni mensaje (' + (await it0.textContent()).trim() + ')');
   ok((await it0.locator('.help, .pistas, .hexp, .orig, .cd, button.mute').count()) === 0 && (await page.locator('.gut .e, #ul .e').count()) === 0, 'apagada: sin ayuda, sin pistas, sin código del error y sin marcas en el editor');
   ok(!(await page.evaluate(() => document.getElementById('out').textContent.match(/l[ií]nea|falta el &/i))), 'apagada: la consola tampoco dice la línea');
   await shot('1-apagada');

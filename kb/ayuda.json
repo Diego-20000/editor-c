@@ -330,7 +330,7 @@
    {
     "cuando": "Al inicializar una variable bool que debe comenzar en verdadero.",
     "que_es": "La macro true se convierte al valor lógico verdadero de tipo bool al asignarse.",
-    "ejemplo": "#include <stdio.h>\n#include <stdbool.h>\nint main(void){ bool ACTIVO=true; printf(\"%d\\n\",ACTIVO); return 0; }",
+    "ejemplo": "#include <stdio.h>\n#include <stdbool.h>\nint main(){ bool ACTIVO=true; printf(\"%d\\n\",ACTIVO);}",
     "error_tipico": "Olvidar #include <stdbool.h> o escribir el nombre con mayúsculas."
    }
   ],
@@ -362,7 +362,7 @@
    {
     "cuando": "Al inicializar una variable bool que debe comenzar en falso.",
     "que_es": "La macro false se convierte al valor lógico falso al asignarse a bool.",
-    "ejemplo": "#include <stdio.h>\n#include <stdbool.h>\nint main(void){ bool TERMINADO=false; printf(\"%d\\n\",TERMINADO); return 0; }",
+    "ejemplo": "#include <stdio.h>\n#include <stdbool.h>\nint main(){ bool TERMINADO=false; printf(\"%d\\n\",TERMINADO);}",
     "error_tipico": "Usar False o FALSE en vez de false."
    }
   ],
@@ -399,13 +399,13 @@
    {
     "cuando": "En una declaración, delante del tipo de una variable.",
     "que_es": "El objeto conserva el tipo declarado, pero el programa no puede modificarlo mediante ese identificador.",
-    "ejemplo": "#include <stdio.h>\nint main(void){ const int EDAD=18; printf(\"%d\\n\",EDAD); return 0; }",
+    "ejemplo": "#include <stdio.h>\nint main(){ const int EDAD=18; printf(\"%d\\n\",EDAD);}",
     "error_tipico": "Intentar hacer EDAD=19 después de la declaración."
    },
    {
     "cuando": "Al compartir un valor fijo con una función mediante un parámetro const.",
     "que_es": "La calificación indica que la función no debe modificar el objeto a través de ese parámetro.",
-    "ejemplo": "#include <stdio.h>\nint MOSTRAR(const int N){ return N; }\nint main(void){ printf(\"%d\\n\",MOSTRAR(5)); return 0; }",
+    "ejemplo": "#include <stdio.h>\nint MOSTRAR(const int N){ return N; }\nint main(){ printf(\"%d\\n\",MOSTRAR(5));}",
     "error_tipico": "Creer que const cambia el tipo base o el tamaño del objeto."
    }
   ],
@@ -937,7 +937,7 @@
    {
     "cuando": "En main, para indicar el estado final del programa.",
     "que_es": "return 0 comunica que el programa terminó correctamente.",
-    "ejemplo": "int main(void){\n    return 0;\n}",
+    "ejemplo": "int main(){\n}",
     "error_tipico": "Un valor distinto de cero suele indicar que el programa terminó con un estado de error."
    }
   ],
@@ -1009,7 +1009,7 @@
   "elemento": "main",
   "tipo": "concepto",
   "que_es": "La función por la que empieza a ejecutarse todo programa en C. Tiene que existir una sola.",
-  "como_se_usa": "int main(void){\n return 0;\n}",
+  "como_se_usa": "int main(){\n}",
   "error_tipico": "Escribirla sin paréntesis, o sin int adelante.",
   "en_la_materia": "Funciones",
   "errores_ids": [
@@ -1322,7 +1322,7 @@
   "tipo": "operador",
   "que_es": "Asigna: guarda en la variable de la izquierda el valor de la derecha. No compara.",
   "como_se_usa": "A=5;\nprintf(\"%d\\n\",A);  // muestra: 5",
-  "error_tipico": "Usarlo dentro de un if para comparar: if(A=5) asigna y siempre da verdadero. Para comparar es ==.",
+  "error_tipico": "Usarlo dentro de un if para comparar: if(A=5) asigna 5 y da verdadero (salvo que se asigne 0, que da falso). Para comparar es ==.",
   "en_la_materia": "Operadores",
   "errores_ids": [
    "CTL-029",
@@ -2994,19 +2994,19 @@
    {
     "cuando": "Al declarar o asignar un carácter a una variable char.",
     "que_es": "La expresión entre comillas simples representa el código numérico del carácter; char guarda ese valor en un byte.",
-    "ejemplo": "#include <stdio.h>\nint main(void){ char C='5'; printf(\"%c %d\\n\",C,C); return 0; }",
+    "ejemplo": "#include <stdio.h>\nint main(){ char C='5'; printf(\"%c %d\\n\",C,C);}",
     "error_tipico": "Creer que '5' vale el número cinco; en ASCII su código es 53."
    },
    {
     "cuando": "Al comparar un carácter digitado con un dígito concreto.",
     "que_es": "Se compara el carácter con otra constante de carácter, no con un entero decimal.",
-    "ejemplo": "#include <stdio.h>\nint main(void){ char C='0'; printf(\"%d %d\\n\",C=='0',C==0); return 0; }",
+    "ejemplo": "#include <stdio.h>\nint main(){ char C='0'; printf(\"%d %d\\n\",C=='0',C==0);}",
     "error_tipico": "Confundir el carácter '0' con el valor numérico 0: son valores diferentes."
    },
    {
     "cuando": "Al escribir un carácter especial entre comillas simples.",
     "que_es": "Una secuencia como '\\n' representa un único carácter de control.",
-    "ejemplo": "#include <stdio.h>\nint main(void){ char C='\\n'; printf(\"%d\\n\",C); return 0; }",
+    "ejemplo": "#include <stdio.h>\nint main(){ char C='\\n'; printf(\"%d\\n\",C);}",
     "error_tipico": "Poner dos caracteres ordinarios dentro de comillas simples: una constante multicaracter no es un char común."
    }
   ],
@@ -3058,25 +3058,25 @@
    {
     "cuando": "Al pasar un texto a printf, puts u otra función de salida.",
     "que_es": "El contenido se pasa como cadena; puts muestra el texto sin interpretar marcas de formato.",
-    "ejemplo": "#include <stdio.h>\nint main(void){ puts(\"Dato: %d\"); return 0; }",
+    "ejemplo": "#include <stdio.h>\nint main(){ puts(\"Dato: %d\");}",
     "error_tipico": "Creer que puts interpreta %d; muestra esos dos caracteres literalmente."
    },
    {
     "cuando": "Al crear un arreglo de caracteres inicializado con una cadena.",
     "que_es": "El compilador copia los bytes del texto y agrega un byte nulo al final.",
-    "ejemplo": "#include <stdio.h>\nint main(void){ char T[]=\"hola\"; printf(\"%d\\n\",(int)sizeof(T)); return 0; }",
+    "ejemplo": "#include <stdio.h>\nint main(){ char T[]=\"hola\"; printf(\"%d\\n\",(int)sizeof(T));}",
     "error_tipico": "Reservar espacio para las letras pero olvidar el byte extra del terminador."
    },
    {
     "cuando": "Al usar una cadena vacía, escrita como dos comillas juntas.",
     "que_es": "La cadena vacía no tiene letras, pero sigue conteniendo el terminador nulo.",
-    "ejemplo": "#include <stdio.h>\nint main(void){ char T[]=\"\"; printf(\"%d\\n\",(int)sizeof(T)); return 0; }",
+    "ejemplo": "#include <stdio.h>\nint main(){ char T[]=\"\"; printf(\"%d\\n\",(int)sizeof(T));}",
     "error_tipico": "Pensar que una cadena vacía no ocupa memoria: ocupa un byte para '\\0'."
    },
    {
     "cuando": "Cuando el texto de printf contiene %d como parte del formato.",
     "que_es": "printf interpreta %d como una conversión y espera un argumento int; puts no interpreta formatos.",
-    "ejemplo": "#include <stdio.h>\nint main(void){ printf(\"Valor: %d\\n\",7); return 0; }",
+    "ejemplo": "#include <stdio.h>\nint main(){ printf(\"Valor: %d\\n\",7);}",
     "error_tipico": "Dejar %d en printf sin proporcionar el entero correspondiente."
    }
   ],
@@ -3435,7 +3435,7 @@
    },
    {
     "cuando": "En scanf, para leer una variable float.",
-    "que_es": "El destino debe ser float*, por eso se pasa &NOTA.",
+    "que_es": "Lee el dato y lo guarda en una variable float; por eso se escribe con & delante.",
     "ejemplo": "scanf(\"%f\",&NOTA);",
     "error_tipico": "Para una variable double se utiliza %lf."
    }
@@ -3480,7 +3480,7 @@
    },
    {
     "cuando": "En scanf, para leer un double.",
-    "que_es": "El destino debe ser double*.",
+    "que_es": "Lee el dato y lo guarda en una variable double, que se escribe con & delante.",
     "ejemplo": "scanf(\"%lf\",&PROMEDIO);",
     "error_tipico": "Usar %f para double puede escribir con un tipo incompatible."
    }
@@ -3655,7 +3655,7 @@
  {
   "elemento": "%c",
   "tipo": "formato",
-  "que_es": "Muestra o lee un carácter. Si le pasás un número, muestra el carácter con ese código ASCII.",
+  "que_es": "Muestra o lee un carácter. Si se le pasa un número, muestra el carácter con ese código ASCII.",
   "como_se_usa": "printf(\"%c\\n\",LETRA);\nscanf(\" %c\",&LETRA);  // muestra: Z",
   "error_tipico": "Leer sin el espacio antes de %c: toma el Enter que quedó pendiente.",
   "en_la_materia": "printf y scanf",
@@ -3682,7 +3682,7 @@
    "formato printf",
    "formato scanf"
   ],
-  "detalle": "Conversión de un carácter; printf muestra un byte y scanf lee un carácter como int.\nEn printf, el especificador controla cómo se convierte un argumento en texto.\nEn scanf, controla cómo se interpreta la entrada y el tipo de destino que recibe el dato.\nEl ancho de campo y la precisión tienen significados diferentes según la función.\nComprueba siempre que el tipo de la variable coincida con el especificador.\nNo agregues espacios dentro del especificador.",
+  "detalle": "Conversión de un carácter; printf muestra un carácter y scanf lo guarda en una variable char.\nEn printf, el especificador controla cómo se convierte un argumento en texto.\nEn scanf, controla cómo se interpreta la entrada y el tipo de destino que recibe el dato.\nEl ancho de campo y la precisión tienen significados diferentes según la función.\nComprueba siempre que el tipo de la variable coincida con el especificador.\nNo agregues espacios dentro del especificador.",
   "ocasiones": [
    {
     "cuando": "En printf, para mostrar un carácter.",
@@ -4201,7 +4201,7 @@
    },
    {
     "cuando": "En scanf, para leer un long.",
-    "que_es": "El destino debe ser long*, por eso se pasa &GRANDE.",
+    "que_es": "Lee el dato y lo guarda en una variable long; por eso se escribe con & delante.",
     "ejemplo": "scanf(\"%ld\",&GRANDE);",
     "error_tipico": "No se usa %d para una variable long."
    }
@@ -4315,7 +4315,7 @@
    },
    {
     "cuando": "En scanf, para leer size_t.",
-    "que_es": "El destino debe ser size_t*.",
+    "que_es": "Lee el dato y lo guarda en una variable size_t, que se escribe con & delante.",
     "ejemplo": "scanf(\"%zu\",&LARGO);",
     "error_tipico": "La variable debe haberse declarado como size_t."
    }
@@ -4458,7 +4458,7 @@
    {
     "cuando": "Dentro de una cadena literal, en el punto donde debe terminar un renglón.",
     "que_es": "La barra invertida y la letra n forman un solo carácter de control.",
-    "ejemplo": "#include <stdio.h>\nint main(void){ printf(\"Uno\\nDos\\n\"); return 0; }",
+    "ejemplo": "#include <stdio.h>\nint main(){ printf(\"Uno\\nDos\\n\");}",
     "error_tipico": "Escribir una n común o pulsar Enter dentro de las comillas en lugar de escribir la secuencia."
    }
   ],
@@ -4493,7 +4493,7 @@
    {
     "cuando": "Dentro de una cadena, entre dos datos que se quieren separar visualmente.",
     "que_es": "El tabulador desplaza la posición de escritura hasta una columna de tabulación.",
-    "ejemplo": "#include <stdio.h>\nint main(void){ printf(\"A\\tB\\n\"); return 0; }",
+    "ejemplo": "#include <stdio.h>\nint main(){ printf(\"A\\tB\\n\");}",
     "error_tipico": "Esperar que en todas las terminales el tabulador ocupe exactamente cuatro u ocho espacios."
    }
   ],
@@ -4529,7 +4529,7 @@
    {
     "cuando": "Dentro de una cadena literal cuando se necesita mostrar una barra invertida.",
     "que_es": "Dos barras escritas en el código producen una sola barra en el valor de la cadena.",
-    "ejemplo": "#include <stdio.h>\nint main(void){ puts(\"C:\\\\Datos\"); return 0; }",
+    "ejemplo": "#include <stdio.h>\nint main(){ puts(\"C:\\\\Datos\");}",
     "error_tipico": "Poner una sola barra antes de una letra y crear otro escape, o una secuencia inválida."
    }
   ],
@@ -4566,7 +4566,7 @@
    {
     "cuando": "Dentro de una cadena literal, cuando se quiere mostrar una comilla doble.",
     "que_es": "La secuencia evita que la comilla funcione como delimitador de fin de cadena.",
-    "ejemplo": "#include <stdio.h>\nint main(void){ puts(\"Dijo: \\\"hola\\\"\"); return 0; }",
+    "ejemplo": "#include <stdio.h>\nint main(){ puts(\"Dijo: \\\"hola\\\"\");}",
     "error_tipico": "Escribir la comilla doble directamente y dejar la cadena dividida en partes inválidas."
    }
   ],
@@ -4598,7 +4598,7 @@
    {
     "cuando": "Dentro de una constante de carácter delimitada por comillas simples.",
     "que_es": "La barra permite que la comilla simple sea el dato y no el cierre del literal.",
-    "ejemplo": "#include <stdio.h>\nint main(void){ char C='\\''; printf(\"%c\\n\",C); return 0; }",
+    "ejemplo": "#include <stdio.h>\nint main(){ char C='\\''; printf(\"%c\\n\",C);}",
     "error_tipico": "Olvidar la barra y terminar el literal antes de representar el carácter."
    }
   ],
@@ -4630,7 +4630,7 @@
    {
     "cuando": "Dentro de una cadena donde se necesita volver al inicio del renglón actual.",
     "que_es": "El cursor regresa a la columna inicial; lo que se escriba después puede sobrescribir caracteres visibles.",
-    "ejemplo": "#include <stdio.h>\nint main(void){ printf(\"ABC\\rX\\n\"); return 0; }",
+    "ejemplo": "#include <stdio.h>\nint main(){ printf(\"ABC\\rX\\n\");}",
     "error_tipico": "Suponer que \\r baja una línea como \\n."
    }
   ],
@@ -4666,13 +4666,13 @@
    {
     "cuando": "En una constante de carácter que debe valer cero.",
     "que_es": "La secuencia forma un carácter nulo que puede guardarse en un char.",
-    "ejemplo": "#include <stdio.h>\nint main(void){ char C='\\0'; printf(\"%d\\n\",C); return 0; }",
+    "ejemplo": "#include <stdio.h>\nint main(){ char C='\\0'; printf(\"%d\\n\",C);}",
     "error_tipico": "Confundirlo con el dígito '0', cuyo código en ASCII es 48."
    },
    {
     "cuando": "Dentro de una cadena o arreglo de char, para marcar el fin del texto.",
     "que_es": "La primera aparición de '\\0' indica a funciones como printf con %s dónde termina la cadena.",
-    "ejemplo": "#include <stdio.h>\nint main(void){ char T[]=\"A\\0B\"; printf(\"%s %d\\n\",T,(int)sizeof(T)); return 0; }",
+    "ejemplo": "#include <stdio.h>\nint main(){ char T[]=\"A\\0B\"; printf(\"%s %d\\n\",T,(int)sizeof(T));}",
     "error_tipico": "Incluir un '\\0' antes de tiempo y luego preguntarse por qué las letras posteriores no aparecen al imprimir con %s."
    }
   ],
@@ -4718,7 +4718,7 @@
    {
     "cuando": "Dentro de una cadena cuando se quiere emitir una señal de alerta.",
     "que_es": "El carácter se envía a la salida estándar; el entorno decide si produce sonido u otra señal.",
-    "ejemplo": "#include <stdio.h>\nint main(void){ printf(\"Aviso\\a\\n\"); return 0; }",
+    "ejemplo": "#include <stdio.h>\nint main(){ printf(\"Aviso\\a\\n\");}",
     "error_tipico": "Dar por hecho que todos los dispositivos reproducen un sonido audible."
    }
   ],
@@ -4773,9 +4773,9 @@
  {
   "elemento": "\\x41",
   "tipo": "secuencia de escape",
-  "que_es": "Escape hexadecimal: \\x seguido de dos dígitos hexa da el carácter con ese código (\\x41 es la A).",
+  "que_es": "\\x seguido de dígitos hexadecimales escribe el carácter con ese código: \\x41 es la A. \\x toma todos los dígitos hexadecimales que siguen, no solo dos.",
   "como_se_usa": "printf(\"\\x41\\n\");  // muestra: A",
-  "error_tipico": "Poner letras que no son dígitos hexadecimales justo después.",
+  "error_tipico": "Poner justo después una letra de la A a la F (o de la a a la f): se pega al número hexadecimal y cambia el carácter, o el compilador avisa que está fuera de rango.",
   "en_la_materia": "printf",
   "errores_ids": [],
   "buscar": [
@@ -5649,7 +5649,7 @@
  {
   "elemento": "strcmp",
   "tipo": "función",
-  "que_es": "Compara dos textos (string.h). Da 0 si son iguales, negativo si el primero va antes en orden alfabético y positivo si va después.",
+  "que_es": "Compara dos textos (string.h). Da 0 si son iguales, negativo si el primero va antes según el código de cada letra (las mayúsculas van antes que las minúsculas) y positivo si va después.",
   "como_se_usa": "if(strcmp(\"A\",\"B\")<0) puts(\"A va antes\");  // muestra: A va antes",
   "error_tipico": "Comparar textos con ==: compara direcciones, no letras.",
   "en_la_materia": "Texto",
@@ -5867,7 +5867,7 @@
  {
   "elemento": "isspace",
   "tipo": "función",
-  "que_es": "Dice si un carácter es un espacio en blanco: espacio, tabulador o salto de línea (ctype.h).",
+  "que_es": "Dice si un carácter es un espacio en blanco: espacio, tabulador, salto de línea y otros separadores (ctype.h).",
   "como_se_usa": "if(isspace(' ')) puts(\"Espacio\");  // muestra: Espacio",
   "error_tipico": "Creer que solo detecta el espacio común.",
   "en_la_materia": "Texto, ctype.h",
@@ -7327,7 +7327,7 @@
    {
     "cuando": "Al comparar el resultado de getchar() con el fin de la entrada.",
     "que_es": "getchar devuelve un int para poder representar todos los caracteres y también EOF.",
-    "ejemplo": "#include <stdio.h>\nint main(void){ int C=getchar(); if(C==EOF) puts(\"Fin\"); return 0; }",
+    "ejemplo": "#include <stdio.h>\nint main(){ int C=getchar(); if(C==EOF) puts(\"Fin\");}",
     "error_tipico": "Guardar getchar() en char y perder la posibilidad de distinguir EOF de un carácter válido."
    }
   ],
@@ -7342,7 +7342,7 @@
  {
   "elemento": "NULL",
   "tipo": "constante",
-  "que_es": "Valor nulo, \"ninguna dirección\". Vale 0. Se usa sobre todo con punteros (stdio.h).",
+  "que_es": "Valor nulo, \"ninguna dirección\". Equivale a 0. Se usa sobre todo con punteros (stdio.h).",
   "como_se_usa": "srand(time(NULL));",
   "error_tipico": "Confundirlo con el carácter '\\0' o con el texto vacío.",
   "en_la_materia": "stdio.h",
@@ -7360,13 +7360,13 @@
    {
     "cuando": "Al inicializar un puntero para indicar que todavía no apunta a un objeto.",
     "que_es": "NULL representa una constante de puntero nulo; la forma concreta de la macro depende de la implementación.",
-    "ejemplo": "#include <stdio.h>\n#include <stddef.h>\nint main(void){ void *P=NULL; printf(\"%d\\n\",P==NULL); return 0; }",
+    "ejemplo": "#include <stdio.h>\n#include <stddef.h>\nint main(){ void *P=NULL; printf(\"%d\\n\",P==NULL);}",
     "error_tipico": "Usar NULL como si fuera un carácter o el contenido de una cadena."
    },
    {
     "cuando": "Al comparar un puntero con la ausencia de una dirección válida.",
     "que_es": "La comparación permite comprobar si el puntero tiene el valor nulo.",
-    "ejemplo": "#include <stdio.h>\n#include <stddef.h>\nint main(void){ int *P=NULL; printf(\"%d\\n\",P==NULL); return 0; }",
+    "ejemplo": "#include <stdio.h>\n#include <stddef.h>\nint main(){ int *P=NULL; printf(\"%d\\n\",P==NULL);}",
     "error_tipico": "Comparar el puntero con una cadena vacía o con el carácter '\\0'."
    }
   ],
@@ -7398,7 +7398,7 @@
    {
     "cuando": "Al consultar el límite superior del resultado de rand().",
     "que_es": "RAND_MAX permite conocer el máximo que la biblioteca promete para esa función.",
-    "ejemplo": "#include <stdio.h>\n#include <stdlib.h>\nint main(void){ printf(\"%d\\n\",RAND_MAX); return 0; }",
+    "ejemplo": "#include <stdio.h>\n#include <stdlib.h>\nint main(){ printf(\"%d\\n\",RAND_MAX);}",
     "error_tipico": "Olvidar stdlib.h o asumir un valor idéntico en cualquier sistema."
    }
   ],
@@ -7435,13 +7435,13 @@
    {
     "cuando": "Al consultar el límite superior del tipo int.",
     "que_es": "La macro permite conocer el máximo representable por int sin escribir el número a mano.",
-    "ejemplo": "#include <stdio.h>\n#include <limits.h>\nint main(void){ printf(\"%d\\n\",INT_MAX); return 0; }",
+    "ejemplo": "#include <stdio.h>\n#include <limits.h>\nint main(){ printf(\"%d\\n\",INT_MAX);}",
     "error_tipico": "Olvidar incluir limits.h o escribir INT_MAX con una capitalización diferente."
    },
    {
     "cuando": "Al comprobar si un resultado cabe antes de una operación.",
     "que_es": "Se puede comparar el valor actual con INT_MAX antes de sumarle otro número positivo.",
-    "ejemplo": "#include <stdio.h>\n#include <limits.h>\nint main(void){ int A=INT_MAX; printf(\"%d\\n\",A); return 0; }",
+    "ejemplo": "#include <stdio.h>\n#include <limits.h>\nint main(){ int A=INT_MAX; printf(\"%d\\n\",A);}",
     "error_tipico": "Realizar primero la suma que puede desbordar y comprobar después."
    }
   ],
@@ -7476,13 +7476,13 @@
    {
     "cuando": "Al consultar el límite inferior de int.",
     "que_es": "La macro indica el número entero más negativo representable por el tipo.",
-    "ejemplo": "#include <stdio.h>\n#include <limits.h>\nint main(void){ printf(\"%d\\n\",INT_MIN); return 0; }",
+    "ejemplo": "#include <stdio.h>\n#include <limits.h>\nint main(){ printf(\"%d\\n\",INT_MIN);}",
     "error_tipico": "Olvidar limits.h o escribir la macro con letras minúsculas."
    },
    {
     "cuando": "Al revisar si una resta puede superar el rango del tipo.",
     "que_es": "Se compara el valor actual con INT_MIN antes de realizar una resta negativa.",
-    "ejemplo": "#include <stdio.h>\n#include <limits.h>\nint main(void){ int A=INT_MIN; printf(\"%d\\n\",A); return 0; }",
+    "ejemplo": "#include <stdio.h>\n#include <limits.h>\nint main(){ int A=INT_MIN; printf(\"%d\\n\",A);}",
     "error_tipico": "Ejecutar la resta potencialmente desbordada antes de revisar el límite."
    }
   ],
@@ -7716,7 +7716,7 @@
    {
     "cuando": "En una fórmula matemática que necesita el valor de pi.",
     "que_es": "La macro proporciona un valor decimal de precisión double para usar en expresiones.",
-    "ejemplo": "#include <stdio.h>\n#include <math.h>\nint main(void){ double R=2.0; printf(\"%.5f\\n\",M_PI*R); return 0; }",
+    "ejemplo": "#include <stdio.h>\n#include <math.h>\nint main(){ double R=2.0; printf(\"%.5f\\n\",M_PI*R);}",
     "error_tipico": "Escribir PI o m_pi: el nombre de la macro distingue mayúsculas y minúsculas."
    }
   ],
@@ -8776,19 +8776,19 @@
    {
     "cuando": "Al escribir un valor directamente en una expresión.",
     "que_es": "El literal representa el valor en el punto donde se escribe, sin declarar un objeto con nombre.",
-    "ejemplo": "#include <stdio.h>\nint main(void){ printf(\"%d\\n\",100); return 0; }",
+    "ejemplo": "#include <stdio.h>\nint main(){ printf(\"%d\\n\",100);}",
     "error_tipico": "Confundir el literal con una variable que puede modificarse."
    },
    {
     "cuando": "Al declarar un objeto con const.",
     "que_es": "El objeto tiene un tipo declarado y no se puede modificar a través de ese nombre.",
-    "ejemplo": "#include <stdio.h>\nint main(void){ const int MAXIMO=100; printf(\"%d\\n\",MAXIMO); return 0; }",
+    "ejemplo": "#include <stdio.h>\nint main(){ const int MAXIMO=100; printf(\"%d\\n\",MAXIMO);}",
     "error_tipico": "Intentar asignar otro valor después de inicializarlo."
    },
    {
     "cuando": "Al usar #define para dar un nombre a un valor.",
     "que_es": "El preprocesador reemplaza el nombre por el texto indicado y no crea un objeto tipado.",
-    "ejemplo": "#include <stdio.h>\n#define MAXIMO 100\nint main(void){ printf(\"%d\\n\",MAXIMO); return 0; }",
+    "ejemplo": "#include <stdio.h>\n#define MAXIMO 100\nint main(){ printf(\"%d\\n\",MAXIMO);}",
     "error_tipico": "Agregar ; al final del #define o creer que la macro ocupa memoria por sí misma."
    }
   ],
@@ -9248,7 +9248,7 @@
  {
   "elemento": "desborde",
   "tipo": "concepto",
-  "que_es": "Cuando una cuenta da un resultado que no entra en el tipo: un int se pasa de 2147483647 y da la vuelta a un número negativo.",
+  "que_es": "Cuando una cuenta da un resultado que no entra en el tipo: un int se pasa de 2147483647 y el resultado deja de ser el esperado (en la práctica suele salir un número negativo, pero C no lo garantiza).",
   "como_se_usa": "int A=INT_MAX;\nA=A+1;",
   "error_tipico": "No darse cuenta: la suma \"anda\" pero da un número absurdo. Probá con long.",
   "en_la_materia": "Tipos",
@@ -9449,7 +9449,7 @@
   "tipo": "concepto",
   "que_es": "La suma de los datos dividida por la cantidad. Hay que evitar dividir por cero si no se cargó ningún dato, y convertir a decimal para no perder la parte decimal.",
   "como_se_usa": "PROM=(float)SUMA/N;\nprintf(\"%g\\n\",PROM);  // muestra: 3.5",
-  "error_tipico": "Dividir dos enteros: el promedio sale truncado. Dividir con N=0: error.",
+  "error_tipico": "Dividir dos enteros: el promedio sale truncado. Dividir con N=0: con enteros el programa se cierra con error; con decimales da inf o nan.",
   "en_la_materia": "LC, acumulador",
   "errores_ids": [
    "LOG-002",
@@ -9656,13 +9656,13 @@
    {
     "cuando": "Al mostrar un carácter con %d en lugar de %c.",
     "que_es": "La constante de carácter se promociona a int y se muestra su código numérico.",
-    "ejemplo": "#include <stdio.h>\nint main(void){ printf(\"%d %d\\n\",'A','5'); return 0; }",
+    "ejemplo": "#include <stdio.h>\nint main(){ printf(\"%d %d\\n\",'A','5');}",
     "error_tipico": "Esperar que %d muestre la letra en vez de su número de código."
    },
    {
     "cuando": "Al transformar un dígito escrito como carácter en su valor numérico.",
     "que_es": "La diferencia entre el carácter del dígito y '0' permite obtener el entero correspondiente en ASCII.",
-    "ejemplo": "#include <stdio.h>\nint main(void){ char C='5'; printf(\"%d\\n\",C-'0'); return 0; }",
+    "ejemplo": "#include <stdio.h>\nint main(){ char C='5'; printf(\"%d\\n\",C-'0');}",
     "error_tipico": "Usar C-0 en lugar de C-'0': el carácter cero no es el entero cero."
    }
   ],
@@ -9698,13 +9698,13 @@
    {
     "cuando": "En una asignación o inicialización, a la derecha del signo =.",
     "que_es": "El literal proporciona el valor que recibe la variable.",
-    "ejemplo": "#include <stdio.h>\nint main(void){ int EDAD=18; printf(\"%d\\n\",EDAD); return 0; }",
+    "ejemplo": "#include <stdio.h>\nint main(){ int EDAD=18; printf(\"%d\\n\",EDAD);}",
     "error_tipico": "Creer que el literal tiene el mismo tipo que la variable: C puede convertirlo al tipo de destino."
    },
    {
     "cuando": "Como argumento de una función, por ejemplo dentro de printf.",
     "que_es": "El literal se pasa directamente como dato; no hace falta crear una variable solo para usarlo una vez.",
-    "ejemplo": "#include <stdio.h>\nint main(void){ printf(\"%d\\n\",25); return 0; }",
+    "ejemplo": "#include <stdio.h>\nint main(){ printf(\"%d\\n\",25);}",
     "error_tipico": "Usar un especificador de formato que no corresponde al tipo del literal."
    }
   ],
@@ -10020,7 +10020,7 @@
   "elemento": "literal entero decimal",
   "tipo": "concepto",
   "que_es": "Un número escrito en base diez sin punto decimal, como 0, 1, 10, 100 o 214.",
-  "como_se_usa": "#include <stdio.h>\nint main(void){ printf(\"%d %d\\n\",100,-5); return 0; }",
+  "como_se_usa": "#include <stdio.h>\nint main(){ printf(\"%d %d\\n\",100,-5);}",
   "error_tipico": "Esperar decimales en una división entre enteros: 5/2 produce 2, no 2.5.",
   "en_la_materia": "Tipos y operadores",
   "errores_ids": [],
@@ -10038,19 +10038,19 @@
    {
     "cuando": "En una asignación a una variable entera.",
     "que_es": "El literal decimal sin sufijo tiene tipo int si su valor cabe en int; en el objetivo del editor ocupa 4 bytes.",
-    "ejemplo": "#include <stdio.h>\nint main(void){ int A=100; printf(\"%d\\n\",A); return 0; }",
+    "ejemplo": "#include <stdio.h>\nint main(){ int A=100; printf(\"%d\\n\",A);}",
     "error_tipico": "Asignar un entero demasiado grande a int y perder el valor por conversión fuera de rango."
    },
    {
     "cuando": "Con un signo menos al inicio de la expresión.",
     "que_es": "-5 se interpreta como el operador menos aplicado al literal entero 5; el resultado es negativo.",
-    "ejemplo": "#include <stdio.h>\nint main(void){ printf(\"%d\\n\",-5); return 0; }",
+    "ejemplo": "#include <stdio.h>\nint main(){ printf(\"%d\\n\",-5);}",
     "error_tipico": "Pensar que el signo forma parte de un literal diferente."
    },
    {
     "cuando": "Como operandos del operador de división /.",
     "que_es": "Si ambos operandos son enteros, el resultado es entero y se descarta la parte fraccionaria.",
-    "ejemplo": "#include <stdio.h>\nint main(void){ printf(\"%d %f\\n\",5/2,5/2.0); return 0; }",
+    "ejemplo": "#include <stdio.h>\nint main(){ printf(\"%d %f\\n\",5/2,5/2.0);}",
     "error_tipico": "Esperar 2.5 de 5/2; para obtener una división decimal, al menos un operando debe ser decimal."
    }
   ],
@@ -10068,7 +10068,7 @@
   "elemento": "cero y uno",
   "tipo": "concepto",
   "que_es": "Los literales 0 y 1 son enteros comunes, pero se usan mucho para representar falso y verdadero o para iniciar contadores y acumuladores.",
-  "como_se_usa": "#include <stdio.h>\nint main(void){ int ACTIVO=0,CONTADOR=1; if(ACTIVO==0) printf(\"apagado %d\\n\",CONTADOR); return 0; }",
+  "como_se_usa": "#include <stdio.h>\nint main(){ int ACTIVO=0,CONTADOR=1; if(ACTIVO==0) printf(\"apagado %d\\n\",CONTADOR);}",
   "error_tipico": "Confundir una condición con una comparación: A=0 asigna cero; A==0 pregunta si A vale cero.",
   "en_la_materia": "Condiciones, inicialización y lazos",
   "errores_ids": [],
@@ -10087,25 +10087,25 @@
    {
     "cuando": "En una condición if o while, cuando se evalúa directamente el número.",
     "que_es": "C considera falso al valor 0 y verdadero a cualquier valor distinto de cero, no solamente a 1.",
-    "ejemplo": "#include <stdio.h>\nint main(void){ if(0) puts(\"si\"); else puts(\"no\"); if(-5) puts(\"tambien\"); return 0; }",
+    "ejemplo": "#include <stdio.h>\nint main(){ if(0) puts(\"si\"); else puts(\"no\"); if(-5) puts(\"tambien\");}",
     "error_tipico": "Pensar que solamente 1 es verdadero; también lo son -1, 2 y cualquier otro valor no nulo."
    },
    {
     "cuando": "Al inicializar una bandera o variable de estado.",
     "que_es": "Se suele usar 0 para indicar que un evento todavía no ocurrió y 1 para indicar que ya ocurrió.",
-    "ejemplo": "#include <stdio.h>\nint main(void){ int ENCONTRADO=0; if(3==3) ENCONTRADO=1; printf(\"%d\\n\",ENCONTRADO); return 0; }",
+    "ejemplo": "#include <stdio.h>\nint main(){ int ENCONTRADO=0; if(3==3) ENCONTRADO=1; printf(\"%d\\n\",ENCONTRADO);}",
     "error_tipico": "No inicializar la bandera antes de consultarla."
    },
    {
     "cuando": "Al declarar o preparar un contador de un lazo.",
     "que_es": "El 0 o el 1 determina desde qué valor empieza el recorrido; no existe una regla universal para todos los lazos.",
-    "ejemplo": "#include <stdio.h>\nint main(void){ int I=1; for(;I<=3;I++) printf(\"%d \",I); return 0; }",
+    "ejemplo": "#include <stdio.h>\nint main(){ int I=1; for(;I<=3;I++) printf(\"%d \",I);}",
     "error_tipico": "Empezar en 1 cuando el algoritmo necesita recorrer posiciones que comienzan en 0, o al revés."
    },
    {
     "cuando": "Al iniciar un acumulador antes de sumar datos.",
     "que_es": "El cero es el elemento neutro de la suma, por eso es el inicio habitual de una suma acumulada.",
-    "ejemplo": "#include <stdio.h>\nint main(void){ int SUMA=0; SUMA=SUMA+7; printf(\"%d\\n\",SUMA); return 0; }",
+    "ejemplo": "#include <stdio.h>\nint main(){ int SUMA=0; SUMA=SUMA+7; printf(\"%d\\n\",SUMA);}",
     "error_tipico": "Iniciar una suma en 1 y alterar el total desde el primer dato."
    }
   ],
@@ -10124,7 +10124,7 @@
   "elemento": "literal de punto flotante",
   "tipo": "concepto",
   "que_es": "Un número escrito con punto decimal o exponente, como 0.0, 3.14, 2.5f o 1e3.",
-  "como_se_usa": "#include <stdio.h>\nint main(void){ double A=0.0,B=3.14,C=1e3; float D=2.5f; printf(\"%.1f %.2f %.0f %.1f\\n\",A,B,C,D); return 0; }",
+  "como_se_usa": "#include <stdio.h>\nint main(){ double A=0.0,B=3.14,C=1e3; float D=2.5f; printf(\"%.1f %.2f %.0f %.1f\\n\",A,B,C,D);}",
   "error_tipico": "Creer que 3.14 es float: sin sufijo, un literal decimal tiene tipo double.",
   "en_la_materia": "Tipos y expresiones",
   "errores_ids": [],
@@ -10144,13 +10144,13 @@
    {
     "cuando": "En una inicialización sin sufijo, como double PI=3.14.",
     "que_es": "Un literal con punto decimal y sin sufijo tiene tipo double.",
-    "ejemplo": "#include <stdio.h>\nint main(void){ double PI=3.14; printf(\"%.2f\\n\",PI); return 0; }",
+    "ejemplo": "#include <stdio.h>\nint main(){ double PI=3.14; printf(\"%.2f\\n\",PI);}",
     "error_tipico": "Suponer que todos los números con punto son float."
    },
    {
     "cuando": "Con el sufijo f, como 2.5f, o con notación exponencial, como 1e3.",
     "que_es": "El sufijo f convierte el literal en float; la notación e indica una potencia de diez y no cambia por sí misma el tipo double.",
-    "ejemplo": "#include <stdio.h>\nint main(void){ float A=2.5f; double B=1e3; printf(\"%.1f %.0f\\n\",A,B); return 0; }",
+    "ejemplo": "#include <stdio.h>\nint main(){ float A=2.5f; double B=1e3; printf(\"%.1f %.0f\\n\",A,B);}",
     "error_tipico": "Escribir 2.5f esperando doble precisión o leer float con el formato de scanf para double."
    }
   ],
@@ -10166,7 +10166,7 @@
   "elemento": "sufijos de literales",
   "tipo": "concepto",
   "que_es": "Son letras colocadas al final de un literal para indicar su tipo, tamaño o signo, como f, L, u y UL.",
-  "como_se_usa": "#include <stdio.h>\nint main(void){ float A=2.5f; long B=10L; unsigned C=10u; unsigned long D=10UL; printf(\"%.1f %ld %u %lu\\n\",A,B,C,D); return 0; }",
+  "como_se_usa": "#include <stdio.h>\nint main(){ float A=2.5f; long B=10L; unsigned C=10u; unsigned long D=10UL; printf(\"%.1f %ld %u %lu\\n\",A,B,C,D);}",
   "error_tipico": "Usar 10f como si fuera un entero o creer que L significa lo mismo en cualquier literal.",
   "en_la_materia": "Tipos y constantes",
   "errores_ids": [],
@@ -10186,25 +10186,25 @@
    {
     "cuando": "Al final de un literal decimal para indicar float.",
     "que_es": "f o F hace que el literal decimal sea float de 4 bytes en este objetivo.",
-    "ejemplo": "#include <stdio.h>\nint main(void){ float NOTA=2.5f; printf(\"%.1f\\n\",NOTA); return 0; }",
+    "ejemplo": "#include <stdio.h>\nint main(){ float NOTA=2.5f; printf(\"%.1f\\n\",NOTA);}",
     "error_tipico": "Quitar la f y olvidar que 2.5 pasa a ser double antes de convertirse a float."
    },
    {
     "cuando": "Al final de un literal entero para indicar long.",
     "que_es": "L o l hace que el literal entero tenga tipo long cuando el valor cabe en ese tipo.",
-    "ejemplo": "#include <stdio.h>\nint main(void){ long N=10L; printf(\"%ld\\n\",N); return 0; }",
+    "ejemplo": "#include <stdio.h>\nint main(){ long N=10L; printf(\"%ld\\n\",N);}",
     "error_tipico": "Mostrar un long con %d en lugar de %ld."
    },
    {
     "cuando": "Al final de un literal entero para indicar unsigned.",
     "que_es": "U o u indica que el literal se interpreta como entero sin signo.",
-    "ejemplo": "#include <stdio.h>\nint main(void){ unsigned N=10u; printf(\"%u\\n\",N); return 0; }",
+    "ejemplo": "#include <stdio.h>\nint main(){ unsigned N=10u; printf(\"%u\\n\",N);}",
     "error_tipico": "Usar un valor negativo con un tipo sin signo y obtener un valor grande por conversión."
    },
    {
     "cuando": "Al combinar U y L al final de un literal entero.",
     "que_es": "UL, LU y sus variantes en minúscula indican unsigned long.",
-    "ejemplo": "#include <stdio.h>\nint main(void){ unsigned long N=10UL; printf(\"%lu\\n\",N); return 0; }",
+    "ejemplo": "#include <stdio.h>\nint main(){ unsigned long N=10UL; printf(\"%lu\\n\",N);}",
     "error_tipico": "Usar %ld o %d para mostrar un unsigned long."
    }
   ],
@@ -10222,7 +10222,7 @@
   "elemento": "literal octal y hexadecimal",
   "tipo": "concepto",
   "que_es": "Son literales enteros escritos en bases distintas de diez: octal comienza con 0 y hexadecimal con 0x o 0X.",
-  "como_se_usa": "#include <stdio.h>\nint main(void){ printf(\"%d %d %d\\n\",010,0xFF,0X2A); return 0; }",
+  "como_se_usa": "#include <stdio.h>\nint main(){ printf(\"%d %d %d\\n\",010,0xFF,0X2A);}",
   "error_tipico": "Leer 010 como diez: en C, el cero inicial lo convierte en octal y su valor es ocho.",
   "en_la_materia": "Tipos y literales enteros",
   "errores_ids": [],
@@ -10241,13 +10241,13 @@
    {
     "cuando": "En un número entero que comienza con cero, sin x.",
     "que_es": "El literal se interpreta en base ocho; cada posición representa una potencia de ocho.",
-    "ejemplo": "#include <stdio.h>\nint main(void){ printf(\"%d\\n\",010); return 0; }",
+    "ejemplo": "#include <stdio.h>\nint main(){ printf(\"%d\\n\",010);}",
     "error_tipico": "Escribir 08 o 09: los dígitos 8 y 9 no existen en base ocho y el literal no es válido."
    },
    {
     "cuando": "En un número que comienza con 0x o 0X.",
     "que_es": "El literal se interpreta en hexadecimal, con dígitos de 0 a 9 y letras A a F.",
-    "ejemplo": "#include <stdio.h>\nint main(void){ printf(\"%d\\n\",0xFF); return 0; }",
+    "ejemplo": "#include <stdio.h>\nint main(){ printf(\"%d\\n\",0xFF);}",
     "error_tipico": "Pensar que 0xFF es un texto o que su valor es 0."
    }
   ],
