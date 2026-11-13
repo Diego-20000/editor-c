@@ -76,19 +76,17 @@
     clearTimeout(saveTimer); saveTimer = null;
     if (!cur) return;
     cur.code = ta.value; cur.input = inTxt.value; cur.t = Date.now();
-    try { cur.proc = proc.serializar() || undefined; } catch (e) { /* sin evidencia de proceso: el programa se guarda igual */ }
     persist();
   }
   window.addEventListener('pagehide', flushSave);
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flushSave(); });
   window.addEventListener('beforeunload', flushSave);
 
-  // origen: de dónde viene el texto si el programa no trae datos de proceso ('c' archivo o ejemplo, 'a' plantilla, 'u' programa de antes)
+  // origen: de dónde viene el texto ('c' archivo o ejemplo, 'a' plantilla, 'u' programa de antes); hoy no se usa
   function showProgram(p, origen) {
     cur = p;
     stopRun(true);
     ta.value = p.code; inTxt.value = p.input || '';
-    try { if (p.proc) proc.restaurar(p.proc, p.code); else proc.marcarCargado(p.code, origen || 'u'); } catch (e) { proc.marcarCargado(p.code, 'u'); }
     cerrarBurbuja();
     ta.scrollTop = 0; ta.scrollLeft = 0;
     clearProblems(); clearConsole(); setStatus('Listo');
@@ -223,21 +221,10 @@
     }
     paint(brEl, v, m < 0 ? [{ s: pos, e: pos + 1, c: 'bu' }] : [{ s: pos, e: pos + 1, c: 'bm' }, { s: m, e: m + 1, c: 'bm' }]);
   }
-  /* evidencia de proceso: mide de dónde viene cada carácter (tipeado, pegado, automático, cargado). Todo queda en este dispositivo. */
-  const PROC_NULO = { marcarAuto(fn) { return fn(); }, marcarCargado() {}, restaurar() {}, serializar() { return null; }, resumen() { return null; }, linea() { return ''; }, ejecutar() {} };
-  let proc = PROC_NULO, practica = false;
-  try {
-    if (window.Proceso) {
-      practica = Proceso.politicaDesdeEnlace(location.search, () => toast('Modo práctica: en este enlace no se puede pegar. Escribe el código tú mismo.'));
-      proc = Proceso.conectar(ta, { tipoInicial: 'u' });
-    }
-  } catch (e) { proc = PROC_NULO; practica = false; }
-  $('practica').hidden = !practica;
-  // en modo práctica no se puede pegar: tampoco por el campo «Reemplazar con» de buscar y reemplazar
-  if (practica) { ['fr', 'frep', 'frepall'].forEach((id) => { const e = $(id); if (e) { e.disabled = true; e.title = 'No disponible en modo práctica'; } }); }
-  const auto = (fn, o) => proc.marcarAuto(fn, o);
+  const auto = (fn) => fn();   // las inserciones automáticas del editor pasan por acá
   /* cierre automático de llaves, paréntesis y comillas: apagado por defecto (que el alumno tipee todo) */
   let autoCierre = store.get('autocierre', '') === '1';
+  let gccIngles = store.get('gccingles', '') === '1';
 
   ta.addEventListener('scroll', syncScroll);
   ta.addEventListener('input', () => {
@@ -1016,10 +1003,10 @@
   }
   window.__seg = { get: segGet, set: segSet };
 
-  /* ---------- ajustes: ayuda, escritura, evidencia de proceso ---------- */
+  /* ---------- ajustes: ayuda y escritura ---------- */
   function sincronizarAjustesNuevos() {
     segSet($('ayudaSel'), String(nivelAyuda)); $('ayudaDesc').textContent = NIVELES_TXT[nivelAyuda];
-    $('autoCierre').checked = autoCierre;
+    $('autoCierre').checked = autoCierre; $('gccIngles').checked = gccIngles;
     $('tabSel').value = String(SANG); $('wsChk').checked = verEsp;
     const n = casosLista().length;
     $('casosBtn').textContent = 'Casos para enviar' + (n ? ' (' + n + ')' : '');
@@ -1030,6 +1017,7 @@
   });
   $('symChk').checked = simbolos;
   $('symChk').addEventListener('change', () => { simbolos = $('symChk').checked; store.set('simbolos', simbolos ? '1' : '0'); mostrarBarraSimbolos(); });
+  $('gccIngles').addEventListener('change', () => { gccIngles = $('gccIngles').checked; store.set('gccingles', gccIngles ? '1' : '0'); });
   $('autoCierre').addEventListener('change', () => { autoCierre = $('autoCierre').checked; store.set('autocierre', autoCierre ? '1' : '0'); });
   $('tabSel').addEventListener('change', () => { SANG = +$('tabSel').value; store.set('sang', String(SANG)); aplicarVista(); refresh(); });
   $('wsChk').addEventListener('change', () => { verEsp = $('wsChk').checked; store.set('ws', verEsp ? '1' : '0'); refresh(); });
@@ -1262,12 +1250,33 @@ self.postMessage({ type: 'ready' });`;
     const ls = errs.map((e) => e.line).filter((l, i, a) => l && a.indexOf(l) === i);
     return 'No se pudo ejecutar: el programa no compiló (' + tipo + ')' + (ls.length ? (ls.length === 1 ? ' en la línea ' + ls[0] : ' en las líneas ' + ls.join(', ')) : '') + '. Corrígelo y vuelve a ejecutar.';
   }
+  // Cómo lo diría gcc 13 (en inglés), solo para los errores más comunes; los textos están comprobados con gcc. Los demás no muestran nada (no se inventa).
+  function textoGcc(errs) {
+    const src = ta.value.split('\n'), out = [];
+    errs.forEach((e) => {
+      const c = String(e.code || '').replace(/^[EW]-/, ''), m = e.msg || '', q = /'([^']+)'/.exec(m), id = q ? q[1] : '';
+      let t = null, sig;
+      if (c === 'no-declarada' && id) t = /^la función/.test(m) ? "warning: implicit declaration of function '" + id + "' [-Wimplicit-function-declaration]" : "error: '" + id + "' undeclared (first use in this function)";
+      else if (c === 'redeclarada' && id) t = "error: redefinition of '" + id + "'";
+      else if (c === 'const-modificada' && id) t = "error: assignment of read-only variable '" + id + "'";
+      else if (c === 'sin-inicializar' && id) t = "warning: '" + id + "' is used uninitialized [-Wuninitialized]";
+      else if (c === 'falta-punto-coma' && e.line && (sig = (/antes de '([^']+)'/.exec(m) || [])[1])) t = /^\s*(int|float|double|char|long|short|unsigned|const)\b/.test(src[e.line - 1] || '') ? "error: expected ',' or ';' before '" + sig + "'" : "error: expected ';' before '" + sig + "'";
+      else if (c === 'llave-sin-cerrar') t = 'error: expected declaration or statement at end of input';
+      else if (c === 'preprocesador' && /usas (\w+)/.test(m)) t = "warning: implicit declaration of function '" + /usas (\w+)/.exec(m)[1] + "' [-Wimplicit-function-declaration]";
+      else if (c === 'break-fuera') t = 'error: break statement not within loop or switch';
+      else if (c === 'sin-return') t = 'warning: control reaches end of non-void function [-Wreturn-type]';
+      else if (c === 'division-cero') t = 'warning: division by zero [-Wdiv-by-zero]';
+      if (t && out.indexOf(t) < 0 && out.length < 3) out.push(t);
+    });
+    return out;
+  }
   // devuelve true si había errores (y ya los mostró)
   function reportCompile(res) {
     lastRes = res; showDiag(res);
     if (res.errors.length) {
       const n = res.errors.length;
       appendText(mensajeNoCompilo(res.errors) + '\n', 'er');
+      if (gccIngles && nivelAyuda >= 2) textoGcc(res.errors).forEach((t) => appendText('  gcc: ' + t + '\n', 'er'));
       setStatus('No compiló', 'err');
       return true;
     }
@@ -1316,7 +1325,6 @@ self.postMessage({ type: 'ready' });`;
     resetRun();
     removeInput(); clearConsole(); clearProblems();
     flushSave();
-    proc.ejecutar();
     avisoCierre();
     const src = ta.value;
     if (tabMode()) setTab('co');
@@ -1566,7 +1574,7 @@ self.postMessage({ type: 'ready' });`;
   }
   function abrirEjemplo(i) {
     const ex = EXAMPLES[i]; if (!ex) return;
-    if (isPristine(ta.value)) { cur.name = nextName(ex.t); cur.code = ex.c; cur.input = ex.e || ''; cur.proc = undefined; showProgram(cur, 'c'); }
+    if (isPristine(ta.value)) { cur.name = nextName(ex.t); cur.code = ex.c; cur.input = ex.e || ''; showProgram(cur, 'c'); }
     else { newProgram(ex.t, ex.c, ex.e || ''); toast('Ejemplo abierto como programa nuevo; el anterior sigue en "Programas".'); }
     dEj.close();
   }
@@ -1774,8 +1782,7 @@ self.postMessage({ type: 'ready' });`;
       if (sim.some((x) => x.name === name)) { name = nm(p.name + ' (importado)'); res.renamed++; } else res.add++;
       sim.push({ name, code: p.code });
       if (commit) {
-        let pr; try { pr = window.Proceso ? Proceso.nuevo(p.code, 'c').serializar() : undefined; } catch (e) { pr = undefined; }
-        progs.push({ id: uid(), name, code: p.code, input: p.input, t: p.t, proc: pr });
+        progs.push({ id: uid(), name, code: p.code, input: p.input, t: p.t });
       }
     });
     return res;
@@ -1947,5 +1954,5 @@ self.postMessage({ type: 'ready' });`;
     if (!store.get('seen', '')) { store.set('seen', '1'); }
   })();
   recibirEnlace();
-  window.__editorc = { run, cfg, proceso: () => proc.resumen(), procLinea: () => proc.linea(), nivelAyuda: () => nivelAyuda, setNivel: (n) => { nivelAyuda = +n === 2 ? 2 : 1; store.set('ayuda', String(nivelAyuda)); segSet($('ayudaSel'), String(nivelAyuda)); $('ayudaDesc').textContent = NIVELES_TXT[nivelAyuda]; }, setCode: (s) => { ta.value = s; proc.marcarCargado(s, 'c'); refresh(); scheduleSave(); }, compile: (s) => CCompiler.compile(s), showDiag: (r) => { lastRes = r; showDiag(r); } };
+  window.__editorc = { run, cfg, nivelAyuda: () => nivelAyuda, setNivel: (n) => { nivelAyuda = +n === 2 ? 2 : 1; store.set('ayuda', String(nivelAyuda)); segSet($('ayudaSel'), String(nivelAyuda)); $('ayudaDesc').textContent = NIVELES_TXT[nivelAyuda]; }, setCode: (s) => { ta.value = s; refresh(); scheduleSave(); }, compile: (s) => CCompiler.compile(s), showDiag: (r) => { lastRes = r; showDiag(r); } };
 })();

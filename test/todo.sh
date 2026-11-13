@@ -28,7 +28,6 @@ paso "Motor contra gcc"               600 bash test/run_all.sh
 paso "Programas aleatorios contra gcc" 900 bash test/fuzz_run.sh "$FUZZ"
 paso "Diagnósticos del compilador"    300 node test/diag.js
 paso "Base de conocimiento (módulos)" 300 node test/kb.test.js
-paso "Evidencia de proceso"           300 node test/proceso.test.js
 paso "Ejemplos del editor"            300 node test/ejemplos.js
 paso "Nombres del alumno (¿qué es?)"   300 node test/nombres.test.js
 paso "Ayuda completa (¿qué es?)"       300 node test/ayuda-completa.test.js

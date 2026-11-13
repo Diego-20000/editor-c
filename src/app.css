@@ -453,7 +453,6 @@ a.btn { text-decoration: none; }
 }
 
 /* ---------- modo práctica, ajustes ---------- */
-.practica { padding: 8px 16px; background: color-mix(in srgb, var(--warn) 18%, var(--bg)); color: var(--text); border-bottom: 1px solid var(--line); font: 600 14px var(--ui); text-align: center; }
 .wsel { width: auto; max-width: 60%; background: transparent; padding-right: 0; color: var(--accent); justify-content: flex-end; text-align-last: right; }
 /* celular: el botón Detener aparece solo mientras corre el programa, «Ayuda» lleva su texto y la posición del cursor no le quita lugar al nombre del programa */
 @media (max-width: 560px) { #stop:disabled { display: none; } .pane-head .hint { display: none; } }
@@ -473,7 +472,7 @@ a.btn { text-decoration: none; }
 }
 
 /* ---------- modo lectura: solo el código ---------- */
-html.lectura .bar, html.lectura .tabs, html.lectura .term, html.lectura .divider, html.lectura .practica, html.lectura .find { display: none !important; }
+html.lectura .bar, html.lectura .tabs, html.lectura .term, html.lectura .divider, html.lectura .find { display: none !important; }
 html.lectura .pane.ed { flex: 1 1 auto; position: relative; inset: auto; visibility: visible; pointer-events: auto; }
 html.lectura .split > .pane.ed { position: absolute; inset: 12px max(12px, env(safe-area-inset-left)) max(12px, env(safe-area-inset-bottom)); }
 html.lectura .split { padding-top: 12px; position: relative; }

@@ -1038,83 +1038,6 @@ async function entrenadorSuite(browser, target, mobile) {
   await ctx.close();
 }
 
-// proceso (tipeado vs pegado) y modo práctica: teclado y portapapeles reales, solo escritorio
-async function procesoSuite(browser, target) {
-  console.log('\n== proceso y modo práctica · ' + target.label);
-  const ctx = await newCtx(browser, false), page = await ctx.newPage();
-  const errors = [], net = [];
-  page.on('console', (m) => { if (m.type() === 'error' || m.type() === 'warning') errors.push(m.text()); });
-  page.on('pageerror', (e) => { errors.push('pageerror: ' + e.message); if (process.env.DBG) console.log('PAGEERROR', e.message); });
-  ctx.on('request', (r) => { const u = r.url(); if (/^(file|data|blob|about):/.test(u)) return; if (target.origin && u.startsWith(target.origin)) return; net.push(u); });
-  const H = helpers(page, false);
-  // copia texto con teclado real: textarea temporal, Ctrl+A, Ctrl+C
-  const copiar = async (texto) => {
-    await page.evaluate((t) => { const x = document.createElement('textarea'); x.id = 'tmpclip'; x.value = t; document.body.appendChild(x); x.focus(); x.select(); }, texto);
-    await page.keyboard.press('Control+C');
-    await page.evaluate(() => document.getElementById('tmpclip').remove());
-  };
-  await page.goto(target.url); await page.waitForSelector('#code');
-  await page.click('#code'); await page.keyboard.press('Control+A'); await page.keyboard.press('Backspace');
-  await page.evaluate(() => window.__editorc.setCode(''));
-  await page.click('#code');
-  const tipeado = '#include <stdio.h>\nint main() {\nprintf("hola");\nreturn 0;\n}';
-  await page.keyboard.type(tipeado);
-  let r = await page.evaluate(() => window.__editorc.proceso());
-  ok(r.tipeado >= 70 && r.pegado === 0, 'proceso: lo tipeado cuenta como tipeado (' + r.tipeado + ' % tipeado, ' + r.pegado + ' % pegado, ' + r.automatico + ' % automático)');
-  const pegar = '\nint FUNCION_PEGADA(int X) {\n    return X * 2 + 1;\n}\n';
-  await copiar(pegar);
-  await page.click('#code'); await page.keyboard.press('Control+End'); await page.keyboard.press('Control+V');
-  ok((await page.inputValue('#code')).includes('FUNCION_PEGADA'), 'se pudo pegar con el teclado real (Ctrl+V)');
-  r = await page.evaluate(() => window.__editorc.proceso());
-  const esperado = Math.round(pegar.length * 100 / (tipeado.length + pegar.length));
-  ok(r.pegado >= esperado - 8 && r.pegado <= esperado + 8 && r.tipeado >= 40 && r.pegados >= 1, 'proceso: lo pegado cuenta como pegado (' + r.tipeado + ' % tipeado, ' + r.pegado + ' % pegado; esperado ~' + esperado + ' %)');
-  const linea = await page.evaluate(() => window.__editorc.procLinea());
-  ok(/% tipeado/.test(linea) && /% pegado/.test(linea) && /ejecuci/.test(linea) && !/\bIA\b/.test(linea), 'proceso: la línea de la captura (' + linea + ')');
-  // ejecutar cuenta ejecuciones y todo se guarda con el programa
-  await page.evaluate(() => window.__editorc.setCode('')); await page.click('#code'); await page.keyboard.type('int A;');
-  await page.keyboard.press('F5'); await page.waitForTimeout(700);
-  const antes = await page.evaluate(() => window.__editorc.proceso());
-  ok(antes.ejecuciones >= 1, 'proceso: cuenta las ejecuciones (' + antes.ejecuciones + ')');
-  await page.waitForTimeout(500);
-  await page.reload(); await page.waitForSelector('#code');
-  const desp = await page.evaluate(() => window.__editorc.proceso());
-  ok(desp.caracteres.t === antes.caracteres.t && desp.ejecuciones === antes.ejecuciones, 'proceso: se guarda y se restaura con el programa (' + desp.caracteres.t + ' caracteres tipeados)');
-  // captura: línea opcional
-  await page.keyboard.press('Control+End');
-  await H.tap('#shot');
-  await page.waitForFunction(() => { const i = document.getElementById('shotImg'); return i.complete && i.naturalWidth > 0; });
-  ok(!(await page.$('#shotProc')) && !(await page.$('#shotProcRow')), 'captura: ya no hay opción de línea de proceso');
-  await page.screenshot({ path: path.join(STEP, 'd-proceso-captura-' + target.label.replace(/\W+/g, '') + '.png') });
-  await page.keyboard.press('Escape');
-  // transparencia: el texto de Ajustes, sin la palabra IA en ningún lado
-  await H.menu(); await H.tap('#settings'); await page.waitForSelector('#dSet[open]');
-  ok(!/tipeaste|Cómo se escribió/.test(await page.textContent('#dSet')), 'Ajustes ya no muestra nada del tipeado');
-  await page.keyboard.press('Escape');
-  const visible = await page.evaluate(() => Array.from(document.body.children).filter((e) => e.tagName !== 'SCRIPT').map((e) => e.textContent).join(' '));
-  ok(!/\bIA\b|inteligencia artificial/i.test(visible), 'la palabra «IA» no aparece en la interfaz');
-  // modo práctica
-  const pg2 = await ctx.newPage();
-  const e2 = []; pg2.on('console', (m) => { if (m.type() === 'error' || m.type() === 'warning') e2.push(m.text()); }); pg2.on('pageerror', (e) => e2.push(e.message));
-  await pg2.goto(target.url + '?practica=1'); await pg2.waitForSelector('#code');
-  ok(await pg2.isVisible('#practica') && /Modo práctica/.test(await pg2.textContent('#practica')), 'modo práctica: cartel visible mientras esté activo');
-  await pg2.evaluate(() => window.__editorc.setCode('')); await pg2.click('#code');
-  await pg2.evaluate((t) => { const x = document.createElement('textarea'); x.id = 'tmpclip'; x.value = t; document.body.appendChild(x); x.focus(); x.select(); }, 'PEGADO_PROHIBIDO();');
-  await pg2.keyboard.press('Control+C'); await pg2.evaluate(() => document.getElementById('tmpclip').remove());
-  await pg2.click('#code'); await pg2.keyboard.press('Control+V');
-  ok((await pg2.inputValue('#code')) === '', 'modo práctica: pegar con Ctrl+V no escribe nada');
-  ok(/no se puede pegar/i.test(await pg2.textContent('#toast')), 'modo práctica: avisa por qué no pegó');
-  await pg2.keyboard.type('int A;');
-  ok((await pg2.inputValue('#code')) === 'int A;', 'modo práctica: tipear sigue funcionando');
-  await pg2.evaluate(() => { const t = document.getElementById('code'); const dt = new DataTransfer(); dt.setData('text/plain', 'SOLTADO();'); t.dispatchEvent(new DragEvent('drop', { dataTransfer: dt, bubbles: true, cancelable: true })); });
-  ok(!(await pg2.inputValue('#code')).includes('SOLTADO'), 'modo práctica: soltar texto tampoco');
-  await pg2.screenshot({ path: path.join(STEP, 'd-practica-' + target.label.replace(/\W+/g, '') + '.png') });
-  const pg3 = await ctx.newPage(); await pg3.goto(target.url); await pg3.waitForSelector('#code');
-  ok(!(await pg3.isVisible('#practica')), 'sin ?practica=1 no hay cartel ni bloqueo');
-  ok(errors.length === 0 && e2.length === 0, 'proceso: consola limpia' + (errors.concat(e2).length ? ': ' + errors.concat(e2).join(' | ') : ''));
-  ok(net.length === 0, 'proceso: cero pedidos de red externos' + (net.length ? ': ' + net.join(' ') : ''));
-  await ctx.close();
-}
-
 // ------------------------------------------------------------------ capturas finales (SHOTS_FINAL=1)
 async function finalShots(browser, url) {
   console.log('\n== capturas finales');
@@ -1160,8 +1083,6 @@ async function finalShots(browser, url) {
   await guard('dist http', () => suite(browser, T.oneHttp, false));
   for (const [n, t] of [['index file', T.idx], ['index http', T.idxHttp], ['dist file', T.one], ['dist http', T.oneHttp]]) await guard('entrenador ' + n, () => entrenadorSuite(browser, t, false));
   for (const [n, t] of [['index file', T.idx], ['index http', T.idxHttp], ['dist file', T.one]]) await guard('entrenador ' + n + ' celular', () => entrenadorSuite(browser, t, true));
-  await guard('proceso index', () => procesoSuite(browser, T.idx));
-  await guard('proceso dist', () => procesoSuite(browser, T.one));
   await guard('identidad index', () => identidadSuite(browser, T.idxHttp));
   await guard('identidad dist', () => identidadSuite(browser, T.one));
   await guard('divisor', () => dividerSuite(browser, T.idx));
