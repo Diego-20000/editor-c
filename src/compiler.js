@@ -1152,7 +1152,8 @@
           for (let i = 0; i < v.dims.length; i++) {
             if (v.dims[i] === null) { if (!(i === 0 && dimsCode.length)) { this.err('al arreglo le falta el tamaño', v.line, i > 0 ? 'ARR-019' : 'ARR-010'); ok = false; } continue; }
             const r = this.expr(v.dims[i]);
-            if (!INTLIKE.has(r.t)) { this.err('el tamaño de un arreglo debe ser un entero', v.line, 'ARR-028'); ok = false; }
+            if (global && INTLIKE.has(r.t) && !this.isConstExpr(v.dims[i])) { this.err('el tamaño de un arreglo global tiene que ser un número fijo: usa un número o un #define (una variable, aunque sea const, no alcanza)', v.line, 'ARR-009'); ok = false; }
+            else if (!INTLIKE.has(r.t)) { this.err('el tamaño de un arreglo debe ser un entero', v.line, 'ARR-028'); ok = false; }
             else if (this.isConstExpr(v.dims[i])) { let nv = null; try { nv = Function('return ' + this.val(r))(); } catch (x) { nv = null; } if (nv !== null && nv <= 0) { this.err('el tamaño del arreglo tiene que ser mayor que 0 (usaste ' + nv + ')', v.line, nv < 0 ? 'ARR-007' : 'ARR-006'); ok = false; } }
             dimsCode.push(this.val(r));
             sizes.push(this.isConstExpr(v.dims[i]) ? Number(r.c) : null);
