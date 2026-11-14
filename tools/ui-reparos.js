@@ -292,6 +292,27 @@ const check = (c, m) => { if (c) { ok++; console.log('  ok   ' + m); } else { fa
     await cx.close();
   }
 
+  // 6) Privacidad: aviso en la captura cuando hay datos personales y diálogo «qué se guarda y qué no» en Ajustes
+  {
+    for (const conDatos of [true, false]) {
+      const cx = await br.newContext({ viewport: { width: 1280, height: 800 } });
+      if (conDatos) await cx.addInitScript(() => { try { localStorage.setItem('editorc.user', JSON.stringify({ name: 'Perez, Ana', curso: '5to 2da' })); } catch (e) { /* nada */ } });
+      const pg = await cx.newPage();
+      const errs = []; pg.on('pageerror', (e) => errs.push(e.message));
+      await pg.goto(url); await pg.waitForSelector('#code');
+      await pg.click('#shot'); await pg.waitForSelector('#dShot[open]');
+      check((await pg.isVisible('#shotAviso')) === conDatos, 'privacidad: el aviso de la captura ' + (conDatos ? 'aparece cuando hay datos cargados' : 'no aparece sin datos'));
+      await pg.keyboard.press('Escape');
+      if (conDatos) {
+        await pg.click('#settings'); await pg.waitForSelector('#dSet[open]'); await pg.click('#privBtn'); await pg.waitForSelector('#dPriv[open]');
+        const t = await pg.textContent('#dPriv');
+        check(/no se env[ií]a a ning[uú]n servidor/.test(t) && /Qu[eé] sale del dispositivo/.test(t) && /direcci[oó]n IP/.test(t), 'privacidad: el diálogo explica qué se guarda, qué sale y lo del alojamiento');
+        check(errs.length === 0, 'privacidad: consola limpia' + (errs.length ? ': ' + errs.join(' | ') : ''));
+      }
+      await cx.close();
+    }
+  }
+
   await br.close();
   console.log(ok + ' ok, ' + fallas + ' fallas');
   process.exit(fallas ? 1 : 0);

@@ -154,7 +154,37 @@
   </fieldset>
   <div class="group" id="mutedGroup"><div class="srow" id="mutedRow" hidden><span id="mutedTxt"></span><button id="mutedReset" class="btn" type="button">Mostrar de nuevo</button></div></div>
   <p class="foot acerca" id="acerca">Editor C, de Diego Segurotti (ArtPrograms Studio). Uso libre dentro de este sitio, sin fines comerciales. Prohibido copiar, redistribuir o vender sin permiso. PolyForm Strict License 1.0.0.</p>
-  <div class="drow"><button id="helpBtn" class="btn" type="button">Atajos y alcance</button><button class="btn primary" type="button" data-close>Listo</button></div>
+  <div class="drow"><button id="privBtn" class="btn" type="button">Privacidad</button><button id="helpBtn" class="btn" type="button">Atajos y alcance</button><button class="btn primary" type="button" data-close>Listo</button></div>
+</dialog>
+
+<dialog id="dPriv" class="wide" aria-labelledby="tPriv">
+  <h2 id="tPriv">Privacidad: qué se guarda y qué no</h2>
+  <p class="lead">Editor C se ejecuta en tu navegador. No tiene cuentas, anuncios ni analítica, y el código que escribes no se envía a ningún servidor.</p>
+  <h3>Qué se guarda en tu dispositivo</h3>
+  <ul>
+    <li>Tus programas, sus entradas y sus pruebas.</li>
+    <li>Los datos de Ajustes, si los cargaste: apellido y nombre, DNI, curso, materia y ciclo.</li>
+    <li>Tus preferencias: tema, tamaño de letra y nivel de ayuda.</li>
+    <li>Los casos que el editor no supo explicar, para que tú elijas si los mandas.</li>
+  </ul>
+  <p>Todo eso queda solo en el navegador de este dispositivo. Si borras los datos del navegador, se pierde: descarga tus programas con «Guardar .c» o «Exportar todo».</p>
+  <h3>Qué sale del dispositivo, y solo si tú lo eliges</h3>
+  <ul>
+    <li><b>Captura:</b> la imagen lleva los datos que cargaste en Ajustes. Revísala antes de compartirla.</li>
+    <li><b>Pasar a otro dispositivo:</b> el enlace contiene tu programa. Cualquiera que lo reciba puede verlo, así que cuídalo como un archivo.</li>
+    <li><b>Avisar a Diego:</b> ves una vista previa de lo que se manda (sin nombre ni datos personales) y tú decides si lo envías por WhatsApp.</li>
+    <li><b>Exportar y Guardar .c:</b> son archivos que quedan en tu dispositivo.</li>
+  </ul>
+  <h3>Qué no hace</h3>
+  <ul>
+    <li>No pide cuenta ni contraseña.</li>
+    <li>No usa cookies, publicidad ni analítica.</li>
+    <li>No manda tu código ni tus datos de forma automática.</li>
+    <li>El autor no puede ver tus programas, y tu profesor tampoco: la entrega es la captura que tú subes.</li>
+  </ul>
+  <h3>Una aclaración</h3>
+  <p>El sitio está alojado en un servicio de alojamiento web (hoy GitHub Pages). Como cualquier alojamiento, puede registrar la dirección IP de quien visita el sitio. El editor no controla ese registro ni recibe esa información. Después de la primera visita, el editor funciona sin conexión.</p>
+  <div class="drow"><button class="btn primary" type="button" data-close>Listo</button></div>
 </dialog>
 
 <dialog id="dPru" class="wide" aria-labelledby="tPru">
@@ -174,6 +204,7 @@
   <div class="group">
     <label class="chk" id="shotInRow"><input type="checkbox" id="shotIn" role="switch" checked> Incluir los datos de entrada</label>
     <label class="chk" id="shotLayRow">Disposición <select id="shotLay" class="btn sel" aria-label="Disposición de la imagen"><option value="abajo">Una debajo de otra</option><option value="lado">Lado a lado</option></select></label>
+    <p class="fine" id="shotAviso" hidden>La imagen lleva los datos que cargaste en Ajustes (nombre, DNI, curso…). Revísala antes de compartirla.</p>
     <p class="fine" id="shotFalta" hidden>Falta tu nombre o tu curso: se cargan una sola vez en Ajustes y salen en la cabecera de la captura.</p>
   </div>
   <div class="shotbox" id="shotBox"><div class="carga" aria-live="polite">Armando la imagen…</div><img id="shotImg" decoding="async" alt="Vista previa de la captura: cabecera, código, entrada y salida"></div>
