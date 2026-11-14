@@ -1622,6 +1622,21 @@ self.postMessage({ type: 'ready' });`;
     pruRender(); return true;
   }
   function pruAbrir() { flushSave(); $('pruEstado').textContent = ''; pruRender(); dPru.showModal(); }
+  /* ---------- ordenar código: solo la forma (sangría y espacios); se puede deshacer con Ctrl+Z ---------- */
+  $('ordenar').addEventListener('click', () => {
+    if (!window.Ordenar) { toast('Todavía se está cargando. Prueba de nuevo en un momento.'); return; }
+    if (ta.readOnly) return;
+    const antes = ta.value, despues = window.Ordenar.ordenar(antes, SP());
+    $('more').open = matchMedia('(min-width: 900px)').matches;
+    if (despues === antes) { toast('El código ya estaba ordenado.'); return; }
+    const linea = antes.slice(0, ta.selectionStart).split('\n').length - 1, col = ta.selectionStart - (antes.lastIndexOf('\n', ta.selectionStart - 1) + 1);
+    ta.focus({ preventScroll: true }); ta.setSelectionRange(0, antes.length);
+    guard = true; try { insert(despues); } finally { guard = false; }
+    const ls = despues.split('\n'); let pos = 0; for (let i = 0; i < Math.min(linea, ls.length - 1); i++) pos += ls[i].length + 1;
+    const l = ls[Math.min(linea, ls.length - 1)] || '', sang = l.length - l.replace(/^ +/, '').length;
+    pos += Math.min(l.length, Math.max(sang, col)); ta.setSelectionRange(pos, pos);
+    toast('Código ordenado. Si no te gusta, Ctrl+Z lo deshace.');
+  });
   $('pruebas').addEventListener('click', () => { $('more').open = matchMedia('(min-width: 900px)').matches; pruAbrir(); });
   $('pruAdd').addEventListener('click', () => {
     const T = pruTests(); if (!cur) return;

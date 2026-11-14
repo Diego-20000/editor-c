@@ -272,6 +272,26 @@ const check = (c, m) => { if (c) { ok++; console.log('  ok   ' + m); } else { fa
     await cx.close();
   }
 
+  // 5) «Ordenar código»: acomoda la sangría sin cambiar el programa, avisa si ya estaba ordenado y se deshace con Ctrl+Z
+  {
+    const feo = '#include <stdio.h>\nint main() {\nint A = 3;\nif(A>1){\nprintf("%d\\n",A);\n}\n}\n';
+    const lindo = '#include <stdio.h>\nint main() {\n    int A = 3;\n    if (A>1){\n        printf("%d\\n",A);\n    }\n}\n';
+    const cx = await br.newContext({ viewport: { width: 1280, height: 800 } }); const pg = await cx.newPage();
+    const errs = []; pg.on('pageerror', (e) => errs.push(e.message));
+    await pg.goto(url); await pg.waitForSelector('#code');
+    await pg.evaluate((c) => { const t = document.getElementById('code'); t.value = c; t.dispatchEvent(new Event('input', { bubbles: true })); }, feo);
+    await pg.click('#ordenar'); await pg.waitForTimeout(300);
+    check((await pg.inputValue('#code')) === lindo, 'ordenar: acomoda la sangría y el espacio de if');
+    await pg.click('#code'); await pg.keyboard.press('Control+Z'); await pg.waitForTimeout(200);
+    check((await pg.inputValue('#code')) === feo, 'ordenar: Ctrl+Z vuelve al código de antes');
+    await pg.click('#ordenar'); await pg.waitForTimeout(200); await pg.click('#ordenar'); await pg.waitForTimeout(200);
+    check(/ya estaba ordenado/.test(await pg.evaluate(() => (document.getElementById('toast') || {}).textContent || '')), 'ordenar: si ya estaba ordenado, lo dice');
+    await pg.keyboard.press('F5'); await pg.waitForTimeout(1200);
+    check(/3/.test(await pg.$eval('#out', (o) => o.textContent)), 'ordenar: el programa ordenado sigue ejecutando igual');
+    check(errs.length === 0, 'ordenar: consola limpia' + (errs.length ? ': ' + errs.join(' | ') : ''));
+    await cx.close();
+  }
+
   await br.close();
   console.log(ok + ' ok, ' + fallas + ' fallas');
   process.exit(fallas ? 1 : 0);
