@@ -503,3 +503,12 @@ html.lectura .pane-head .hint { margin-right: 8px; }
 @media (max-width: 440px) { .more > summary > span { display: none; } .more > summary { padding: 0; min-width: 44px; } }
 .diag .it > button:disabled { cursor: default; color: var(--text); }
 .acerca { margin-top: 20px; padding-top: 12px; border-top: 1px solid var(--line); }
+
+/* pruebas guardadas */
+.prulist { list-style: none; margin: 8px 0; padding: 0; display: grid; gap: 10px; max-height: 50vh; overflow: auto; }
+.pru { border: 1px solid var(--line); border-radius: 10px; padding: 8px; background: var(--panel); }
+.prucab { display: flex; gap: 6px; align-items: center; margin-bottom: 6px; }
+.prucab input { flex: 1; min-width: 0; padding: 6px 8px; border-radius: 8px; border: 1px solid var(--lineS); background: var(--bg); color: var(--text); font: 600 14px var(--ui); }
+.pru textarea { width: 100%; resize: vertical; padding: 6px 8px; border-radius: 8px; border: 1px solid var(--lineS); background: var(--bg); color: var(--input); font: 600 14px/1.4 var(--mono); }
+.pruout { margin: 6px 0 0; padding: 8px; border-radius: 8px; background: var(--bg); border: 1px solid var(--line); font: 14px/1.4 var(--mono); white-space: pre-wrap; overflow-wrap: anywhere; max-height: 30vh; overflow: auto; }
+.pruout.er { border-color: var(--err, #c2261b); }

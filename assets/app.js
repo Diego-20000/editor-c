@@ -1430,15 +1430,17 @@ self.postMessage({ type: 'ready' });`;
       if (n.nodeType === 3) outSegs.push([null, n.textContent]);
       else if (!(n.classList.contains('stdin') || n.classList.contains('eofbtn')) && !/^—\s*Programa terminado · código de salida 0( · [^—]*)?\s*—\s*$/.test(n.textContent.trim())) outSegs.push([n.className, n.textContent]);
     });
+    const pruebasImg = opts.pruebas && pruRes && pruRes.code === ta.value ? pruSegs() : null;
+    if (pruebasImg) { outSegs.length = 0; pruebasImg.forEach((x) => outSegs.push(x)); }
     const colsR = opts.lado ? 46 : cols + 3;
     let outRows = rowsOf(outSegs, colsR);
     while (outRows.length > 1 && !outRows[outRows.length - 1].length) outRows.pop();
     // salidas muy largas (por ejemplo cuando se leen 150 valores y cada uno se repite en pantalla): se deja el principio y el final, que es donde está el resultado
-    if (outRows.length > 32) { const om = outRows.length - 30; outRows = outRows.slice(0, 20).concat([[['dim', '… (' + om + ' líneas omitidas) …']]], outRows.slice(-10)); }
+    if (outRows.length > (pruebasImg ? 120 : 32)) { const lim = pruebasImg ? 120 : 32, om = outRows.length - (lim - 2); outRows = outRows.slice(0, lim - 12).concat([[['dim', '… (' + om + ' líneas omitidas) …']]], outRows.slice(-10)); }
     // si la entrada son muchas líneas cortas (números), se muestra en pocas filas y no una por renglón; si es muy larga se recorta
     let inTxtImg = inTxt.value.replace(/\n+$/, '');
     { const ls = inTxtImg.split('\n'); if (ls.length > 4 && ls.every((l) => l.length <= 14)) inTxtImg = ls.join('   '); }
-    let inRows = opts.input !== false && inTxt.value.trim() ? rowsOf([['in', inTxtImg]], colsR) : [];
+    let inRows = opts.input !== false && !pruebasImg && inTxt.value.trim() ? rowsOf([['in', inTxtImg]], colsR) : [];
     if (inRows.length > 8) { const mas = inRows.length - 7; inRows = inRows.slice(0, 7); inRows.push([['dim', '… (' + mas + ' filas más de entrada)']]); }
     // la segunda línea de la cabecera (DNI, curso, materia, ciclo) pasa a dos líneas si no entra junto a la fecha
     const datosPartes = [user.dni && 'DNI ' + user.dni, user.curso, user.mat, user.ciclo && (/ciclo/i.test(user.ciclo) ? user.ciclo : 'Ciclo lectivo ' + user.ciclo)].filter(Boolean);
@@ -1496,7 +1498,7 @@ self.postMessage({ type: 'ready' });`;
     drawRows(codeRows, xb + gutW, true);
     if (opts.lado) { y = y0; xb = padX + leftW + gapX; wb = rightW; } else y += gap;
     if (inRows.length) { section('Entrada'); drawRows(inRows, xb + 12, false); y += gap; }
-    section('Salida');
+    section(pruebasImg ? 'Pruebas' : 'Salida');
     drawRows(outRows.length && (outRows.length > 1 || outRows[0].length) ? outRows : [[['dim', '(sin salida: ejecuta el programa antes de sacar la captura)']]], xb + 12, false);
     if (opts.lado) { y = y0 + bodyH; xb = padX; wb = leftW; }
     // pie: cómo se escribió (si se incluye) y la marca, en letra chica
@@ -1506,12 +1508,12 @@ self.postMessage({ type: 'ready' });`;
   }
   // Vista previa antes de descargar: se puede incluir u omitir la entrada
   const dShot = $('dShot');
-  let shotBlob = null, shotUrl = '', shotSeq = 0;
+  let shotBlob = null, shotUrl = '', shotSeq = 0, shotPru = false;
   function shotRender() {
     const seq = ++shotSeq;
     $('shotBox').classList.add('cargando');
     let cv;
-    try { cv = makePng({ input: $('shotIn').checked, lado: $('shotLay').value === 'lado', nombre: nombreCaptura() }); } catch (e) { toast('No se pudo armar la imagen: ' + e.message); dShot.close(); return; }
+    try { cv = makePng({ input: $('shotIn').checked, lado: $('shotLay').value === 'lado', nombre: nombreCaptura(), pruebas: shotPru }); } catch (e) { toast('No se pudo armar la imagen: ' + e.message); dShot.close(); return; }
     cv.toBlob((blob) => {
       if (seq !== shotSeq) return;
       if (!blob) { toast('No se pudo generar la imagen.'); dShot.close(); return; }
@@ -1525,8 +1527,9 @@ self.postMessage({ type: 'ready' });`;
       listo(blob);
     }, 'image/png');
   }
-  $('shot').addEventListener('click', () => {
-    const hasIn = !!inTxt.value.trim();
+  function abrirShot(pruebas) {
+    shotPru = !!pruebas;
+    const hasIn = !!inTxt.value.trim() && !shotPru;
     $('shotFalta').hidden = !!(user.name && user.curso);
     $('shotInRow').hidden = !hasIn; $('shotIn').checked = hasIn;
     const canShare = !!(coarse && typeof File === 'function' && navigator.canShare && navigator.canShare({ files: [new File([new Blob(['x'])], 'a.png', { type: 'image/png' })] }));
@@ -1535,11 +1538,107 @@ self.postMessage({ type: 'ready' });`;
     $('shotLay').value = !coarse && window.innerWidth >= 1000 ? 'lado' : 'abajo';
     shotBlob = null; $('shotImg').removeAttribute('src');
     dShot.showModal(); $('shotBox').classList.add('cargando'); setTimeout(shotRender, 40);   // primero se ve el cuadro, después se arma la imagen
+  }
+  $('shot').addEventListener('click', () => abrirShot(false));
+
+  /* ---------- pruebas: varias entradas guardadas con el programa y «Ejecutar todas» ---------- */
+  const dPru = $('dPru');
+  let pruRes = null;   // { code, items: [{ estado, out, ... }] } de la última vez que se ejecutaron todas con este código
+  function pruLimpiar(t) { return Array.isArray(t) ? t.filter((x) => x && typeof x.i === 'string').slice(0, 30).map((x) => ({ n: String(x.n || '').slice(0, 40), i: x.i.slice(0, 5000) })) : undefined; }
+  const pruTests = () => { if (!cur) return []; if (!Array.isArray(cur.tests)) cur.tests = []; return cur.tests; };
+  function correrCaso(src, entrada) {
+    return new Promise((resolve) => {
+      let w; try { w = makeWorker(); } catch (e) { resolve({ estado: 'sin', out: '' }); return; }
+      const q = String(entrada).replace(/\r\n?/g, '\n'), lineas = q.trim() ? q.replace(/\n$/, '').split('\n') : [];
+      let out = '', fin = false, t = null;
+      const cerrar = (r) => { if (fin) return; fin = true; clearTimeout(t); w.terminate(); resolve(r); };
+      t = setTimeout(() => cerrar({ estado: 'tiempo', out }), 8000);
+      w.onerror = () => cerrar({ estado: 'sin', out });
+      w.onmessage = (ev) => {
+        const m = ev.data;
+        if (m.type === 'ready') w.postMessage({ type: 'run', src });
+        else if (m.type === 'compiled') { if (m.res.errors.length) cerrar({ estado: 'compila', out: '', errs: m.res.errors }); }
+        else if (m.type === 'out') { out += m.s; if (out.length > 20000) cerrar({ estado: 'larga', out: out.slice(0, 20000) }); }
+        else if (m.type === 'cap') cerrar({ estado: 'larga', out });
+        else if (m.type === 'need') { if (lineas.length) { const l = lineas.shift(); out += l + '\n'; w.postMessage({ type: 'line', s: l }); } else w.postMessage({ type: 'eof' }); }
+        else if (m.type === 'done') { const r = m.res || {}; cerrar(r.error ? { estado: 'falla', out, linea: r.line } : { estado: 'ok', out, code: r.code === undefined || r.code === null ? 0 : r.code }); }
+      };
+    });
+  }
+  function pruEstadoTxt(r) {
+    if (r.estado === 'ok') return r.code === 0 ? '' : 'Terminó con código de salida ' + r.code + '.';
+    if (r.estado === 'compila') { const ls = (r.errs || []).map((e) => e.line).filter((l, i, a) => l && a.indexOf(l) === i); return 'No compiló' + (nivelAyuda >= 2 && ls.length ? ' (línea ' + ls.join(', ') + ')' : '') + '.'; }
+    if (r.estado === 'falla') return 'El programa falló al ejecutarse' + (nivelAyuda >= 2 && r.linea ? ' (línea ' + r.linea + ')' : '') + '.';
+    if (r.estado === 'tiempo') return 'Se detuvo: tardó más de 8 segundos (¿lazo infinito?).';
+    if (r.estado === 'larga') return 'Se cortó: demasiada salida.';
+    return 'Este navegador no permite ejecutar las pruebas juntas.';
+  }
+  function pruSegs() {
+    const segs = [], T = pruTests();
+    pruRes.items.forEach((r, i) => {
+      const p = T[i]; if (!p) return;
+      segs.push(['dim', '── Prueba ' + (i + 1) + (p.n && p.n !== 'Prueba ' + (i + 1) ? ': ' + p.n : '') + ' ──\n']);
+      const ent = p.i.replace(/\n+$/, '');
+      if (ent) segs.push(['dim', 'Entrada: '], ['in', ent.split('\n').join('  ') + '\n']);
+      if (r.out) segs.push([null, r.out.replace(/\n?$/, '\n')]);
+      const e = pruEstadoTxt(r); if (e) segs.push([r.estado === 'ok' ? 'dim' : 'er', e + '\n']);
+      if (i < pruRes.items.length - 1) segs.push([null, '\n']);
+    });
+    return segs;
+  }
+  function pruRender() {
+    const ls = $('pruList'); ls.textContent = '';
+    const T = pruTests(), fresca = !!(pruRes && pruRes.code === ta.value && pruRes.items.length === T.length);
+    $('pruVacio').hidden = T.length > 0;
+    $('pruRun').disabled = !T.length; $('pruShot').disabled = !T.length;
+    T.forEach((p, i) => {
+      const li = el('li', 'pru');
+      const cab = el('div', 'prucab');
+      const nm = el('input'); nm.type = 'text'; nm.value = p.n; nm.maxLength = 40; nm.placeholder = 'Nombre de la prueba'; nm.setAttribute('aria-label', 'Nombre de la prueba ' + (i + 1));
+      nm.addEventListener('input', () => { p.n = nm.value; pruRes = fresca ? pruRes : null; persist(); });
+      cab.appendChild(nm);
+      cab.appendChild(btnEl('Usar', 'mini', () => { inTxt.value = p.i; inTxt.dispatchEvent(new Event('input', { bubbles: true })); dPru.close(); toast('La prueba quedó en «Entrada». Aprieta Ejecutar.'); }, 'Poner la prueba ' + (i + 1) + ' en el cuadro de entrada'));
+      cab.appendChild(btnEl('Borrar', 'mini danger', () => { T.splice(i, 1); pruRes = null; persist(); pruRender(); }, 'Borrar la prueba ' + (i + 1)));
+      li.appendChild(cab);
+      const en = el('textarea'); en.rows = Math.min(6, Math.max(2, p.i.split('\n').length)); en.value = p.i; en.spellcheck = false; en.setAttribute('aria-label', 'Entrada de la prueba ' + (i + 1));
+      en.addEventListener('input', () => { p.i = en.value; if (pruRes) { pruRes = null; li.querySelectorAll('.pruout').forEach((n) => n.remove()); } persist(); });
+      li.appendChild(en);
+      if (fresca) {
+        const r = pruRes.items[i], pre = el('pre', 'pruout' + (r.estado === 'ok' ? '' : ' er'));
+        pre.textContent = (r.out || '') + (pruEstadoTxt(r) ? (r.out && !/\n$/.test(r.out) ? '\n' : '') + pruEstadoTxt(r) : '');
+        li.appendChild(pre);
+      }
+      ls.appendChild(li);
+    });
+  }
+  async function pruEjecutarTodas() {
+    const T = pruTests(); if (!T.length) return false;
+    flushSave(); const src = ta.value, items = [];
+    $('pruRun').disabled = true; $('pruShot').disabled = true; $('pruEstado').textContent = 'Ejecutando…';
+    for (let k = 0; k < T.length; k++) { $('pruEstado').textContent = 'Ejecutando ' + (k + 1) + ' de ' + T.length + '…'; items.push(await correrCaso(src, T[k].i)); }
+    pruRes = { code: src, items };
+    const bien = items.filter((r) => r.estado === 'ok').length;
+    $('pruEstado').textContent = bien === items.length ? 'Las ' + items.length + ' pruebas terminaron.' : bien + ' de ' + items.length + ' pruebas terminaron; revisa las demás.';
+    pruRender(); return true;
+  }
+  function pruAbrir() { flushSave(); $('pruEstado').textContent = ''; pruRender(); dPru.showModal(); }
+  $('pruebas').addEventListener('click', () => { $('more').open = matchMedia('(min-width: 900px)').matches; pruAbrir(); });
+  $('pruAdd').addEventListener('click', () => {
+    const T = pruTests(); if (!cur) return;
+    if (T.length >= 30) { toast('Hay un máximo de 30 pruebas por programa.'); return; }
+    T.push({ n: 'Prueba ' + (T.length + 1), i: inTxt.value.replace(/\n+$/, '') }); pruRes = null; persist(); pruRender();
+    $('pruList').lastElementChild.querySelector('input').focus({ preventScroll: false });
   });
+  $('pruRun').addEventListener('click', pruEjecutarTodas);
+  $('pruShot').addEventListener('click', async () => {
+    if (!(pruRes && pruRes.code === ta.value && pruRes.items.length === pruTests().length)) { if (!(await pruEjecutarTodas())) return; }
+    dPru.close(); abrirShot(true);
+  });
+
   $('shotIn').addEventListener('change', shotRender);
   $('shotLay').addEventListener('change', shotRender);
   { let tN = 0; $('shotName').addEventListener('input', () => { clearTimeout(tN); tN = setTimeout(shotRender, 250); }); }
-  dShot.addEventListener('close', () => { shotSeq++; shotBlob = null; if (shotUrl) { URL.revokeObjectURL(shotUrl); shotUrl = ''; } $('shotImg').removeAttribute('src'); });
+  dShot.addEventListener('close', () => { shotPru = false; shotSeq++; shotBlob = null; if (shotUrl) { URL.revokeObjectURL(shotUrl); shotUrl = ''; } $('shotImg').removeAttribute('src'); });
   $('shotDl').addEventListener('click', () => {
     if (!shotBlob) { toast('La imagen todavía se está preparando.'); return; }
     const name = archivoCaptura() + '.png'; download(shotBlob, name); toast('Imagen descargada: ' + name); dShot.close();
@@ -1751,7 +1850,7 @@ self.postMessage({ type: 'ready' });`;
   $('pexp').addEventListener('click', () => {
     flushSave();
     const d = new Date(), stamp = d.getFullYear() + pad2(d.getMonth() + 1) + pad2(d.getDate());
-    const data = { app: EXP_APP, version: 1, exported: d.toISOString(), programs: progs.map((p) => ({ name: p.name, code: p.code, input: p.input || '', t: p.t })) };
+    const data = { app: EXP_APP, version: 1, exported: d.toISOString(), programs: progs.map((p) => ({ name: p.name, code: p.code, input: p.input || '', t: p.t, tests: (p.tests || []).length ? p.tests : undefined })) };
     download(new Blob([JSON.stringify(data, null, 1)], { type: 'application/json' }), 'editor-c-programas-' + stamp + '.json');
     toast('Se exportaron ' + progs.length + (progs.length === 1 ? ' programa.' : ' programas.'));
   });
@@ -1783,7 +1882,7 @@ self.postMessage({ type: 'ready' });`;
       if (sim.some((x) => x.name === name)) { name = nm(p.name + ' (importado)'); res.renamed++; } else res.add++;
       sim.push({ name, code: p.code });
       if (commit) {
-        progs.push({ id: uid(), name, code: p.code, input: p.input, t: p.t });
+        progs.push({ id: uid(), name, code: p.code, input: p.input, t: p.t, tests: pruLimpiar(p.tests) });
       }
     });
     return res;
