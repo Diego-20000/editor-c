@@ -240,6 +240,38 @@ const check = (c, m) => { if (c) { ok++; console.log('  ok   ' + m); } else { fa
     }
   }
 
+  // 4) Pruebas guardadas: varias entradas con el programa, «Ejecutar todas», captura con todas y persistencia
+  {
+    const prog = '#include <stdio.h>\nint main() {\n    int N;\n    scanf("%d", &N);\n    printf("doble: %d\\n", N * 2);\n}\n';
+    const cx = await br.newContext({ viewport: { width: 1280, height: 800 } }); const pg = await cx.newPage();
+    const errs = []; pg.on('pageerror', (e) => errs.push(e.message));
+    await pg.goto(url); await pg.waitForSelector('#code');
+    await pg.evaluate((c) => { const t = document.getElementById('code'); t.value = c; t.dispatchEvent(new Event('input', { bubbles: true })); }, prog);
+    await pg.click('#inBtn'); await pg.fill('#inTxt', '4\n');
+    await pg.click('#pruebas'); await pg.waitForSelector('#dPru[open]');
+    await pg.click('#pruAdd'); await pg.click('#pruAdd');
+    const tas = await pg.$$('#pruList textarea'); await tas[1].fill('-7');
+    const nms = await pg.$$('#pruList input'); await nms[1].fill('negativo');
+    await pg.click('#pruRun'); await pg.waitForFunction(() => /terminaron/.test(document.getElementById('pruEstado').textContent), null, { timeout: 20000 });
+    const outs = await pg.$$eval('#pruList .pruout', (n) => n.map((x) => x.textContent));
+    check(outs.length === 2 && /doble: 8/.test(outs[0]) && /doble: -14/.test(outs[1]), 'pruebas: «Ejecutar todas» muestra la salida de cada entrada (' + outs.map((o) => o.trim().replace(/\n/g, ' ')).join(' | ') + ')');
+    await pg.click('#pruShot'); await pg.waitForSelector('#dShot[open]');
+    await pg.waitForFunction(() => document.getElementById('shotImg').src && document.getElementById('shotImg').naturalWidth > 0, null, { timeout: 15000 });
+    check(await pg.isHidden('#shotInRow'), 'pruebas: la captura de las pruebas arma una sola imagen con todas');
+    await pg.keyboard.press('Escape'); await pg.waitForTimeout(300);
+    await pg.reload(); await pg.waitForSelector('#code'); await pg.click('#pruebas'); await pg.waitForSelector('#dPru[open]');
+    check((await pg.$$('#pruList li')).length === 2 && (await (await pg.$$('#pruList input'))[1].inputValue()) === 'negativo', 'pruebas: se guardan con el programa y siguen al recargar');
+    await (await pg.$$('#pruList textarea'))[0].fill('2');
+    check((await pg.$$('#pruList .pruout')).length === 0, 'pruebas: al cambiar una entrada, los resultados viejos desaparecen');
+    await pg.keyboard.press('Escape');
+    await pg.evaluate(() => { const t = document.getElementById('code'); t.value = 'int main() { int A = 1 printf("x"); }'; t.dispatchEvent(new Event('input', { bubbles: true })); });
+    await pg.click('#pruebas'); await pg.waitForSelector('#dPru[open]'); await pg.click('#pruRun');
+    await pg.waitForFunction(() => /terminaron|revisa/.test(document.getElementById('pruEstado').textContent), null, { timeout: 20000 });
+    check(/No compiló/.test((await pg.$$eval('#pruList .pruout', (n) => n.map((x) => x.textContent)))[0] || ''), 'pruebas: un programa que no compila lo avisa en cada prueba');
+    check(errs.length === 0, 'pruebas: consola limpia' + (errs.length ? ': ' + errs.join(' | ') : ''));
+    await cx.close();
+  }
+
   await br.close();
   console.log(ok + ' ok, ' + fallas + ' fallas');
   process.exit(fallas ? 1 : 0);

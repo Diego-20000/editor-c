@@ -33,6 +33,7 @@
     <div class="menu">
       <button id="progs" class="btn" title="Mis programas guardados en este dispositivo" aria-label="Programas"><svg class="i" aria-hidden="true"><use href="#i-programas"/></svg><span class="l">Programas</span></button>
       <button id="exBtn" class="btn" title="Programas de ejemplo ordenados por tema" aria-label="Ejemplos"><svg class="i" aria-hidden="true"><use href="#i-abrir"/></svg><span class="l">Ejemplos</span></button>
+      <button id="pruebas" class="btn" title="Guardar varias entradas con el programa y ejecutarlas todas juntas" aria-label="Pruebas"><svg class="i" aria-hidden="true"><use href="#i-ejecutar"/></svg><span class="l">Pruebas</span></button>
       <button id="shot" class="btn" title="Descargar una imagen PNG con el código y la salida" aria-label="Captura"><svg class="i" aria-hidden="true"><use href="#i-captura"/></svg><span class="l">Captura</span></button>
       <button id="save" class="btn" title="Descargar como archivo .c (Ctrl+S)" aria-label="Guardar .c"><svg class="i" aria-hidden="true"><use href="#i-descargar"/></svg><span class="l">Guardar .c</span></button>
       <button id="enlace" class="btn" title="Armar un enlace para abrir este programa en otro dispositivo" aria-label="Pasar a otro dispositivo"><svg class="i" aria-hidden="true"><use href="#i-dispositivo"/></svg><span class="l">Pasar a otro dispositivo</span></button>
@@ -153,6 +154,16 @@
   <div class="group" id="mutedGroup"><div class="srow" id="mutedRow" hidden><span id="mutedTxt"></span><button id="mutedReset" class="btn" type="button">Mostrar de nuevo</button></div></div>
   <p class="foot acerca" id="acerca">Editor C, de Diego Segurotti (ArtPrograms Studio). Uso libre dentro de este sitio, sin fines comerciales. Prohibido copiar, redistribuir o vender sin permiso. PolyForm Strict License 1.0.0.</p>
   <div class="drow"><button id="helpBtn" class="btn" type="button">Atajos y alcance</button><button class="btn primary" type="button" data-close>Listo</button></div>
+</dialog>
+
+<dialog id="dPru" class="wide" aria-labelledby="tPru">
+  <h2 id="tPru">Pruebas de funcionamiento</h2>
+  <p>Guarda varias entradas con este programa, ejecútalas todas juntas y sácales una sola captura. Se guardan en este dispositivo.</p>
+  <ul class="prulist" id="pruList"></ul>
+  <p class="fine" id="pruVacio">Todavía no hay pruebas. Escribe una entrada en «Entrada» (en la consola) y aprieta «Guardar la entrada actual», o crea una vacía y escríbela acá.</p>
+  <div class="drow"><button id="pruAdd" class="btn" type="button"><svg class="i" aria-hidden="true"><use href="#i-mas"/></svg>Guardar la entrada actual como prueba</button></div>
+  <div class="drow"><button id="pruRun" class="btn primary" type="button"><svg class="i" aria-hidden="true"><use href="#i-ejecutar"/></svg>Ejecutar todas</button><button id="pruShot" class="btn" type="button"><svg class="i" aria-hidden="true"><use href="#i-captura"/></svg>Captura de las pruebas</button><button class="btn" type="button" value="cancel" onclick="this.closest('dialog').close()">Cerrar</button></div>
+  <p class="fine" id="pruEstado" role="status"></p>
 </dialog>
 
 <dialog id="dShot" aria-labelledby="tShot" class="wide">

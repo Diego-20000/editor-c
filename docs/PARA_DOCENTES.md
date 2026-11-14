@@ -2,7 +2,7 @@
 
 Editor de C que corre en el navegador del alumno, en español, sin cuentas, sin anuncios y sin servidor. Pensado para que el alumno **piense y escriba**. Gratis para usar con tus alumnos dentro del sitio (licencia PolyForm Strict, ver `LICENSE`).
 
-**Enlace:** https://diego-20000.github.io/editor-c/
+**Enlace:** https://diego-20000.github.io/editor-c/ (pásalo siempre **con la barra final**: sin conexión, la dirección sin barra no abre, porque queda fuera del alcance de la copia que guarda el navegador).
 
 ## Antes de la clase
 - **No hace falta nada instalado ni una cuenta.** Se abre desde el celular o la compu.
@@ -16,6 +16,9 @@ Editor de C que corre en el navegador del alumno, en español, sin cuentas, sin 
 | `…/editor-c/?ayuda=2` | **Indica la línea** del problema y nada más. Sin explicaciones ni pistas. |
 
 El alumno también puede cambiar la ayuda en Ajustes, y queda guardado en su dispositivo. El enlace decide el punto de partida.
+
+## Pruebas de funcionamiento
+En el menú «Más» → **«Pruebas»** el alumno guarda varias entradas con su programa (por ejemplo «el 6 justo», «todo en cero»), las ejecuta todas juntas y baja **una sola captura** con el código y todas las pruebas. Es lo que pide la Unidad 4 (4.3 Pruebas). Las pruebas se guardan en su dispositivo, junto con el programa.
 
 ## Qué entrega el alumno
 El botón **Captura** arma una imagen PNG con su nombre, curso y materia (los carga una vez en Ajustes), el código, los datos de entrada y la salida. La sube a Classroom o la manda por donde prefieras. Se puede elegir la disposición (código y salida lado a lado o uno abajo del otro).

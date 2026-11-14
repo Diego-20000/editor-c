@@ -41,6 +41,8 @@ ANSI C básico: `char`, `int`, `float`, `double`, operadores, `printf`/`scanf` (
 ## Estado
 - Soporta: tipos con `long` de 64 bits exactos, `short`, `unsigned`, `bool`; control de flujo; funciones con recursión y prototipos; arreglos 1D/2D (también como parámetro); textos (`char[]`, `%s`, `fgets`, `sprintf`, `string.h` básico); `#define` con parámetros y `#if`; `rand` igual que glibc; `printf`/`scanf` con todos los formatos.
 - No soporta todavía: punteros en general, `struct`, `enum`, `typedef`, archivos, `long double`, `sscanf`, `strchr`/`strstr`/`strtok`.
+- Pruebas guardadas (14/11/2026): menú «Más» → «Pruebas». `cur.tests = [{ n, i }]` viaja con el programa (localStorage y «Exportar todo»); «Ejecutar todas» corre cada entrada en un Worker aparte (`correrCaso` en `src/app.js`) y la captura de pruebas junta todo en una imagen. Prueba: `tools/ui-reparos.js` (sección 4).
+- Límite conocido: sin conexión, la URL sin barra final (`/editor-c`) no abre porque queda fuera del alcance del service worker (`/editor-c/`). En GitHub Pages no se puede arreglar; se pasa el enlace con la barra.
 - Interfaz: diseño estilo iOS con tema claro, oscuro y automático, panel de problemas según el nivel de ayuda, atajos, buscar y reemplazar, programas guardados, captura PNG (código, entrada y salida, abajo o lado a lado, con nombre a elección), «Avisar a Diego» por WhatsApp, pasar un programa a otro dispositivo por enlace, PWA con service worker (solo en http/https), exportar/importar. Licencia: PolyForm Strict 1.0.0 (`LICENSE`).
 
 ## Cómo se trabaja
