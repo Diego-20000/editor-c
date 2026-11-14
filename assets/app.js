@@ -1531,6 +1531,7 @@ self.postMessage({ type: 'ready' });`;
     shotPru = !!pruebas;
     const hasIn = !!inTxt.value.trim() && !shotPru;
     $('shotFalta').hidden = !!(user.name && user.curso);
+    $('shotAviso').hidden = !(user.name || user.dni || user.curso || user.mat || user.ciclo);
     $('shotInRow').hidden = !hasIn; $('shotIn').checked = hasIn;
     const canShare = !!(coarse && typeof File === 'function' && navigator.canShare && navigator.canShare({ files: [new File([new Blob(['x'])], 'a.png', { type: 'image/png' })] }));
     $('shotShare').hidden = !canShare;
@@ -1766,6 +1767,7 @@ self.postMessage({ type: 'ready' });`;
       lastHeader = nh;
     });
   });
+  $('privBtn').addEventListener('click', () => { $('dSet').close(); $('dPriv').showModal(); });
   $('helpBtn').addEventListener('click', () => { $('dSet').close(); $('dlg').showModal(); });
   // color de la barra del sistema (<meta name="theme-color">): con tema automático siguen las dos metas con media; con uno elegido, ambas toman su color
   const TEMA_BARRA = { light: '#f2f2f4', dark: '#141517' };

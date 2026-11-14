@@ -34,6 +34,9 @@ Pensado para el C de la materia: `char`, `int`, `float`, `double`, `long`, `unsi
 **No soporta todavía:** punteros en general, `struct`, `enum`, `typedef`, archivos, `long double`, `sscanf`, `strchr`/`strstr`/`strtok`. Si el programa usa algo así, el editor lo dice con claridad. Qué se promete y qué no: `docs/COMPATIBILIDAD.md`.
 
 ## Privacidad
+En Ajustes → **«Privacidad»** el alumno encuentra, en lenguaje simple, qué se guarda en su dispositivo, qué sale solo si él lo elige y qué no hace nunca el editor. La captura avisa que lleva los datos cargados en Ajustes.
+
+
 - El código del alumno **no sale de su dispositivo**. No hay cuentas ni analítica.
 - La única salida de datos es **el botón «Avisar a Diego»**: el alumno escribe qué pasó, ve la vista previa de todo lo que se enviaría (sin nombre ni datos personales) y recién ahí lo manda por WhatsApp. Nunca se envía solo.
 
