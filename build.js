@@ -81,7 +81,7 @@ function kbDatos() {
   return { errores, ayuda, lecciones, nombres };
 }
 const KBD = kbDatos();
-const KB_JS = [['kb-data.js', 'window.KB_DATA=' + json(KBD) + ';\n'], ['config.js', R('config.js')], ['kb.js', R('kb.js')], ['compartir.js', R('compartir.js')], ['nombres.js', R('nombres.js')]];
+const KB_JS = [['kb-data.js', 'window.KB_DATA=' + json(KBD) + ';\n'], ['config.js', R('config.js')], ['kb.js', R('kb.js')], ['compartir.js', R('compartir.js')], ['nombres.js', R('nombres.js')], ['ordenar.js', R('ordenar.js')]];
 const tpl = R('template.html');
 
 // ---- identidad: los íconos PNG, el favicon y la pantalla de inicio se dibujan con tools/generar-iconos.js (a partir de los SVG de
@@ -134,7 +134,7 @@ W('index.html', conIconos(tpl)
 
 // 2) service worker: la versión es el hash del contenido de todo lo que precachea
 const PRECACHE = ['./', 'index.html', 'manifest.webmanifest', 'assets/styles.css', 'assets/compiler.js', 'assets/runtime.js', 'assets/examples.js', 'assets/app.js',
-  'assets/SourceCodePro.ttf', 'assets/kb-data.js', 'assets/config.js', 'assets/kb.js', 'assets/compartir.js', 'assets/nombres.js', 'assets/favicon.svg', 'assets/favicon-32.png', 'assets/favicon.ico'].concat(APP.filter((n) => !/^(favicon|splash)/.test(n)).map((n) => 'assets/' + n));
+  'assets/SourceCodePro.ttf', 'assets/kb-data.js', 'assets/config.js', 'assets/kb.js', 'assets/compartir.js', 'assets/nombres.js', 'assets/ordenar.js', 'assets/favicon.svg', 'assets/favicon-32.png', 'assets/favicon.ico'].concat(APP.filter((n) => !/^(favicon|splash)/.test(n)).map((n) => 'assets/' + n));
 const hash = crypto.createHash('sha256');
 // config.js lleva la versión adentro: se calcula con su texto sin completar
 PRECACHE.filter((f) => f !== './').forEach((f) => { hash.update(f); hash.update(f === 'assets/config.js' ? R('config.js') : OUT[f]); });

@@ -20,6 +20,9 @@ El alumno también puede cambiar la ayuda en Ajustes, y queda guardado en su dis
 ## Pruebas de funcionamiento
 En el menú «Más» → **«Pruebas»** el alumno guarda varias entradas con su programa (por ejemplo «el 6 justo», «todo en cero»), las ejecuta todas juntas y baja **una sola captura** con el código y todas las pruebas. Es lo que pide la Unidad 4 (4.3 Pruebas). Las pruebas se guardan en su dispositivo, junto con el programa.
 
+## Ordenar código
+En «Más» → **«Ordenar»** el editor acomoda la sangría y los espacios del programa, sin cambiar lo que hace (no toca nombres, números, textos ni comentarios). Es opcional: el alumno lo elige y lo puede deshacer con Ctrl+Z. Sirve para entregar capturas prolijas y para ver qué llave quedó sin cerrar.
+
 ## Qué entrega el alumno
 El botón **Captura** arma una imagen PNG con su nombre, curso y materia (los carga una vez en Ajustes), el código, los datos de entrada y la salida. La sube a Classroom o la manda por donde prefieras. Se puede elegir la disposición (código y salida lado a lado o uno abajo del otro).
 
