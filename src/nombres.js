@@ -6,8 +6,10 @@
 (function (root) {
   'use strict';
 
-  var TIPOS = { int: 1, float: 1, double: 1, char: 1, long: 1, short: 1, unsigned: 1, signed: 1, bool: 1, void: 1, const: 1, static: 1, _Bool: 1 };
-  var CONTROL = { if: 1, else: 1, while: 1, for: 1, do: 1, switch: 1, case: 1, default: 1, return: 1, break: 1, continue: 1, sizeof: 1, goto: 1 };
+  // sin prototipo: un nombre del alumno como «constructor» o «toString» no cuenta como palabra de C
+  var sinProto = function (o) { return Object.assign(Object.create(null), o); };
+  var TIPOS = sinProto({ int: 1, float: 1, double: 1, char: 1, long: 1, short: 1, unsigned: 1, signed: 1, bool: 1, void: 1, const: 1, static: 1, _Bool: 1 });
+  var CONTROL = sinProto({ if: 1, else: 1, while: 1, for: 1, do: 1, switch: 1, case: 1, default: 1, return: 1, break: 1, continue: 1, sizeof: 1, goto: 1 });
   var OPS3 = ['<<=', '>>=', '...'];
   var OPS2 = ['==', '!=', '<=', '>=', '&&', '||', '++', '--', '+=', '-=', '*=', '/=', '%=', '<<', '>>', '->', '&=', '|=', '^='];
   var ASIGNA = { '=': 1, '+=': 1, '-=': 1, '*=': 1, '/=': 1, '%=': 1, '&=': 1, '|=': 1, '^=': 1, '<<=': 1, '>>=': 1 };
@@ -423,7 +425,7 @@
     var T = A.T, k = -1, i;
     for (i = 0; i < T.length; i++) if (offset >= T[i].i && offset < T[i].e) { k = i; break; }
     if (k < 0) for (i = 0; i < T.length; i++) if (offset === T[i].e) { k = i; break; }
-    var tags = {};
+    var tags = Object.create(null);
     if (k < 0) return tags;
     function dentro(lst, a, b) { return lst.some(function (x) { return k > x[a] && k <= x[b]; }); }
     if (dentro(A.fors, 'a', 'h')) tags['for'] = 1;
@@ -442,8 +444,8 @@
     if (T[k].t === 'str') tags['cadena'] = 1;
     return tags;
   }
-  var SINONIMOS = { 'for': ['for', 'repeticion'], 'if': ['if', 'condicion', 'condicional'], 'while': ['while', 'bucle', 'repeticion'], 'switch': ['switch', 'case'], llamada: ['llamada', 'argumento', 'printf', 'scanf'], funcion: ['funcion', 'parametro', 'prototipo', 'encabezado'],
-    arreglo: ['arreglo', 'indice', 'matriz', 'corchete', 'posicion'], declaracion: ['declaracion', 'declara', 'declarar', 'inicializ'], cadena: ['cadena', 'texto'] };
+  var SINONIMOS = sinProto({ 'for': ['for', 'repeticion'], 'if': ['if', 'condicion', 'condicional'], 'while': ['while', 'bucle', 'repeticion'], 'switch': ['switch', 'case'], llamada: ['llamada', 'argumento', 'printf', 'scanf'], funcion: ['funcion', 'parametro', 'prototipo', 'encabezado'],
+    arreglo: ['arreglo', 'indice', 'matriz', 'corchete', 'posicion'], declaracion: ['declaracion', 'declara', 'declarar', 'inicializ'], cadena: ['cadena', 'texto'] });
   function ocasionAqui(ayuda, codigo, offset) {
     if (!ayuda || !Array.isArray(ayuda.ocasiones) || !ayuda.ocasiones.length) return null;
     var tags; try { tags = contexto(String(codigo || ''), offset); } catch (e) { return null; }

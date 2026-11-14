@@ -9,7 +9,10 @@
   function sinTildes(s) { return String(s).normalize('NFD').replace(/[̀-ͯ]/g, ''); }
   function norm(s) { return sinTildes(String(s == null ? '' : s).toLowerCase()); }
 
-  var PALABRAS_VACIAS = {};
+  // Los índices se consultan con palabras e identificadores que escribe el alumno: se usan mapas sin prototipo para que
+  // nombres como «constructor», «toString» o «__proto__» no encuentren nada heredado de Object.
+  function mapa() { return Object.create(null); }
+  var PALABRAS_VACIAS = mapa();
   ('a al algo ante aca ahi ahora asi aun aunque con contra cual cuales cuando cuanto como de del desde donde dos e el ella ellos en entre era eran es esa ese eso esas esos esta estan este esto estos estoy fue ha hace hacen hacer hago han hay la las le les lo los me mi mis mucho muy ni no nos nuestro o os otra otro para pero por porque que quien quienes se ser si son su sus te ti tu tus un una uno unos unas va vamos van voy y ya yo da dan dar das dice dicen puede pueden puedo podria quiero quiere quieren saber necesito tengo tiene tienen sirve sirven usa usan usar significa sobre cada todo toda todos todas tambien segun sera seria hacemos hizo haga hagan muestra ayuda ayúdame explícame explica dime dime').split(' ').forEach(function (w) { PALABRAS_VACIAS[w] = 1; });
 
   // Frases que se reemplazan por una sola palabra, igual en los textos de la base y en la consulta.
@@ -103,7 +106,7 @@
   var NIVEL_AYUDA = 1;
 
   function vacio() {
-    return { errores: [], ayuda: [], lecciones: [], porId: {}, ayudaMap: {}, plantillas: {}, porCodigo: {}, docs: [], post: {}, vocab: [], idf: {}, cacheExp: {}, sin: {} };
+    return { errores: [], ayuda: [], lecciones: [], porId: mapa(), ayudaMap: mapa(), plantillas: mapa(), porCodigo: mapa(), docs: [], post: mapa(), vocab: [], idf: mapa(), cacheExp: mapa(), sin: mapa() };
   }
 
   /* ---------- explicar: del diagnóstico del editor a la entrada de errores ---------- */
@@ -227,7 +230,7 @@
         var rs = raices(t, simb);
         for (var r = 0; r < rs.length; r++) {
           var tok = rs[r], p = S.post[tok];
-          if (!p) { p = S.post[tok] = {}; S.vocab.push(tok); }
+          if (!p) { p = S.post[tok] = mapa(); S.vocab.push(tok); }
           if (!(doc.idx in p) || p[doc.idx] < peso) p[doc.idx] = peso;
         }
         if ((campo === TITULO[tipo] || campo === 'buscar') && rs.length) {
@@ -243,7 +246,7 @@
 
   function construirIndice() {
     var i, g, k;
-    S.docs = []; S.post = {}; S.vocab = []; S.sin = {}; S.cacheExp = {}; S.idf = {};
+    S.docs = []; S.post = mapa(); S.vocab = []; S.sin = mapa(); S.cacheExp = mapa(); S.idf = mapa();
     for (i = 0; i < S.errores.length; i++) agregarDoc('error', S.errores[i].id, S.errores[i]);
     for (i = 0; i < S.ayuda.length; i++) agregarDoc('ayuda', S.ayuda[i].elemento, S.ayuda[i]);
     for (i = 0; i < S.lecciones.length; i++) agregarDoc('leccion', S.lecciones[i].id, S.lecciones[i]);
@@ -282,14 +285,14 @@
     if (!S) return [];
     opts = opts || {};
     var max = opts.max > 0 ? opts.max : 8, tipos = opts.tipos;
-    var qs = raices(textoConsulta, true), uniq = [], vistos = {}, i, j, k;
+    var qs = raices(textoConsulta, true), uniq = [], vistos = mapa(), i, j, k;
     for (i = 0; i < qs.length; i++) if (!vistos[qs[i]]) { vistos[qs[i]] = 1; uniq.push(qs[i]); }
     if (!uniq.length) return [];
-    var total = {}, cubiertos = {};
+    var total = mapa(), cubiertos = mapa();
     for (i = 0; i < uniq.length; i++) {
       var q = uniq[i], variantes = [[q, 1]], grupos = S.sin[q];
       if (grupos) for (j = 0; j < grupos.length; j++) for (k = 0; k < grupos[j].length; k++) if (grupos[j][k] !== q) variantes.push([grupos[j][k], 0.75]);
-      var mejor = {};
+      var mejor = mapa();
       for (j = 0; j < variantes.length; j++) {
         var ex = expandir(variantes[j][0]);
         for (k = 0; k < ex.length; k++) {
@@ -325,10 +328,10 @@
 
   /* ---------- «¿qué es esto?»: elemento de C en una posición del código ---------- */
 
-  var CONOCIDAS = {};
+  var CONOCIDAS = mapa();
   ('auto break case char const continue default do double else enum extern float for goto if int long register return short signed sizeof static struct switch typedef union unsigned void volatile while true false bool main NULL EXIT_SUCCESS EXIT_FAILURE ' +
     'printf scanf getchar putchar puts gets fgets sprintf snprintf fmod sqrt pow fabs abs rand srand getch system tolower toupper isalpha isdigit isspace islower isupper isalnum ceil floor round sin cos tan log log10 exp atoi atol atof strlen strcpy strncpy strcat strncat strcmp strncmp').split(' ').forEach(function (w) { CONOCIDAS[w] = 1; });
-  var CABECERAS = { 'stdio.h': 1, 'stdlib.h': 1, 'math.h': 1, 'ctype.h': 1, 'string.h': 1, 'stdbool.h': 1, 'time.h': 1, 'limits.h': 1, 'float.h': 1 };
+  var CABECERAS = Object.assign(mapa(), { 'stdio.h': 1, 'stdlib.h': 1, 'math.h': 1, 'ctype.h': 1, 'string.h': 1, 'stdbool.h': 1, 'time.h': 1, 'limits.h': 1, 'float.h': 1 });
   var OPS3 = ['<<=', '>>=', '...'];
   var OPS2 = ['&&', '||', '==', '!=', '<=', '>=', '++', '--', '+=', '-=', '*=', '/=', '%=', '&=', '|=', '^=', '<<', '>>', '->'];
   var RE_FORMATO = /%(?:%|[-+ #0]*(?:\d+|\*)?(?:\.(?:\d+|\*))?(?:hh|h|ll|l|z|L|j|t)?[diouxXfFeEgGaAcspn])/g;

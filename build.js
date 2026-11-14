@@ -20,7 +20,8 @@ const W = (f, s) => {
   fs.mkdirSync(path.dirname(path.join(ROOT, f)), { recursive: true }); fs.writeFileSync(path.join(ROOT, f), s); OUT[f] = s;
   console.log(f.padEnd(28), (Buffer.byteLength(s) / 1024).toFixed(1) + ' KB');
 };
-const safe = (s) => s.replace(/<\/script/gi, '<\\/script');
+// texto de un script que va en línea (archivo único): «</script» lo cerraría antes de tiempo y «<!--» cambia cómo el navegador busca ese cierre
+const safe = (s) => s.replace(/<\/script/gi, '<\\/script').replace(/<!--/g, '<\\!--');
 const json = (s) => JSON.stringify(s).replace(/</g, '\\u003c').split(String.fromCharCode(0x2028)).join('\\u2028').split(String.fromCharCode(0x2029)).join('\\u2029');
 
 // El compilador y el runtime también corren dentro de un Worker creado desde un Blob; como con file://
@@ -83,12 +84,31 @@ function kbDatos() {
 const KBD = kbDatos();
 const KB_JS = [['kb-data.js', 'window.KB_DATA=' + json(KBD) + ';\n'], ['config.js', R('config.js')], ['kb.js', R('kb.js')], ['compartir.js', R('compartir.js')], ['nombres.js', R('nombres.js')], ['ordenar.js', R('ordenar.js')]];
 const tpl = R('template.html');
+if (/\son[a-z]+\s*=|<script|\sstyle=|javascript:/i.test(tpl)) throw new Error('src/template.html trae un manejador en línea (onclick=…), un <script>, un atributo style o un enlace javascript: — la política de seguridad de contenido (CSP) los bloquea');
+
+/* ---- Política de seguridad de contenido (CSP), por <meta> porque GitHub Pages no deja poner cabeceras ----
+   Defensa en profundidad: aunque algún día se colara marcado HTML en la página (un nombre de programa, un enlace, un archivo importado),
+   el navegador no ejecuta manejadores en línea ni scripts que no sean los del sitio, y la página no puede mandar datos a otro servidor.
+   - 'unsafe-eval' hace falta: el programa en C se traduce a JavaScript y se ejecuta con new Function (en el Worker y, si no hay Worker, en la página).
+   - worker-src/child-src blob: — el Worker se arma desde un Blob (con file:// no se puede leer un archivo con fetch).
+   - file: — con doble clic (file://) los archivos del sitio se cargan con ese esquema; desde http(s) el navegador igual no deja cargar file:.
+   - frame-ancestors no se puede poner en un <meta> (el navegador lo ignora): que otro sitio muestre el editor en un marco no se puede impedir así.
+   Lo vigila tools/ui-seguridad.js (http, sin conexión, file:// y el archivo único). */
+const sha = (t) => "'sha256-" + crypto.createHash('sha256').update(t, 'utf8').digest('base64') + "'";
+const cspMeta = (d) => '<meta http-equiv="Content-Security-Policy" content="' + d.join('; ') + '">';
+const CSP_SITIO = cspMeta([
+  "default-src 'none'", "script-src 'self' file: 'unsafe-eval'", "worker-src 'self' blob:", "child-src 'self' blob:", "style-src 'self' file:",
+  "img-src 'self' file: data: blob:", "font-src 'self' file: data:", "connect-src 'self'", "manifest-src 'self'", "base-uri 'none'", "form-action 'none'", "object-src 'none'"
+]);
 
 // ---- identidad: los íconos PNG, el favicon y la pantalla de inicio se dibujan con tools/generar-iconos.js (a partir de los SVG de
 //      docs/identidad/) y quedan guardados en docs/identidad/app/. Acá solo se copian: build.js sigue necesitando solo node. ----
 const ID = path.join(ROOT, 'docs', 'identidad');
 const leerId = (f) => { const q = path.join(ID, f); if (!fs.existsSync(q)) throw new Error('falta docs/identidad/' + f + ' (corré: node tools/generar-identidad.js && node tools/generar-iconos.js)'); return fs.readFileSync(q); };
-const ICONOS_SVG = leerId('iconos.svg').toString('utf8').trim();   // sprite de íconos, se incrusta en la página (sin pedidos de red)
+// sprite de íconos, se incrusta en la página (sin pedidos de red). Su estilo en línea pasa a una clase (.sprite en app.css):
+// la política de seguridad de contenido no admite atributos style
+const ICONOS_SVG = leerId('iconos.svg').toString('utf8').trim().replace(' style="position:absolute"', ' class="sprite"');
+if (/\sstyle=/.test(ICONOS_SVG)) throw new Error('docs/identidad/iconos.svg trae un atributo style: la política de seguridad de contenido (CSP) lo bloquea; pásalo a una clase de app.css');
 const FAVICON_SVG = leerId('favicon.svg');
 const APP = ['icon-192.png', 'icon-512.png', 'icon-maskable-512.png', 'apple-touch-icon.png', 'favicon-32.png', 'favicon.ico', 'splash-claro.png', 'splash-oscuro.png'];
 
@@ -128,6 +148,7 @@ const HEAD_SITE = [
 const HEAD_ONE = ['<link rel="icon" href="data:image/svg+xml;base64,' + FAVICON_SVG.toString('base64') + '" type="image/svg+xml">'].concat(META_TEMA).join('\n');
 const conIconos = (h) => h.replace('<!--@@ICONOS@@-->', () => ICONOS_SVG);
 W('index.html', conIconos(tpl)
+  .replace('<!--@@CSP@@-->', () => CSP_SITIO)
   .replace('<!--@@HEAD@@-->', () => HEAD_SITE)
   .replace('<!--@@CSS@@-->', () => '<link rel="stylesheet" href="assets/styles.css">')
   .replace('<!--@@JS@@-->', () => JS.map(([n]) => '<script src="assets/' + n + '"></script>').concat(KB_JS.map(([n]) => '<script defer src="assets/' + n + '"></script>')).join('\n')));
@@ -147,8 +168,17 @@ if (swSrc.split('@@VERSION@@').length !== 2 || swSrc.split('@@FILES@@').length !
 W('sw.js', swSrc.replace('@@VERSION@@', VERSION).replace('@@FILES@@', () => JSON.stringify(PRECACHE)));
 
 // 3) un solo archivo (sin manifest ni service worker)
+// los scripts y el estilo van en línea: la política los permite por su hash (sha256 del texto exacto), no con 'unsafe-inline'.
+// El navegador calcula el hash después de pasar los saltos de línea a \n, así que el texto se incrusta ya normalizado.
+const enLinea = (t) => '\n' + t.replace(/\r\n?/g, '\n');
+const UNO_JS = JS.concat(KB_JS).map(([, s]) => enLinea(safe(s))), UNO_CSS = enLinea(cssUno);
+const CSP_UNO = cspMeta([
+  "default-src 'none'", 'script-src ' + UNO_JS.map(sha).join(' ') + " 'unsafe-eval'", 'worker-src blob:', 'child-src blob:', 'style-src ' + sha(UNO_CSS),
+  'img-src data: blob:', 'font-src data:', "base-uri 'none'", "form-action 'none'", "object-src 'none'"
+]);
 W('dist/editor-c.html', conIconos(tpl)
+  .replace('<!--@@CSP@@-->', () => CSP_UNO)
   .replace('<!--@@HEAD@@-->', () => HEAD_ONE)
-  .replace('<!--@@CSS@@-->', () => '<style>\n' + cssUno + '</style>')
-  .replace('<!--@@JS@@-->', () => JS.concat(KB_JS).map(([, s]) => '<script>\n' + safe(s) + '</script>').join('\n')));
+  .replace('<!--@@CSS@@-->', () => '<style>' + UNO_CSS + '</style>')
+  .replace('<!--@@JS@@-->', () => UNO_JS.map((t) => '<script>' + t + '</script>').join('\n')));
 console.log('versión', VERSION);

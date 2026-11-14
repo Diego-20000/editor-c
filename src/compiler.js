@@ -99,7 +99,7 @@
               let prof = 0; for (const q of out) { if (q.t === 'op' && q.v === '{') prof++; else if (q.t === 'op' && q.v === '}') prof--; }
               const hm = /^[<"]([^>"\s]+)[>"]$/.exec(arg);
               if (prof > 0) includes.avisos.push({ line, kb: 'PRE-041', msg: 'el #include va al principio del programa, afuera de las funciones: acá adentro rompe el programa' });
-              else if (hm && HDR_FUNCS[hm[1]]) { const usada = out.find((q) => q.t === 'id' && HDR_FUNCS[hm[1]].indexOf(q.v) >= 0); if (usada) includes.avisos.push({ line, kb: 'PRE-042', msg: "usas " + usada.v + " antes de este #include: los #include van todos al principio, antes de usar sus funciones" }); }
+              else if (hm && own(HDR_FUNCS, hm[1])) { const usada = out.find((q) => q.t === 'id' && HDR_FUNCS[hm[1]].indexOf(q.v) >= 0); if (usada) includes.avisos.push({ line, kb: 'PRE-042', msg: "usas " + usada.v + " antes de este #include: los #include van todos al principio, antes de usar sus funciones" }); }
             }
             if (/^(<[^>\s]+>|"[^"]+")$/.test(arg)) includes.push(arg); else includes.avisos.push({ line, kb: /;\s*$/.test(arg) ? 'PRE-018' : 'PRE-014', msg: 'el #include está mal escrito: tiene que ser #include <stdio.h> (con < y >) o #include "archivo.h"' }); }
           else if (dir === 'pragma' || dir === 'line' || dir === 'warning') { /* se ignora */ }
@@ -792,7 +792,8 @@
         if (nm === 'conio.h') this.warn("<conio.h> solo existe en Windows (Code::Blocks): en Programiz y OnlineGDB no compila. Para esperar una tecla usa getchar() o scanf", 1, 'PRE-037', 'POR-003');
         else if (ok.indexOf(nm) < 0) {
           const sg = nm === 'studio.h' || nm === 'stdoi.h' || nm === 'stido.h' || nm === 'stdio' ? 'stdio.h' : (nm === 'maths.h' || nm === 'math' ? 'math.h' : null);
-          this.warn('no se conoce la biblioteca <' + nm + '>' + (sg ? ': ¿quisiste escribir <' + sg + '>?' : ''), 1, { 'studio.h': 'PRE-012', stdio: 'PRE-013', 'STDIO.H': 'PRE-017', 'stdafx.h': 'POR-024', 'windows.h': 'POR-017', 'dos.h': 'POR-019' }[nm]);
+          const KBH = { 'studio.h': 'PRE-012', stdio: 'PRE-013', 'STDIO.H': 'PRE-017', 'stdafx.h': 'POR-024', 'windows.h': 'POR-017', 'dos.h': 'POR-019' };
+          this.warn('no se conoce la biblioteca <' + nm + '>' + (sg ? ': ¿quisiste escribir <' + sg + '>?' : ''), 1, own(KBH, nm) ? KBH[nm] : undefined);
         }
       }
     }

@@ -33,6 +33,7 @@ paso "Nombres del alumno (¿qué es?)"   300 node test/nombres.test.js
 paso "Ayuda completa (¿qué es?)"       300 node test/ayuda-completa.test.js
 paso "Español neutro (sin voseo)"       120 node test/neutro.test.js
 paso "Ordenar código (forma, no contenido)" 300 node test/ordenar.test.js
+paso "Seguridad (motor y datos)"     300 node test/seguridad.test.js
 if [ "$KB" = 1 ]; then
   for f in kb/errores/*.json kb/lecciones.json; do paso "Base contra gcc: $(basename "$f" .json)" 900 bash -c "cd \"$T\" && node \"$OLDPWD/tools/kb-validar.js\" \"$OLDPWD/$f\" --silencio"; done
 fi
@@ -40,6 +41,7 @@ if [ "$RAPIDO" = 0 ]; then
   paso "Interfaz (completa)"          900 node tools/ui-smoke.js
   paso "Interfaz (reparos)"           300 node tools/ui-reparos.js
   paso "Enlace entre dispositivos"    300 node tools/ui-enlace.js
+  paso "Seguridad (interfaz)"         900 node tools/ui-seguridad.js
 fi
 echo
 FIN=$(( $(date +%s) - INICIO ))

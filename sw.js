@@ -3,7 +3,7 @@
 // Primera visita: precachea todo. Después sirve desde la caché (sin conexión). Una versión nueva queda
 // "en espera" hasta que la persona acepta recargar (la página manda SKIP_WAITING).
 'use strict';
-const VERSION = '220b07b2b367';
+const VERSION = '7584d74dfc02';
 const CACHE = 'editor-c-' + VERSION;
 const FILES = ["./","index.html","manifest.webmanifest","assets/styles.css","assets/compiler.js","assets/runtime.js","assets/examples.js","assets/app.js","assets/SourceCodePro.ttf","assets/kb-data.js","assets/config.js","assets/kb.js","assets/compartir.js","assets/nombres.js","assets/ordenar.js","assets/favicon.svg","assets/favicon-32.png","assets/favicon.ico","assets/icon-192.png","assets/icon-512.png","assets/icon-maskable-512.png","assets/apple-touch-icon.png"];
 
@@ -25,7 +25,11 @@ self.addEventListener('fetch', (e) => {
   e.respondWith(caches.open(CACHE).then(async (c) => {
     const hit = await c.match(req, { ignoreSearch: true });
     if (hit) return hit;
-    if (req.mode === 'navigate') { const idx = await c.match(new URL('index.html', self.registration.scope).href); if (idx) return idx; }
-    return fetch(req);
+    if (req.mode !== 'navigate') return fetch(req);
+    // Navegación a algo del sitio que no está en la caché (por ejemplo dist/editor-c.html o un documento): primero la red, para
+    // traer ESE archivo. Antes se devolvía siempre la página principal, y con el editor instalado esos archivos no se podían abrir.
+    // Solo si no hay conexión se muestra el editor.
+    try { return await fetch(req); }
+    catch (err) { const idx = await c.match(new URL('index.html', self.registration.scope).href); if (idx) return idx; throw err; }
   }));
 });
