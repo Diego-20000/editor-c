@@ -1124,14 +1124,14 @@
     if (open) inTxt.focus({ preventScroll: true });
   });
   inTxt.addEventListener('input', () => { updateInDot(); scheduleSave(); });
-  let presetQ = [];
+  let presetQ = [], presetI = 0;   // presetI: próxima línea (sacar del frente con shift() se vuelve lento con decenas de miles de líneas)
   function preparePreset() {
     const t = inTxt.value.replace(/\r\n?/g, '\n');
-    presetQ = t.trim() ? t.replace(/\n$/, '').split('\n') : [];
+    presetQ = t.trim() ? t.replace(/\n$/, '').split('\n') : []; presetI = 0;
   }
   function nextPreset() {
-    if (!presetQ.length) return null;
-    const l = presetQ.shift();
+    if (presetI >= presetQ.length) return null;
+    const l = presetQ[presetI++];
     avisoComa(l);
     removeInput(); appendText(l + '\n', 'in');
     return l;

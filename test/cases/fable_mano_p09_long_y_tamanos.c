@@ -1,0 +1,2 @@
+#include <stdio.h>
+int main() { long L = 9000000000L; unsigned long U = 18000000000000000000UL; short S = -5; unsigned char C = 200; long long Q = -1; printf("%ld %lu %lx %lo %lld %llu\n", L, U, U, U, Q, (unsigned long long) Q); printf("%hd %hhu %hu %hhd %hx\n", S, C, (unsigned short) S, (signed char) C, (unsigned short) 65535); printf("%zu %zu %zu\n", sizeof(int), sizeof(double), sizeof(L)); printf("[%15ld][%-15ld][%015ld][%+ld]\n", L, L, L, L); return 0; }

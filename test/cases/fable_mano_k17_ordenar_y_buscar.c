@@ -1,0 +1,2 @@
+#include <stdio.h>
+int main() { int V[8] = {5, 3, 9, 1, 7, 3, 8, 2}, I, J, T, N = 8, P = -1; for (I = 0; I < N - 1; I++) for (J = 0; J < N - 1 - I; J++) if (V[J] > V[J + 1]) { T = V[J]; V[J] = V[J + 1]; V[J + 1] = T; } for (I = 0; I < N; I++) printf("%d ", V[I]); for (I = 0; I < N && P < 0; I++) if (V[I] == 7) P = I; printf("\n%d\n", P); int A = 0, B = N - 1, M; while (A <= B) { M = (A + B) / 2; if (V[M] == 8) break; if (V[M] < 8) A = M + 1; else B = M - 1; } printf("%d\n", M); return 0; }

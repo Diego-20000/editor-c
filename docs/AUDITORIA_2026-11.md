@@ -4,7 +4,7 @@ Rama `fable-auditoria`. Tarea pedida en `docs/TAREA_FABLE.md`. Este informe se e
 
 ## Estado
 - **Tarea 1 (seguridad de lo que entra desde afuera): hecha.** Pruebas: `node test/seguridad.test.js` (15 pruebas, motor y datos) y `node tools/ui-seguridad.js` (199 comprobaciones con Chromium). Las dos están sumadas a `bash test/todo.sh`.
-- **Tarea 2 (campaña contra gcc): sin empezar.** Solo se sumaron 4 casos (`test/cases/fable_001` a `fable_004`), iguales a gcc.
+- **Tarea 2 (campaña contra gcc): hecha.** 6.000 programas aleatorios completos (`test/fuzz2.py`) y 152 a mano; 5 fallas reales arregladas. Detalle abajo.
 - `bash test/todo.sh` completo (15/11/2026): 14 de 15 pasos en verde en la corrida entera; el paso que falló («Interfaz (completa)», porque la prueba lee la imagen de la captura con `fetch` y la política lo bloqueaba) se arregló permitiendo `connect-src blob:` y se repitió aparte: 1215 ok, 0 fallas. Motor contra gcc: 365/365. No se volvió a correr la batería entera después de ese último cambio.
 
 ## Tarea 1: resultado
@@ -38,7 +38,7 @@ Sí aparecieron fallas de robustez, algunas con pérdida de datos:
 5. Las marcas de dirección dentro del **código** recibido no se filtran (solo en los nombres): la vista previa del enlace muestra el texto tal como lo dibuja el navegador.
 6. Memoria y tiempo de un programa hostil (arreglos enormes, recursión): queda para la Tarea 2.
 
-## Tarea 2: campaña contra gcc (en curso)
+## Tarea 2: campaña contra gcc (hecha)
 ### Programas aleatorios completos (`test/fuzz2.py`, hecho)
 Generador determinista por semilla: `if`/`else if`/`else`, `for` y `while` anidados con `break`/`continue`, `switch` con y sin `break`, bloques con variables que tapan a otras, funciones con prototipo (también con arreglo 1D y matriz como parámetro, `static`, recursión), arreglos 1D y 2D con inicialización parcial, `char[]` con `strlen`/`strcpy`/`strcat`/`strcmp`, `#define` con y sin parámetros, `math.h`, `printf` con anchos, precisiones y banderas, y `scanf` de `%d %f %lf %c %s`. Sin comportamiento indefinido. Se corre con `bash test/fuzz2_run.sh CANTIDAD [PRIMERA_SEMILLA]` y quedó en `test/todo.sh` (60 programas por corrida).
 
@@ -50,5 +50,43 @@ Generador determinista por semilla: `if`/`else if`/`else`, `for` y `while` anida
 - **Falla real (arreglada):** `0.0 - ENTERO` con el entero en 0. gcc 13 lo reduce a «menos el entero pasado a decimal» y da `-0.0` (se ve como `-0.0000` en `printf`); el editor daba `0.0000`. Con un decimal a la derecha (`0.0 - X`) gcc da `0.0` y el editor ya coincidía. Casos: `test/cases/fable_005_cero_menos_entero.c` y `fable_006_cero_menos_decimal.c`.
 - **Descartada (no es falla):** una primera versión del generador ponía dos llamadas con efecto en una misma asignación (`M[f()] = f()`); ese orden no está definido en C. Se corrigió el generador.
 
-### Programas a mano por categoría
-Sin empezar (faltan los 150 programas, las mediciones de tiempo y memoria y la tabla final).
+### Programas a mano por categoría (hecho)
+152 programas escritos a mano, cada uno compilado con `gcc -std=gnu99 -Wall -Wextra` y comparado en salida y código de salida. Los 141 válidos quedaron como casos de regresión en `test/cases/fable_mano_*.c` (con su `.in`).
+
+| Categoría | Programas | Diferencias | Fallas reales del editor | Descartadas |
+|---|---|---|---|---|
+| Lectura con `scanf` y entradas raras | 28 | 3 | 2 | 1 (variable sin valor en mi programa) |
+| Formatos de `printf` | 18 | 1 | 0 | 1 (texto + número: puntero, no soportado) |
+| Conversiones, división con negativos, `unsigned`/`char`/`short`, `float` y `double` | 20 | 2 | 1 | 1 (decimal fuera de rango a `short`: indefinido) |
+| Prioridad, cortocircuito, ámbito, `static`, recursión, matrices, textos, `switch`, macros | 26 | 3 | 0 (ver recursión profunda) | 2 (puntero en un prototipo; error mío) |
+| Programas estilo TP con entrada | 30 | 2 | 0 | 2 (división entera por cero: indefinido; error mío) |
+| Macros con efectos, textos y casos límite | 30 | 2 | 0 | 2 (`T + 0`: puntero; `-INT_MIN`: indefinido) |
+| **Total** | **152** | **13** | **3** | **9** (más 1 límite documentado) |
+
+**Fallas reales, todas arregladas:**
+1. `scanf("%f")` con un exponente empezado y sin dígitos (`3.5e+kg`): glibc lee `3.5` y consume `e+`; el editor dejaba `e+kg` para la lectura siguiente. También `0x` sin dígitos (glibc falla y lo consume). Caso `fable_007`.
+2. Un `nan` guardado en un `float` (leído con `scanf("%f")`, o `(float) NAN`) salía `-nan`: la marca que distingue `nan` de `-nan` se perdía al pasar por `float`. Caso `fable_008`.
+3. `sizeof` de una expresión (`sizeof(1)`, `sizeof('a')`, `sizeof(A + 1.5)`, `sizeof("hola")`) daba error; gcc lo compila. Caso `fable_009`.
+4. (De la campaña aleatoria) `0.0 - ENTERO` con el entero en 0 da `-0.0` en gcc. Casos `fable_005` y `fable_006`.
+
+**Límite que queda documentado (no se puede corregir):** la recursión se corta cerca de los 8.000 a 10.000 niveles (Node y Chromium), con el mensaje «desbordamiento de la pila»; gcc llega a más de 100.000. Ya figuraba en `docs/COMPATIBILIDAD.md`.
+
+**Avisos del editor en programas que gcc compila sin avisos** (todos a propósito, de la base de la materia): `%c` después de otra lectura, división entera guardada en `float`, comparar decimales con `==`, `for` con cuerpo vacío, `%d` con un `char`. El único discutible es el de `^` («no es potencia»), que también aparece cuando el programa usa XOR a propósito (`A ^ B`, `I ^= 3`): no impide ejecutar; queda a decisión de Diego si se afina.
+
+### Tiempos y memoria
+| Programa | gcc -O0 | Editor (Node) |
+|---|---|---|
+| Dos lazos anidados, 100 millones de vueltas | 0,27 s | 0,81 s |
+| Criba de primos con arreglo de 1 millón | 0,02 s | 0,11 s |
+| Matriz de 1000×1000, 5 pasadas | 0,02 s | 0,17 s |
+| `fib(35)` recursivo | 0,08 s | 0,19 s |
+| 10.000 líneas de `printf` | 0,01 s | 0,13 s |
+| Dos arreglos de 5 millones y una matriz de 2000×2000 | 0,03 s | 0,30 s (196 MB) |
+| Leer 160.000 números, uno por línea | 0,01 s | **10 s → 0,2 s** |
+
+- **Falla de rendimiento (arreglada):** leer la entrada precargada tardaba en proporción al cuadrado de la cantidad de líneas (se sacaba cada línea del frente de la lista). Con 10.000 líneas no se notaba; con 160.000 eran 10 segundos.
+- Un arreglo de más de 20 millones de elementos se rechaza con un mensaje claro. Ocho arreglos de 20 millones juntos sí se aceptan (1,9 s en Node): en un celular eso puede cerrar la pestaña. No hay tope para el total; queda como riesgo.
+- Los mensajes de error revisados (división por cero, índice fuera de rango, arreglo demasiado grande, pila) nombran el problema real y la línea.
+
+### Resumen de la Tarea 2
+6.000 programas aleatorios completos y 152 a mano: **5 fallas reales** de fidelidad (todas arregladas, con caso en `test/cases`), 1 de rendimiento (arreglada) y 1 límite documentado. `bash test/run_all.sh`: 511 de 511 casos iguales a gcc.
