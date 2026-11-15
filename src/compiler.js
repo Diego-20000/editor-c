@@ -1291,7 +1291,7 @@
         case 'cast': {
           const r = this.expr(n.e);
           if (n.type === 'void') return { c: '(' + r.c + ',0)', t: 'int' };
-          return { c: this.conv(r, n.type), t: n.type };
+          return { c: this.conv(r, n.type), t: n.type, deEntero: FLOATLIKE.has(n.type) && INTLIKE.has(r.t) };
         }
         case 'sizeof': {
           const sz = { int: 4, uint: 4, long: 8, char: 1, uchar: 1, bool: 1, short: 2, ushort: 2, ulong: 8, float: 4, double: 8, void: 1 };
@@ -1465,7 +1465,10 @@
       }
       const t = ctype;
       switch (op) {
-        case '+': case '-': return { c: this.wrapInt(t, av + ' ' + op + ' ' + bv), t };
+        case '+': case '-':
+          // gcc 13 reduce «0.0 - entero» a «-(decimal) entero»: con el entero en 0 da -0.0 (se ve en printf como -0.000000). Se imita.
+          if (op === '-' && FLOATLIKE.has(t) && ln.k === 'num' && ln.v === 0 && FLOATLIKE.has(ln.kind) && (INTLIKE.has(b.t) || b.deEntero)) return { c: '$.neg(' + bv + ')', t };
+          return { c: this.wrapInt(t, av + ' ' + op + ' ' + bv), t };
         case '*':
           if (t === 'int') return { c: 'Math.imul(' + av + ',' + bv + ')', t };
           if (t === 'uint') return { c: '(Math.imul(' + av + ',' + bv + ')>>>0)', t };

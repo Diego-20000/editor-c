@@ -26,6 +26,7 @@ echo
 paso "Armar el sitio"                 120 node build.js
 paso "Motor contra gcc"               600 bash test/run_all.sh
 paso "Programas aleatorios contra gcc" 900 bash test/fuzz_run.sh "$FUZZ"
+paso "Programas completos contra gcc" 900 bash test/fuzz2_run.sh "$((FUZZ * 2))"
 paso "Diagnósticos del compilador"    300 node test/diag.js
 paso "Base de conocimiento (módulos)" 300 node test/kb.test.js
 paso "Ejemplos del editor"            300 node test/ejemplos.js

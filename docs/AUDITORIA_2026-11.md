@@ -38,5 +38,17 @@ Sí aparecieron fallas de robustez, algunas con pérdida de datos:
 5. Las marcas de dirección dentro del **código** recibido no se filtran (solo en los nombres): la vista previa del enlace muestra el texto tal como lo dibuja el navegador.
 6. Memoria y tiempo de un programa hostil (arreglos enormes, recursión): queda para la Tarea 2.
 
-## Tarea 2
-Sin empezar. Orden previsto: `test/fuzz2.py`, 150 programas a mano por categoría, tabla de resultados.
+## Tarea 2: campaña contra gcc (en curso)
+### Programas aleatorios completos (`test/fuzz2.py`, hecho)
+Generador determinista por semilla: `if`/`else if`/`else`, `for` y `while` anidados con `break`/`continue`, `switch` con y sin `break`, bloques con variables que tapan a otras, funciones con prototipo (también con arreglo 1D y matriz como parámetro, `static`, recursión), arreglos 1D y 2D con inicialización parcial, `char[]` con `strlen`/`strcpy`/`strcat`/`strcmp`, `#define` con y sin parámetros, `math.h`, `printf` con anchos, precisiones y banderas, y `scanf` de `%d %f %lf %c %s`. Sin comportamiento indefinido. Se corre con `bash test/fuzz2_run.sh CANTIDAD [PRIMERA_SEMILLA]` y quedó en `test/todo.sh` (60 programas por corrida).
+
+| Tanda | Programas | Diferencias | Fallas reales |
+|---|---|---|---|
+| Semillas 1 a 3000 | 3000 | 1 | 1 |
+| Semillas 3001 a 6000 | 3000 | 0 | 0 |
+
+- **Falla real (arreglada):** `0.0 - ENTERO` con el entero en 0. gcc 13 lo reduce a «menos el entero pasado a decimal» y da `-0.0` (se ve como `-0.0000` en `printf`); el editor daba `0.0000`. Con un decimal a la derecha (`0.0 - X`) gcc da `0.0` y el editor ya coincidía. Casos: `test/cases/fable_005_cero_menos_entero.c` y `fable_006_cero_menos_decimal.c`.
+- **Descartada (no es falla):** una primera versión del generador ponía dos llamadas con efecto en una misma asignación (`M[f()] = f()`); ese orden no está definido en C. Se corrigió el generador.
+
+### Programas a mano por categoría
+Sin empezar (faltan los 150 programas, las mediciones de tiempo y memoria y la tabla final).
