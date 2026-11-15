@@ -1298,7 +1298,10 @@
           if (n.type) return { c: String(sz[n.type]), t: 'int' };
           if (n.e.k === 'id') { const info = this.lookup(n.e.name); if (info && info.scalar) return { c: String(sz[info.type]), t: 'int' }; if (info && info.array) { if (info.param || info.ptrStr) return { c: '8', t: 'int' }; let mul = info.js + '.length'; if (info.ndims === 2) mul += '*' + info.js + '[0].length'; return { c: '(' + mul + '*' + sz[info.type] + ')', t: 'uint' }; } }
           if (n.e.k === 'idx') { let b = n.e, k = 0; while (b.k === 'idx') { k++; b = b.base; } const info = b.k === 'id' ? this.lookup(b.name) : null; if (info && info.array && k <= info.ndims) { if (k === info.ndims) return { c: String(sz[info.type]), t: 'uint' }; return { c: '(' + info.js + '[0].length*' + sz[info.type] + ')', t: 'uint' }; } }
-          this.err('sizeof solo se soporta con un tipo (sizeof(int)) o una variable simple', n.line);
+          // sizeof de una expresión cualquiera (sizeof(1), sizeof('a'), sizeof(A + 1.5), sizeof("hola")): vale el tamaño del tipo del resultado; la expresión no se ejecuta
+          if (n.e.k === 'str') return { c: String(new TextEncoder().encode(n.e.v).length + 1), t: 'ulong' };
+          if (n.e.k !== 'call' && n.e.k !== 'assign' && n.e.k !== 'incdec' && !this.hasSideEffect(n.e)) { const r = this.expr(n.e); const tt = r.b ? 'int' : r.t; if (own(sz, tt) && tt !== 'void') return { c: String(sz[arith(tt, tt) === 'int' && n.e.k !== 'cast' ? 'int' : tt]), t: 'ulong' }; }
+          this.err('sizeof solo se soporta con un tipo (sizeof(int)), una variable o una cuenta sin llamadas ni asignaciones', n.line);
           return { c: '0', t: 'int' };
         }
         case 'incdec': return this.incdec(n, asStmt);
