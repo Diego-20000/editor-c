@@ -5,7 +5,7 @@ Rama `fable-auditoria`. Tarea pedida en `docs/TAREA_FABLE.md`. Este informe se e
 ## Estado
 - **Tarea 1 (seguridad de lo que entra desde afuera): hecha.** Pruebas: `node test/seguridad.test.js` (15 pruebas, motor y datos) y `node tools/ui-seguridad.js` (199 comprobaciones con Chromium). Las dos están sumadas a `bash test/todo.sh`.
 - **Tarea 2 (campaña contra gcc): sin empezar.** Solo se sumaron 4 casos (`test/cases/fable_001` a `fable_004`), iguales a gcc.
-- Falta correr `bash test/todo.sh` completo después de los últimos cambios (la batería rápida estaba en verde al empezar: 361/361 contra gcc).
+- `bash test/todo.sh` completo (15/11/2026): 14 de 15 pasos en verde en la corrida entera; el paso que falló («Interfaz (completa)», porque la prueba lee la imagen de la captura con `fetch` y la política lo bloqueaba) se arregló permitiendo `connect-src blob:` y se repitió aparte: 1215 ok, 0 fallas. Motor contra gcc: 365/365. No se volvió a correr la batería entera después de ese último cambio.
 
 ## Tarea 1: resultado
 **No se encontró ninguna forma de ejecutar un script** (XSS) por ningún camino: nombre de programa, nombre de prueba, JSON importado, enlace `#p=`, valores de `localStorage`, nombre de archivo ni identificadores del código. Las 23 líneas con `innerHTML` de `src/app.js` son vaciados (`''`) o texto pasado por `esc()` como contenido de un elemento (resaltado, guías, coincidencias, subrayados) o números de línea; el resto de la interfaz usa `textContent`. El código que genera el compilador pasa los textos por `JSON.stringify` y los nombres con prefijo (`v_`, `f_`): 15 textos hostiles y 54 nombres de JavaScript probados, sin escape.

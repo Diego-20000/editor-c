@@ -92,13 +92,14 @@ if (/\son[a-z]+\s*=|<script|\sstyle=|javascript:/i.test(tpl)) throw new Error('s
    - 'unsafe-eval' hace falta: el programa en C se traduce a JavaScript y se ejecuta con new Function (en el Worker y, si no hay Worker, en la página).
    - worker-src/child-src blob: — el Worker se arma desde un Blob (con file:// no se puede leer un archivo con fetch).
    - file: — con doble clic (file://) los archivos del sitio se cargan con ese esquema; desde http(s) el navegador igual no deja cargar file:.
+   - connect-src blob: — leer un Blob propio (la imagen de la captura) no saca nada del dispositivo; la red sigue limitada al propio sitio.
    - frame-ancestors no se puede poner en un <meta> (el navegador lo ignora): que otro sitio muestre el editor en un marco no se puede impedir así.
    Lo vigila tools/ui-seguridad.js (http, sin conexión, file:// y el archivo único). */
 const sha = (t) => "'sha256-" + crypto.createHash('sha256').update(t, 'utf8').digest('base64') + "'";
 const cspMeta = (d) => '<meta http-equiv="Content-Security-Policy" content="' + d.join('; ') + '">';
 const CSP_SITIO = cspMeta([
   "default-src 'none'", "script-src 'self' file: 'unsafe-eval'", "worker-src 'self' blob:", "child-src 'self' blob:", "style-src 'self' file:",
-  "img-src 'self' file: data: blob:", "font-src 'self' file: data:", "connect-src 'self'", "manifest-src 'self'", "base-uri 'none'", "form-action 'none'", "object-src 'none'"
+  "img-src 'self' file: data: blob:", "font-src 'self' file: data:", "connect-src 'self' blob:", "manifest-src 'self'", "base-uri 'none'", "form-action 'none'", "object-src 'none'"
 ]);
 
 // ---- identidad: los íconos PNG, el favicon y la pantalla de inicio se dibujan con tools/generar-iconos.js (a partir de los SVG de
@@ -174,7 +175,7 @@ const enLinea = (t) => '\n' + t.replace(/\r\n?/g, '\n');
 const UNO_JS = JS.concat(KB_JS).map(([, s]) => enLinea(safe(s))), UNO_CSS = enLinea(cssUno);
 const CSP_UNO = cspMeta([
   "default-src 'none'", 'script-src ' + UNO_JS.map(sha).join(' ') + " 'unsafe-eval'", 'worker-src blob:', 'child-src blob:', 'style-src ' + sha(UNO_CSS),
-  'img-src data: blob:', 'font-src data:', "base-uri 'none'", "form-action 'none'", "object-src 'none'"
+  'img-src data: blob:', 'font-src data:', 'connect-src blob:', "base-uri 'none'", "form-action 'none'", "object-src 'none'"
 ]);
 W('dist/editor-c.html', conIconos(tpl)
   .replace('<!--@@CSP@@-->', () => CSP_UNO)
