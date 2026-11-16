@@ -163,8 +163,10 @@ html.lectura #code { caret-color: transparent; }
 .runbar.wait::before { border-radius: 50%; background: transparent; box-shadow: inset 0 0 0 2px var(--accent); }
 .console { flex: 1; overflow: auto; padding: 12px 14px; font: var(--fs)/1.5 var(--mono); background: var(--panel); min-height: 0; }
 .console:focus-visible { outline-offset: -2px; }
-#out { margin: 0; font: inherit; white-space: pre; color: var(--text); width: max-content; min-width: 100%; }
-.console.wrap #out { white-space: pre-wrap; overflow-wrap: anywhere; width: auto; }
+#out { margin: 0; font: inherit; white-space: pre; color: var(--text); }
+.console.wrap #out { white-space: pre-wrap; overflow-wrap: anywhere; }
+/* los mensajes del editor (errores, «terminado», entrada escrita) bajan de renglón; solo lo que imprime el programa se desliza de costado */
+#out .er, #out .dim, #out .ok, #out .in { white-space: pre-wrap; overflow-wrap: anywhere; }
 #out .fin { display: none; }
 .runend { padding: 7px 14px; border-top: 1px solid var(--line); background: var(--panel); font: 600 13px/1.4 var(--mono); }
 .runend.ok { color: var(--ok); } .runend.er { color: var(--danger); }
@@ -523,3 +525,5 @@ html.lectura .pane-head .hint { margin-right: 8px; }
 .pruout.er { border-color: var(--err, #c2261b); }
 #shotLayRow { flex-direction: row; }
 #shotLayRow select { max-width: 60%; }
+.group > .fine { padding: 8px 16px 10px; color: var(--muted); }
+.group + .shotbox { margin-top: 12px; }

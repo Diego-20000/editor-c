@@ -1552,7 +1552,7 @@ self.postMessage({ type: 'ready' });`;
     if (opts.lado) { y = y0; xb = padX + leftW + gapX; wb = rightW; } else y += gap;
     if (inRows.length) { section('Entrada'); drawRows(inRows, xb + 12, false); y += gap; }
     section(pruebasImg ? 'Pruebas' : 'Salida');
-    drawRows(outRows.length && (outRows.length > 1 || outRows[0].length) ? outRows : [[['dim', '(sin salida: ejecuta el programa antes de sacar la captura)']]], xb + 12, false);
+    drawRows(outRows.length && (outRows.length > 1 || outRows[0].length) ? outRows : [[['dim', '(sin salida: ejecuta primero)']]], xb + 12, false);
     if (opts.lado) { y = y0 + bodyH; xb = padX; wb = leftW; }
     // pie: cómo se escribió (si se incluye) y la marca, en letra chica
     ctx.font = '12px ' + UI; ctx.fillStyle = SUB;
