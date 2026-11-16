@@ -171,6 +171,8 @@
       last = r.e;
     }
     el.innerHTML = res + esc(text.slice(last)) + '\n';
+    // al vaciar la capa el navegador la manda arriba del todo: se vuelve a alinear con el texto
+    if (el !== ta) { el.scrollTop = ta.scrollTop; el.scrollLeft = ta.scrollLeft; }
   }
 
   /* ---------- editor ---------- */
@@ -188,6 +190,7 @@
   function refresh() {
     hl.innerHTML = highlight(ta.value) + '\n';
     gdEl.innerHTML = guias(ta.value);
+    gdEl.scrollTop = ta.scrollTop; gdEl.scrollLeft = ta.scrollLeft;
     renderGutter(false);
     paintProblems();
     syncScroll();
@@ -234,14 +237,14 @@
   // pareja del paréntesis, corchete o llave que toca el cursor (ignora lo que está en comentarios, textos y #líneas)
   function marcarPareja() {
     const v = ta.value, s = ta.selectionStart;
-    if (ta.selectionEnd !== s || v.length > 60000) { brEl.innerHTML = ''; return; }
+    if (ta.selectionEnd !== s || v.length > 60000) { brEl.innerHTML = ''; brEl.scrollTop = ta.scrollTop; brEl.scrollLeft = ta.scrollLeft; return; }
     const PAR = { '(': ')', '[': ']', '{': '}', ')': '(', ']': '[', '}': '{' };
     let pos = -1;
     if (s > 0 && PAR[v[s - 1]]) pos = s - 1; else if (s < v.length && PAR[v[s]]) pos = s;
-    if (pos < 0) { brEl.innerHTML = ''; return; }
+    if (pos < 0) { brEl.innerHTML = ''; brEl.scrollTop = ta.scrollTop; brEl.scrollLeft = ta.scrollLeft; return; }
     const skip = new Uint8Array(v.length); let at = 0;
     tokens(v).forEach(([c, t]) => { if (c === 'c' || c === 's' || c === 'p') skip.fill(1, at, at + t.length); at += t.length; });
-    if (skip[pos]) { brEl.innerHTML = ''; return; }
+    if (skip[pos]) { brEl.innerHTML = ''; brEl.scrollTop = ta.scrollTop; brEl.scrollLeft = ta.scrollLeft; return; }
     const ch = v[pos], op = '([{'.indexOf(ch) >= 0, other = PAR[ch], dir = op ? 1 : -1;
     let depth = 0, m = -1;
     for (let i = pos; i >= 0 && i < v.length; i += dir) {

@@ -330,6 +330,21 @@ const check = (c, m) => { if (c) { ok++; console.log('  ok   ' + m); } else { fa
     await cx.close();
   }
 
+  // 9) Capas del editor (pares de paréntesis, guías, subrayados) alineadas con el texto cuando hay desplazamiento
+  {
+    const cx = await br.newContext({ viewport: { width: 1356, height: 606 } });
+    const pg = await cx.newPage();
+    await pg.goto(url + '?ayuda=2'); await pg.waitForSelector('#code');
+    let cod = ''; for (let i = 0; i < 30; i++) cod += '//linea ' + i + '\n';
+    cod += 'int main() {\n    printf ("hola")\n}\n';
+    await pg.fill('#code', cod);
+    await pg.evaluate(() => { const t = document.getElementById('code'); const i = t.value.indexOf('("hola")') + 8; t.focus(); t.setSelectionRange(i, i); t.scrollTop = t.scrollHeight; t.dispatchEvent(new Event('scroll')); t.dispatchEvent(new Event('keyup')); t.dispatchEvent(new Event('click')); });
+    await pg.waitForTimeout(400);
+    const d = await pg.evaluate(() => { const t = document.getElementById('code'); return ['gd', 'br', 'hl'].map((id) => [id, document.getElementById(id).scrollTop - t.scrollTop]); });
+    check(d.every(([, x]) => Math.abs(x) <= 1), 'editor: todas las capas quedan alineadas con el texto al desplazar (' + d.map((a) => a[0] + ':' + a[1]).join(' ') + ')');
+    await cx.close();
+  }
+
   await br.close();
   console.log(ok + ' ok, ' + fallas + ' fallas');
   process.exit(fallas ? 1 : 0);

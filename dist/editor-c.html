@@ -3,7 +3,7 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-wm7GsMty5KTzqStZRdJc4AsPRHIhKeVxzZNfSV/D7DE=' 'sha256-pZVFs1YVsdy2azF75ymoYrdNRc5OZVrrfu7C+JcNW4U=' 'sha256-9zvWeljVCsD4A/ghvUPZzT4c9slTDfe9sD7ZDEfcd04=' 'sha256-DL2bdzy6W9fZAG/yFDIs9GVh/Z0f4JB5r+j+1ECqkxA=' 'sha256-gulZ4uD1j9wrWrUJTM0i0CfFQRLjijuxwfAI5nM7EFo=' 'sha256-2lfDc3Mz/on2MjZOuLtxU09Lc97ObHG9LfRyJkmNj30=' 'sha256-D5eNFhJM5caNHsqiKB7XBhlV8Y/ARxp5llSr91wXSdw=' 'sha256-roqfeKHX31qnhNACUzx3ptrcftZMZBB97BGtw/Z3ojs=' 'sha256-eDnOIzEinYAB2tOTqOA5fuAMar6Rl/n1njISU2FFeCY=' 'sha256-rgiSH12iMr5IUIltfKReOQmwgPX6XvqRC3qq4U3+BPk=' 'unsafe-eval'; worker-src blob:; child-src blob:; style-src 'sha256-ZtyoiOsLbCdgDIBsLsxKFI2wy2CqdQT34zIF+XB1goE='; img-src data: blob:; font-src data:; connect-src blob:; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-wm7GsMty5KTzqStZRdJc4AsPRHIhKeVxzZNfSV/D7DE=' 'sha256-pZVFs1YVsdy2azF75ymoYrdNRc5OZVrrfu7C+JcNW4U=' 'sha256-9zvWeljVCsD4A/ghvUPZzT4c9slTDfe9sD7ZDEfcd04=' 'sha256-mqi0dtvOsDGsk52ZIe0J14qT34cruUOVbCXPQ6ppXWE=' 'sha256-gulZ4uD1j9wrWrUJTM0i0CfFQRLjijuxwfAI5nM7EFo=' 'sha256-S/3y6mDjra8OA5gidsJrEhMjqDzLHaHxZdf7Ysr2AL8=' 'sha256-D5eNFhJM5caNHsqiKB7XBhlV8Y/ARxp5llSr91wXSdw=' 'sha256-roqfeKHX31qnhNACUzx3ptrcftZMZBB97BGtw/Z3ojs=' 'sha256-eDnOIzEinYAB2tOTqOA5fuAMar6Rl/n1njISU2FFeCY=' 'sha256-rgiSH12iMr5IUIltfKReOQmwgPX6XvqRC3qq4U3+BPk=' 'unsafe-eval'; worker-src blob:; child-src blob:; style-src 'sha256-ZtyoiOsLbCdgDIBsLsxKFI2wy2CqdQT34zIF+XB1goE='; img-src data: blob:; font-src data:; connect-src blob:; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="dark light">
 <title>Editor C</title>
@@ -4810,6 +4810,8 @@ int main() {
       last = r.e;
     }
     el.innerHTML = res + esc(text.slice(last)) + '\n';
+    // al vaciar la capa el navegador la manda arriba del todo: se vuelve a alinear con el texto
+    if (el !== ta) { el.scrollTop = ta.scrollTop; el.scrollLeft = ta.scrollLeft; }
   }
 
   /* ---------- editor ---------- */
@@ -4827,6 +4829,7 @@ int main() {
   function refresh() {
     hl.innerHTML = highlight(ta.value) + '\n';
     gdEl.innerHTML = guias(ta.value);
+    gdEl.scrollTop = ta.scrollTop; gdEl.scrollLeft = ta.scrollLeft;
     renderGutter(false);
     paintProblems();
     syncScroll();
@@ -4873,14 +4876,14 @@ int main() {
   // pareja del paréntesis, corchete o llave que toca el cursor (ignora lo que está en comentarios, textos y #líneas)
   function marcarPareja() {
     const v = ta.value, s = ta.selectionStart;
-    if (ta.selectionEnd !== s || v.length > 60000) { brEl.innerHTML = ''; return; }
+    if (ta.selectionEnd !== s || v.length > 60000) { brEl.innerHTML = ''; brEl.scrollTop = ta.scrollTop; brEl.scrollLeft = ta.scrollLeft; return; }
     const PAR = { '(': ')', '[': ']', '{': '}', ')': '(', ']': '[', '}': '{' };
     let pos = -1;
     if (s > 0 && PAR[v[s - 1]]) pos = s - 1; else if (s < v.length && PAR[v[s]]) pos = s;
-    if (pos < 0) { brEl.innerHTML = ''; return; }
+    if (pos < 0) { brEl.innerHTML = ''; brEl.scrollTop = ta.scrollTop; brEl.scrollLeft = ta.scrollLeft; return; }
     const skip = new Uint8Array(v.length); let at = 0;
     tokens(v).forEach(([c, t]) => { if (c === 'c' || c === 's' || c === 'p') skip.fill(1, at, at + t.length); at += t.length; });
-    if (skip[pos]) { brEl.innerHTML = ''; return; }
+    if (skip[pos]) { brEl.innerHTML = ''; brEl.scrollTop = ta.scrollTop; brEl.scrollLeft = ta.scrollLeft; return; }
     const ch = v[pos], op = '([{'.indexOf(ch) >= 0, other = PAR[ch], dir = op ? 1 : -1;
     let depth = 0, m = -1;
     for (let i = pos; i >= 0 && i < v.length; i += dir) {
@@ -6782,7 +6785,7 @@ window.KB_DATA={"errores":[{"id":"ARR-001","categoria":"arreglos y textos","nomb
    (por ejemplo '5491112345678'). Vacío = el botón abre WhatsApp sin destinatario. */
 (function (root) {
   'use strict';
-  var CONFIG = { WHATSAPP_NUMERO: '5491137781528', VERSION: '0670785f1007' };
+  var CONFIG = { WHATSAPP_NUMERO: '5491137781528', VERSION: 'ee7fdfc02ab5' };
   if (typeof module !== 'undefined' && module.exports) module.exports = CONFIG;
   else root.CONFIG = CONFIG;
 })(typeof self !== 'undefined' ? self : this);
