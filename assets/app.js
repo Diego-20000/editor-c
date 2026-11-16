@@ -171,6 +171,8 @@
       last = r.e;
     }
     el.innerHTML = res + esc(text.slice(last)) + '\n';
+    // al vaciar la capa el navegador la manda arriba del todo: se vuelve a alinear con el texto
+    if (el !== ta) { el.scrollTop = ta.scrollTop; el.scrollLeft = ta.scrollLeft; }
   }
 
   /* ---------- editor ---------- */
@@ -188,6 +190,7 @@
   function refresh() {
     hl.innerHTML = highlight(ta.value) + '\n';
     gdEl.innerHTML = guias(ta.value);
+    gdEl.scrollTop = ta.scrollTop; gdEl.scrollLeft = ta.scrollLeft;
     renderGutter(false);
     paintProblems();
     syncScroll();
@@ -234,14 +237,14 @@
   // pareja del paréntesis, corchete o llave que toca el cursor (ignora lo que está en comentarios, textos y #líneas)
   function marcarPareja() {
     const v = ta.value, s = ta.selectionStart;
-    if (ta.selectionEnd !== s || v.length > 60000) { brEl.innerHTML = ''; return; }
+    if (ta.selectionEnd !== s || v.length > 60000) { brEl.innerHTML = ''; brEl.scrollTop = ta.scrollTop; brEl.scrollLeft = ta.scrollLeft; return; }
     const PAR = { '(': ')', '[': ']', '{': '}', ')': '(', ']': '[', '}': '{' };
     let pos = -1;
     if (s > 0 && PAR[v[s - 1]]) pos = s - 1; else if (s < v.length && PAR[v[s]]) pos = s;
-    if (pos < 0) { brEl.innerHTML = ''; return; }
+    if (pos < 0) { brEl.innerHTML = ''; brEl.scrollTop = ta.scrollTop; brEl.scrollLeft = ta.scrollLeft; return; }
     const skip = new Uint8Array(v.length); let at = 0;
     tokens(v).forEach(([c, t]) => { if (c === 'c' || c === 's' || c === 'p') skip.fill(1, at, at + t.length); at += t.length; });
-    if (skip[pos]) { brEl.innerHTML = ''; return; }
+    if (skip[pos]) { brEl.innerHTML = ''; brEl.scrollTop = ta.scrollTop; brEl.scrollLeft = ta.scrollLeft; return; }
     const ch = v[pos], op = '([{'.indexOf(ch) >= 0, other = PAR[ch], dir = op ? 1 : -1;
     let depth = 0, m = -1;
     for (let i = pos; i >= 0 && i < v.length; i += dir) {
@@ -254,6 +257,7 @@
   /* cierre automático de llaves, paréntesis y comillas: apagado por defecto (que el alumno tipee todo) */
   let autoCierre = store.get('autocierre', '') === '1';
   let gccIngles = store.get('gccingles', '') === '1';
+  let ajustar = store.get('ajustar', '') === '1';
 
   ta.addEventListener('scroll', syncScroll);
   ta.addEventListener('input', () => {
@@ -1035,7 +1039,7 @@
   /* ---------- ajustes: ayuda y escritura ---------- */
   function sincronizarAjustesNuevos() {
     segSet($('ayudaSel'), String(nivelAyuda)); $('ayudaDesc').textContent = NIVELES_TXT[nivelAyuda];
-    $('autoCierre').checked = autoCierre; $('gccIngles').checked = gccIngles;
+    $('autoCierre').checked = autoCierre; $('gccIngles').checked = gccIngles; $('ajustarLineas').checked = ajustar;
     $('tabSel').value = String(SANG); $('wsChk').checked = verEsp;
     const n = casosLista().length;
     $('casosBtn').textContent = 'Casos para enviar' + (n ? ' (' + n + ')' : '');
@@ -1046,6 +1050,9 @@
   });
   $('symChk').checked = simbolos;
   $('symChk').addEventListener('change', () => { simbolos = $('symChk').checked; store.set('simbolos', simbolos ? '1' : '0'); mostrarBarraSimbolos(); });
+  const aplicarAjuste = () => { $('console').classList.toggle('wrap', ajustar); };
+  aplicarAjuste();
+  $('ajustarLineas').addEventListener('change', () => { ajustar = $('ajustarLineas').checked; store.set('ajustar', ajustar ? '1' : '0'); aplicarAjuste(); });
   $('gccIngles').addEventListener('change', () => { gccIngles = $('gccIngles').checked; store.set('gccingles', gccIngles ? '1' : '0'); });
   $('autoCierre').addEventListener('change', () => { autoCierre = $('autoCierre').checked; store.set('autocierre', autoCierre ? '1' : '0'); });
   $('tabSel').addEventListener('change', () => { SANG = +$('tabSel').value; store.set('sang', String(SANG)); aplicarVista(); refresh(); });
@@ -1078,6 +1085,7 @@
     cons.scrollTop = cons.scrollHeight;
     if (tabMode() && tab === 'ed') $('tabDot').hidden = false;
   }
+  const runEnd = $('runEnd');
   function appendText(text, cls) {
     if (!text) return;
     total += text.length;
@@ -1100,7 +1108,7 @@
     rb.hidden = !on; rb.className = 'runbar' + (cls === 'wait' ? ' wait' : '');
     $('runBarTxt').textContent = cls === 'wait' ? 'Esperando datos: escribe en la consola y aprieta Enter' : txt === 'Compilando…' ? 'Compilando…' : 'Ejecutando… el programa está en marcha';
   }
-  function clearConsole() { clearTimeout(outTimer); outTimer = null; outBuf = ''; out.textContent = ''; total = 0; }
+  function clearConsole() { clearTimeout(outTimer); outTimer = null; outBuf = ''; out.textContent = ''; total = 0; runEnd.hidden = true; runEnd.textContent = ''; }
   $('clear').addEventListener('click', () => { removeInput(); clearConsole(); if ((worker || main) && waiting) showInput(); });
   function copyText(s, host) {
     const fallback = () => {
@@ -1272,7 +1280,10 @@ self.postMessage({ type: 'ready' });`;
       const c = r.code === undefined || r.code === null ? 0 : r.code;
       finEspera();
       const seg = fmtSeg(Math.max(0, performance.now() - tRun0 - tEspera));
-      appendText('— Programa terminado · código de salida ' + c + ' · ' + seg + ' —\n', c === 0 ? 'ok' : 'er');
+      // la línea queda oculta dentro de la salida (para copiar y capturar) y se muestra abajo de todo
+      const fin = '— Programa terminado · código de salida ' + c + ' · ' + seg + ' —';
+      appendText(fin + '\n', 'fin ' + (c === 0 ? 'ok' : 'er'));
+      runEnd.textContent = fin; runEnd.className = 'runend ' + (c === 0 ? 'ok' : 'er'); runEnd.hidden = false;
       setStatus('Terminó (código ' + c + ') · ' + seg, c === 0 ? '' : 'err');
     }
   }
@@ -1541,7 +1552,7 @@ self.postMessage({ type: 'ready' });`;
     if (opts.lado) { y = y0; xb = padX + leftW + gapX; wb = rightW; } else y += gap;
     if (inRows.length) { section('Entrada'); drawRows(inRows, xb + 12, false); y += gap; }
     section(pruebasImg ? 'Pruebas' : 'Salida');
-    drawRows(outRows.length && (outRows.length > 1 || outRows[0].length) ? outRows : [[['dim', '(sin salida: ejecuta el programa antes de sacar la captura)']]], xb + 12, false);
+    drawRows(outRows.length && (outRows.length > 1 || outRows[0].length) ? outRows : [[['dim', '(sin salida: ejecuta primero)']]], xb + 12, false);
     if (opts.lado) { y = y0 + bodyH; xb = padX; wb = leftW; }
     // pie: cómo se escribió (si se incluye) y la marca, en letra chica
     ctx.font = '12px ' + UI; ctx.fillStyle = SUB;

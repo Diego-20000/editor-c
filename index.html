@@ -98,12 +98,14 @@
       <button type="button" id="diagHead" class="dhead" aria-expanded="true"><span id="diagTitle">Problemas</span><svg class="i" aria-hidden="true"><use href="#i-abajo"/></svg></button>
       <div id="diagList"></div>
     </div>
+    <div class="runend" id="runEnd" role="status" hidden></div>
   </section>
 </main>
 
 <dialog id="dProgs" aria-labelledby="tProgs">
   <h2 id="tProgs">Mis programas</h2>
   <p>Se guardan solos en este dispositivo (no se suben a ningún lado).</p>
+  <p class="fine">Si esta computadora borra todo al reiniciar (pasa en algunos laboratorios), guarda tus programas en un pendrive con «Guardar .c» o «Exportar todo».</p>
   <ul class="plist" id="plist"></ul>
   <div class="drow"><button id="pnew" class="btn primary" type="button"><svg class="i" aria-hidden="true"><use href="#i-mas"/></svg>Nuevo programa</button><button id="popen" class="btn" type="button"><svg class="i" aria-hidden="true"><use href="#i-abrir"/></svg>Abrir archivo .c</button></div>
   <div class="drow"><button id="pexp" class="btn" type="button" title="Descarga todos tus programas en un solo archivo .json (copia de seguridad)"><svg class="i" aria-hidden="true"><use href="#i-descargar"/></svg>Exportar todo (.json)</button><button id="pimp" class="btn" type="button" title="Agrega los programas de un archivo .json exportado antes; no sobrescribe los que ya tienes"><svg class="i" aria-hidden="true"><use href="#i-subir"/></svg>Importar (.json)</button><button class="btn" type="button" data-close>Cerrar</button></div>
@@ -144,6 +146,7 @@
   </fieldset>
   <fieldset><legend>Escritura</legend>
     <div class="group"><label class="chk"><input type="checkbox" id="autoCierre" role="switch"> Cerrar solo llaves, paréntesis y comillas</label></div>
+    <div class="group"><label class="chk"><input type="checkbox" id="ajustarLineas" role="switch"> Ajustar las líneas largas de la salida (si no, se desliza de costado)</label></div>
     <div class="group"><label class="chk"><input type="checkbox" id="gccIngles" role="switch"> Mostrar cómo lo diría gcc (en inglés)</label></div>
     <p class="foot">Apagado: practicas escribiendo todo. La sangría automática no cambia.</p>
     <div class="group"><label class="chk"><input type="checkbox" id="symChk" role="switch"> Barra de símbolos en el celular</label></div>
@@ -168,7 +171,7 @@
     <li>Tus preferencias: tema, tamaño de letra y nivel de ayuda.</li>
     <li>Los casos que el editor no supo explicar, para que tú elijas si los mandas.</li>
   </ul>
-  <p>Todo eso queda solo en el navegador de este dispositivo. Si borras los datos del navegador, se pierde: descarga tus programas con «Guardar .c» o «Exportar todo».</p>
+  <p>Todo eso queda solo en el navegador de este dispositivo. Si borras los datos del navegador, o si la computadora se restaura al reiniciar (algunos laboratorios lo hacen), se pierde: descarga tus programas con «Guardar .c» o «Exportar todo».</p>
   <h3>Qué sale del dispositivo, y solo si tú lo eliges</h3>
   <ul>
     <li><b>Captura:</b> la imagen lleva los datos que cargaste en Ajustes. Revísala antes de compartirla.</li>
@@ -192,7 +195,7 @@
   <h2 id="tPru">Pruebas de funcionamiento</h2>
   <p>Guarda varias entradas con este programa, ejecútalas todas juntas y sácales una sola captura. Se guardan en este dispositivo.</p>
   <ul class="prulist" id="pruList"></ul>
-  <p class="fine" id="pruVacio">Todavía no hay pruebas. Escribe una entrada en «Entrada» (en la consola) y aprieta «Guardar la entrada actual», o crea una vacía y escríbela acá.</p>
+  <p class="fine" id="pruVacio">Todavía no hay pruebas. Escribe una entrada en «Entrada» (en la consola) y aprieta «Guardar la entrada actual», o crea una vacía y escríbela aquí.</p>
   <div class="drow"><button id="pruAdd" class="btn" type="button"><svg class="i" aria-hidden="true"><use href="#i-mas"/></svg>Guardar la entrada actual como prueba</button></div>
   <div class="drow"><button id="pruRun" class="btn primary" type="button"><svg class="i" aria-hidden="true"><use href="#i-ejecutar"/></svg>Ejecutar todas</button><button id="pruShot" class="btn" type="button"><svg class="i" aria-hidden="true"><use href="#i-captura"/></svg>Captura de las pruebas</button><button class="btn" type="button" data-close>Cerrar</button></div>
   <p class="fine" id="pruEstado" role="status"></p>
@@ -288,7 +291,7 @@
   <textarea id="cNota2" rows="3" maxlength="600" placeholder="Por ejemplo: «En el ejercicio del promedio me da 2 y esperaba 2.5» o «el editor me marca un error que no entiendo»"></textarea>
   <p class="fine">Se manda lo que escribes arriba, el código del programa (sin la cabecera con tu nombre), los datos de entrada y el mensaje del compilador. Sin nombre ni datos personales.</p>
   <ul class="clist" id="cList"></ul>
-  <p class="fine" id="cVacio" hidden>No hay casos guardados. Cuando el editor no sepa explicar algo, lo vas a poder mandar desde acá.</p>
+  <p class="fine" id="cVacio" hidden>No hay casos guardados. Cuando el editor no sepa explicar algo, lo vas a poder mandar desde aquí.</p>
   <div id="cAcc">
     <h3>Vista previa de lo que se enviaría</h3>
     <pre class="prev" id="cPrev" tabindex="0" aria-label="Vista previa del texto que se enviaría"></pre>
@@ -305,6 +308,7 @@
 <div class="bubble" id="bubble" role="dialog" aria-label="¿Qué es esto?" hidden></div>
 <input type="file" id="file" hidden>
 <input type="file" id="fileJson" hidden>
+<script src="assets/compat.js"></script>
 <script src="assets/compiler.js"></script>
 <script src="assets/runtime.js"></script>
 <script src="assets/examples.js"></script>

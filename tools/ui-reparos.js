@@ -313,6 +313,57 @@ const check = (c, m) => { if (c) { ok++; console.log('  ok   ' + m); } else { fa
     }
   }
 
+  // 8) Consola: «Programa terminado» abajo de todo y salida con desplazamiento lateral
+  {
+    const cx = await br.newContext({ viewport: { width: 1280, height: 800 } });
+    const pg = await cx.newPage();
+    await pg.goto(url + '?ayuda=2'); await pg.waitForSelector('#code');
+    await pg.fill('#code', '#include <stdio.h>\nint main() {\n    int I;\n    float X = 3;\n    printf("%d\\n", X);\n    for (I = 1; I <= 3; I++) printf("%5d %200d\\n", I, I);\n}\n');
+    await pg.keyboard.press('F5'); await pg.waitForSelector('#runEnd:not([hidden])', { timeout: 8000 });
+    const g = await pg.evaluate(() => { const e = document.getElementById('runEnd').getBoundingClientRect(), o = document.getElementById('out').getBoundingClientRect(), d = document.getElementById('diag'), c = document.getElementById('console'); const dr = d.hidden ? null : d.getBoundingClientRect(); return { eTop: e.top, oBottom: o.bottom, dBottom: dr && dr.bottom, sw: c.scrollWidth, cw: c.clientWidth, vis: getComputedStyle(document.querySelector('#out .fin')).display }; });
+    check(/Programa terminado/.test(await pg.textContent('#runEnd')), 'consola: la línea «Programa terminado» se muestra abajo');
+    check(g.dBottom === null || g.eTop >= g.dBottom - 1, 'consola: la línea final queda debajo del panel de problemas');
+    check(g.vis === 'none', 'consola: no se repite dentro de la salida');
+    check(g.sw > g.cw, 'consola: las líneas largas se deslizan de costado');
+    await pg.click('#clear');
+    check(await pg.isHidden('#runEnd'), 'consola: Limpiar oculta la línea final');
+    await cx.close();
+  }
+
+  // 9) Capas del editor (pares de paréntesis, guías, subrayados) alineadas con el texto cuando hay desplazamiento
+  {
+    const cx = await br.newContext({ viewport: { width: 1356, height: 606 } });
+    const pg = await cx.newPage();
+    await pg.goto(url + '?ayuda=2'); await pg.waitForSelector('#code');
+    let cod = ''; for (let i = 0; i < 30; i++) cod += '//linea ' + i + '\n';
+    cod += 'int main() {\n    printf ("hola")\n}\n';
+    await pg.fill('#code', cod);
+    await pg.evaluate(() => { const t = document.getElementById('code'); const i = t.value.indexOf('("hola")') + 8; t.focus(); t.setSelectionRange(i, i); t.scrollTop = t.scrollHeight; t.dispatchEvent(new Event('scroll')); t.dispatchEvent(new Event('keyup')); t.dispatchEvent(new Event('click')); });
+    await pg.waitForTimeout(400);
+    const d = await pg.evaluate(() => { const t = document.getElementById('code'); return ['gd', 'br', 'hl'].map((id) => [id, document.getElementById(id).scrollTop - t.scrollTop]); });
+    check(d.every(([, x]) => Math.abs(x) <= 1), 'editor: todas las capas quedan alineadas con el texto al desplazar (' + d.map((a) => a[0] + ':' + a[1]).join(' ') + ')');
+    await cx.close();
+  }
+
+  // 7) Navegador no compatible: avisa en vez de dejar la pantalla rota; con un navegador normal no aparece
+  {
+    const casos = [
+      ['normal', null, false],
+      ['sin BigInt', () => { delete window.BigInt; }, true],
+      ['sin ventanas <dialog>', () => { HTMLDialogElement.prototype.showModal = undefined; }, true]
+    ];
+    for (const [nombre, preparar, debeAvisar] of casos) {
+      const cx = await br.newContext({ viewport: { width: 1280, height: 800 } });
+      if (preparar) await cx.addInitScript(preparar);
+      const pg = await cx.newPage();
+      await pg.goto(url); await pg.waitForTimeout(800);
+      const hay = !!(await pg.$('#compat'));
+      check(hay === debeAvisar, 'compatibilidad (' + nombre + '): ' + (debeAvisar ? 'muestra el aviso de navegador viejo' : 'no muestra ningún aviso'));
+      if (debeAvisar) check(/navegador es muy viejo/.test(await pg.textContent('#compat')) && /celular/.test(await pg.textContent('#compat')), 'compatibilidad (' + nombre + '): el aviso dice qué hacer');
+      await cx.close();
+    }
+  }
+
   await br.close();
   console.log(ok + ' ok, ' + fallas + ' fallas');
   process.exit(fallas ? 1 : 0);

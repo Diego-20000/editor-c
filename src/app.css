@@ -107,6 +107,7 @@ select.btn { background-image: none; }
 .pname:hover { background: var(--fill); }
 .pname span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .pname .i { width: 16px; height: 16px; color: var(--muted); }
+.pane-head > .chip { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 .chip { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px; background: var(--fill); color: var(--muted); font: 600 13px var(--ui); white-space: nowrap; }
 .chip::before { content: ""; width: 7px; height: 7px; background: currentColor; border-radius: 50%; }
 .chip.run { color: var(--accent); } .chip.run::before { border-radius: 1px; }
@@ -161,7 +162,13 @@ html.lectura #code { caret-color: transparent; }
 .runbar.wait::before { border-radius: 50%; background: transparent; box-shadow: inset 0 0 0 2px var(--accent); }
 .console { flex: 1; overflow: auto; padding: 12px 14px; font: var(--fs)/1.5 var(--mono); background: var(--panel); min-height: 0; }
 .console:focus-visible { outline-offset: -2px; }
-#out { margin: 0; font: inherit; white-space: pre-wrap; overflow-wrap: anywhere; color: var(--text); }
+#out { margin: 0; font: inherit; white-space: pre; color: var(--text); }
+.console.wrap #out { white-space: pre-wrap; overflow-wrap: anywhere; }
+/* los mensajes del editor (errores, «terminado», entrada escrita) bajan de renglón; solo lo que imprime el programa se desliza de costado */
+#out .er, #out .dim, #out .ok, #out .in { white-space: pre-wrap; overflow-wrap: anywhere; }
+#out .fin { display: none; }
+.runend { padding: 7px 14px; border-top: 1px solid var(--line); background: var(--panel); font: 600 13px/1.4 var(--mono); }
+.runend.ok { color: var(--ok); } .runend.er { color: var(--danger); }
 /* lo que tipea el alumno se distingue de lo que imprime el programa por el matiz y el peso, no solo por el color */
 #out .in { color: var(--input); font-weight: 700; }
 #out .er { color: var(--danger); }
@@ -515,3 +522,7 @@ html.lectura .pane-head .hint { margin-right: 8px; }
 .pru textarea { width: 100%; resize: vertical; padding: 6px 8px; border-radius: 8px; border: 1px solid var(--lineS); background: var(--bg); color: var(--input); font: 600 14px/1.4 var(--mono); }
 .pruout { margin: 6px 0 0; padding: 8px; border-radius: 8px; background: var(--bg); border: 1px solid var(--line); font: 14px/1.4 var(--mono); white-space: pre-wrap; overflow-wrap: anywhere; max-height: 30vh; overflow: auto; }
 .pruout.er { border-color: var(--err, #c2261b); }
+#shotLayRow { flex-direction: row; }
+#shotLayRow select { max-width: 60%; }
+.group > .fine { padding: 8px 16px 10px; color: var(--muted); }
+.group + .shotbox { margin-top: 12px; }
