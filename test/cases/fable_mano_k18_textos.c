@@ -1,0 +1,3 @@
+#include <stdio.h>
+#include <string.h>
+int main() { char A[30] = "hola", B[30], C[] = {'x', 'y', '\0', 'z'}; int I, N; strcpy(B, A); strcat(B, " mundo"); printf("%s %d %d %d\n", B, (int) strlen(B), (int) strlen(C), (int) sizeof(C)); printf("%d %d %d %d\n", strcmp("abc", "abd") < 0, strcmp("b", "abc") > 0, strcmp(A, "hola"), strncmp("hola", "holz", 3)); N = strlen(B); for (I = 0; I < N / 2; I++) { char T = B[I]; B[I] = B[N - 1 - I]; B[N - 1 - I] = T; } puts(B); B[4] = '\0'; printf("[%s] %d\n", B, (int) strlen(B)); strncpy(A, "abcdefgh", 3); printf("%s\n", A); A[0] = A[0] - 32; printf("%s %c %d\n", A, A[1], A[4]); return 0; }

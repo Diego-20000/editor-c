@@ -1,0 +1,2 @@
+#include <stdio.h>
+int main() { int A = 5, B, V[4] = {10, 20, 30, 40}, I = 0; B = A++; printf("%d %d\n", A, B); B = ++A; printf("%d %d\n", A, B); B = A-- - 1; printf("%d %d\n", A, B); B = -A++; printf("%d %d\n", A, B); V[I++] = 99; V[I] += 5; printf("%d %d %d %d\n", V[0], V[1], I, V[++I]); B = V[I--] + V[I]; printf("%d %d\n", I, I >= 0); for (I = 0; I < 3; ) printf("%d ", V[I++]); printf("\n"); A = 3; A += A++ * 0 + 1; printf("%d\n", A > 0); return 0; }

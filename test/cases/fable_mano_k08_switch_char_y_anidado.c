@@ -1,0 +1,2 @@
+#include <stdio.h>
+int main() { char T[] = "a+b*c-9"; int I, V = 0, O = 0; for (I = 0; T[I]; I++) { switch (T[I]) { case '+': case '-': O++; break; case '*': O += 10; break; case 'a': case 'e': V++; break; default: switch (T[I] >= '0' && T[I] <= '9') { case 1: V += 100; break; case 0: break; } } } printf("%d %d\n", V, O); switch (3 * 2 - 1) { case 2 + 3: printf("cinco\n"); break; case 'A': printf("A\n"); } return 0; }

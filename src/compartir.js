@@ -22,7 +22,23 @@
       .replace(/https?:\/\/\S+/g, '(enlace quitado)')
       .replace(/\+?\d[\d ()-]{7,}\d/g, function (m) { return m.replace(/\D/g, '').length >= 8 ? '(número quitado)' : m; });
   }
-  function recortar(s, n) { s = String(s == null ? '' : s); return s.length > n ? s.slice(0, n) : s; }
+  // Medio carácter suelto (una mitad de un par, como queda al cortar un emoji o al venir de un archivo dañado) no se puede
+  // poner en un enlace: encodeURIComponent falla y «Avisar a Diego» dejaba de abrir. Se cambia por el signo de reemplazo.
+  function bienFormado(s) {
+    s = String(s == null ? '' : s);
+    if (!/[\ud800-\udfff]/.test(s)) return s;
+    if (typeof s.toWellFormed === 'function') return s.toWellFormed();
+    var out = '', i, c, d;
+    for (i = 0; i < s.length; i++) {
+      c = s.charCodeAt(i);
+      if (c >= 0xD800 && c <= 0xDBFF) { d = s.charCodeAt(i + 1); if (d >= 0xDC00 && d <= 0xDFFF) { out += s[i] + s[i + 1]; i++; } else out += '\ufffd'; }
+      else if (c >= 0xDC00 && c <= 0xDFFF) out += '\ufffd';
+      else out += s[i];
+    }
+    return out;
+  }
+  function soloTexto(v) { return typeof v === 'string' ? v : typeof v === 'number' && isFinite(v) ? String(v) : ''; }
+  function recortar(s, n) { s = bienFormado(s); return s.length > n ? cortarSeguro(s, n) : s; }
   function entero(n, min, max, def) { n = Math.round(Number(n)); return isFinite(n) && n >= min && n <= max ? n : def; }
 
   function hoy() { return new Date().toISOString().slice(0, 10); }
@@ -57,8 +73,29 @@
     try {
       var t = almacen.getItem(CLAVE);
       var a = t ? JSON.parse(t) : [];
-      return Array.isArray(a) ? a.filter(function (c) { return c && typeof c === 'object' && c.diag && typeof c.codigo === 'string'; }) : [];
+      return Array.isArray(a) ? a.map(guardadoLimpio).filter(Boolean).slice(-MAX_CASOS) : [];
     } catch (e) { return []; }
+  }
+  // Un caso que estaba guardado en el navegador: se arma de nuevo con los campos conocidos, cada uno con su tipo y su tope.
+  // (Si lo guardado está dañado o lo cambió otra cosa, un campo con otro tipo rompía la pantalla de casos.)
+  function guardadoLimpio(c) {
+    if (!c || typeof c !== 'object' || Array.isArray(c) || !c.diag || typeof c.diag !== 'object' || typeof c.codigo !== 'string') return null;
+    var d = c.diag, limpio = {
+      v: 1,
+      fecha: /^\d{4}-\d{2}-\d{2}$/.test(soloTexto(c.fecha)) ? c.fecha : hoy(),
+      version: recortar(soloTexto(c.version), 40).replace(/[^\w.-]/g, ''),
+      nivel_ayuda: entero(typeof c.nivel_ayuda === 'number' ? c.nivel_ayuda : NaN, 0, 2, 1),
+      diag: {
+        nivel: d.nivel === 'aviso' || d.nivel === 'informacion' ? d.nivel : 'error',
+        code: recortar(soloTexto(d.code), 60).replace(/[^\w-]/g, ''),
+        msg: recortar(soloTexto(d.msg), MAX_MSG),
+        line: entero(typeof d.line === 'number' ? d.line : NaN, 0, 100000, 0)
+      },
+      codigo: recortar(c.codigo, MAX_CODIGO),
+      entrada: recortar(soloTexto(c.entrada), MAX_ENTRADA)
+    };
+    if (typeof c.recortado === 'number' && isFinite(c.recortado) && c.recortado > MAX_CODIGO) { limpio.recortado = c.recortado; limpio.aviso = 'código recortado a ' + MAX_CODIGO + ' caracteres (original: ' + c.recortado + ')'; }
+    return limpio;
   }
   function escribir(almacen, lista) {
     try { almacen.setItem(CLAVE, JSON.stringify(lista)); return true; } catch (e) { return false; }
@@ -86,7 +123,7 @@
 
   /* ---------- WhatsApp ---------- */
 
-  function limpiarNota(n) { return String(n == null ? '' : n).replace(/\r/g, '').replace(/\n{3,}/g, '\n\n').trim().slice(0, 600); }
+  function limpiarNota(n) { return recortar(bienFormado(n).replace(/\r/g, '').replace(/\n{3,}/g, '\n\n').trim(), 600); }
   function mensajeWhatsApp(casos, nota) {
     casos = (casos || []).filter(Boolean);
     nota = limpiarNota(nota);
@@ -109,10 +146,10 @@
   }
 
   function cortarSeguro(s, n) { if (n < s.length && n > 0 && /[\uD800-\uDBFF]/.test(s[n - 1])) n--; return s.slice(0, n); }
-  function cod(s) { return encodeURIComponent(s).length; }
+  function cod(s) { return encodeURIComponent(bienFormado(s)).length; }
 
   function urlWhatsApp(texto, numero) {
-    texto = String(texto == null ? '' : texto);
+    texto = bienFormado(texto);
     api.textoCompleto = texto; api.recortado = false;
     var num = String(numero == null ? '' : numero).replace(/\D/g, '');
     var base = 'https://wa.me/' + num + '?text=';
@@ -140,7 +177,7 @@
       }
       t = t.replace(/\s+$/, '') + '\n' + AVISO;
     }
-    return base + encodeURIComponent(t);
+    return base + encodeURIComponent(bienFormado(t));
   }
 
   /* ---------- exportar e importar ---------- */

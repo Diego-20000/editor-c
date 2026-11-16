@@ -24,7 +24,11 @@ self.addEventListener('fetch', (e) => {
   e.respondWith(caches.open(CACHE).then(async (c) => {
     const hit = await c.match(req, { ignoreSearch: true });
     if (hit) return hit;
-    if (req.mode === 'navigate') { const idx = await c.match(new URL('index.html', self.registration.scope).href); if (idx) return idx; }
-    return fetch(req);
+    if (req.mode !== 'navigate') return fetch(req);
+    // Navegación a algo del sitio que no está en la caché (por ejemplo dist/editor-c.html o un documento): primero la red, para
+    // traer ESE archivo. Antes se devolvía siempre la página principal, y con el editor instalado esos archivos no se podían abrir.
+    // Solo si no hay conexión se muestra el editor.
+    try { return await fetch(req); }
+    catch (err) { const idx = await c.match(new URL('index.html', self.registration.scope).href); if (idx) return idx; throw err; }
   }));
 });

@@ -25,7 +25,9 @@ Estos casos no tienen resultado garantizado en C, así que el editor no promete 
 ## Límites propios del editor
 - Los textos y la entrada son **bytes UTF-8**, como en glibc: `strlen`, los anchos de `%s`, `%c`, `getchar`, `fgets` y `%[...]` cuentan bytes, y lo que se imprime de a un byte (`%c`, `putchar`) se junta como UTF-8 (dos llamadas con los bytes de una `é` muestran una `é`). Lo único que no se reproduce igual: una secuencia UTF-8 incompleta o inválida (por ejemplo cortar una `é` por la mitad con un ancho) se muestra como «�» en lugar de imprimir el byte suelto, porque la salida del editor es texto.
 - Arreglos de hasta 20 millones de elementos; ancho y precisión de formato hasta 100000.
-- La recursión se corta antes que en gcc (el límite depende del navegador).
+- La recursión se corta antes que en gcc (el límite depende del navegador): medido en noviembre de 2026, entre 8.000 y 10.000 niveles en Chromium y Node; gcc pasa de 100.000. El editor avisa «desbordamiento de la pila».
+- Cada arreglo admite hasta 20 millones de elementos (un arreglo más grande se rechaza con un mensaje); no hay un tope para el total del programa.
+- Sumarle un número a un texto o a un arreglo (`"hola" + 2`, `T + 1`) es aritmética de punteros: no está soportado.
 - `%e`/`%g` con 15 o más cifras cerca de potencias de 10 y funciones de `math.h` pueden diferir en 1 ulp de glibc.
 
 ## Cómo se comprueba

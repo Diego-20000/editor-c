@@ -13,17 +13,28 @@
   const coarse = !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
 
   /* ---------- almacenamiento local (todo queda en este dispositivo) ---------- */
-  let storeWarned = false;
+  let storeWarned = 0;   // momento del último aviso: si sigue sin poder guardar, se vuelve a avisar cada minuto (antes avisaba una sola vez y después se perdía todo en silencio)
   const store = {
     get(k, d) { try { const v = localStorage.getItem('editorc.' + k); return v === null ? d : v; } catch (e) { return d; } },
-    set(k, v) {
-      try { localStorage.setItem('editorc.' + k, v); }
-      catch (e) { if (!storeWarned) { storeWarned = true; toast('No se pudo guardar en este dispositivo (¿navegación privada o sin espacio?). Descarga el .c para no perder el trabajo.'); } }
+    // devuelve true si quedó guardado; callado = sin el aviso general (quien llama avisa con sus palabras)
+    set(k, v, callado) {
+      try { localStorage.setItem('editorc.' + k, v); storeWarned = 0; return true; }
+      catch (e) {
+        if (!callado && Date.now() - storeWarned > 60000) { storeWarned = Date.now(); toast('No se pudo guardar en este dispositivo (¿navegación privada o sin espacio?). Descarga el .c para no perder el trabajo.'); }
+        return false;
+      }
     },
     json(k, d) { try { const v = JSON.parse(store.get(k, '')); return v === null || v === undefined ? d : v; } catch (e) { return d; } }
   };
-  const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  // Para armar HTML con texto del alumno (capas del editor). Hoy solo se usa como contenido de un elemento, donde alcanza con & < >;
+  // las comillas también se escapan por si algún día se usa dentro de un atributo.
+  const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   const pad2 = (n) => (n < 10 ? '0' : '') + n;
+  /* Todo lo que no escribió el alumno en esta sesión (lo guardado en el navegador, un enlace, un archivo importado, un .c) se revisa antes de usarlo:
+     tipo, largo y caracteres. Un nombre no lleva caracteres de control ni marcas de dirección (las que hacen que «exe.jpg» se lea al revés). */
+  const RARO = /[\u0000-\u001f\u007f-\u009f\u200e\u200f\u2028-\u202e\u2066-\u2069\ufeff]+/g;
+  const texto = (v, max) => (typeof v === 'string' ? v : typeof v === 'number' && isFinite(v) ? String(v) : '').slice(0, max);
+  const nombreLimpio = (v, max) => texto(v, 400).replace(RARO, ' ').replace(/\s+/g, ' ').trim().slice(0, max || 60).trim();
 
   /* ---------- toast ---------- */
   let toastTimer = null;
@@ -49,7 +60,11 @@
   }
 
   /* ---------- datos del alumno y cabecera ---------- */
-  let user = Object.assign({ name: '', dni: '', curso: '', mat: '', ciclo: '' }, store.json('user', {}));
+  let user = (function () {
+    const g = store.json('user', {}), u = { name: '', dni: '', curso: '', mat: '', ciclo: '' };
+    if (g && typeof g === 'object' && !Array.isArray(g)) for (const k of Object.keys(u)) if (Object.prototype.hasOwnProperty.call(g, k)) u[k] = nombreLimpio(g[k], 120);
+    return u;
+  })();
   function headerText() {
     const c = user.ciclo || String(new Date().getFullYear());
     return ['// ' + (user.name || 'Apellido, Nombre'), '// ' + (user.curso || 'Curso'), '// ' + (user.mat || 'Materia'),
@@ -58,9 +73,21 @@
   function template() { return headerText() + '\n\n#include <stdio.h>\n\nint main() {\n    \n    return 0;\n}\n'; }
 
   /* ---------- programas guardados ---------- */
+  const MAX_PRUEBAS = 30;
+  // pruebas guardadas con un programa: [{ n: nombre, i: entrada }]
+  function pruLimpiar(t) {
+    if (!Array.isArray(t)) return undefined;
+    const l = t.filter((x) => x && typeof x === 'object' && typeof x.i === 'string').slice(0, MAX_PRUEBAS).map((x) => ({ n: nombreLimpio(x.n, 40), i: x.i.slice(0, 5000) }));
+    return l.length ? l : undefined;
+  }
+  // un programa guardado: solo los campos conocidos, cada uno con su tipo (lo demás se descarta)
+  function progLimpio(p) {
+    if (!p || typeof p !== 'object' || Array.isArray(p) || typeof p.code !== 'string' || !(typeof p.id === 'string' || typeof p.id === 'number') || p.id === '') return null;
+    return { id: String(p.id).slice(0, 40), name: nombreLimpio(p.name) || 'Programa', code: p.code, input: typeof p.input === 'string' ? p.input : '', t: typeof p.t === 'number' && isFinite(p.t) ? p.t : Date.now(), tests: pruLimpiar(p.tests) };
+  }
   let progs = store.json('progs', []);
   if (!Array.isArray(progs)) progs = [];
-  progs = progs.filter((p) => p && typeof p.code === 'string' && p.id);
+  progs = progs.map(progLimpio).filter(Boolean);
   let cur = null;
   const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
   function nextName(base) {
@@ -69,7 +96,8 @@
     if (!names.has(base)) return base;
     for (let i = 2; ; i++) if (!names.has(base + ' ' + i)) return base + ' ' + i;
   }
-  function persist() { store.set('progs', JSON.stringify(progs)); store.set('cur', cur ? cur.id : ''); }
+  let guardadoOk = true;   // ¿entró el último guardado? (si el navegador se quedó sin espacio, no)
+  function persist(callado) { guardadoOk = store.set('progs', JSON.stringify(progs), callado); store.set('cur', cur ? cur.id : '', true); return guardadoOk; }
   let saveTimer = null;
   function scheduleSave() { clearTimeout(saveTimer); saveTimer = setTimeout(flushSave, 350); }
   function flushSave() {
@@ -490,7 +518,7 @@
   });
   /* avisos silenciados por código estable (si el motor lo informa); se guardan en este dispositivo */
   let muted = store.json('muted', []); if (!Array.isArray(muted)) muted = muted && typeof muted === 'object' ? Object.keys(muted) : [];
-  muted = muted.filter((c) => typeof c === 'string').slice(0, 200);
+  muted = muted.filter((c) => typeof c === 'string' && /^[\w-]{1,60}$/.test(c)).slice(0, 200);
   function saveMuted() { store.set('muted', JSON.stringify(muted)); updateMutedRow(); }
   function updateMutedRow() {
     $('mutedRow').hidden = !muted.length;
@@ -1096,14 +1124,14 @@
     if (open) inTxt.focus({ preventScroll: true });
   });
   inTxt.addEventListener('input', () => { updateInDot(); scheduleSave(); });
-  let presetQ = [];
+  let presetQ = [], presetI = 0;   // presetI: próxima línea (sacar del frente con shift() se vuelve lento con decenas de miles de líneas)
   function preparePreset() {
     const t = inTxt.value.replace(/\r\n?/g, '\n');
-    presetQ = t.trim() ? t.replace(/\n$/, '').split('\n') : [];
+    presetQ = t.trim() ? t.replace(/\n$/, '').split('\n') : []; presetI = 0;
   }
   function nextPreset() {
-    if (!presetQ.length) return null;
-    const l = presetQ.shift();
+    if (presetI >= presetQ.length) return null;
+    const l = presetQ[presetI++];
     avisoComa(l);
     removeInput(); appendText(l + '\n', 'in');
     return l;
@@ -1145,6 +1173,15 @@
   // Así un código patológico (compilación eterna, bucle infinito, arreglo gigante) nunca congela la página
   // y Detener siempre funciona (termina el Worker).
   const BOOT = `
+// El programa del alumno no necesita red ni almacenamiento. Se quitan del Worker antes de ejecutar nada: si algún día un error del
+// compilador dejara pasar código que no es el del programa, no tendría con qué sacar datos, traer otro script ni tocar la caché del sitio.
+(function () {
+  const QUITAR = ['fetch', 'XMLHttpRequest', 'WebSocket', 'WebTransport', 'EventSource', 'importScripts', 'caches', 'indexedDB', 'BroadcastChannel', 'Worker', 'SharedWorker', 'RTCPeerConnection', 'Notification'];
+  for (const k of QUITAR) {
+    for (let o = self; o && o !== Object.prototype; o = Object.getPrototypeOf(o)) { try { delete o[k]; } catch (e) { /* no se deja borrar */ } }
+    try { if (k in self) Object.defineProperty(self, k, { value: undefined, writable: false, configurable: false }); } catch (e) { /* no se deja tapar */ }
+  }
+})();
 const CAP = ${CAP};
 let pend = '', sent = 0, resolver = null, capped = false;
 function flush() { if (pend) { self.postMessage({ type: 'out', s: pend }); pend = ''; } }
@@ -1372,12 +1409,17 @@ self.postMessage({ type: 'ready' });`;
   }
   function save() { download(new Blob([ta.value], { type: 'text/plain' }), slug() + '.c'); }
   $('save').addEventListener('click', save);
+  const MAX_CODE = 1000000;   // tope de un programa que viene de afuera (archivo .c o importación)
+  const avisoSinEspacio = () => toast('El programa se abrió, pero no se pudo guardar en este dispositivo: no queda espacio. Descarga el .c para no perderlo.');
   $('popen').addEventListener('click', () => $('file').click());
   $('file').addEventListener('change', (e) => {
     const f = e.target.files[0]; if (!f) return;
-    const r = new FileReader();
     const inp = e.target;
-    r.onload = () => { newProgram(f.name.replace(/\.[^.]*$/, ''), String(r.result).replace(/\r\n?/g, '\n')); $('dProgs').close(); };
+    // un archivo enorme (o uno que no es de texto) congelaba la página varios segundos y llenaba el almacenamiento
+    if (f.size > MAX_CODE) { toast('El archivo es demasiado grande para ser un programa en C (más de 1 MB).'); try { inp.value = ''; } catch (err) { /* nada */ } return; }
+    const r = new FileReader();
+    r.onerror = () => toast('No se pudo leer el archivo.');
+    r.onload = () => { newProgram(nombreLimpio(String(f.name).replace(/\.[^.]*$/, '')) || 'Programa', String(r.result).replace(/\r\n?/g, '\n')); $('dProgs').close(); if (!guardadoOk) avisoSinEspacio(); };
     r.onloadend = () => { try { inp.value = ''; } catch (err) { /* nada */ } };
     r.readAsText(f);
   });
@@ -1544,7 +1586,6 @@ self.postMessage({ type: 'ready' });`;
   /* ---------- pruebas: varias entradas guardadas con el programa y «Ejecutar todas» ---------- */
   const dPru = $('dPru');
   let pruRes = null;   // { code, items: [{ estado, out, ... }] } de la última vez que se ejecutaron todas con este código
-  function pruLimpiar(t) { return Array.isArray(t) ? t.filter((x) => x && typeof x.i === 'string').slice(0, 30).map((x) => ({ n: String(x.n || '').slice(0, 40), i: x.i.slice(0, 5000) })) : undefined; }
   const pruTests = () => { if (!cur) return []; if (!Array.isArray(cur.tests)) cur.tests = []; return cur.tests; };
   function correrCaso(src, entrada) {
     return new Promise((resolve) => {
@@ -1640,7 +1681,7 @@ self.postMessage({ type: 'ready' });`;
   $('pruebas').addEventListener('click', () => { $('more').open = matchMedia('(min-width: 900px)').matches; pruAbrir(); });
   $('pruAdd').addEventListener('click', () => {
     const T = pruTests(); if (!cur) return;
-    if (T.length >= 30) { toast('Hay un máximo de 30 pruebas por programa.'); return; }
+    if (T.length >= MAX_PRUEBAS) { toast('Hay un máximo de ' + MAX_PRUEBAS + ' pruebas por programa.'); return; }
     T.push({ n: 'Prueba ' + (T.length + 1), i: inTxt.value.replace(/\n+$/, '') }); pruRes = null; persist(); pruRender();
     $('pruList').lastElementChild.querySelector('input').focus({ preventScroll: false });
   });
@@ -1807,7 +1848,7 @@ self.postMessage({ type: 'ready' });`;
   });
 
   /* ---------- pasar un programa a otro dispositivo por enlace: los datos van en la parte # y no llegan a ningún servidor ---------- */
-  const MAX_ENLACE = 8000;
+  const MAX_ENLACE = 8000, MAX_ENTRADA_ENLACE = 2000, MAX_HASH = 100000, MAX_DESCOMPRIMIDO = 512 * 1024;
   const b64u = (u8) => { let s = ''; for (let i = 0; i < u8.length; i++) s += String.fromCharCode(u8[i]); return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); };
   const unb64u = (t) => { t = t.replace(/-/g, '+').replace(/_/g, '/'); while (t.length % 4) t += '='; const b = atob(t), u = new Uint8Array(b.length); for (let i = 0; i < b.length; i++) u[i] = b.charCodeAt(i); return u; };
   async function empaquetar(obj) {
@@ -1816,24 +1857,32 @@ self.postMessage({ type: 'ready' });`;
     return 'r.' + b64u(raw);
   }
   async function desempaquetar(s) {
+    if (s.length > MAX_HASH) throw new Error('tamaño');
     let u = unb64u(s.slice(2));
     if (s.slice(0, 2) === 'z.') {
-      // se descomprime de a pedazos y se corta al pasar el tope: un enlace chico no puede llenar la memoria
-      const lector = new Blob([u]).stream().pipeThrough(new DecompressionStream('deflate-raw')).getReader(), partes = []; let total = 0;
-      for (;;) { const r = await lector.read(); if (r.done) break; total += r.value.length; if (total > 512 * 1024) { lector.cancel().catch(() => {}); throw new Error('tamaño'); } partes.push(r.value); }
+      // Se descomprime de a poco y se corta al pasar el tope: un enlace chico no puede llenar la memoria.
+      // El comprimido entra en tramos de 1 KB y solo cuando se pide: entregado de una vez, el navegador descomprimía todo
+      // (cientos de MB con un enlace de 300 KB) antes de que el tope pudiera cortar.
+      let desde = 0;
+      const fuente = new ReadableStream({ pull(c) { if (desde >= u.length) c.close(); else { c.enqueue(u.subarray(desde, desde + 1024)); desde += 1024; } } }, { highWaterMark: 0 });
+      const lector = fuente.pipeThrough(new DecompressionStream('deflate-raw')).getReader(), partes = []; let total = 0;
+      for (;;) { const r = await lector.read(); if (r.done) break; total += r.value.length; if (total > MAX_DESCOMPRIMIDO) { lector.cancel().catch(() => {}); throw new Error('tamaño'); } partes.push(r.value); }
       u = new Uint8Array(total); let pos = 0; partes.forEach((x) => { u.set(x, pos); pos += x.length; });
     }
     else if (s.slice(0, 2) !== 'r.') throw new Error('formato');
     const o = JSON.parse(new TextDecoder().decode(u));
-    if (!o || typeof o.c !== 'string' || o.c.length > MAX_ENLACE * 4) throw new Error('datos');
-    return { name: String(o.n || 'Programa recibido').slice(0, 60), code: o.c, input: typeof o.i === 'string' ? o.i.slice(0, 2000) : '' };
+    if (!o || typeof o !== 'object' || typeof o.c !== 'string' || o.c.length > MAX_ENLACE * 4) throw new Error('datos');
+    return { name: nombreLimpio(o.n) || 'Programa recibido', code: o.c.replace(/\r\n?/g, '\n'), input: typeof o.i === 'string' ? o.i.slice(0, MAX_ENTRADA_ENLACE) : '' };
   }
   $('enlace').addEventListener('click', async () => {
     $('more').open = false; flushSave();
     if (!/^https?:$/.test(location.protocol)) { toast('El enlace funciona desde la página publicada. Desde un archivo usa «Guardar .c».'); return; }
     if (cur.code.length > MAX_ENLACE) { toast('El programa es demasiado largo para un enlace. Usa «Guardar .c».'); return; }
     let url;
-    try { url = location.origin + location.pathname + '#p=' + await empaquetar({ v: 1, n: cur.name, c: cur.code, i: cur.input || '' }); } catch (e) { toast('No se pudo armar el enlace.'); return; }
+    // la entrada viaja hasta el mismo tope con el que se recibe: una entrada enorme no arma un enlace enorme
+    const ent = (cur.input || '').slice(0, MAX_ENTRADA_ENLACE);
+    try { url = location.origin + location.pathname + '#p=' + await empaquetar({ v: 1, n: cur.name, c: cur.code, i: ent }); } catch (e) { toast('No se pudo armar el enlace.'); return; }
+    if (url.length - url.indexOf('#') > MAX_HASH) { toast('El programa es demasiado largo para un enlace. Usa «Guardar .c».'); return; }
     $('enlUrl').value = url;
     $('enlTxt').textContent = 'Abre este enlace en el otro dispositivo para traer «' + cur.name + '». Envíatelo a ti mismo, por ejemplo por WhatsApp.';
     $('enlShare').hidden = !navigator.share;
@@ -1845,7 +1894,7 @@ self.postMessage({ type: 'ready' });`;
   $('enlShare').addEventListener('click', () => { navigator.share({ title: 'Programa de Editor C', url: $('enlUrl').value }).catch(() => {}); });
   let recibido = null;
   async function recibirEnlace() {
-    const m = /^#p=([zr]\.[A-Za-z0-9_-]+)$/.exec(location.hash);
+    const m = location.hash.length <= MAX_HASH ? /^#p=([zr]\.[A-Za-z0-9_-]+)$/.exec(location.hash) : null;
     if (!m) {
       if (/^#p=/.test(location.hash)) { try { history.replaceState(null, '', location.pathname + location.search); } catch (e) { /* nada */ } toast('El enlace del programa está dañado o incompleto. Pide que te lo manden de nuevo.'); }
       return;
@@ -1859,10 +1908,10 @@ self.postMessage({ type: 'ready' });`;
       $('dRecibido').showModal();
     } catch (e) { toast('El enlace del programa no se pudo leer. Pide que te lo manden de nuevo.'); }
   }
-  $('recOk').addEventListener('click', () => { if (!recibido) return; newProgram(recibido.name, recibido.code, recibido.input); recibido = null; $('dRecibido').close(); toast('Programa abierto.'); });
+  $('recOk').addEventListener('click', () => { if (!recibido) return; newProgram(recibido.name, recibido.code, recibido.input); recibido = null; $('dRecibido').close(); if (guardadoOk) toast('Programa abierto.'); else avisoSinEspacio(); });
 
   /* ---------- exportar e importar todos los programas (.json) ---------- */
-  const EXP_APP = 'editor-c', MAX_PROGS = 1000, MAX_CODE = 1000000, MAX_FILE = 25e6;
+  const EXP_APP = 'editor-c', MAX_PROGS = 1000, MAX_FILE = 25e6;
   $('pexp').addEventListener('click', () => {
     flushSave();
     const d = new Date(), stamp = d.getFullYear() + pad2(d.getMonth() + 1) + pad2(d.getDate());
@@ -1880,9 +1929,9 @@ self.postMessage({ type: 'ready' });`;
     const list = []; let invalid = 0;
     d.programs.forEach((p) => {
       if (!p || typeof p !== 'object' || typeof p.code !== 'string' || p.code.length > MAX_CODE || typeof p.name !== 'string') { invalid++; return; }
-      const name = p.name.replace(/[\u0000-\u001f\u007f]/g, ' ').trim().slice(0, 60);
+      const name = nombreLimpio(p.name);
       if (!name) { invalid++; return; }
-      list.push({ name, code: p.code.replace(/\r\n?/g, '\n'), input: typeof p.input === 'string' && p.input.length <= MAX_CODE ? p.input : '', t: typeof p.t === 'number' && isFinite(p.t) ? p.t : Date.now() });
+      list.push({ name, code: p.code.replace(/\r\n?/g, '\n'), input: typeof p.input === 'string' && p.input.length <= MAX_CODE ? p.input : '', t: typeof p.t === 'number' && isFinite(p.t) ? p.t : Date.now(), tests: pruLimpiar(p.tests) });
     });
     if (!list.length) return { error: invalid ? 'Ningún programa del archivo es válido.' : 'El archivo no trae programas.' };
     return { list, invalid };
@@ -1898,7 +1947,7 @@ self.postMessage({ type: 'ready' });`;
       if (sim.some((x) => x.name === name)) { name = nm(p.name + ' (importado)'); res.renamed++; } else res.add++;
       sim.push({ name, code: p.code });
       if (commit) {
-        progs.push({ id: uid(), name, code: p.code, input: p.input, t: p.t, tests: pruLimpiar(p.tests) });
+        progs.push({ id: uid(), name, code: p.code, input: p.input, t: p.t, tests: p.tests });
       }
     });
     return res;
@@ -1931,8 +1980,12 @@ self.postMessage({ type: 'ready' });`;
   $('impOk').addEventListener('click', () => {
     if (!impPending) return;
     flushSave();
+    const antes = progs.length;
     const plan = planImport(impPending, true); impPending = null;
-    persist(); if (dProgs.open) renderProgs();
+    // si lo importado no entra en el almacenamiento del navegador se vuelve atrás: antes quedaba «importado» en pantalla,
+    // no se guardaba nada y, desde ahí, tampoco lo que el alumno escribía después
+    if (!persist(true)) { progs.length = antes; persist(true); if (dProgs.open) renderProgs(); $('dImp').close(); toast('No se importó nada: no queda espacio en este dispositivo para esos programas. Borra los que no uses o importa un archivo más chico.'); return; }
+    if (dProgs.open) renderProgs();
     $('dImp').close();
     const n = plan.add + plan.renamed;
     toast('Se importaron ' + n + (n === 1 ? ' programa.' : ' programas.') + (plan.dup ? ' (' + plan.dup + ' repetidos omitidos)' : ''));

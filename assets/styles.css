@@ -2,6 +2,9 @@
 /* Editor C: interfaz neutra, lenguaje de iOS. Ver docs/DISENO.md (paleta, contrastes, íconos, qué no se hace). Interfaz con fuentes del sistema; el código usa Source Code Pro (viaja con el sitio, licencia OFL en src/fuentes/). */
 @font-face { font-family: "Source Code Pro"; src: url(SourceCodePro.ttf) format("truetype"); font-weight: 200 900; font-style: normal; font-display: swap; }
 
+/* sprite de íconos incrustado al principio de la página: fuera del flujo (antes era un atributo style, que la política de seguridad de contenido no admite) */
+svg.sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+
 /* ---------- colores: claro (base), oscuro y automático. Los valores y sus contrastes están en docs/DISENO.md ---------- */
 :root {
   --bg: #f2f2f4; --panel: #ffffff; --panel2: #f7f7f8; --fill: rgba(60, 60, 67, .08); --line: rgba(60, 60, 67, .16); --lineS: #8a8a91;

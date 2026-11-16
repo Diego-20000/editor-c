@@ -99,7 +99,7 @@
               let prof = 0; for (const q of out) { if (q.t === 'op' && q.v === '{') prof++; else if (q.t === 'op' && q.v === '}') prof--; }
               const hm = /^[<"]([^>"\s]+)[>"]$/.exec(arg);
               if (prof > 0) includes.avisos.push({ line, kb: 'PRE-041', msg: 'el #include va al principio del programa, afuera de las funciones: acá adentro rompe el programa' });
-              else if (hm && HDR_FUNCS[hm[1]]) { const usada = out.find((q) => q.t === 'id' && HDR_FUNCS[hm[1]].indexOf(q.v) >= 0); if (usada) includes.avisos.push({ line, kb: 'PRE-042', msg: "usas " + usada.v + " antes de este #include: los #include van todos al principio, antes de usar sus funciones" }); }
+              else if (hm && own(HDR_FUNCS, hm[1])) { const usada = out.find((q) => q.t === 'id' && HDR_FUNCS[hm[1]].indexOf(q.v) >= 0); if (usada) includes.avisos.push({ line, kb: 'PRE-042', msg: "usas " + usada.v + " antes de este #include: los #include van todos al principio, antes de usar sus funciones" }); }
             }
             if (/^(<[^>\s]+>|"[^"]+")$/.test(arg)) includes.push(arg); else includes.avisos.push({ line, kb: /;\s*$/.test(arg) ? 'PRE-018' : 'PRE-014', msg: 'el #include está mal escrito: tiene que ser #include <stdio.h> (con < y >) o #include "archivo.h"' }); }
           else if (dir === 'pragma' || dir === 'line' || dir === 'warning') { /* se ignora */ }
@@ -792,7 +792,8 @@
         if (nm === 'conio.h') this.warn("<conio.h> solo existe en Windows (Code::Blocks): en Programiz y OnlineGDB no compila. Para esperar una tecla usa getchar() o scanf", 1, 'PRE-037', 'POR-003');
         else if (ok.indexOf(nm) < 0) {
           const sg = nm === 'studio.h' || nm === 'stdoi.h' || nm === 'stido.h' || nm === 'stdio' ? 'stdio.h' : (nm === 'maths.h' || nm === 'math' ? 'math.h' : null);
-          this.warn('no se conoce la biblioteca <' + nm + '>' + (sg ? ': ¿quisiste escribir <' + sg + '>?' : ''), 1, { 'studio.h': 'PRE-012', stdio: 'PRE-013', 'STDIO.H': 'PRE-017', 'stdafx.h': 'POR-024', 'windows.h': 'POR-017', 'dos.h': 'POR-019' }[nm]);
+          const KBH = { 'studio.h': 'PRE-012', stdio: 'PRE-013', 'STDIO.H': 'PRE-017', 'stdafx.h': 'POR-024', 'windows.h': 'POR-017', 'dos.h': 'POR-019' };
+          this.warn('no se conoce la biblioteca <' + nm + '>' + (sg ? ': ¿quisiste escribir <' + sg + '>?' : ''), 1, own(KBH, nm) ? KBH[nm] : undefined);
         }
       }
     }
@@ -1290,14 +1291,17 @@
         case 'cast': {
           const r = this.expr(n.e);
           if (n.type === 'void') return { c: '(' + r.c + ',0)', t: 'int' };
-          return { c: this.conv(r, n.type), t: n.type };
+          return { c: this.conv(r, n.type), t: n.type, deEntero: FLOATLIKE.has(n.type) && INTLIKE.has(r.t) };
         }
         case 'sizeof': {
           const sz = { int: 4, uint: 4, long: 8, char: 1, uchar: 1, bool: 1, short: 2, ushort: 2, ulong: 8, float: 4, double: 8, void: 1 };
           if (n.type) return { c: String(sz[n.type]), t: 'int' };
           if (n.e.k === 'id') { const info = this.lookup(n.e.name); if (info && info.scalar) return { c: String(sz[info.type]), t: 'int' }; if (info && info.array) { if (info.param || info.ptrStr) return { c: '8', t: 'int' }; let mul = info.js + '.length'; if (info.ndims === 2) mul += '*' + info.js + '[0].length'; return { c: '(' + mul + '*' + sz[info.type] + ')', t: 'uint' }; } }
           if (n.e.k === 'idx') { let b = n.e, k = 0; while (b.k === 'idx') { k++; b = b.base; } const info = b.k === 'id' ? this.lookup(b.name) : null; if (info && info.array && k <= info.ndims) { if (k === info.ndims) return { c: String(sz[info.type]), t: 'uint' }; return { c: '(' + info.js + '[0].length*' + sz[info.type] + ')', t: 'uint' }; } }
-          this.err('sizeof solo se soporta con un tipo (sizeof(int)) o una variable simple', n.line);
+          // sizeof de una expresión cualquiera (sizeof(1), sizeof('a'), sizeof(A + 1.5), sizeof("hola")): vale el tamaño del tipo del resultado; la expresión no se ejecuta
+          if (n.e.k === 'str') return { c: (new TextEncoder().encode(n.e.v).length + 1) + 'n', t: 'ulong' };
+          if (n.e.k !== 'call' && n.e.k !== 'assign' && n.e.k !== 'incdec' && !this.hasSideEffect(n.e)) { const r = this.expr(n.e); const tt = r.b ? 'int' : r.t; if (own(sz, tt) && tt !== 'void') return { c: sz[arith(tt, tt) === 'int' && n.e.k !== 'cast' ? 'int' : tt] + 'n', t: 'ulong' }; }
+          this.err('sizeof solo se soporta con un tipo (sizeof(int)), una variable o una cuenta sin llamadas ni asignaciones', n.line);
           return { c: '0', t: 'int' };
         }
         case 'incdec': return this.incdec(n, asStmt);
@@ -1464,7 +1468,10 @@
       }
       const t = ctype;
       switch (op) {
-        case '+': case '-': return { c: this.wrapInt(t, av + ' ' + op + ' ' + bv), t };
+        case '+': case '-':
+          // gcc 13 reduce «0.0 - entero» a «-(decimal) entero»: con el entero en 0 da -0.0 (se ve en printf como -0.000000). Se imita.
+          if (op === '-' && FLOATLIKE.has(t) && ln.k === 'num' && ln.v === 0 && FLOATLIKE.has(ln.kind) && (INTLIKE.has(b.t) || b.deEntero)) return { c: '$.neg(' + bv + ')', t };
+          return { c: this.wrapInt(t, av + ' ' + op + ' ' + bv), t };
         case '*':
           if (t === 'int') return { c: 'Math.imul(' + av + ',' + bv + ')', t };
           if (t === 'uint') return { c: '(Math.imul(' + av + ',' + bv + ')>>>0)', t };

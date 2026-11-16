@@ -13,19 +13,20 @@
   function signBit(x) { return x < 0 || Object.is(x, -0); }
   // Signo de un NaN, como en gcc para x86-64: una cuenta inválida (0.0/0.0, sqrt(-1)) da «-nan», y NAN, atof("nan") o scanf("nan") dan «nan».
   // JavaScript no distingue el signo de un NaN (y según el motor la cuenta 0/0 puede salir con uno u otro bit), así que el «nan» sin signo se marca
-  // con una huella en la parte baja del NaN, que viaja con el valor (el hardware la conserva al sumar, restar, etc.). Todo NaN sin huella es «-nan».
+  // con una huella en un bit alto de la mantisa del NaN, que viaja con el valor (el hardware la conserva al sumar, restar y también al pasar por float;
+  // en la parte baja se perdía en cada float, y un «nan» leído con scanf("%f") o guardado en un float salía «-nan»). Todo NaN sin huella es «-nan».
   // Si el navegador no conserva la huella, todos salen «-nan» (lo que ya pasaba antes).
   const NANF = new Float64Array(1), NANU = new Uint32Array(NANF.buffer);
-  const NAN_POS = (function () { NANU[0] = 1; NANU[1] = 0x7FF80000; return NANF[0]; })();
+  const NAN_POS = (function () { NANU[0] = 0; NANU[1] = 0x7FFC0000; return NANF[0]; })();
   const NAN_NEG = NaN;
   const NAN_OK = (function () {
     try {
       const id = Function('a', 'return a'), ng = Function('a', 'return -a'), sm = Function('a', 'return a + 1');
-      const huella = (v) => { NANF[0] = v; return (NANU[0] & 1) === 1 && (NANU[1] & 0x7FF80000) === 0x7FF80000; };
-      return huella(NAN_POS) && huella(id(NAN_POS)) && huella(ng(NAN_POS)) && huella(sm(NAN_POS)) && !((NANF[0] = NAN_NEG), (NANU[0] & 1));
+      const huella = (v) => { NANF[0] = v; return (NANU[1] & 0x7FFC0000) === 0x7FFC0000; };
+      return huella(NAN_POS) && huella(id(NAN_POS)) && huella(ng(NAN_POS)) && huella(sm(NAN_POS)) && huella(Math.fround(NAN_POS)) && !huella(NAN_NEG);
     } catch (e) { return false; }
   })();
-  function nanNegativo(v) { if (!NAN_OK) return true; NANF[0] = v; if ((NANU[0] & 1) !== 1) return true; return (NANU[1] >>> 31) === 1; }
+  function nanNegativo(v) { if (!NAN_OK) return true; NANF[0] = v; if ((NANU[1] & 0x7FFC0000) !== 0x7FFC0000) return true; return (NANU[1] >>> 31) === 1; }
 
 
   // |x| con p decimales, redondeo exacto "half-even" (igual que glibc)
@@ -398,8 +399,15 @@
             const rest = buf.slice(pos);
             const m = /^[+-]?(0[xX]([0-9a-fA-F]+\.?[0-9a-fA-F]*|\.[0-9a-fA-F]+)([pP][+-]?\d+)?|\d+\.?\d*([eE][+-]?\d+)?|\.\d+([eE][+-]?\d+)?|inf(inity)?|nan)/i.exec(rest.slice(0, isFinite(maxw) ? maxw : undefined));
             if (!m) { if (/^[+-]/.test(rest) && maxw >= 1) pos += 1; return count; }
+            // «0x» sin ningún dígito hexadecimal: glibc lo consume y la lectura falla (no lee un 0)
+            { const sinDig = /^[+-]?0[xX](?![0-9a-fA-F.])/.exec(rest); if (sinDig && sinDig[0].length <= maxw) { pos += sinDig[0].length; return count; } }
             pos += m[0].length;
             const hx = /^[+-]?0[xX]/.exec(m[0]);
+            // glibc lee el comienzo de un exponente aunque después no haya dígitos y lo descarta: «3.5e+kg» da 3.5 y deja «kg»
+            if (!/inf|nan/i.test(m[0]) && !(hx ? /[pP]/ : /[eE]/).test(m[0].slice(hx ? hx[0].length : 0))) {
+              const cola = (hx ? /^[pP][+-]?/ : /^[eE][+-]?/).exec(buf.slice(pos, pos + 2));
+              if (cola && m[0].length + cola[0].length <= maxw) pos += cola[0].length;
+            }
             const v = /inf/i.test(m[0]) ? (m[0][0] === '-' ? -Infinity : Infinity) : (/nan/i.test(m[0]) ? (m[0][0] === '-' ? NAN_NEG : NAN_POS) : (hx ? hexFloat(m[0]) : parseFloat(m[0])));
             if (!suppress) { const r = refs[ri], t = types[ri]; ri++; r[1](conv(t, v)); count++; }
             first = false; continue;

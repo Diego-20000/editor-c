@@ -1,0 +1,2 @@
+#include <stdio.h>
+int main() { int OP; float A, B; do { printf("1-SUMA 2-RESTA 3-DIV 0-FIN: "); scanf("%d", &OP); if (OP >= 1 && OP <= 3) { scanf("%f %f", &A, &B); switch (OP) { case 1: printf("%.2f\n", A + B); break; case 2: printf("%.2f\n", A - B); break; case 3: if (B != 0) printf("%.2f\n", A / B); else printf("ERROR\n"); } } else if (OP != 0) printf("OPCION INVALIDA\n"); } while (OP != 0); printf("FIN\n"); return 0; }
