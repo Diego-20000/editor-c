@@ -3,7 +3,7 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-L31blAFvewNjNN5UWm5jyPYir0pxZUJwhwD4C9QxFWg=' 'sha256-pZVFs1YVsdy2azF75ymoYrdNRc5OZVrrfu7C+JcNW4U=' 'sha256-9zvWeljVCsD4A/ghvUPZzT4c9slTDfe9sD7ZDEfcd04=' 'sha256-DQ8MTspG3X6fgHopxXBZMshx7vOYVeETUn3Jo+YU9ZI=' 'sha256-pDqV4IKVyUeQf2FYrKxx5DRKR8vf9w/wpyCSd/zM6pQ=' 'sha256-S7cKP369TbmrlYuzQN2bGoYEthRWiQGacYuUmFwIoKw=' 'sha256-D5eNFhJM5caNHsqiKB7XBhlV8Y/ARxp5llSr91wXSdw=' 'sha256-roqfeKHX31qnhNACUzx3ptrcftZMZBB97BGtw/Z3ojs=' 'sha256-eDnOIzEinYAB2tOTqOA5fuAMar6Rl/n1njISU2FFeCY=' 'sha256-rgiSH12iMr5IUIltfKReOQmwgPX6XvqRC3qq4U3+BPk=' 'unsafe-eval'; worker-src blob:; child-src blob:; style-src 'sha256-0rW0EE0XxbT8reC/PGYJJgiKmSiNw5rty0lFc3s7/Kg='; img-src data: blob:; font-src data:; connect-src blob:; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-fU/QoskQuRctWlhECw3JlI6RrDSje0vtV21uFbUnqKQ=' 'sha256-L31blAFvewNjNN5UWm5jyPYir0pxZUJwhwD4C9QxFWg=' 'sha256-pZVFs1YVsdy2azF75ymoYrdNRc5OZVrrfu7C+JcNW4U=' 'sha256-9zvWeljVCsD4A/ghvUPZzT4c9slTDfe9sD7ZDEfcd04=' 'sha256-DQ8MTspG3X6fgHopxXBZMshx7vOYVeETUn3Jo+YU9ZI=' 'sha256-pDqV4IKVyUeQf2FYrKxx5DRKR8vf9w/wpyCSd/zM6pQ=' 'sha256-dwW8t4maeWONCITPjdiXoy7K0qVppEbzFD3XVuK9DXE=' 'sha256-D5eNFhJM5caNHsqiKB7XBhlV8Y/ARxp5llSr91wXSdw=' 'sha256-roqfeKHX31qnhNACUzx3ptrcftZMZBB97BGtw/Z3ojs=' 'sha256-eDnOIzEinYAB2tOTqOA5fuAMar6Rl/n1njISU2FFeCY=' 'sha256-rgiSH12iMr5IUIltfKReOQmwgPX6XvqRC3qq4U3+BPk=' 'unsafe-eval'; worker-src blob:; child-src blob:; style-src 'sha256-0rW0EE0XxbT8reC/PGYJJgiKmSiNw5rty0lFc3s7/Kg='; img-src data: blob:; font-src data:; connect-src blob:; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="dark light">
 <title>Editor C</title>
@@ -613,6 +613,7 @@ html.lectura .pane-head .hint { margin-right: 8px; }
 <dialog id="dProgs" aria-labelledby="tProgs">
   <h2 id="tProgs">Mis programas</h2>
   <p>Se guardan solos en este dispositivo (no se suben a ningún lado).</p>
+  <p class="fine">Si esta computadora borra todo al reiniciar (pasa en algunos laboratorios), guarda tus programas en un pendrive con «Guardar .c» o «Exportar todo».</p>
   <ul class="plist" id="plist"></ul>
   <div class="drow"><button id="pnew" class="btn primary" type="button"><svg class="i" aria-hidden="true"><use href="#i-mas"/></svg>Nuevo programa</button><button id="popen" class="btn" type="button"><svg class="i" aria-hidden="true"><use href="#i-abrir"/></svg>Abrir archivo .c</button></div>
   <div class="drow"><button id="pexp" class="btn" type="button" title="Descarga todos tus programas en un solo archivo .json (copia de seguridad)"><svg class="i" aria-hidden="true"><use href="#i-descargar"/></svg>Exportar todo (.json)</button><button id="pimp" class="btn" type="button" title="Agrega los programas de un archivo .json exportado antes; no sobrescribe los que ya tienes"><svg class="i" aria-hidden="true"><use href="#i-subir"/></svg>Importar (.json)</button><button class="btn" type="button" data-close>Cerrar</button></div>
@@ -677,7 +678,7 @@ html.lectura .pane-head .hint { margin-right: 8px; }
     <li>Tus preferencias: tema, tamaño de letra y nivel de ayuda.</li>
     <li>Los casos que el editor no supo explicar, para que tú elijas si los mandas.</li>
   </ul>
-  <p>Todo eso queda solo en el navegador de este dispositivo. Si borras los datos del navegador, se pierde: descarga tus programas con «Guardar .c» o «Exportar todo».</p>
+  <p>Todo eso queda solo en el navegador de este dispositivo. Si borras los datos del navegador, o si la computadora se restaura al reiniciar (algunos laboratorios lo hacen), se pierde: descarga tus programas con «Guardar .c» o «Exportar todo».</p>
   <h3>Qué sale del dispositivo, y solo si tú lo eliges</h3>
   <ul>
     <li><b>Captura:</b> la imagen lleva los datos que cargaste en Ajustes. Revísala antes de compartirla.</li>
@@ -814,6 +815,54 @@ html.lectura .pane-head .hint { margin-right: 8px; }
 <div class="bubble" id="bubble" role="dialog" aria-label="¿Qué es esto?" hidden></div>
 <input type="file" id="file" hidden>
 <input type="file" id="fileJson" hidden>
+<script>
+/* Editor C: aviso de navegador no compatible. Va PRIMERO y está escrito con JavaScript antiguo (sin const, flechas ni plantillas) para que
+   pueda ejecutarse hasta en un navegador que no entienda el resto del editor. Si el navegador cumple lo que el editor necesita, no hace nada.
+   Necesita: BigInt (Chrome 67, Edge 79, Firefox 68, Safari 14) y la etiqueta <dialog> con showModal (Chrome 37, Edge 79, Firefox 98, Safari 15.4). */
+(function () {
+  'use strict';
+  var faltan = [];
+  if (typeof BigInt !== 'function') faltan.push('BigInt');
+  if (typeof HTMLDialogElement === 'undefined' || typeof HTMLDialogElement.prototype.showModal !== 'function') faltan.push('ventanas');
+  if (typeof Promise === 'undefined') faltan.push('Promise');
+  if (!faltan.length) return;
+
+  function poner() {
+    if (!document.body || document.getElementById('compat')) return;
+    var capa = document.createElement('div');
+    capa.id = 'compat';
+    capa.setAttribute('role', 'alert');
+    var s = capa.style;
+    s.position = 'fixed'; s.left = '0'; s.top = '0'; s.right = '0'; s.bottom = '0'; s.zIndex = '2147483647';
+    s.background = '#17181b'; s.color = '#f2f2f4'; s.overflow = 'auto'; s.padding = '24px 16px'; s.boxSizing = 'border-box';
+    s.fontFamily = 'Arial, Helvetica, sans-serif'; s.fontSize = '16px'; s.lineHeight = '1.5';
+    var caja = document.createElement('div');
+    caja.style.maxWidth = '560px'; caja.style.margin = '0 auto';
+    var h = document.createElement('h1');
+    h.textContent = 'Tu navegador es muy viejo para Editor C';
+    h.style.fontSize = '22px'; h.style.margin = '0 0 12px';
+    var p = document.createElement('p');
+    p.textContent = 'El editor necesita un navegador más nuevo. Con el que estás usando no puede ejecutar tus programas. Los programas que guardaste en este navegador siguen ahí: los verás cuando lo actualices.';
+    p.style.margin = '0 0 12px';
+    var l = document.createElement('ul');
+    l.style.paddingLeft = '20px'; l.style.margin = '0 0 12px';
+    var items = [
+      'Microsoft Edge o Google Chrome: ábrelos y busca «Acerca de» en el menú (o escribe edge://settings/help o chrome://settings/help) para que se actualicen solos.',
+      'Firefox: necesita la versión 98 o más nueva.',
+      'Si la computadora no se puede actualizar, abre el editor desde tu celular.'
+    ];
+    for (var i = 0; i < items.length; i++) { var li = document.createElement('li'); li.textContent = items[i]; li.style.marginBottom = '6px'; l.appendChild(li); }
+    var f = document.createElement('p');
+    f.textContent = 'Detalle técnico: falta ' + faltan.join(', ') + '.';
+    f.style.fontSize = '13px'; f.style.opacity = '0.7'; f.style.margin = '0';
+    caja.appendChild(h); caja.appendChild(p); caja.appendChild(l); caja.appendChild(f);
+    capa.appendChild(caja);
+    document.body.appendChild(capa);
+  }
+  if (document.body) poner();
+  else if (document.addEventListener) document.addEventListener('DOMContentLoaded', poner);
+})();
+</script>
 <script>
 /* Compilador del Editor C: subconjunto de C de la materia -> JavaScript.
    Entrada: texto C. Salida: { js, errors:[{line,msg,code,kb?}], warnings:[{line,msg,code,kb?,kbAlt?}] } */
@@ -6765,7 +6814,7 @@ window.KB_DATA={"errores":[{"id":"ARR-001","categoria":"arreglos y textos","nomb
    (por ejemplo '5491112345678'). Vacío = el botón abre WhatsApp sin destinatario. */
 (function (root) {
   'use strict';
-  var CONFIG = { WHATSAPP_NUMERO: '5491137781528', VERSION: 'fb346632d591' };
+  var CONFIG = { WHATSAPP_NUMERO: '5491137781528', VERSION: '7839a731a343' };
   if (typeof module !== 'undefined' && module.exports) module.exports = CONFIG;
   else root.CONFIG = CONFIG;
 })(typeof self !== 'undefined' ? self : this);
