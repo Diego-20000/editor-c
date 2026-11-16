@@ -364,6 +364,18 @@ const check = (c, m) => { if (c) { ok++; console.log('  ok   ' + m); } else { fa
     }
   }
 
+  // 10) Ventana a mitad de pantalla (960 px): el estado de la consola se lee completo y la plantilla no trae return 0
+  {
+    const cx = await br.newContext({ viewport: { width: 960, height: 1040 } });
+    const pg = await cx.newPage();
+    await pg.goto(url + '?ayuda=2'); await pg.waitForSelector('#code');
+    await pg.keyboard.press('F5'); await pg.waitForSelector('#runEnd:not([hidden])', { timeout: 8000 });
+    const t = await pg.evaluate(() => { const e = document.getElementById('status'); return { cut: e.scrollWidth > e.clientWidth + 1, txt: e.textContent }; });
+    check(!t.cut, 'ventana chica: el estado de la consola no queda cortado («' + t.txt + '»)');
+    check(!/return 0/.test(await pg.inputValue('#code')), 'el programa nuevo no trae «return 0» (la materia no lo usa)');
+    await cx.close();
+  }
+
   await br.close();
   console.log(ok + ' ok, ' + fallas + ' fallas');
   process.exit(fallas ? 1 : 0);

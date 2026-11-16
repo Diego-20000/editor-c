@@ -71,7 +71,7 @@
     return ['// ' + (user.name || 'Apellido, Nombre'), '// ' + (user.curso || 'Curso'), '// ' + (user.mat || 'Materia'),
       '// ' + (/ciclo/i.test(c) ? c : 'Ciclo lectivo ' + c)].join('\n');
   }
-  function template() { return headerText() + '\n\n#include <stdio.h>\n\nint main() {\n    \n    return 0;\n}\n'; }
+  function template() { return headerText() + '\n\n#include <stdio.h>\n\nint main() {\n    \n}\n'; }
 
   /* ---------- programas guardados ---------- */
   const MAX_PRUEBAS = 30;
