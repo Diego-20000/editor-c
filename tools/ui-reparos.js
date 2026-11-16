@@ -345,6 +345,25 @@ const check = (c, m) => { if (c) { ok++; console.log('  ok   ' + m); } else { fa
     await cx.close();
   }
 
+  // 7) Navegador no compatible: avisa en vez de dejar la pantalla rota; con un navegador normal no aparece
+  {
+    const casos = [
+      ['normal', null, false],
+      ['sin BigInt', () => { delete window.BigInt; }, true],
+      ['sin ventanas <dialog>', () => { HTMLDialogElement.prototype.showModal = undefined; }, true]
+    ];
+    for (const [nombre, preparar, debeAvisar] of casos) {
+      const cx = await br.newContext({ viewport: { width: 1280, height: 800 } });
+      if (preparar) await cx.addInitScript(preparar);
+      const pg = await cx.newPage();
+      await pg.goto(url); await pg.waitForTimeout(800);
+      const hay = !!(await pg.$('#compat'));
+      check(hay === debeAvisar, 'compatibilidad (' + nombre + '): ' + (debeAvisar ? 'muestra el aviso de navegador viejo' : 'no muestra ningún aviso'));
+      if (debeAvisar) check(/navegador es muy viejo/.test(await pg.textContent('#compat')) && /celular/.test(await pg.textContent('#compat')), 'compatibilidad (' + nombre + '): el aviso dice qué hacer');
+      await cx.close();
+    }
+  }
+
   await br.close();
   console.log(ok + ' ok, ' + fallas + ' fallas');
   process.exit(fallas ? 1 : 0);

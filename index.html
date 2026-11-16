@@ -105,6 +105,7 @@
 <dialog id="dProgs" aria-labelledby="tProgs">
   <h2 id="tProgs">Mis programas</h2>
   <p>Se guardan solos en este dispositivo (no se suben a ningún lado).</p>
+  <p class="fine">Si esta computadora borra todo al reiniciar (pasa en algunos laboratorios), guarda tus programas en un pendrive con «Guardar .c» o «Exportar todo».</p>
   <ul class="plist" id="plist"></ul>
   <div class="drow"><button id="pnew" class="btn primary" type="button"><svg class="i" aria-hidden="true"><use href="#i-mas"/></svg>Nuevo programa</button><button id="popen" class="btn" type="button"><svg class="i" aria-hidden="true"><use href="#i-abrir"/></svg>Abrir archivo .c</button></div>
   <div class="drow"><button id="pexp" class="btn" type="button" title="Descarga todos tus programas en un solo archivo .json (copia de seguridad)"><svg class="i" aria-hidden="true"><use href="#i-descargar"/></svg>Exportar todo (.json)</button><button id="pimp" class="btn" type="button" title="Agrega los programas de un archivo .json exportado antes; no sobrescribe los que ya tienes"><svg class="i" aria-hidden="true"><use href="#i-subir"/></svg>Importar (.json)</button><button class="btn" type="button" data-close>Cerrar</button></div>
@@ -170,7 +171,7 @@
     <li>Tus preferencias: tema, tamaño de letra y nivel de ayuda.</li>
     <li>Los casos que el editor no supo explicar, para que tú elijas si los mandas.</li>
   </ul>
-  <p>Todo eso queda solo en el navegador de este dispositivo. Si borras los datos del navegador, se pierde: descarga tus programas con «Guardar .c» o «Exportar todo».</p>
+  <p>Todo eso queda solo en el navegador de este dispositivo. Si borras los datos del navegador, o si la computadora se restaura al reiniciar (algunos laboratorios lo hacen), se pierde: descarga tus programas con «Guardar .c» o «Exportar todo».</p>
   <h3>Qué sale del dispositivo, y solo si tú lo eliges</h3>
   <ul>
     <li><b>Captura:</b> la imagen lleva los datos que cargaste en Ajustes. Revísala antes de compartirla.</li>
@@ -307,6 +308,7 @@
 <div class="bubble" id="bubble" role="dialog" aria-label="¿Qué es esto?" hidden></div>
 <input type="file" id="file" hidden>
 <input type="file" id="fileJson" hidden>
+<script src="assets/compat.js"></script>
 <script src="assets/compiler.js"></script>
 <script src="assets/runtime.js"></script>
 <script src="assets/examples.js"></script>
