@@ -13,6 +13,9 @@ Un editor de C que corre en el navegador, para alumnos de 5.º año de la E.E.S.
 - **No hay IA dentro del editor.** Es decisión de Diego. Ninguna función puede depender de un modelo ni de una API. ChatGPT o Claude se usan solo afuera, para generar ideas y textos que después se validan contra gcc y se guardan como datos fijos.
 - Cualquier idea que necesite un servidor (ranking, cuentas, tablero del profesor, corrección en línea, detectores) está fuera, salvo que se resuelva con archivos estáticos o con datos que el alumno lleva.
 
+## Dispositivo real de uso (aclaración de Diego, 16/11/2026)
+- Los compañeros **no usan el celular** para programar (ni para Programiz): usan **computadora** (casi todo Windows 10; también Huayra). Quien no tiene compu lo hace con un amigo o compañero. **Prioridad de diseño y pruebas: escritorio y netbook** (1280×800, 1366×768). El celular se mantiene funcionando pero no es el foco.
+
 ## Cómo piensa Diego la enseñanza
 - La idea no es facilitar la escritura ni decirle al alumno exactamente dónde está el error, sino que **piense y tipee**.
 - **Referencia: Photomath como «entrenador».** Lo que Diego quiere imitar es cómo «sabe» responder a todo sin ser IA: un **motor de reglas + una base de conocimiento** hecha a mano. Acá: el editor reconoce el caso con reglas fijas (`scanf` sin `&`, contador sin inicializar, `PROM = A / N` con enteros…) y responde con textos ya escritos (qué pasó, por qué, pistas de menos a más, mini-lección). La base está en `kb/` (ver `kb/SCHEMA.md`), se arma afuera (ChatGPT, Claude, casos reales de los alumnos), se **valida contra gcc 13 y contra el editor** y se guarda como datos fijos. No hay foto ni OCR (Diego lo descartó).
