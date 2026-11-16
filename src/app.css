@@ -526,3 +526,4 @@ html.lectura .pane-head .hint { margin-right: 8px; }
 #shotLayRow select { max-width: 60%; }
 .group > .fine { padding: 8px 16px 10px; color: var(--muted); }
 .group + .shotbox { margin-top: 12px; }
+#paneCo > .pane-head { flex-wrap: wrap; row-gap: 2px; }

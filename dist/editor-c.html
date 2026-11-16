@@ -3,7 +3,7 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-fU/QoskQuRctWlhECw3JlI6RrDSje0vtV21uFbUnqKQ=' 'sha256-wm7GsMty5KTzqStZRdJc4AsPRHIhKeVxzZNfSV/D7DE=' 'sha256-pZVFs1YVsdy2azF75ymoYrdNRc5OZVrrfu7C+JcNW4U=' 'sha256-9zvWeljVCsD4A/ghvUPZzT4c9slTDfe9sD7ZDEfcd04=' 'sha256-+C8AL7j7Q1ZIaQwo0cNn02vElvEwiJLuQin71ggbD50=' 'sha256-gulZ4uD1j9wrWrUJTM0i0CfFQRLjijuxwfAI5nM7EFo=' 'sha256-8LySzmJqiVAmb9hs8MWh4Zj/pJDSDDzT71yjcuyYdnU=' 'sha256-D5eNFhJM5caNHsqiKB7XBhlV8Y/ARxp5llSr91wXSdw=' 'sha256-roqfeKHX31qnhNACUzx3ptrcftZMZBB97BGtw/Z3ojs=' 'sha256-eDnOIzEinYAB2tOTqOA5fuAMar6Rl/n1njISU2FFeCY=' 'sha256-rgiSH12iMr5IUIltfKReOQmwgPX6XvqRC3qq4U3+BPk=' 'unsafe-eval'; worker-src blob:; child-src blob:; style-src 'sha256-6V7ltP5O0+SthvvnHgHIw23GQhaQFid0YFHC5NBT15Q='; img-src data: blob:; font-src data:; connect-src blob:; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-fU/QoskQuRctWlhECw3JlI6RrDSje0vtV21uFbUnqKQ=' 'sha256-wm7GsMty5KTzqStZRdJc4AsPRHIhKeVxzZNfSV/D7DE=' 'sha256-pZVFs1YVsdy2azF75ymoYrdNRc5OZVrrfu7C+JcNW4U=' 'sha256-9zvWeljVCsD4A/ghvUPZzT4c9slTDfe9sD7ZDEfcd04=' 'sha256-qibvdG1sFTOomuphARkFUtg8hCgpv8J5HS96V5KtDYE=' 'sha256-gulZ4uD1j9wrWrUJTM0i0CfFQRLjijuxwfAI5nM7EFo=' 'sha256-feqqbet75xF50Ifg2G1ZyojogUxXaG+R5L4+SLDMaEM=' 'sha256-D5eNFhJM5caNHsqiKB7XBhlV8Y/ARxp5llSr91wXSdw=' 'sha256-roqfeKHX31qnhNACUzx3ptrcftZMZBB97BGtw/Z3ojs=' 'sha256-eDnOIzEinYAB2tOTqOA5fuAMar6Rl/n1njISU2FFeCY=' 'sha256-rgiSH12iMr5IUIltfKReOQmwgPX6XvqRC3qq4U3+BPk=' 'unsafe-eval'; worker-src blob:; child-src blob:; style-src 'sha256-s9bIIt8QRuKns/yHoqLAvOsLYM9UwhOqoAf07LB4DXE='; img-src data: blob:; font-src data:; connect-src blob:; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="dark light">
 <title>Editor C</title>
@@ -540,6 +540,7 @@ html.lectura .pane-head .hint { margin-right: 8px; }
 #shotLayRow select { max-width: 60%; }
 .group > .fine { padding: 8px 16px 10px; color: var(--muted); }
 .group + .shotbox { margin-top: 12px; }
+#paneCo > .pane-head { flex-wrap: wrap; row-gap: 2px; }
 </style>
 </head>
 <body>
@@ -4763,7 +4764,7 @@ int main() {
     return ['// ' + (user.name || 'Apellido, Nombre'), '// ' + (user.curso || 'Curso'), '// ' + (user.mat || 'Materia'),
       '// ' + (/ciclo/i.test(c) ? c : 'Ciclo lectivo ' + c)].join('\n');
   }
-  function template() { return headerText() + '\n\n#include <stdio.h>\n\nint main() {\n    \n    return 0;\n}\n'; }
+  function template() { return headerText() + '\n\n#include <stdio.h>\n\nint main() {\n    \n}\n'; }
 
   /* ---------- programas guardados ---------- */
   const MAX_PRUEBAS = 30;
@@ -6838,7 +6839,7 @@ window.KB_DATA={"errores":[{"id":"ARR-001","categoria":"arreglos y textos","nomb
    (por ejemplo '5491112345678'). Vacío = el botón abre WhatsApp sin destinatario. */
 (function (root) {
   'use strict';
-  var CONFIG = { WHATSAPP_NUMERO: '5491137781528', VERSION: '7e82548ba935' };
+  var CONFIG = { WHATSAPP_NUMERO: '5491137781528', VERSION: '03eeb1d1ac65' };
   if (typeof module !== 'undefined' && module.exports) module.exports = CONFIG;
   else root.CONFIG = CONFIG;
 })(typeof self !== 'undefined' ? self : this);
