@@ -205,7 +205,7 @@
   "codigo_bien": "#include <stdio.h>\nint main(){\n int A=1;\n if(A>0){\n  printf(\"%d\\n\",A);\n }\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:7: error: expected declaration or statement at end of input",
-  "mensaje_editor": "Línea 4: desde acá hay un bloque que no se cierra, falta una }. Cuenta las { y las } del programa.",
+  "mensaje_editor": "Línea 4: desde aquí hay un bloque que no se cierra, falta una }. Cuenta las { y las } del programa.",
   "explicacion": "Cada { abre un bloque y necesita su }. Si falta una, C toma la } de más abajo como cierre del if y se queda esperando otra para main, así que el error aparece recién al final del archivo.",
   "como_arreglarlo": "Con la sangría, busca el bloque que no tiene su cierre alineado con la apertura y agrega la }.",
   "pistas": [
@@ -1354,7 +1354,7 @@
   "codigo_bien": "#include <stdio.h>\nint main(){\n int A=5;\n printf(\"%d\\n\",A);\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:3: error: expected identifier or '(' before '=' token",
-  "mensaje_editor": "Línea 3: después de int tiene que venir el nombre de la variable, y acá aparece directamente el =.",
+  "mensaje_editor": "Línea 3: después de int tiene que venir el nombre de la variable, y aquí aparece directamente el =.",
   "explicacion": "Una declaración tiene un tipo y un nombre. Sin nombre no hay dónde guardar el valor.",
   "como_arreglarlo": "Escribe el nombre de la variable entre el tipo y el =.",
   "pistas": [
@@ -1369,7 +1369,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "después del tipo tiene que venir el nombre de la variable, y acá aparece directamente el =",
+  "mensaje_editor_actual": "después del tipo tiene que venir el nombre de la variable, y aquí aparece directamente el =",
   "codigo_editor_actual": "E-sintaxis",
   "verificado_editor_corrige": true
  },

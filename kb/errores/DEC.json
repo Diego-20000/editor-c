@@ -232,7 +232,7 @@
   "codigo_bien": "#include <stdio.h>\nint A = 10;\nvoid mostrar() {\n  printf(\"%d\\n\", A);\n}\nint main() {\n  A = A + 1;\n  mostrar();\n}",
   "entrada": "",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 7: esta A es una variable nueva que tapa a la A global de la línea 2. Lo que cambies acá no modifica la global.",
+  "mensaje_editor": "Línea 7: esta A es una variable nueva que tapa a la A global de la línea 2. Lo que cambies aquí no modifica la global.",
   "explicacion": "Si dentro de una función declaras una variable con el mismo nombre que una global, la local tapa a la global. Los cambios se hacen sobre la copia local y la global queda igual.",
   "como_arreglarlo": "Si quieres modificar la global, no la vuelvas a declarar adentro de la función.",
   "pistas": [

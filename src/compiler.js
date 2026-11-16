@@ -98,7 +98,7 @@
             if (top) {
               let prof = 0; for (const q of out) { if (q.t === 'op' && q.v === '{') prof++; else if (q.t === 'op' && q.v === '}') prof--; }
               const hm = /^[<"]([^>"\s]+)[>"]$/.exec(arg);
-              if (prof > 0) includes.avisos.push({ line, kb: 'PRE-041', msg: 'el #include va al principio del programa, afuera de las funciones: acá adentro rompe el programa' });
+              if (prof > 0) includes.avisos.push({ line, kb: 'PRE-041', msg: 'el #include va al principio del programa, afuera de las funciones: aquí adentro rompe el programa' });
               else if (hm && own(HDR_FUNCS, hm[1])) { const usada = out.find((q) => q.t === 'id' && HDR_FUNCS[hm[1]].indexOf(q.v) >= 0); if (usada) includes.avisos.push({ line, kb: 'PRE-042', msg: "usas " + usada.v + " antes de este #include: los #include van todos al principio, antes de usar sus funciones" }); }
             }
             if (/^(<[^>\s]+>|"[^"]+")$/.test(arg)) includes.push(arg); else includes.avisos.push({ line, kb: /;\s*$/.test(arg) ? 'PRE-018' : 'PRE-014', msg: 'el #include está mal escrito: tiene que ser #include <stdio.h> (con < y >) o #include "archivo.h"' }); }
@@ -342,8 +342,8 @@
       if (t.t !== 'id') {
         let kb, msg;
         if (cx === 'decl') {
-          if (t.mac) { kb = 'PRE-031'; msg = "'" + t.mac + "' está definida con #define: acá se reemplaza por su valor y queda un nombre inválido. Cambia el nombre de la constante o el de la variable"; }
-          else if (t.t === 'op' && t.v === '=') { kb = 'SIN-049'; msg = 'después del tipo tiene que venir el nombre de la variable, y acá aparece directamente el ='; }
+          if (t.mac) { kb = 'PRE-031'; msg = "'" + t.mac + "' está definida con #define: aquí se reemplaza por su valor y queda un nombre inválido. Cambia el nombre de la constante o el de la variable"; }
+          else if (t.t === 'op' && t.v === '=') { kb = 'SIN-049'; msg = 'después del tipo tiene que venir el nombre de la variable, y aquí aparece directamente el ='; }
           else if (t.t === 'op' && t.v === '(') { kb = 'NOS-019'; msg = 'los punteros a función todavía no están soportados en este editor'; }
           else if (t.t === 'num' && pv.v === ',' && this.t[this.p - 2] && this.t[this.p - 2].t === 'num' && this.t[this.p - 2].en === pv.s) { kb = 'DEC-015'; msg = 'los decimales se escriben con punto (12.5), no con coma: la coma separa variables'; }
           else if (t.t === 'num' && nx.t === 'id' && t.en === nx.s) { kb = 'DEC-017'; msg = 'un nombre de variable no puede empezar con un número: tiene que empezar con una letra o con _'; }
@@ -653,8 +653,8 @@
         return { k: 'str', v: s, line: t.line };
       }
       if (t.t === 'id') {
-        if (TYPE_KW.has(t.v)) throw new CErr(this.inCall ? "en la llamada se escribe solo el valor, sin el tipo ('" + t.v + "' sobra)" : "no se esperaba el tipo '" + t.v + "' acá (¿falta un ';' antes?)", t.line, this.inCall ? 'FUN-036' : undefined);
-        if (RESERVED.has(t.v)) throw new CErr("no se esperaba '" + t.v + "' acá", t.line);
+        if (TYPE_KW.has(t.v)) throw new CErr(this.inCall ? "en la llamada se escribe solo el valor, sin el tipo ('" + t.v + "' sobra)" : "no se esperaba el tipo '" + t.v + "' aquí (¿falta un ';' antes?)", t.line, this.inCall ? 'FUN-036' : undefined);
+        if (RESERVED.has(t.v)) throw new CErr("no se esperaba '" + t.v + "' aquí", t.line);
         return { k: 'id', name: t.v, line: t.line };
       }
       if (t.t === 'op' && t.v === '(') { const e = this.expr(); this.expect(')'); e.par = true; return e; }
@@ -1452,7 +1452,7 @@
         this.err(a.t === 'void' || b.t === 'void' ? 'esa función no devuelve ningún valor' : 'no se puede operar con un texto entre comillas: una letra va con comillas simples (\'A\') y para comparar textos se usa strcmp', line, a.t === 'void' || b.t === 'void' ? 'FUN-013' : 'ARR-056');
         return { c: '0', t: 'int' };
       }
-      if ((op === '/' || op === '%') && rn.k === 'num' && rn.v === 0 && rn.kind !== 'double' && rn.kind !== 'float' && !FLOATLIKE.has(a.t) && !FLOATLIKE.has(b.t)) this.warn('división por cero: el programa se cierra al llegar acá', line, 'OPE-022');
+      if ((op === '/' || op === '%') && rn.k === 'num' && rn.v === 0 && rn.kind !== 'double' && rn.kind !== 'float' && !FLOATLIKE.has(a.t) && !FLOATLIKE.has(b.t)) this.warn('división por cero: el programa se cierra al llegar aquí', line, 'OPE-022');
       const esShift = op === '<<' || op === '>>';
       const ctype = esShift ? arith(a.t, 'int') : arith(a.t, b.t);
       const av = this.conv(a, ctype), bv = esShift ? (BIG.has(ctype) ? this.conv(b, ctype) : this.conv(b, 'int')) : this.conv(b, ctype);
@@ -1815,7 +1815,7 @@
      Reconocen, sobre el árbol del programa, los errores de la base de conocimiento que gcc no marca
      (lógica del algoritmo, tipos, operadores). Cada aviso lleva el id del caso en `kb`; el texto largo
      (explicación, pistas) lo muestra la interfaz desde la base. REGLA DE ORO: ningún falso positivo:
-     ante la duda, la regla no avisa (ver kb/PENDIENTES-REGLAS.md). Una falla acá nunca rompe la compilación. */
+     ante la duda, la regla no avisa (ver kb/PENDIENTES-REGLAS.md). Una falla aquí nunca rompe la compilación. */
   const KB_CODIGO = {
     'LOG-001': 'orden-lectura', 'LOG-002': 'promedio-sin-parentesis', 'LOG-004': 'intercambio-sin-auxiliar', 'LOG-005': 'mostrar-antes-de-calcular', 'LOG-006': 'calcular-antes-de-leer',
     'LOG-007': 'condicion-invertida', 'LOG-008': 'rama-verdadera-vacia', 'LOG-009': 'ifs-sueltos', 'LOG-010': 'else-colgante', 'LOG-011': 'rama-inalcanzable',

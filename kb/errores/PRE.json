@@ -848,7 +848,7 @@
   "codigo_bien": "#include <stdio.h>\n#define LIMITE 10\nint main()\n{\n  int A = 5;\n  printf(\"%d\\n\", A);\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:2: error: expected identifier or '(' before numeric constant",
-  "mensaje_editor": "Línea 5: A está definida como 10 con #define, así que acá queda int 10 = 5. Cambia el nombre de la constante o de la variable.",
+  "mensaje_editor": "Línea 5: A está definida como 10 con #define, así que aquí queda int 10 = 5. Cambia el nombre de la constante o de la variable.",
   "explicacion": "El preprocesador reemplaza todas las apariciones del nombre, también las que querías como variables.",
   "como_arreglarlo": "Usa nombres distintos para constantes y variables.",
   "pistas": [
@@ -863,7 +863,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "'A' está definida con #define: acá se reemplaza por su valor y queda un nombre inválido. Cambia el nombre de la constante o el de la variable",
+  "mensaje_editor_actual": "'A' está definida con #define: aquí se reemplaza por su valor y queda un nombre inválido. Cambia el nombre de la constante o el de la variable",
   "codigo_editor_actual": "E-preprocesador",
   "verificado_editor_corrige": true
  },
@@ -1143,7 +1143,7 @@
   "nivel": "aviso",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "el #include va al principio del programa, afuera de las funciones: acá adentro rompe el programa",
+  "mensaje_editor_actual": "el #include va al principio del programa, afuera de las funciones: aquí adentro rompe el programa",
   "codigo_editor_actual": "W-portabilidad",
   "verificado_editor_corrige": true
  },

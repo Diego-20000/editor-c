@@ -1017,7 +1017,7 @@
   "entrada": "5\n",
   "que_dice_gcc": "archivo.c:4: warning: 'A' is used uninitialized [-Wuninitialized]",
   "mensaje_editor": "Línea 4: printf solo muestra: no lee nada del teclado. A se usa sin valor.",
-  "explicacion": "Para pedir un dato hace falta scanf. printf no espera nada del usuario: muestra el valor que A tenga en ese momento, que acá es basura.",
+  "explicacion": "Para pedir un dato hace falta scanf. printf no espera nada del usuario: muestra el valor que A tenga en ese momento, que aquí es basura.",
   "como_arreglarlo": "Muestra el mensaje con printf y lee el valor con scanf(\"%d\", &A);",
   "pistas": [
    "Piensa qué función lee del teclado.",

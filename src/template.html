@@ -86,6 +86,7 @@
       <button type="button" id="diagHead" class="dhead" aria-expanded="true"><span id="diagTitle">Problemas</span><svg class="i" aria-hidden="true"><use href="#i-abajo"/></svg></button>
       <div id="diagList"></div>
     </div>
+    <div class="runend" id="runEnd" role="status" hidden></div>
   </section>
 </main>
 
@@ -132,6 +133,7 @@
   </fieldset>
   <fieldset><legend>Escritura</legend>
     <div class="group"><label class="chk"><input type="checkbox" id="autoCierre" role="switch"> Cerrar solo llaves, paréntesis y comillas</label></div>
+    <div class="group"><label class="chk"><input type="checkbox" id="ajustarLineas" role="switch"> Ajustar las líneas largas de la salida (si no, se desliza de costado)</label></div>
     <div class="group"><label class="chk"><input type="checkbox" id="gccIngles" role="switch"> Mostrar cómo lo diría gcc (en inglés)</label></div>
     <p class="foot">Apagado: practicas escribiendo todo. La sangría automática no cambia.</p>
     <div class="group"><label class="chk"><input type="checkbox" id="symChk" role="switch"> Barra de símbolos en el celular</label></div>
@@ -180,7 +182,7 @@
   <h2 id="tPru">Pruebas de funcionamiento</h2>
   <p>Guarda varias entradas con este programa, ejecútalas todas juntas y sácales una sola captura. Se guardan en este dispositivo.</p>
   <ul class="prulist" id="pruList"></ul>
-  <p class="fine" id="pruVacio">Todavía no hay pruebas. Escribe una entrada en «Entrada» (en la consola) y aprieta «Guardar la entrada actual», o crea una vacía y escríbela acá.</p>
+  <p class="fine" id="pruVacio">Todavía no hay pruebas. Escribe una entrada en «Entrada» (en la consola) y aprieta «Guardar la entrada actual», o crea una vacía y escríbela aquí.</p>
   <div class="drow"><button id="pruAdd" class="btn" type="button"><svg class="i" aria-hidden="true"><use href="#i-mas"/></svg>Guardar la entrada actual como prueba</button></div>
   <div class="drow"><button id="pruRun" class="btn primary" type="button"><svg class="i" aria-hidden="true"><use href="#i-ejecutar"/></svg>Ejecutar todas</button><button id="pruShot" class="btn" type="button"><svg class="i" aria-hidden="true"><use href="#i-captura"/></svg>Captura de las pruebas</button><button class="btn" type="button" data-close>Cerrar</button></div>
   <p class="fine" id="pruEstado" role="status"></p>
@@ -276,7 +278,7 @@
   <textarea id="cNota2" rows="3" maxlength="600" placeholder="Por ejemplo: «En el ejercicio del promedio me da 2 y esperaba 2.5» o «el editor me marca un error que no entiendo»"></textarea>
   <p class="fine">Se manda lo que escribes arriba, el código del programa (sin la cabecera con tu nombre), los datos de entrada y el mensaje del compilador. Sin nombre ni datos personales.</p>
   <ul class="clist" id="cList"></ul>
-  <p class="fine" id="cVacio" hidden>No hay casos guardados. Cuando el editor no sepa explicar algo, lo vas a poder mandar desde acá.</p>
+  <p class="fine" id="cVacio" hidden>No hay casos guardados. Cuando el editor no sepa explicar algo, lo vas a poder mandar desde aquí.</p>
   <div id="cAcc">
     <h3>Vista previa de lo que se enviaría</h3>
     <pre class="prev" id="cPrev" tabindex="0" aria-label="Vista previa del texto que se enviaría"></pre>

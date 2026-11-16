@@ -597,7 +597,7 @@
   "codigo_bien": "#include <stdio.h>\nint main() {\n  int A = 8, B = 2, R;\n  R = A / B;\n  printf(\"%d\\n\", R);\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:4: warning: division by zero [-Wdiv-by-zero]",
-  "mensaje_editor": "Línea 4: división por cero: el programa se cierra al llegar acá.",
+  "mensaje_editor": "Línea 4: división por cero: el programa se cierra al llegar aquí.",
   "explicacion": "No se puede dividir por 0. Con enteros el programa termina con un error, y gcc lo avisa cuando el divisor es una constante 0.",
   "como_arreglarlo": "Divide por un valor distinto de 0.",
   "pistas": [
@@ -612,7 +612,7 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "división por cero: el programa se cierra al llegar acá",
+  "mensaje_editor_actual": "división por cero: el programa se cierra al llegar aquí",
   "codigo_editor_actual": "W-division-cero",
   "verificado_editor_corrige": true
  },

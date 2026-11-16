@@ -92,7 +92,7 @@
   "codigo_bien": "#include <stdio.h>\nfloat AREA(int L);\nint main()\n{\n  printf(\"%.2f\\n\", AREA(3));\n}\nfloat AREA(int L)\n{\n  return L * L * 1.5f;\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:7: error: conflicting types for 'AREA'; have 'float(int)'",
-  "mensaje_editor": "Línea 7: AREA devuelve float acá pero el prototipo dice int.",
+  "mensaje_editor": "Línea 7: AREA devuelve float aquí pero el prototipo dice int.",
   "explicacion": "El tipo de retorno forma parte de la firma de la función. El prototipo y la definición deben declarar el mismo, si no el compilador rechaza el programa.",
   "como_arreglarlo": "Cambia el prototipo o la definición para que devuelvan el mismo tipo, y usa el %f si es float.",
   "pistas": [
@@ -456,7 +456,7 @@
   "codigo_bien": "#include <stdio.h>\nint DOBLE(int X)\n{\n  return 2 * X;\n}\nint main()\n{\n  int N = 4;\n  N = DOBLE(N);\n  printf(\"%d\\n\", N);\n}",
   "entrada": "",
   "que_dice_gcc": "nada",
-  "mensaje_editor": "Línea 9: DOBLE devuelve un valor pero acá no se guarda. N sigue valiendo lo mismo.",
+  "mensaje_editor": "Línea 9: DOBLE devuelve un valor pero aquí no se guarda. N sigue valiendo lo mismo.",
   "explicacion": "La función no cambia N: devuelve un resultado. Si no lo guardas en una variable o lo usas en una expresión, se pierde.",
   "como_arreglarlo": "Asigna la llamada a una variable (N = DOBLE(N);) o úsala dentro de un printf.",
   "pistas": [
@@ -736,7 +736,7 @@
   "codigo_bien": "#include <stdio.h>\nint SUMA(int A, int B)\n{\n  return A + B;\n}\nint main()\n{\n  int R;\n  R = SUMA(2, 3);\n  printf(\"%d\\n\", R);\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:9: error: called object 'SUMA' is not a function or function pointer",
-  "mensaje_editor": "Línea 9: SUMA es una variable acá, no se puede llamar como función. Usa otro nombre para la variable.",
+  "mensaje_editor": "Línea 9: SUMA es una variable aquí, no se puede llamar como función. Usa otro nombre para la variable.",
   "explicacion": "Una variable local con el mismo nombre que una función la oculta dentro de ese bloque. Después ya no puedes llamar a la función.",
   "como_arreglarlo": "Dale a la variable un nombre distinto del de cualquier función.",
   "pistas": [
