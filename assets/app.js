@@ -2189,10 +2189,18 @@ self.postMessage({ type: 'ready' });`;
     const dichoWeb = 'https://diego-20000.github.io/editor-c/';
     btn.addEventListener('click', async () => {
       if (btn.disabled) return;
-      if (!/^https?:$/.test(location.protocol)) { msg.textContent = 'Esta copia es un archivo suelto y no se actualiza sola. Abre ' + dichoWeb + ' para usar siempre la última versión.'; return; }
+      const enApp = !!document.querySelector('meta[name="editorc-local"]');
+      if (!enApp && !/^https?:$/.test(location.protocol)) { msg.textContent = 'Esta copia es un archivo suelto y no se actualiza sola. Abre ' + dichoWeb + ' para usar siempre la última versión.'; return; }
       btn.disabled = true;
       try {
-        if (nueva) {
+        if (enApp) {
+          msg.textContent = 'Buscando…';
+          const inf = await (await fetch('/api/info', { cache: 'no-store' })).json();
+          const j = await (await fetch('/api/actualizar', { method: 'POST', headers: { 'X-Token': inf.token } })).json();
+          if (j.error) msg.textContent = 'No se pudo comprobar. ¿Hay conexión a internet?';
+          else if (j.changed) { msg.textContent = 'Actualizado a la versión ' + String(j.version).slice(0, 8) + '. Recargando…'; flushSave(); setTimeout(() => location.reload(), 800); }
+          else msg.textContent = 'Ya tienes la última versión (' + String(j.version).slice(0, 8) + ').';
+        } else if (nueva) {
           msg.textContent = 'Instalando…'; flushSave();
           const ks = window.caches ? await caches.keys() : [];
           await Promise.all(ks.filter((k) => /^editor-c-/.test(k)).map((k) => caches.delete(k)));
@@ -2218,6 +2226,7 @@ self.postMessage({ type: 'ready' });`;
     const btn = $('instBtn'), msg = $('instMsg');
     const instalada = () => (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
     let ev = null;
+    if (document.querySelector('meta[name="editorc-local"]')) { const fila = btn.closest('.group'); if (fila) fila.hidden = true; msg.hidden = true; return; }   // dentro de la app de escritorio no hay nada que instalar
     if (instalada()) { msg.textContent = 'Ya estás usando la app instalada.'; btn.hidden = true; return; }
     if (!/^https?:$/.test(location.protocol)) { btn.hidden = true; msg.textContent = 'Para instalarla, abre el editor desde su página de internet.'; return; }
     msg.textContent = 'En Edge o Chrome: menú ⋯ → Aplicaciones → Instalar Editor C. Queda con ícono, se abre sin barra del navegador y se actualiza sola.';

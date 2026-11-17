@@ -39,8 +39,18 @@ const escuchar = (s) => new Promise((r) => s.listen(0, '127.0.0.1', r));
   g = await pedir('POST', '/api/gcc', { code: 'int main(){}', input: '' }, { 'X-Token': tk, 'Sec-Fetch-Site': 'cross-site' }); check(g.s === 404, 'pedido desde otro sitio: no');
   g = await pedir('POST', '/api/gcc', { code: 'int main(){}', input: '' }, { 'X-Token': tk, Origin: 'http://ejemplo.com' }); check(g.s === 404, 'otro Origin: no');
   const sg2 = await crearServidor(() => sitio, 18337, { gcc: '', marcar: true });
-  const i2 = await new Promise((res) => { http.get({ host: '127.0.0.1', port: sg2.port, path: '/api/info', headers: { Host: '127.0.0.1:' + sg2.port } }, (rr) => { rr.resume(); res(rr.statusCode); }); }); check(i2 === 404, 'sin gcc en la app: /api/info no existe');
+  const i2 = await new Promise((res) => { http.get({ host: '127.0.0.1', port: sg2.port, path: '/api/info', headers: { Host: '127.0.0.1:' + sg2.port } }, (rr) => { rr.resume(); res(rr.statusCode); }); }); check(i2 === 200, 'sin gcc en la app: /api/info igual responde (gcc: false)');
   await sg2.close(); await SG.close();
+  // «Buscar actualización» desde la página: pasa por /api/actualizar del programa
+  let llamadas = 0;
+  const SA = await crearServidor(() => sitio, 18537, { marcar: true, actualizar: async () => { llamadas++; return { version: 'abcdef012345', cambio: false }; } });
+  const ha = '127.0.0.1:' + SA.port;
+  const pedirA = (met, p, hdr) => new Promise((res) => { const rq = http.request({ host: '127.0.0.1', port: SA.port, path: p, method: met, headers: Object.assign({ Host: ha }, hdr || {}), agent: false }, (r) => { let b = ''; r.on('data', (d) => { b += d; }); r.on('end', () => { let j = null; try { j = JSON.parse(b); } catch (e) { /* no era JSON */ } res({ s: r.statusCode, j }); }); }); rq.on('error', () => res({ s: 0 })); rq.end(); });
+  const infoA = await pedirA('GET', '/api/info'); check(infoA.s === 200 && infoA.j.gcc === false && infoA.j.token.length === 32, 'sin gcc, /api/info igual da el token (la página lo necesita para actualizar)');
+  let au = await pedirA('POST', '/api/actualizar', { 'X-Token': infoA.j.token }); check(au.s === 200 && au.j.version === 'abcdef012345' && au.j.changed === false && llamadas === 1, '/api/actualizar usa el actualizador del programa');
+  au = await pedirA('POST', '/api/actualizar'); check(au.s === 404 && llamadas === 1, '/api/actualizar sin token: no');
+  au = await pedirA('POST', '/api/actualizar', { 'X-Token': infoA.j.token, 'Sec-Fetch-Site': 'cross-site' }); check(au.s === 404 && llamadas === 1, '/api/actualizar desde otro sitio: no');
+  await SA.close();
   // actualizador
   const ver = /const VERSION = '([0-9a-f]{12})'/.exec(fs.readFileSync(path.join(raiz, 'sw.js'), 'utf8'))[1];
   let web = publicada(); await escuchar(web); const base = 'http://127.0.0.1:' + web.address().port + '/';

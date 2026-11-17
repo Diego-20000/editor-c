@@ -33,9 +33,14 @@ function crearServidor(getDir, puertoBase, opts) {
     let u;
     try { u = decodeURIComponent(rq.url.split('?')[0]); } catch (e) { rs.statusCode = 400; rs.end('mal pedido'); return; }
     if (u === '/api/info' && rq.method === 'GET') {
-      if (!mismoOrigen(rq) || !gccRuta) { rs.statusCode = 404; rs.end('no'); return; }
-      if (versionG === null) versionG = versionGcc(gccRuta);
-      json(rs, 200, { gcc: true, version: versionG, so: process.platform === 'win32' ? 'windows' : 'linux', token }); return;
+      if (!mismoOrigen(rq)) { rs.statusCode = 404; rs.end('no'); return; }
+      if (gccRuta && versionG === null) versionG = versionGcc(gccRuta);
+      json(rs, 200, { gcc: !!gccRuta, version: versionG, so: process.platform === 'win32' ? 'windows' : 'linux', token }); return;
+    }
+    if (u === '/api/actualizar') {   // «Buscar actualización» de Ajustes: la página no puede pedir la versión publicada (solo habla con 127.0.0.1), la pide el programa
+      if (rq.method !== 'POST' || !mismoOrigen(rq) || !opts.actualizar || rq.headers['x-token'] !== token) { rs.statusCode = 404; rs.end('no'); return; }
+      Promise.resolve().then(() => opts.actualizar()).then((r) => json(rs, 200, { version: r.version, changed: !!r.cambio }), (e) => json(rs, 200, { error: String(e && e.message || e) }));
+      return;
     }
     if (u === '/api/gcc') {
       if (rq.method !== 'POST' || !mismoOrigen(rq) || !gccRuta || rq.headers['x-token'] !== token) { rs.statusCode = 404; rs.end('no'); return; }
