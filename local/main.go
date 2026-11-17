@@ -35,10 +35,50 @@ const (
 )
 
 var (
-	token   string
-	gccRuta string
-	puerto  int
+	token       string
+	gccRuta     string
+	puerto      int
+	dirEditor   string // carpeta «editor» junto al programa: si existe, manda sobre la copia embebida (así se actualiza)
+	verEmbebida string
 )
+
+func carpetaEditor() string {
+	if v := os.Getenv("EDITORC_EDITOR"); v != "" {
+		return v
+	}
+	exe, err := os.Executable()
+	if err != nil {
+		return "editor"
+	}
+	return filepath.Join(filepath.Dir(exe), "editor")
+}
+
+// de dónde se sirve el editor: la carpeta «editor» si está completa, si no la copia embebida
+func sitioActual() http.FileSystem {
+	if _, err := os.Stat(filepath.Join(dirEditor, "index.html")); err == nil {
+		return http.Dir(dirEditor)
+	}
+	sub, _ := fs.Sub(sitioFS, "site")
+	return http.FS(sub)
+}
+
+// el index.html lleva una marca para que el editor sepa que lo sirve este programa (y solo entonces busque gcc)
+func servirIndex(w http.ResponseWriter, r *http.Request) {
+	f, err := sitioActual().Open("index.html")
+	if err != nil {
+		http.NotFound(w, r)
+		return
+	}
+	defer f.Close()
+	b, err := io.ReadAll(io.LimitReader(f, 8<<20))
+	if err != nil {
+		http.NotFound(w, r)
+		return
+	}
+	b = bytes.Replace(b, []byte("<head>"), []byte("<head>\n<meta name=\"editorc-local\" content=\"1\">"), 1)
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.Write(b)
+}
 
 func buscarGcc() string {
 	if v := os.Getenv("EDITORC_GCC"); v != "" {
@@ -266,15 +306,13 @@ func main() {
 	rand.Read(b)
 	token = hex.EncodeToString(b)
 
-	sub, err := fs.Sub(sitioFS, "site")
-	if err != nil {
-		fmt.Println("error interno:", err)
-		os.Exit(1)
+	dirEditor = carpetaEditor()
+	if b, err := sitioFS.ReadFile("site/VERSION"); err == nil {
+		verEmbebida = strings.TrimSpace(string(b))
 	}
 	mux := http.NewServeMux()
 	mux.HandleFunc("/api/info", apiInfo)
 	mux.HandleFunc("/api/gcc", apiGcc)
-	estatico := http.FileServer(http.FS(sub))
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if !origenValido(r) {
 			http.Error(w, "dirección no permitida", http.StatusForbidden)
@@ -282,10 +320,15 @@ func main() {
 		}
 		w.Header().Set("Cache-Control", "no-store")
 		w.Header().Set("X-Content-Type-Options", "nosniff")
-		estatico.ServeHTTP(w, r)
+		if r.URL.Path == "/" || r.URL.Path == "/index.html" {
+			servirIndex(w, r)
+			return
+		}
+		http.FileServer(sitioActual()).ServeHTTP(w, r)
 	})
 
 	var ln net.Listener
+	var err error
 	for i := 0; i < 10; i++ {
 		puerto = puertoBase + i
 		ln, err = net.Listen("tcp", fmt.Sprintf("127.0.0.1:%d", puerto))
@@ -310,6 +353,19 @@ func main() {
 	fmt.Println("Deja esta ventana abierta mientras uses el editor. Ciérrala para terminar.")
 	if os.Getenv("EDITORC_NO_ABRIR") == "" {
 		abrirNavegador(url)
+	}
+	if os.Getenv("EDITORC_SIN_ACTUALIZAR") == "" {
+		go func() {
+			nueva, cambio, err := actualizar(dirEditor, verEmbebida)
+			switch {
+			case err != nil:
+				fmt.Println("Actualización: sin cambios (", err, ")")
+			case cambio:
+				fmt.Println("Editor actualizado a la versión", nueva, "- recarga la página del editor (F5) para usarla.")
+			default:
+				fmt.Println("Editor al día (versión", nueva+").")
+			}
+		}()
 	}
 	srv := &http.Server{Handler: mux, ReadHeaderTimeout: 10 * time.Second}
 	if err := srv.Serve(ln); err != nil {

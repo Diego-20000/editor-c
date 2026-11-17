@@ -5,7 +5,7 @@ const bin = path.join(__dirname, '..', 'local', 'editorc-local');
 if (!fs.existsSync(bin)) { console.log('falta local/editorc-local (bash local/build.sh linux): se omite'); process.exit(0); }
 (async () => {
   const gcc = execFileSync('which', ['gcc']).toString().trim();
-  const srv = spawn(bin, [], { env: Object.assign({}, process.env, { EDITORC_GCC: gcc, EDITORC_NO_ABRIR: '1' }) });
+  const srv = spawn(bin, [], { env: Object.assign({}, process.env, { EDITORC_GCC: gcc, EDITORC_NO_ABRIR: '1', EDITORC_SIN_ACTUALIZAR: '1' }) });
   let log = ''; srv.stdout.on('data', (d) => { log += d; });
   await new Promise((r) => setTimeout(r, 800));
   const m = /127\.0\.0\.1:(\d+)/.exec(log); const base = 'http://127.0.0.1:' + (m ? m[1] : '8137');
@@ -33,6 +33,44 @@ if (!fs.existsSync(bin)) { console.log('falta local/editorc-local (bash local/bu
   const estado = (host) => new Promise((res) => { const rq = require('http').request({ host: '127.0.0.1', port: +base.split(':')[2].replace('/', ''), path: '/', headers: { Host: host } }, (r) => { r.resume(); res(r.statusCode); }); rq.on('error', () => res(0)); rq.end(); });
   check(await estado('ejemplo.com') === 403 && await estado('127.0.0.1:' + base.split(':')[2]) === 200, 'local: rechaza otro nombre de host (DNS rebinding) y acepta el propio');
   check(errs.length === 0, 'local: consola limpia' + (errs.length ? ': ' + errs.join(' | ') : ''));
+
+  // actualización automática: se compara la versión publicada (sw.js) y se bajan los archivos del editor
+  {
+    const http = require('http'); const os = require('os');
+    const raiz = path.join(__dirname, '..');
+    const publicada = (extra) => http.createServer((rq, rs) => {
+      const u = decodeURIComponent(rq.url.split('?')[0]); const f = u === '/' ? 'index.html' : u.slice(1);
+      if (extra && extra[f]) { rs.end(extra[f]); return; }
+      const p = path.join(raiz, f); if (!p.startsWith(raiz) || !fs.existsSync(p) || fs.statSync(p).isDirectory()) { rs.statusCode = 404; rs.end('no'); return; }
+      rs.end(fs.readFileSync(p));
+    });
+    const lanzar = async (url, dir) => {
+      const sv = spawn(bin, [], { env: Object.assign({}, process.env, { EDITORC_NO_ABRIR: '1', EDITORC_ACTUALIZAR_URL: url, EDITORC_EDITOR: dir }) });
+      let lg = ''; sv.stdout.on('data', (d) => { lg += d; });
+      await new Promise((r) => setTimeout(r, 3000)); sv.kill(); return lg;
+    };
+    const ver = /const VERSION = '([0-9a-f]{12})'/.exec(fs.readFileSync(path.join(raiz, 'sw.js'), 'utf8'))[1];
+    // a) hay una versión nueva: se baja completa
+    let web = publicada(); await new Promise((r) => web.listen(0, '127.0.0.1', r));
+    let dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecl-')); fs.mkdirSync(dir + '/e'); fs.writeFileSync(dir + '/e/index.html', '<head>viejo</head>'); fs.writeFileSync(dir + '/e/VERSION', '000000000000\n');
+    let lg = await lanzar('http://127.0.0.1:' + web.address().port + '/', dir + '/e');
+    check(fs.existsSync(dir + '/e/assets/app.js') && fs.readFileSync(dir + '/e/VERSION', 'utf8').trim() === ver && /actualizado/.test(lg), 'actualización: baja el editor nuevo y deja la versión publicada');
+    check(!fs.existsSync(dir + '/e.nuevo') && !fs.existsSync(dir + '/e.viejo'), 'actualización: no deja carpetas temporales');
+    // b) ya está al día: no baja nada
+    lg = await lanzar('http://127.0.0.1:' + web.address().port + '/', dir + '/e');
+    check(/al día/.test(lg), 'actualización: con la misma versión no vuelve a bajar');
+    // c) sin conexión: queda lo que había
+    fs.writeFileSync(dir + '/e/VERSION', '111111111111\n');
+    lg = await lanzar('http://127.0.0.1:1/', dir + '/e');
+    check(fs.existsSync(dir + '/e/index.html') && fs.readFileSync(dir + '/e/VERSION', 'utf8').trim() === '111111111111', 'actualización: sin conexión conserva el editor que ya había');
+    web.close();
+    // d) lista de archivos maliciosa (../): se rechaza y no se toca nada
+    const swMal = fs.readFileSync(path.join(raiz, 'sw.js'), 'utf8').replace(/const FILES = \[[^\]]*\]/, 'const FILES = ["index.html","../../etc/passwd"]');
+    web = publicada({ 'sw.js': swMal }); await new Promise((r) => web.listen(0, '127.0.0.1', r));
+    lg = await lanzar('http://127.0.0.1:' + web.address().port + '/', dir + '/e');
+    check(/no permitido/.test(lg) && fs.readFileSync(dir + '/e/VERSION', 'utf8').trim() === '111111111111', 'actualización: rechaza nombres de archivo con «..»');
+    web.close(); fs.rmSync(dir, { recursive: true, force: true });
+  }
   await br.close(); srv.kill();
   // en el sitio normal (file://) no aparece el botón ni se hace ningún pedido
   const br2 = await chromium.launch(); const pg2 = await (await br2.newContext()).newPage();

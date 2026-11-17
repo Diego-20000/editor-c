@@ -2138,6 +2138,7 @@ self.postMessage({ type: 'ready' });`;
   // Versión local (EditorC.exe): si el editor se abre desde 127.0.0.1 y hay un gcc al lado, aparece «gcc real».
   // En el sitio publicado y con doble clic (file://) no se hace ningún pedido: el botón queda oculto.
   (function () {
+    if (!document.querySelector('meta[name="editorc-local"]')) return;   // la marca la pone EditorC.exe al servir el editor
     if (!/^https?:$/.test(location.protocol) || !/^(127\.0\.0\.1|localhost)$/.test(location.hostname)) return;
     let tk = '', ver = '', so = '';
     fetch('/api/info', { cache: 'no-store' }).then((r) => (r.ok ? r.json() : null)).then((j) => {

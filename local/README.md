@@ -13,3 +13,6 @@ Seguridad: solo escucha en 127.0.0.1; la API exige el `Host` propio, mismo orige
 
 ## Pendiente de probar en Windows 10 real
 Que `gcc\bin\gcc` compile y ejecute (usar `PROBAR.bat`), que corra desde un pendrive, qué dice el antivirus/SmartScreen (el `.exe` no está firmado), y las diferencias MinGW vs Linux (`long` de 4 bytes, `rand`, formatos).
+
+## Actualización automática
+Al abrir `EditorC.exe`, si hay internet, compara la versión publicada (el hash de `sw.js` en `diego-20000.github.io/editor-c/`) con la de la carpeta `editor/` (o la embebida) y, si es más nueva, baja los archivos listados en `FILES` de ese `sw.js` a `editor.nuevo/` y la intercambia por `editor/`. Solo archivos públicos; nada del alumno sale. Sin internet o ante cualquier falla se sigue con lo que hay. Se rechazan nombres con `..`, más de 200 archivos, archivos de más de 8 MB y descargas de más de 40 MB. El `.exe` y `gcc/` no se actualizan solos. Sin firma: la confianza es la de la cuenta de GitHub (activar verificación en dos pasos); firmar las versiones queda como mejora si se reparte mucho. Variables para pruebas: `EDITORC_ACTUALIZAR_URL`, `EDITORC_EDITOR`, `EDITORC_SIN_ACTUALIZAR`.

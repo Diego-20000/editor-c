@@ -5,3 +5,6 @@ test/informes/
 local/site/
 local/editorc-local
 local/EditorC.exe
+local/editor/
+local/editor.nuevo/
+local/editor.viejo/
