@@ -1,0 +1,26 @@
+{
+  "name": "editor-c",
+  "productName": "Editor C",
+  "version": "1.0.0",
+  "description": "Editor de C para escritorio: corre sin conexión y se actualiza al abrir.",
+  "author": "Diego Segurotti (ArtPrograms Studio)",
+  "license": "SEE LICENSE IN ../LICENSE",
+  "main": "main.js",
+  "private": true,
+  "scripts": {
+    "preparar": "node preparar.js",
+    "start": "node preparar.js && electron .",
+    "dist": "node preparar.js && electron-builder --win nsis --x64 --publish never"
+  },
+  "build": {
+    "appId": "ar.artprograms.editorc",
+    "productName": "Editor C",
+    "files": ["main.js", "servidor.js", "actualizar.js", "site/**/*", "package.json"],
+    "win": { "target": [{ "target": "nsis", "arch": ["x64"] }], "icon": "icon.png" },
+    "nsis": { "oneClick": true, "perMachine": false, "allowToChangeInstallationDirectory": false, "createDesktopShortcut": true, "createStartMenuShortcut": true, "shortcutName": "Editor C", "deleteAppDataOnUninstall": false }
+  },
+  "devDependencies": {
+    "electron": "33.2.1",
+    "electron-builder": "25.1.8"
+  }
+}

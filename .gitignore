@@ -2,3 +2,7 @@
 tools/capturas/
 node_modules/
 test/informes/
+app/site/
+app/node_modules/
+app/dist/
+app/icon.png

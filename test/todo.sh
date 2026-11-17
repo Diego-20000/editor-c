@@ -35,6 +35,7 @@ paso "Ayuda completa (¿qué es?)"       300 node test/ayuda-completa.test.js
 paso "Español neutro (sin voseo)"       120 node test/neutro.test.js
 paso "Ordenar código (forma, no contenido)" 300 node test/ordenar.test.js
 paso "Seguridad (motor y datos)"     300 node test/seguridad.test.js
+paso "App de escritorio (servidor y actualizador)" 120 node test/app.test.js
 if [ "$KB" = 1 ]; then
   for f in kb/errores/*.json kb/lecciones.json; do paso "Base contra gcc: $(basename "$f" .json)" 900 bash -c "cd \"$T\" && node \"$OLDPWD/tools/kb-validar.js\" \"$OLDPWD/$f\" --silencio"; done
 fi
