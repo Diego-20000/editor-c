@@ -1,0 +1,39 @@
+# Arma el instalador de Windows de Editor C (app de escritorio) y lo deja descargable.
+# Se corre a mano (Actions → «App de escritorio» → Run workflow) o al subir una etiqueta app-v*.
+name: App de escritorio
+on:
+  workflow_dispatch:
+  push:
+    tags: ['app-v*']
+permissions:
+  contents: write
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Armar el gcc mínimo (WinLibs, con suma de verificación)
+        run: python app/preparar-gcc.py
+      - name: Instalar Electron y electron-builder
+        working-directory: app
+        run: npm install --no-audit --no-fund
+      - name: Armar el instalador
+        working-directory: app
+        run: npm run dist
+      - name: Guardar el instalador
+        uses: actions/upload-artifact@v4
+        with:
+          name: EditorC-instalador
+          path: app/dist/*.exe
+      - name: Publicar en Releases (solo con etiqueta)
+        if: startsWith(github.ref, 'refs/tags/app-v')
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "${{ github.ref_name }}" app/dist/*.exe --title "Editor C para escritorio ${{ github.ref_name }}" --notes "Instalador para Windows. Windows puede mostrar «Windows protegió su PC»: Más información → Ejecutar de todas formas (el instalador no está firmado)."

@@ -3,7 +3,7 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-fU/QoskQuRctWlhECw3JlI6RrDSje0vtV21uFbUnqKQ=' 'sha256-wm7GsMty5KTzqStZRdJc4AsPRHIhKeVxzZNfSV/D7DE=' 'sha256-pZVFs1YVsdy2azF75ymoYrdNRc5OZVrrfu7C+JcNW4U=' 'sha256-9zvWeljVCsD4A/ghvUPZzT4c9slTDfe9sD7ZDEfcd04=' 'sha256-MYDneO0Wg4Vqg3gRX9ZyX/se0JBF0BkpYndit4UgtOs=' 'sha256-gulZ4uD1j9wrWrUJTM0i0CfFQRLjijuxwfAI5nM7EFo=' 'sha256-YWfTPglgy6A16Gqj4KpASJehPD+VJDIA7DGWmY79UM0=' 'sha256-D5eNFhJM5caNHsqiKB7XBhlV8Y/ARxp5llSr91wXSdw=' 'sha256-roqfeKHX31qnhNACUzx3ptrcftZMZBB97BGtw/Z3ojs=' 'sha256-eDnOIzEinYAB2tOTqOA5fuAMar6Rl/n1njISU2FFeCY=' 'sha256-rgiSH12iMr5IUIltfKReOQmwgPX6XvqRC3qq4U3+BPk=' 'unsafe-eval'; worker-src blob:; child-src blob:; style-src 'sha256-quNhzIrgLxjnhAAdzZV8GZ7qL+7HLG4bmluPmVpExok='; img-src data: blob:; font-src data:; connect-src blob:; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-fU/QoskQuRctWlhECw3JlI6RrDSje0vtV21uFbUnqKQ=' 'sha256-wm7GsMty5KTzqStZRdJc4AsPRHIhKeVxzZNfSV/D7DE=' 'sha256-pZVFs1YVsdy2azF75ymoYrdNRc5OZVrrfu7C+JcNW4U=' 'sha256-9zvWeljVCsD4A/ghvUPZzT4c9slTDfe9sD7ZDEfcd04=' 'sha256-uT9B30D51IaXSDdWnLt5hI3Yl9gNI0NAPNa+CQ8Eak0=' 'sha256-gulZ4uD1j9wrWrUJTM0i0CfFQRLjijuxwfAI5nM7EFo=' 'sha256-lzw5PidSmqvMpeXInXWaMiAFH0i7koOilb3shZc6B7k=' 'sha256-D5eNFhJM5caNHsqiKB7XBhlV8Y/ARxp5llSr91wXSdw=' 'sha256-roqfeKHX31qnhNACUzx3ptrcftZMZBB97BGtw/Z3ojs=' 'sha256-eDnOIzEinYAB2tOTqOA5fuAMar6Rl/n1njISU2FFeCY=' 'sha256-rgiSH12iMr5IUIltfKReOQmwgPX6XvqRC3qq4U3+BPk=' 'unsafe-eval'; worker-src blob:; child-src blob:; style-src 'sha256-quNhzIrgLxjnhAAdzZV8GZ7qL+7HLG4bmluPmVpExok='; img-src data: blob:; font-src data:; connect-src blob:; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="dark light">
 <title>Editor C</title>
@@ -607,6 +607,7 @@ fieldset > .group + .group { margin-top: 8px; }
     <div class="pane-head"><span>Consola</span><span id="status" class="chip" role="status">Listo</span>
       <span class="tools">
         <button id="inBtn" class="btn mini" aria-expanded="false" aria-controls="inbox" title="Datos de entrada para precargar lo que lee scanf"><svg class="i" aria-hidden="true"><use href="#i-entrada"/></svg>Entrada<i id="inDot" class="dot" hidden></i></button>
+        <button id="gccBtn" class="btn mini" hidden title="Compila y ejecuta este programa con gcc de verdad (solo en la app de escritorio, si lo activaste en Ajustes)"><svg class="i" aria-hidden="true"><use href="#i-quees"/></svg>gcc real</button>
         <button id="copy" class="btn mini" title="Copiar la salida"><svg class="i" aria-hidden="true"><use href="#i-copiar"/></svg>Copiar</button>
         <button id="clear" class="btn mini" title="Limpiar la consola"><svg class="i" aria-hidden="true"><use href="#i-limpiar"/></svg>Limpiar</button>
       </span></div>
@@ -676,6 +677,10 @@ fieldset > .group + .group { margin-top: 8px; }
     <div class="group"><label class="chk"><input type="checkbox" id="symChk" role="switch"> Barra de símbolos en el celular</label></div>
     <p class="foot">Una fila sobre el teclado con { } ( ) [ ] ; &amp; * y otros símbolos de C. Cada toque escribe un solo símbolo: no completa nada por ti.</p>
     </div>
+  </fieldset>
+  <fieldset id="gccSet" hidden><legend>gcc real (avanzado)</legend>
+    <div class="group"><label class="chk"><input type="checkbox" id="gccRealChk" role="switch"> Activar el botón «gcc real»</label></div>
+    <p class="foot">Compila y ejecuta con gcc 13 de verdad. Ojo: el programa corre directamente en esta computadora, con tus permisos, y no dentro del editor: úsalo solo con programas tuyos. Apagado por defecto.</p>
   </fieldset>
   <fieldset><legend>Versión</legend>
     <div class="group"><div class="srow"><span id="verTxt">Versión</span><button id="updBtn" class="btn" type="button">Buscar actualización</button></div></div>
@@ -6841,6 +6846,47 @@ self.postMessage({ type: 'ready' });`;
   })();
   recibirEnlace();
 
+
+  // gcc real (solo en la app de escritorio: el servidor local pone la marca en el index.html y trae un gcc dentro).
+  // En el sitio publicado y con file:// no se hace ningún pedido: nada de esto aparece.
+  (function () {
+    if (!document.querySelector('meta[name="editorc-local"]')) return;
+    if (!/^https?:$/.test(location.protocol) || !/^(127\.0\.0\.1|localhost)$/.test(location.hostname)) return;
+    let tk = '', ver = '', so = '', hay = false;
+    const btn = $('gccBtn'), chk = $('gccRealChk');
+    const pinta = () => { btn.hidden = !(hay && chk.checked); };
+    chk.checked = store.get('gccreal', '') === '1';
+    chk.addEventListener('change', () => { store.set('gccreal', chk.checked ? '1' : '0'); pinta(); });
+    fetch('/api/info', { cache: 'no-store' }).then((r) => (r.ok ? r.json() : null)).then((j) => {
+      if (!j || !j.gcc || typeof j.token !== 'string') return;
+      tk = j.token; ver = String(j.version || '').slice(0, 20); so = j.so === 'windows' ? 'Windows' : 'Linux';
+      hay = true; $('gccSet').hidden = false; pinta();
+    }).catch(() => { /* sin gcc: nada que mostrar */ });
+    btn.addEventListener('click', () => {
+      if (btn.disabled) return;
+      btn.disabled = true;
+      let entrada = inTxt.value; if (entrada && !entrada.endsWith('\n')) entrada += '\n';
+      fetch('/api/gcc', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Token': tk }, body: JSON.stringify({ code: ta.value, input: entrada }) })
+        .then((r) => (r.ok ? r.json() : Promise.reject(new Error('http'))))
+        .then((j) => {
+          if (!endsWithNewline()) appendText('\n');
+          appendText('— gcc real ' + ver + ' (' + so + ') —\n', 'dim');
+          if (!j.compiled) {
+            appendText(nivelAyuda >= 2 ? String(j.messages || '') + '\n' : 'gcc no pudo compilar el programa.\n', 'er');
+            return;
+          }
+          if (nivelAyuda >= 2 && j.messages) appendText(String(j.messages) + '\n', 'dim');
+          appendText(String(j.output || ''));
+          if (!endsWithNewline()) appendText('\n');
+          if (j.truncated) appendText('(salida cortada: demasiado texto)\n', 'er');
+          if (j.timeout) appendText('— se detuvo: tardó más de 5 segundos —\n', 'er');
+          else appendText('— gcc: código de salida ' + (j.exit | 0) + ' —\n', j.exit ? 'er' : 'ok');
+        })
+        .catch(() => { appendText('No se pudo usar gcc. Cierra y vuelve a abrir la app.\n', 'er'); })
+        .then(() => { btn.disabled = false; });
+    });
+  })();
+
   // Ajustes → Versión: comprobar si hay una versión más nueva y pasarse a ella (no se manda nada del alumno: solo se pide un archivo público)
   (function () {
     const btn = $('updBtn'), msg = $('updMsg');
@@ -6899,7 +6945,7 @@ window.KB_DATA={"errores":[{"id":"ARR-001","categoria":"arreglos y textos","nomb
    (por ejemplo '5491112345678'). Vacío = el botón abre WhatsApp sin destinatario. */
 (function (root) {
   'use strict';
-  var CONFIG = { WHATSAPP_NUMERO: '5491137781528', VERSION: '924ab9413356' };
+  var CONFIG = { WHATSAPP_NUMERO: '5491137781528', VERSION: 'c235a5e760da' };
   if (typeof module !== 'undefined' && module.exports) module.exports = CONFIG;
   else root.CONFIG = CONFIG;
 })(typeof self !== 'undefined' ? self : this);
