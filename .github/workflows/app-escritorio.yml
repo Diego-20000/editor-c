@@ -3,6 +3,10 @@
 name: App de escritorio
 on:
   workflow_dispatch:
+    inputs:
+      etiqueta:
+        description: 'Etiqueta de la página de Releases (si no existe se crea)'
+        default: 'app-v1'
   push:
     tags: ['app-v*']
 permissions:
@@ -31,9 +35,14 @@ jobs:
         with:
           name: EditorC-instalador
           path: app/dist/*.exe
-      - name: Publicar en Releases (solo con etiqueta)
-        if: startsWith(github.ref, 'refs/tags/app-v')
+      - name: Publicar en Releases
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "${{ github.ref_name }}" app/dist/*.exe --title "Editor C para escritorio ${{ github.ref_name }}" --notes "Instalador para Windows. Windows puede mostrar «Windows protegió su PC»: Más información → Ejecutar de todas formas (el instalador no está firmado)."
+          ETIQUETA: ${{ github.event.inputs.etiqueta || github.ref_name }}
+        run: |
+          if gh release view "$ETIQUETA" >/dev/null 2>&1; then
+            gh release upload "$ETIQUETA" app/dist/*.exe --clobber
+          else
+            gh release create "$ETIQUETA" app/dist/*.exe --target "$GITHUB_SHA" --title "Editor C para escritorio $ETIQUETA" --notes "Instalador para Windows. Windows puede mostrar «Windows protegió su PC»: Más información → Ejecutar de todas formas (el instalador no está firmado)."
+          fi
