@@ -3,7 +3,7 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-fU/QoskQuRctWlhECw3JlI6RrDSje0vtV21uFbUnqKQ=' 'sha256-wm7GsMty5KTzqStZRdJc4AsPRHIhKeVxzZNfSV/D7DE=' 'sha256-pZVFs1YVsdy2azF75ymoYrdNRc5OZVrrfu7C+JcNW4U=' 'sha256-9zvWeljVCsD4A/ghvUPZzT4c9slTDfe9sD7ZDEfcd04=' 'sha256-Ut47z8ttWLoaBaGIxmQ4PwfbtqcGnhxfvvcT+b73b5c=' 'sha256-gulZ4uD1j9wrWrUJTM0i0CfFQRLjijuxwfAI5nM7EFo=' 'sha256-5b+trqTGi2X/dB3IWl2CPujJvOm3At2ggczcE7UkRhA=' 'sha256-D5eNFhJM5caNHsqiKB7XBhlV8Y/ARxp5llSr91wXSdw=' 'sha256-roqfeKHX31qnhNACUzx3ptrcftZMZBB97BGtw/Z3ojs=' 'sha256-eDnOIzEinYAB2tOTqOA5fuAMar6Rl/n1njISU2FFeCY=' 'sha256-rgiSH12iMr5IUIltfKReOQmwgPX6XvqRC3qq4U3+BPk=' 'unsafe-eval'; worker-src blob:; child-src blob:; style-src 'sha256-R5aR2anWSIktPBGLRAuWuiFG/RetIIh78ptIn1OBzEU='; img-src data: blob:; font-src data:; connect-src blob:; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-fU/QoskQuRctWlhECw3JlI6RrDSje0vtV21uFbUnqKQ=' 'sha256-wm7GsMty5KTzqStZRdJc4AsPRHIhKeVxzZNfSV/D7DE=' 'sha256-pZVFs1YVsdy2azF75ymoYrdNRc5OZVrrfu7C+JcNW4U=' 'sha256-9zvWeljVCsD4A/ghvUPZzT4c9slTDfe9sD7ZDEfcd04=' 'sha256-TVAZordt+6meZa5eBWThNHUUfXfsLorvN0Hr3tVWdC8=' 'sha256-gulZ4uD1j9wrWrUJTM0i0CfFQRLjijuxwfAI5nM7EFo=' 'sha256-HP9lSDKElpjVcS60V4O++RddK/Aveuxy1KMREMs3oYU=' 'sha256-D5eNFhJM5caNHsqiKB7XBhlV8Y/ARxp5llSr91wXSdw=' 'sha256-roqfeKHX31qnhNACUzx3ptrcftZMZBB97BGtw/Z3ojs=' 'sha256-eDnOIzEinYAB2tOTqOA5fuAMar6Rl/n1njISU2FFeCY=' 'sha256-rgiSH12iMr5IUIltfKReOQmwgPX6XvqRC3qq4U3+BPk=' 'unsafe-eval'; worker-src blob:; child-src blob:; style-src 'sha256-R5aR2anWSIktPBGLRAuWuiFG/RetIIh78ptIn1OBzEU='; img-src data: blob:; font-src data:; connect-src blob:; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="dark light">
 <title>Editor C</title>
@@ -688,6 +688,8 @@ fieldset > .group + .group { margin-top: 8px; }
     <p class="foot" id="updMsg" role="status"></p>
     <div class="group"><div class="srow"><span>Instalar la app</span><button id="instBtn" class="btn" type="button" hidden>Instalar</button></div></div>
     <p class="foot" id="instMsg"></p>
+    <div class="group" id="descGrp"><div class="srow"><span>App para Windows</span><a id="descApp" class="btn" href="https://github.com/Diego-20000/editor-c/releases/latest/download/Editor-C-Setup.exe" target="_blank" rel="noopener">Descargar</a></div></div>
+    <p class="foot" id="descMsg">Instalador de Editor C para Windows (unos 100 MB): queda con ícono, funciona sin internet y se actualiza sola. Windows puede mostrar «Windows protegió su PC»: elige «Más información» y «Ejecutar de todas formas». El archivo se baja de GitHub.</p>
   </fieldset>
   <fieldset><legend>Casos para enviar</legend>
     <p class="lead">Cuando el editor no sabe explicar algo, guarda el caso solo en este dispositivo. Nada se envía solo: tú miras qué se manda y eliges si se lo envías a Diego.</p>
@@ -715,6 +717,7 @@ fieldset > .group + .group { margin-top: 8px; }
     <li><b>Pasar a otro dispositivo:</b> el enlace contiene tu programa. Cualquiera que lo reciba puede verlo, así que cuídalo como un archivo.</li>
     <li><b>Avisar a Diego:</b> ves una vista previa de lo que se manda (sin nombre ni datos personales) y tú decides si lo envías por WhatsApp.</li>
     <li><b>Exportar y Guardar .c:</b> son archivos que quedan en tu dispositivo.</li>
+    <li><b>Descargar la app para Windows:</b> te lleva a GitHub, que ve tu dirección IP como cualquier página que visites.</li>
   </ul>
   <h3>Qué no hace</h3>
   <ul>
@@ -6935,7 +6938,7 @@ self.postMessage({ type: 'ready' });`;
     const btn = $('instBtn'), msg = $('instMsg');
     const instalada = () => (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
     let ev = null;
-    if (document.querySelector('meta[name="editorc-local"]')) { const fila = btn.closest('.group'); if (fila) fila.hidden = true; msg.hidden = true; return; }   // dentro de la app de escritorio no hay nada que instalar
+    if (document.querySelector('meta[name="editorc-local"]')) { const fila = btn.closest('.group'); if (fila) fila.hidden = true; msg.hidden = true; $('descGrp').hidden = true; $('descMsg').hidden = true; return; }   // dentro de la app de escritorio no hay nada que instalar ni que descargar
     if (instalada()) { msg.textContent = 'Ya estás usando la app instalada.'; btn.hidden = true; return; }
     if (!/^https?:$/.test(location.protocol)) { btn.hidden = true; msg.textContent = 'Para instalarla, abre el editor desde su página de internet.'; return; }
     msg.textContent = 'En Edge o Chrome: menú ⋯ → Aplicaciones → Instalar Editor C. Queda con ícono, se abre sin barra del navegador y se actualiza sola.';
@@ -6955,7 +6958,7 @@ window.KB_DATA={"errores":[{"id":"ARR-001","categoria":"arreglos y textos","nomb
    (por ejemplo '5491112345678'). Vacío = el botón abre WhatsApp sin destinatario. */
 (function (root) {
   'use strict';
-  var CONFIG = { WHATSAPP_NUMERO: '5491137781528', VERSION: 'a2c1b7263771' };
+  var CONFIG = { WHATSAPP_NUMERO: '5491137781528', VERSION: 'c1f57f63504e' };
   if (typeof module !== 'undefined' && module.exports) module.exports = CONFIG;
   else root.CONFIG = CONFIG;
 })(typeof self !== 'undefined' ? self : this);

@@ -20,7 +20,7 @@ let ok = 0, bad = 0; const check = (c, m) => { if (c) { ok++; console.log('  ok 
   await pg.waitForFunction(() => /código de salida/.test(document.getElementById('out').textContent), null, { timeout: 15000 });
   const t = await pg.textContent('#out'); check(/gcc real/.test(t) && /doble: 42/.test(t), 'app: «gcc real» compila y ejecuta con la entrada');
   await pg.click('#settings'); await pg.waitForSelector('#dSet[open]');
-  check(await pg.isHidden('#instBtn') && await pg.isHidden('#instMsg'), 'app: dentro de la app no aparece «Instalar la app»');
+  check(await pg.isHidden('#instBtn') && await pg.isHidden('#instMsg') && await pg.isHidden('#descApp'), 'app: dentro de la app no aparece «Instalar la app» ni «Descargar»');
   await pg.click('#updBtn'); await pg.waitForFunction(() => /última versión|Actualizado|No se pudo/.test(document.getElementById('updMsg').textContent), null, { timeout: 8000 });
   check(/No se pudo comprobar|última versión|Actualizado/.test(await pg.textContent('#updMsg')) && !/Buscando/.test(await pg.textContent('#updMsg')), 'app: «Buscar actualización» responde usando el programa (no la copia local)');
   await pg.keyboard.press('Escape');
