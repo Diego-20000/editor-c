@@ -2,3 +2,6 @@
 tools/capturas/
 node_modules/
 test/informes/
+local/site/
+local/editorc-local
+local/EditorC.exe

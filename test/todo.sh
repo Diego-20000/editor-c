@@ -42,6 +42,7 @@ if [ "$RAPIDO" = 0 ]; then
   paso "Interfaz (completa)"          900 node tools/ui-smoke.js
   paso "Interfaz (reparos)"           300 node tools/ui-reparos.js
   paso "Enlace entre dispositivos"    300 node tools/ui-enlace.js
+  if command -v go >/dev/null 2>&1; then bash local/build.sh linux >/dev/null && paso "Versión local (gcc real)"     120 node tools/ui-local.js; fi
   paso "Seguridad (interfaz)"         900 node tools/ui-seguridad.js
 fi
 echo

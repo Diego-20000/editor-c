@@ -2135,5 +2135,41 @@ self.postMessage({ type: 'ready' });`;
     if (!store.get('seen', '')) { store.set('seen', '1'); }
   })();
   recibirEnlace();
+
+  // Versión local (EditorC.exe): si el editor se abre desde 127.0.0.1 y hay un gcc al lado, aparece «gcc real».
+  // En el sitio publicado y con doble clic (file://) no se hace ningún pedido: el botón queda oculto.
+  (function () {
+    if (!/^https?:$/.test(location.protocol) || !/^(127\.0\.0\.1|localhost)$/.test(location.hostname)) return;
+    let tk = '', ver = '', so = '';
+    fetch('/api/info', { cache: 'no-store' }).then((r) => (r.ok ? r.json() : null)).then((j) => {
+      if (!j || !j.gcc || typeof j.token !== 'string') return;
+      tk = j.token; ver = String(j.version || '').slice(0, 20); so = j.so === 'windows' ? 'Windows' : 'Linux';
+      $('gccBtn').hidden = false;
+    }).catch(() => { /* sin versión local: nada que mostrar */ });
+    $('gccBtn').addEventListener('click', () => {
+      const btn = $('gccBtn'); if (btn.disabled) return;
+      btn.disabled = true;
+      let entrada = inTxt.value; if (entrada && !entrada.endsWith('\n')) entrada += '\n';
+      fetch('/api/gcc', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Token': tk }, body: JSON.stringify({ code: ta.value, input: entrada }) })
+        .then((r) => (r.ok ? r.json() : Promise.reject(new Error('http'))))
+        .then((j) => {
+          if (!endsWithNewline()) appendText('\n');
+          appendText('— gcc real ' + ver + ' (' + so + ') —\n', 'dim');
+          if (!j.compiled) {
+            appendText(nivelAyuda >= 2 ? String(j.messages || '') + '\n' : 'gcc no pudo compilar el programa.\n', 'er');
+            return;
+          }
+          if (nivelAyuda >= 2 && j.messages) appendText(String(j.messages) + '\n', 'dim');
+          appendText(String(j.output || ''));
+          if (!endsWithNewline()) appendText('\n');
+          if (j.truncated) appendText('(salida cortada: demasiado texto)\n', 'er');
+          if (j.timeout) appendText('— se detuvo: tardó más de 5 segundos —\n', 'er');
+          else appendText('— gcc: código de salida ' + (j.exit | 0) + ' —\n', j.exit ? 'er' : 'ok');
+        })
+        .catch(() => { appendText('No se pudo hablar con la versión local. Ábrela de nuevo.\n', 'er'); })
+        .then(() => { btn.disabled = false; });
+    });
+  })();
+
   window.__editorc = { run, cfg, nivelAyuda: () => nivelAyuda, setNivel: (n) => { nivelAyuda = +n === 2 ? 2 : 1; store.set('ayuda', String(nivelAyuda)); segSet($('ayudaSel'), String(nivelAyuda)); $('ayudaDesc').textContent = NIVELES_TXT[nivelAyuda]; }, setCode: (s) => { ta.value = s; refresh(); scheduleSave(); }, compile: (s) => CCompiler.compile(s), showDiag: (r) => { lastRes = r; showDiag(r); } };
 })();
