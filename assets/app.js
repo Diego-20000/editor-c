@@ -2138,6 +2138,47 @@ self.postMessage({ type: 'ready' });`;
   })();
   recibirEnlace();
 
+
+  // gcc real (solo en la app de escritorio: el servidor local pone la marca en el index.html y trae un gcc dentro).
+  // En el sitio publicado y con file:// no se hace ningún pedido: nada de esto aparece.
+  (function () {
+    if (!document.querySelector('meta[name="editorc-local"]')) return;
+    if (!/^https?:$/.test(location.protocol) || !/^(127\.0\.0\.1|localhost)$/.test(location.hostname)) return;
+    let tk = '', ver = '', so = '', hay = false;
+    const btn = $('gccBtn'), chk = $('gccRealChk');
+    const pinta = () => { btn.hidden = !(hay && chk.checked); };
+    chk.checked = store.get('gccreal', '') === '1';
+    chk.addEventListener('change', () => { store.set('gccreal', chk.checked ? '1' : '0'); pinta(); });
+    fetch('/api/info', { cache: 'no-store' }).then((r) => (r.ok ? r.json() : null)).then((j) => {
+      if (!j || !j.gcc || typeof j.token !== 'string') return;
+      tk = j.token; ver = String(j.version || '').slice(0, 20); so = j.so === 'windows' ? 'Windows' : 'Linux';
+      hay = true; $('gccSet').hidden = false; pinta();
+    }).catch(() => { /* sin gcc: nada que mostrar */ });
+    btn.addEventListener('click', () => {
+      if (btn.disabled) return;
+      btn.disabled = true;
+      let entrada = inTxt.value; if (entrada && !entrada.endsWith('\n')) entrada += '\n';
+      fetch('/api/gcc', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Token': tk }, body: JSON.stringify({ code: ta.value, input: entrada }) })
+        .then((r) => (r.ok ? r.json() : Promise.reject(new Error('http'))))
+        .then((j) => {
+          if (!endsWithNewline()) appendText('\n');
+          appendText('— gcc real ' + ver + ' (' + so + ') —\n', 'dim');
+          if (!j.compiled) {
+            appendText(nivelAyuda >= 2 ? String(j.messages || '') + '\n' : 'gcc no pudo compilar el programa.\n', 'er');
+            return;
+          }
+          if (nivelAyuda >= 2 && j.messages) appendText(String(j.messages) + '\n', 'dim');
+          appendText(String(j.output || ''));
+          if (!endsWithNewline()) appendText('\n');
+          if (j.truncated) appendText('(salida cortada: demasiado texto)\n', 'er');
+          if (j.timeout) appendText('— se detuvo: tardó más de 5 segundos —\n', 'er');
+          else appendText('— gcc: código de salida ' + (j.exit | 0) + ' —\n', j.exit ? 'er' : 'ok');
+        })
+        .catch(() => { appendText('No se pudo usar gcc. Cierra y vuelve a abrir la app.\n', 'er'); })
+        .then(() => { btn.disabled = false; });
+    });
+  })();
+
   // Ajustes → Versión: comprobar si hay una versión más nueva y pasarse a ella (no se manda nada del alumno: solo se pide un archivo público)
   (function () {
     const btn = $('updBtn'), msg = $('updMsg');

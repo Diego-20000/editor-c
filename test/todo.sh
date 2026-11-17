@@ -43,6 +43,7 @@ if [ "$RAPIDO" = 0 ]; then
   paso "Interfaz (completa)"          900 node tools/ui-smoke.js
   paso "Interfaz (reparos)"           300 node tools/ui-reparos.js
   paso "Enlace entre dispositivos"    300 node tools/ui-enlace.js
+  paso "App de escritorio (interfaz)"  120 node tools/ui-app.js
   paso "Seguridad (interfaz)"         900 node tools/ui-seguridad.js
 fi
 echo

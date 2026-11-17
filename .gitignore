@@ -6,3 +6,5 @@ app/site/
 app/node_modules/
 app/dist/
 app/icon.png
+app/gcc/
+app/winlibs.zip

@@ -72,6 +72,7 @@
     <div class="pane-head"><span>Consola</span><span id="status" class="chip" role="status">Listo</span>
       <span class="tools">
         <button id="inBtn" class="btn mini" aria-expanded="false" aria-controls="inbox" title="Datos de entrada para precargar lo que lee scanf"><svg class="i" aria-hidden="true"><use href="#i-entrada"/></svg>Entrada<i id="inDot" class="dot" hidden></i></button>
+        <button id="gccBtn" class="btn mini" hidden title="Compila y ejecuta este programa con gcc de verdad (solo en la app de escritorio, si lo activaste en Ajustes)"><svg class="i" aria-hidden="true"><use href="#i-quees"/></svg>gcc real</button>
         <button id="copy" class="btn mini" title="Copiar la salida"><svg class="i" aria-hidden="true"><use href="#i-copiar"/></svg>Copiar</button>
         <button id="clear" class="btn mini" title="Limpiar la consola"><svg class="i" aria-hidden="true"><use href="#i-limpiar"/></svg>Limpiar</button>
       </span></div>
@@ -141,6 +142,10 @@
     <div class="group"><label class="chk"><input type="checkbox" id="symChk" role="switch"> Barra de símbolos en el celular</label></div>
     <p class="foot">Una fila sobre el teclado con { } ( ) [ ] ; &amp; * y otros símbolos de C. Cada toque escribe un solo símbolo: no completa nada por ti.</p>
     </div>
+  </fieldset>
+  <fieldset id="gccSet" hidden><legend>gcc real (avanzado)</legend>
+    <div class="group"><label class="chk"><input type="checkbox" id="gccRealChk" role="switch"> Activar el botón «gcc real»</label></div>
+    <p class="foot">Compila y ejecuta con gcc 13 de verdad. Ojo: el programa corre directamente en esta computadora, con tus permisos, y no dentro del editor: úsalo solo con programas tuyos. Apagado por defecto.</p>
   </fieldset>
   <fieldset><legend>Versión</legend>
     <div class="group"><div class="srow"><span id="verTxt">Versión</span><button id="updBtn" class="btn" type="button">Buscar actualización</button></div></div>

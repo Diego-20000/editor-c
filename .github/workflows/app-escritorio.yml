@@ -15,8 +15,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - name: Pruebas del servidor y del actualizador
-        run: node test/app.test.js
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Armar el gcc mínimo (WinLibs, con suma de verificación)
+        run: python app/preparar-gcc.py
       - name: Instalar Electron y electron-builder
         working-directory: app
         run: npm install --no-audit --no-fund
