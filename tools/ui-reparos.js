@@ -410,6 +410,21 @@ const check = (c, m) => { if (c) { ok++; console.log('  ok   ' + m); } else { fa
     await cx.close(); web.close();
   }
 
+  // 13) Ejemplos: con mouse las categorías bajan de renglón (no quedan cortadas a la derecha sin forma de deslizar)
+  {
+    for (const w of [1024, 1366]) {
+      const cx = await br.newContext({ viewport: { width: w, height: w === 1024 ? 600 : 700 } });
+      const pg = await cx.newPage();
+      await pg.goto(url); await pg.waitForSelector('#code');
+      await pg.click('#exBtn'); await pg.waitForSelector('#dEx[open], dialog[open]');
+      const d = await pg.evaluate(() => { const e = document.getElementById('exChips'); return { cut: e.scrollWidth > e.clientWidth + 1, n: e.children.length }; });
+      check(!d.cut && d.n > 4, 'ejemplos (' + w + ' px): las ' + d.n + ' categorías se ven completas');
+      const dentro = await pg.evaluate(() => { const r = document.querySelector('dialog[open]').getBoundingClientRect(); return r.top >= 0 && r.bottom <= innerHeight + 1; });
+      check(dentro, 'ejemplos (' + w + ' px): el diálogo entra en la pantalla (el botón Cerrar se ve)');
+      await cx.close();
+    }
+  }
+
   await br.close();
   console.log(ok + ' ok, ' + fallas + ' fallas');
   process.exit(fallas ? 1 : 0);
