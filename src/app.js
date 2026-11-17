@@ -2225,7 +2225,7 @@ self.postMessage({ type: 'ready' });`;
     const btn = $('instBtn'), msg = $('instMsg');
     const instalada = () => (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
     let ev = null;
-    if (document.querySelector('meta[name="editorc-local"]')) { const fila = btn.closest('.group'); if (fila) fila.hidden = true; msg.hidden = true; return; }   // dentro de la app de escritorio no hay nada que instalar
+    if (document.querySelector('meta[name="editorc-local"]')) { const fila = btn.closest('.group'); if (fila) fila.hidden = true; msg.hidden = true; $('descGrp').hidden = true; $('descMsg').hidden = true; return; }   // dentro de la app de escritorio no hay nada que instalar ni que descargar
     if (instalada()) { msg.textContent = 'Ya estás usando la app instalada.'; btn.hidden = true; return; }
     if (!/^https?:$/.test(location.protocol)) { btn.hidden = true; msg.textContent = 'Para instalarla, abre el editor desde su página de internet.'; return; }
     msg.textContent = 'En Edge o Chrome: menú ⋯ → Aplicaciones → Instalar Editor C. Queda con ícono, se abre sin barra del navegador y se actualiza sola.';

@@ -425,6 +425,17 @@ const check = (c, m) => { if (c) { ok++; console.log('  ok   ' + m); } else { fa
     }
   }
 
+  // 14) Descargar la app para Windows: enlace a la última versión publicada en GitHub; no hace pedidos al cargar la página
+  {
+    const cx = await br.newContext({ viewport: { width: 1280, height: 800 } }); const pg = await cx.newPage();
+    const pedidos = []; pg.on('request', (rq) => { if (/^https?:/.test(rq.url())) pedidos.push(rq.url()); });
+    await pg.goto(url); await pg.waitForSelector('#code'); await pg.click('#settings'); await pg.waitForSelector('#dSet[open]');
+    const href = await pg.getAttribute('#descApp', 'href');
+    check(/^https:\/\/github\.com\/Diego-20000\/editor-c\/releases\/latest\/download\/Editor-C-Setup\.exe$/.test(href) && await pg.isVisible('#descApp'), 'descarga: el botón apunta al instalador de la última versión');
+    check((await pg.getAttribute('#descApp', 'rel')) === 'noopener' && pedidos.length === 0, 'descarga: abre aparte y no hace pedidos de red al cargar');
+    await cx.close();
+  }
+
   await br.close();
   console.log(ok + ' ok, ' + fallas + ' fallas');
   process.exit(fallas ? 1 : 0);
