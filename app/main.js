@@ -19,7 +19,7 @@ if (!app.requestSingleInstanceLock()) { app.quit(); } else {
     const dir = () => (fs.existsSync(path.join(dirUsuario, 'index.html')) ? dirUsuario : dirEmbebida);
     // gcc real (opcional): viene dentro de la app, en resources/gcc; sin esa carpeta el editor funciona igual
     const gcc = path.join(process.resourcesPath || '', 'gcc', 'bin', 'gcc.exe');
-    servidor = await crearServidor(dir, PUERTO, { gcc: fs.existsSync(gcc) ? gcc : '', marcar: true });
+    servidor = await crearServidor(dir, PUERTO, { gcc: fs.existsSync(gcc) ? gcc : '', marcar: true, actualizar: () => actualizar(dirUsuario, dirEmbebida) });
     const origen = 'http://127.0.0.1:' + servidor.port + '/';
     ventana = new BrowserWindow({
       width: 1280, height: 800, minWidth: 700, minHeight: 500, autoHideMenuBar: true, title: 'Editor C',
