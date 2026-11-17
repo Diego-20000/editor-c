@@ -115,8 +115,9 @@
       <div class="segrow"><span id="themeLbl">Tema</span>
         <div class="seg" id="theme" role="radiogroup" aria-labelledby="themeLbl"><button type="button" role="radio" data-v="auto">Automático</button><button type="button" role="radio" data-v="light">Claro</button><button type="button" role="radio" data-v="dark">Oscuro</button></div></div>
       <div class="srow"><span id="fsLbl">Tamaño de letra</span><span class="grp" role="group" aria-labelledby="fsLbl"><button id="fsm" class="btn icon" type="button" title="Letra más pequeña" aria-label="Letra más pequeña">A−</button><output id="fsv" class="fsv"></output><button id="fsp" class="btn icon" type="button" title="Letra más grande" aria-label="Letra más grande">A+</button></span></div>
+      <label class="chk"><input type="checkbox" id="ajustarLineas" role="switch"> Ajustar las líneas largas de la salida</label>
     </div>
-    <p class="foot">Automático sigue el modo claro u oscuro del dispositivo.</p>
+    <p class="foot">Automático sigue el modo claro u oscuro del dispositivo. Apagado, la salida de un programa con líneas largas se desliza de costado.</p>
   </fieldset>
   <fieldset><legend>Cómo se ve el código</legend>
     <div class="group">
@@ -134,11 +135,18 @@
   </fieldset>
   <fieldset><legend>Escritura</legend>
     <div class="group"><label class="chk"><input type="checkbox" id="autoCierre" role="switch"> Cerrar solo llaves, paréntesis y comillas</label></div>
-    <div class="group"><label class="chk"><input type="checkbox" id="ajustarLineas" role="switch"> Ajustar las líneas largas de la salida (si no, se desliza de costado)</label></div>
     <div class="group"><label class="chk"><input type="checkbox" id="gccIngles" role="switch"> Mostrar cómo lo diría gcc (en inglés)</label></div>
     <p class="foot">Apagado: practicas escribiendo todo. La sangría automática no cambia.</p>
+    <div class="solo-tactil">
     <div class="group"><label class="chk"><input type="checkbox" id="symChk" role="switch"> Barra de símbolos en el celular</label></div>
     <p class="foot">Una fila sobre el teclado con { } ( ) [ ] ; &amp; * y otros símbolos de C. Cada toque escribe un solo símbolo: no completa nada por ti.</p>
+    </div>
+  </fieldset>
+  <fieldset><legend>Versión</legend>
+    <div class="group"><div class="srow"><span id="verTxt">Versión</span><button id="updBtn" class="btn" type="button">Buscar actualización</button></div></div>
+    <p class="foot" id="updMsg" role="status"></p>
+    <div class="group"><div class="srow"><span>Instalar la app</span><button id="instBtn" class="btn" type="button" hidden>Instalar</button></div></div>
+    <p class="foot" id="instMsg"></p>
   </fieldset>
   <fieldset><legend>Casos para enviar</legend>
     <p class="lead">Cuando el editor no sabe explicar algo, guarda el caso solo en este dispositivo. Nada se envía solo: tú miras qué se manda y eliges si se lo envías a Diego.</p>

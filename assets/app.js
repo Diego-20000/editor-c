@@ -2105,7 +2105,9 @@ self.postMessage({ type: 'ready' });`;
     if (!('serviceWorker' in navigator) || !/^https?:$/.test(location.protocol) || !document.querySelector('link[rel="manifest"]')) return;
     const hadController = !!navigator.serviceWorker.controller;
     let reloading = false;
-    const offer = (sw) => toast('Hay una versión nueva del editor.', 'Recargar', () => { flushSave(); sw.postMessage({ type: 'SKIP_WAITING' }); }, true);
+    let tocado = false;   // si todavía no escribió nada, la versión nueva se aplica sola al abrir; si ya escribió, se le pregunta
+    ta.addEventListener('input', () => { tocado = true; });
+    const offer = (sw) => { if (!tocado) { flushSave(); sw.postMessage({ type: 'SKIP_WAITING' }); return; } toast('Hay una versión nueva del editor.', 'Recargar', () => { flushSave(); sw.postMessage({ type: 'SKIP_WAITING' }); }, true); };
     navigator.serviceWorker.addEventListener('controllerchange', () => { if (!hadController || reloading) return; reloading = true; flushSave(); location.reload(); });
     navigator.serviceWorker.register('sw.js').then((reg) => {
       if (reg.waiting && navigator.serviceWorker.controller) offer(reg.waiting);
@@ -2135,5 +2137,53 @@ self.postMessage({ type: 'ready' });`;
     if (!store.get('seen', '')) { store.set('seen', '1'); }
   })();
   recibirEnlace();
+
+  // Ajustes → Versión: comprobar si hay una versión más nueva y pasarse a ella (no se manda nada del alumno: solo se pide un archivo público)
+  (function () {
+    const btn = $('updBtn'), msg = $('updMsg');
+    const verAhora = () => (window.CONFIG && CONFIG.VERSION) || '';   // config.js se carga después de este archivo: se lee al usarse
+    const pintaVer = () => { const v = verAhora(); $('verTxt').textContent = 'Versión ' + (v ? v.slice(0, 8) : '—'); };
+    $('settings').addEventListener('click', pintaVer); pintaVer();
+    let nueva = '';
+    const dichoWeb = 'https://diego-20000.github.io/editor-c/';
+    btn.addEventListener('click', async () => {
+      if (btn.disabled) return;
+      if (!/^https?:$/.test(location.protocol)) { msg.textContent = 'Esta copia es un archivo suelto y no se actualiza sola. Abre ' + dichoWeb + ' para usar siempre la última versión.'; return; }
+      btn.disabled = true;
+      try {
+        if (nueva) {
+          msg.textContent = 'Instalando…'; flushSave();
+          const ks = window.caches ? await caches.keys() : [];
+          await Promise.all(ks.filter((k) => /^editor-c-/.test(k)).map((k) => caches.delete(k)));
+          const regs = navigator.serviceWorker ? await navigator.serviceWorker.getRegistrations() : [];
+          await Promise.all(regs.map((g) => g.unregister()));
+          location.reload();
+        } else {
+          msg.textContent = 'Buscando…';
+          const r = await fetch('sw.js', { cache: 'no-store' });
+          const m = r.ok ? /const VERSION = '([0-9a-f]{12})'/.exec(await r.text()) : null;
+          if (!m) msg.textContent = 'No se pudo comprobar. ¿Hay conexión a internet?';
+          else if (m[1] === verAhora()) msg.textContent = 'Ya tienes la última versión.';
+          else { nueva = m[1]; msg.textContent = 'Hay una versión nueva (' + nueva.slice(0, 8) + '). Aprieta el botón otra vez para instalarla; tus programas se conservan.'; btn.textContent = 'Instalar la nueva'; }
+        }
+      } catch (e) { msg.textContent = 'No se pudo comprobar. ¿Hay conexión a internet?'; }
+      btn.disabled = false;
+    });
+  })();
+
+
+  // Instalar la app (PWA): el navegador avisa con «beforeinstallprompt» cuando se puede; si no, se explica a mano
+  (function () {
+    const btn = $('instBtn'), msg = $('instMsg');
+    const instalada = () => (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
+    let ev = null;
+    if (instalada()) { msg.textContent = 'Ya estás usando la app instalada.'; btn.hidden = true; return; }
+    if (!/^https?:$/.test(location.protocol)) { btn.hidden = true; msg.textContent = 'Para instalarla, abre el editor desde su página de internet.'; return; }
+    msg.textContent = 'En Edge o Chrome: menú ⋯ → Aplicaciones → Instalar Editor C. Queda con ícono, se abre sin barra del navegador y se actualiza sola.';
+    window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); ev = e; btn.hidden = false; msg.textContent = 'Se instala como un programa más, funciona sin internet y se actualiza sola. No tiene acceso a tus archivos.'; });
+    window.addEventListener('appinstalled', () => { ev = null; btn.hidden = true; msg.textContent = 'Instalada. Ábrela desde el menú Inicio o el escritorio.'; });
+    btn.addEventListener('click', () => { if (!ev) return; const e = ev; ev = null; try { e.prompt(); } catch (x) { /* nada */ } });
+  })();
+
   window.__editorc = { run, cfg, nivelAyuda: () => nivelAyuda, setNivel: (n) => { nivelAyuda = +n === 2 ? 2 : 1; store.set('ayuda', String(nivelAyuda)); segSet($('ayudaSel'), String(nivelAyuda)); $('ayudaDesc').textContent = NIVELES_TXT[nivelAyuda]; }, setCode: (s) => { ta.value = s; refresh(); scheduleSave(); }, compile: (s) => CCompiler.compile(s), showDiag: (r) => { lastRes = r; showDiag(r); } };
 })();

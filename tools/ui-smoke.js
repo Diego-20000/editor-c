@@ -787,6 +787,7 @@ async function pwaSuite(browser, mobile) {
   const again = await serve(tmp, +new URL(S.url).port);   // vuelve a encender el servidor en el mismo origen
   await page.reload();
   await page.waitForFunction(() => !!navigator.serviceWorker.controller);
+  await page.fill('#code', (await page.inputValue('#code')) + '\n');   // ya escribió: la versión nueva no se aplica sola, se le pregunta
   // nueva "versión" del sitio: otro hash en sw.js y un archivo que cambia
   fs.writeFileSync(path.join(tmp, 'sw.js'), swText.replace(/const VERSION = '[0-9a-f]+'/, "const VERSION = 'aaaaaaaaaaaa'"));
   fs.appendFileSync(path.join(tmp, 'assets', 'app.js'), '\nwindow.__v2 = 1;\n');
@@ -802,6 +803,14 @@ async function pwaSuite(browser, mobile) {
   const keys2 = await page.evaluate(() => caches.keys());
   ok(keys2.length === 1 && keys2[0] === 'editor-c-aaaaaaaaaaaa', 'actualización: se borra la caché vieja (' + keys2.join(',') + ')');
   ok((await page.evaluate(() => !!document.getElementById('code').value)), 'actualización: el trabajo del usuario se conserva');
+  // otra versión, con la página recién abierta y sin escribir nada: se aplica sola
+  fs.writeFileSync(path.join(tmp, 'sw.js'), swText.replace(/const VERSION = '[0-9a-f]+'/, "const VERSION = 'bbbbbbbbbbbb'"));
+  fs.appendFileSync(path.join(tmp, 'assets', 'app.js'), '\nwindow.__v3 = 1;\n');
+  await page.reload();
+  await page.waitForFunction(() => !!navigator.serviceWorker.controller);
+  await page.evaluate(() => navigator.serviceWorker.getRegistration().then((r) => r.update()));
+  await page.waitForFunction(() => window.__v3 === 1, null, { timeout: 10000 });
+  ok(true, 'actualización: si todavía no se escribió nada, la versión nueva se aplica sola al abrir');
   await again.close();
   ok(net.length === 0, 'PWA: cero pedidos de red externos' + (net.length ? ': ' + net.join(' ') : ''));
   await ctx.close();
