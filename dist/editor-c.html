@@ -3,7 +3,7 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-fU/QoskQuRctWlhECw3JlI6RrDSje0vtV21uFbUnqKQ=' 'sha256-wm7GsMty5KTzqStZRdJc4AsPRHIhKeVxzZNfSV/D7DE=' 'sha256-pZVFs1YVsdy2azF75ymoYrdNRc5OZVrrfu7C+JcNW4U=' 'sha256-9zvWeljVCsD4A/ghvUPZzT4c9slTDfe9sD7ZDEfcd04=' 'sha256-DHDIzyRUr0orTOie0QlJ+qPiOlIcmfW81oIshJ1Dy+o=' 'sha256-gulZ4uD1j9wrWrUJTM0i0CfFQRLjijuxwfAI5nM7EFo=' 'sha256-B2O9wLYB6+h7tnHqzHN26CXfcPBeMXkUqjQMEPv6Qe0=' 'sha256-D5eNFhJM5caNHsqiKB7XBhlV8Y/ARxp5llSr91wXSdw=' 'sha256-roqfeKHX31qnhNACUzx3ptrcftZMZBB97BGtw/Z3ojs=' 'sha256-eDnOIzEinYAB2tOTqOA5fuAMar6Rl/n1njISU2FFeCY=' 'sha256-rgiSH12iMr5IUIltfKReOQmwgPX6XvqRC3qq4U3+BPk=' 'unsafe-eval'; worker-src blob:; child-src blob:; style-src 'sha256-s9bIIt8QRuKns/yHoqLAvOsLYM9UwhOqoAf07LB4DXE='; img-src data: blob:; font-src data:; connect-src blob:; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-fU/QoskQuRctWlhECw3JlI6RrDSje0vtV21uFbUnqKQ=' 'sha256-wm7GsMty5KTzqStZRdJc4AsPRHIhKeVxzZNfSV/D7DE=' 'sha256-pZVFs1YVsdy2azF75ymoYrdNRc5OZVrrfu7C+JcNW4U=' 'sha256-9zvWeljVCsD4A/ghvUPZzT4c9slTDfe9sD7ZDEfcd04=' 'sha256-d0r8qG1rRfO0g7pvRkggbnm/91lK3CO+Mt6dUoqwNFw=' 'sha256-gulZ4uD1j9wrWrUJTM0i0CfFQRLjijuxwfAI5nM7EFo=' 'sha256-+XsugEb0C36pww+OgtuDPTlpzG8i5z6JB4GfD7nnMSQ=' 'sha256-D5eNFhJM5caNHsqiKB7XBhlV8Y/ARxp5llSr91wXSdw=' 'sha256-roqfeKHX31qnhNACUzx3ptrcftZMZBB97BGtw/Z3ojs=' 'sha256-eDnOIzEinYAB2tOTqOA5fuAMar6Rl/n1njISU2FFeCY=' 'sha256-rgiSH12iMr5IUIltfKReOQmwgPX6XvqRC3qq4U3+BPk=' 'unsafe-eval'; worker-src blob:; child-src blob:; style-src 'sha256-quNhzIrgLxjnhAAdzZV8GZ7qL+7HLG4bmluPmVpExok='; img-src data: blob:; font-src data:; connect-src blob:; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="dark light">
 <title>Editor C</title>
@@ -541,6 +541,8 @@ html.lectura .pane-head .hint { margin-right: 8px; }
 .group > .fine { padding: 8px 16px 10px; color: var(--muted); }
 .group + .shotbox { margin-top: 12px; }
 #paneCo > .pane-head { flex-wrap: wrap; row-gap: 2px; }
+fieldset > .group + .group { margin-top: 8px; }
+@media (hover: hover) and (pointer: fine) { .solo-tactil { display: none; } }
 </style>
 </head>
 <body>
@@ -649,8 +651,9 @@ html.lectura .pane-head .hint { margin-right: 8px; }
       <div class="segrow"><span id="themeLbl">Tema</span>
         <div class="seg" id="theme" role="radiogroup" aria-labelledby="themeLbl"><button type="button" role="radio" data-v="auto">Automático</button><button type="button" role="radio" data-v="light">Claro</button><button type="button" role="radio" data-v="dark">Oscuro</button></div></div>
       <div class="srow"><span id="fsLbl">Tamaño de letra</span><span class="grp" role="group" aria-labelledby="fsLbl"><button id="fsm" class="btn icon" type="button" title="Letra más pequeña" aria-label="Letra más pequeña">A−</button><output id="fsv" class="fsv"></output><button id="fsp" class="btn icon" type="button" title="Letra más grande" aria-label="Letra más grande">A+</button></span></div>
+      <label class="chk"><input type="checkbox" id="ajustarLineas" role="switch"> Ajustar las líneas largas de la salida</label>
     </div>
-    <p class="foot">Automático sigue el modo claro u oscuro del dispositivo.</p>
+    <p class="foot">Automático sigue el modo claro u oscuro del dispositivo. Apagado, la salida de un programa con líneas largas se desliza de costado.</p>
   </fieldset>
   <fieldset><legend>Cómo se ve el código</legend>
     <div class="group">
@@ -668,11 +671,16 @@ html.lectura .pane-head .hint { margin-right: 8px; }
   </fieldset>
   <fieldset><legend>Escritura</legend>
     <div class="group"><label class="chk"><input type="checkbox" id="autoCierre" role="switch"> Cerrar solo llaves, paréntesis y comillas</label></div>
-    <div class="group"><label class="chk"><input type="checkbox" id="ajustarLineas" role="switch"> Ajustar las líneas largas de la salida (si no, se desliza de costado)</label></div>
     <div class="group"><label class="chk"><input type="checkbox" id="gccIngles" role="switch"> Mostrar cómo lo diría gcc (en inglés)</label></div>
     <p class="foot">Apagado: practicas escribiendo todo. La sangría automática no cambia.</p>
+    <div class="solo-tactil">
     <div class="group"><label class="chk"><input type="checkbox" id="symChk" role="switch"> Barra de símbolos en el celular</label></div>
     <p class="foot">Una fila sobre el teclado con { } ( ) [ ] ; &amp; * y otros símbolos de C. Cada toque escribe un solo símbolo: no completa nada por ti.</p>
+    </div>
+  </fieldset>
+  <fieldset><legend>Versión</legend>
+    <div class="group"><div class="srow"><span id="verTxt">Versión</span><button id="updBtn" class="btn" type="button">Buscar actualización</button></div></div>
+    <p class="foot" id="updMsg" role="status"></p>
   </fieldset>
   <fieldset><legend>Casos para enviar</legend>
     <p class="lead">Cuando el editor no sabe explicar algo, guarda el caso solo en este dispositivo. Nada se envía solo: tú miras qué se manda y eliges si se lo envías a Diego.</p>
@@ -6866,6 +6874,49 @@ self.postMessage({ type: 'ready' });`;
     });
   })();
 
+
+  // Ajustes → Versión: comprobar si hay una versión más nueva y pasarse a ella (no se manda nada del alumno: solo se pide un archivo público)
+  (function () {
+    const btn = $('updBtn'), msg = $('updMsg');
+    const verAhora = () => (window.CONFIG && CONFIG.VERSION) || '';   // config.js se carga después de este archivo: se lee al usarse
+    const pintaVer = () => { const v = verAhora(); $('verTxt').textContent = 'Versión ' + (v ? v.slice(0, 8) : '—'); };
+    $('settings').addEventListener('click', pintaVer); pintaVer();
+    let nueva = '';
+    const dichoWeb = 'https://diego-20000.github.io/editor-c/';
+    btn.addEventListener('click', async () => {
+      if (btn.disabled) return;
+      const local = !!document.querySelector('meta[name="editorc-local"]');
+      if (!local && !/^https?:$/.test(location.protocol)) { msg.textContent = 'Esta copia es un archivo suelto y no se actualiza sola. Abre ' + dichoWeb + ' para usar siempre la última versión.'; return; }
+      btn.disabled = true;
+      try {
+        if (local) {
+          msg.textContent = 'Buscando…';
+          const inf = await (await fetch('/api/info', { cache: 'no-store' })).json();
+          const r = await fetch('/api/actualizar', { method: 'POST', headers: { 'X-Token': inf.token } });
+          const j = await r.json();
+          if (j.error) msg.textContent = 'No se pudo comprobar. ¿Hay conexión a internet?';
+          else if (j.changed) { msg.textContent = 'Actualizado a la versión ' + String(j.version).slice(0, 8) + '. Recargando…'; flushSave(); setTimeout(() => location.reload(), 800); }
+          else msg.textContent = 'Ya tienes la última versión (' + String(j.version).slice(0, 8) + ').';
+        } else if (nueva) {
+          msg.textContent = 'Instalando…'; flushSave();
+          const ks = window.caches ? await caches.keys() : [];
+          await Promise.all(ks.filter((k) => /^editor-c-/.test(k)).map((k) => caches.delete(k)));
+          const regs = navigator.serviceWorker ? await navigator.serviceWorker.getRegistrations() : [];
+          await Promise.all(regs.map((g) => g.unregister()));
+          location.reload();
+        } else {
+          msg.textContent = 'Buscando…';
+          const r = await fetch('sw.js', { cache: 'no-store' });
+          const m = r.ok ? /const VERSION = '([0-9a-f]{12})'/.exec(await r.text()) : null;
+          if (!m) msg.textContent = 'No se pudo comprobar. ¿Hay conexión a internet?';
+          else if (m[1] === verAhora()) msg.textContent = 'Ya tienes la última versión.';
+          else { nueva = m[1]; msg.textContent = 'Hay una versión nueva (' + nueva.slice(0, 8) + '). Aprieta el botón otra vez para instalarla; tus programas se conservan.'; btn.textContent = 'Instalar la nueva'; }
+        }
+      } catch (e) { msg.textContent = 'No se pudo comprobar. ¿Hay conexión a internet?'; }
+      btn.disabled = false;
+    });
+  })();
+
   window.__editorc = { run, cfg, nivelAyuda: () => nivelAyuda, setNivel: (n) => { nivelAyuda = +n === 2 ? 2 : 1; store.set('ayuda', String(nivelAyuda)); segSet($('ayudaSel'), String(nivelAyuda)); $('ayudaDesc').textContent = NIVELES_TXT[nivelAyuda]; }, setCode: (s) => { ta.value = s; refresh(); scheduleSave(); }, compile: (s) => CCompiler.compile(s), showDiag: (r) => { lastRes = r; showDiag(r); } };
 })();
 </script>
@@ -6877,7 +6928,7 @@ window.KB_DATA={"errores":[{"id":"ARR-001","categoria":"arreglos y textos","nomb
    (por ejemplo '5491112345678'). Vacío = el botón abre WhatsApp sin destinatario. */
 (function (root) {
   'use strict';
-  var CONFIG = { WHATSAPP_NUMERO: '5491137781528', VERSION: '9f208b7e95b2' };
+  var CONFIG = { WHATSAPP_NUMERO: '5491137781528', VERSION: 'c40466c166c9' };
   if (typeof module !== 'undefined' && module.exports) module.exports = CONFIG;
   else root.CONFIG = CONFIG;
 })(typeof self !== 'undefined' ? self : this);

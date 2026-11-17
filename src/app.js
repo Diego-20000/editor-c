@@ -2171,5 +2171,48 @@ self.postMessage({ type: 'ready' });`;
     });
   })();
 
+
+  // Ajustes → Versión: comprobar si hay una versión más nueva y pasarse a ella (no se manda nada del alumno: solo se pide un archivo público)
+  (function () {
+    const btn = $('updBtn'), msg = $('updMsg');
+    const verAhora = () => (window.CONFIG && CONFIG.VERSION) || '';   // config.js se carga después de este archivo: se lee al usarse
+    const pintaVer = () => { const v = verAhora(); $('verTxt').textContent = 'Versión ' + (v ? v.slice(0, 8) : '—'); };
+    $('settings').addEventListener('click', pintaVer); pintaVer();
+    let nueva = '';
+    const dichoWeb = 'https://diego-20000.github.io/editor-c/';
+    btn.addEventListener('click', async () => {
+      if (btn.disabled) return;
+      const local = !!document.querySelector('meta[name="editorc-local"]');
+      if (!local && !/^https?:$/.test(location.protocol)) { msg.textContent = 'Esta copia es un archivo suelto y no se actualiza sola. Abre ' + dichoWeb + ' para usar siempre la última versión.'; return; }
+      btn.disabled = true;
+      try {
+        if (local) {
+          msg.textContent = 'Buscando…';
+          const inf = await (await fetch('/api/info', { cache: 'no-store' })).json();
+          const r = await fetch('/api/actualizar', { method: 'POST', headers: { 'X-Token': inf.token } });
+          const j = await r.json();
+          if (j.error) msg.textContent = 'No se pudo comprobar. ¿Hay conexión a internet?';
+          else if (j.changed) { msg.textContent = 'Actualizado a la versión ' + String(j.version).slice(0, 8) + '. Recargando…'; flushSave(); setTimeout(() => location.reload(), 800); }
+          else msg.textContent = 'Ya tienes la última versión (' + String(j.version).slice(0, 8) + ').';
+        } else if (nueva) {
+          msg.textContent = 'Instalando…'; flushSave();
+          const ks = window.caches ? await caches.keys() : [];
+          await Promise.all(ks.filter((k) => /^editor-c-/.test(k)).map((k) => caches.delete(k)));
+          const regs = navigator.serviceWorker ? await navigator.serviceWorker.getRegistrations() : [];
+          await Promise.all(regs.map((g) => g.unregister()));
+          location.reload();
+        } else {
+          msg.textContent = 'Buscando…';
+          const r = await fetch('sw.js', { cache: 'no-store' });
+          const m = r.ok ? /const VERSION = '([0-9a-f]{12})'/.exec(await r.text()) : null;
+          if (!m) msg.textContent = 'No se pudo comprobar. ¿Hay conexión a internet?';
+          else if (m[1] === verAhora()) msg.textContent = 'Ya tienes la última versión.';
+          else { nueva = m[1]; msg.textContent = 'Hay una versión nueva (' + nueva.slice(0, 8) + '). Aprieta el botón otra vez para instalarla; tus programas se conservan.'; btn.textContent = 'Instalar la nueva'; }
+        }
+      } catch (e) { msg.textContent = 'No se pudo comprobar. ¿Hay conexión a internet?'; }
+      btn.disabled = false;
+    });
+  })();
+
   window.__editorc = { run, cfg, nivelAyuda: () => nivelAyuda, setNivel: (n) => { nivelAyuda = +n === 2 ? 2 : 1; store.set('ayuda', String(nivelAyuda)); segSet($('ayudaSel'), String(nivelAyuda)); $('ayudaDesc').textContent = NIVELES_TXT[nivelAyuda]; }, setCode: (s) => { ta.value = s; refresh(); scheduleSave(); }, compile: (s) => CCompiler.compile(s), showDiag: (r) => { lastRes = r; showDiag(r); } };
 })();

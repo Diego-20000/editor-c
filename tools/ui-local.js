@@ -32,6 +32,21 @@ if (!fs.existsSync(bin)) { console.log('falta local/editorc-local (bash local/bu
   check(await f({ headers: { 'X-Token': 'x' } }) === 404, 'local: la API rechaza un token incorrecto');
   const estado = (host) => new Promise((res) => { const rq = require('http').request({ host: '127.0.0.1', port: +base.split(':')[2].replace('/', ''), path: '/', headers: { Host: host } }, (r) => { r.resume(); res(r.statusCode); }); rq.on('error', () => res(0)); rq.end(); });
   check(await estado('ejemplo.com') === 403 && await estado('127.0.0.1:' + base.split(':')[2]) === 200, 'local: rechaza otro nombre de host (DNS rebinding) y acepta el propio');
+  // Ajustes → Buscar actualización (contra una «versión publicada» simulada)
+  {
+    const http = require('http'); const os = require('os'); const raiz = path.join(__dirname, '..');
+    const web = http.createServer((rq, rs) => { const u = decodeURIComponent(rq.url.split('?')[0]); const f = u === '/' ? 'index.html' : u.slice(1); const p2 = path.join(raiz, f); if (!p2.startsWith(raiz) || !fs.existsSync(p2) || fs.statSync(p2).isDirectory()) { rs.statusCode = 404; rs.end('no'); return; } rs.end(fs.readFileSync(p2)); });
+    await new Promise((r) => web.listen(0, '127.0.0.1', r));
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecl2-'));
+    const sv2 = spawn(bin, [], { env: Object.assign({}, process.env, { EDITORC_NO_ABRIR: '1', EDITORC_SIN_ACTUALIZAR: '1', EDITORC_GCC: gcc, EDITORC_EDITOR: dir + '/e', EDITORC_ACTUALIZAR_URL: 'http://127.0.0.1:' + web.address().port + '/' }) });
+    let l2 = ''; sv2.stdout.on('data', (d) => { l2 += d; }); await new Promise((r) => setTimeout(r, 800));
+    const b2 = 'http://127.0.0.1:' + /127\.0\.0\.1:(\d+)/.exec(l2)[1];
+    const pg3 = await cx.newPage(); await pg3.goto(b2 + '/?ayuda=2'); await pg3.waitForSelector('#code');
+    await pg3.click('#settings'); await pg3.waitForSelector('#dSet[open]'); await pg3.click('#updBtn');
+    await pg3.waitForFunction(() => /última versión|Actualizado|No se pudo/.test(document.getElementById('updMsg').textContent), null, { timeout: 15000 });
+    check(/última versión/.test(await pg3.textContent('#updMsg')), 'local: «Buscar actualización» responde que ya tiene la última versión');
+    sv2.kill(); web.close(); fs.rmSync(dir, { recursive: true, force: true });
+  }
   check(errs.length === 0, 'local: consola limpia' + (errs.length ? ': ' + errs.join(' | ') : ''));
 
   // actualización automática: se compara la versión publicada (sw.js) y se bajan los archivos del editor

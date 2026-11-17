@@ -376,6 +376,21 @@ const check = (c, m) => { if (c) { ok++; console.log('  ok   ' + m); } else { fa
     await cx.close();
   }
 
+  // 11) Ajustes: ninguna fila queda cortada (ni en 1024 px ni en 1366 px) y la sección «Versión» responde en una copia suelta
+  {
+    for (const w of [1024, 1366]) {
+      const cx = await br.newContext({ viewport: { width: w, height: 700 } });
+      const pg = await cx.newPage();
+      await pg.goto(url + '?ayuda=2'); await pg.waitForSelector('#code');
+      await pg.click('#settings'); await pg.waitForSelector('#dSet[open]');
+      const cortadas = await pg.evaluate(() => [...document.querySelectorAll('#dSet label, #dSet .srow span, #dSet .foot')].filter((e) => e.offsetParent && (e.scrollWidth > e.clientWidth + 1)).map((e) => e.textContent.trim().slice(0, 40)));
+      check(cortadas.length === 0, 'ajustes (' + w + ' px): ningún texto queda cortado' + (cortadas.length ? ': ' + cortadas.join(' | ') : ''));
+      check(/Versi[oó]n [0-9a-f]{8}/.test(await pg.textContent('#verTxt')), 'ajustes: muestra la versión instalada');
+      if (w === 1366) { await pg.click('#updBtn'); await pg.waitForTimeout(300); check(/archivo suelto/.test(await pg.textContent('#updMsg')), 'ajustes: en un archivo suelto explica que no se actualiza sola'); }
+      await cx.close();
+    }
+  }
+
   await br.close();
   console.log(ok + ' ok, ' + fallas + ' fallas');
   process.exit(fallas ? 1 : 0);

@@ -191,12 +191,26 @@ func json_(w http.ResponseWriter, code int, v any) {
 	json.NewEncoder(w).Encode(v)
 }
 
-func apiInfo(w http.ResponseWriter, r *http.Request) {
-	if !origenValido(r) || gccRuta == "" {
+// comprobar y bajar ahora la versión publicada del editor (lo mismo que hace al abrir)
+func apiActualizar(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost || !origenValido(r) || r.Header.Get("X-Token") != token {
 		http.NotFound(w, r)
 		return
 	}
-	json_(w, 200, map[string]any{"gcc": true, "version": versionGcc(), "so": runtime.GOOS, "token": token})
+	nueva, cambio, err := actualizar(dirEditor, verEmbebida)
+	if err != nil {
+		json_(w, 200, map[string]any{"error": err.Error()})
+		return
+	}
+	json_(w, 200, map[string]any{"version": nueva, "changed": cambio})
+}
+
+func apiInfo(w http.ResponseWriter, r *http.Request) {
+	if !origenValido(r) {
+		http.NotFound(w, r)
+		return
+	}
+	json_(w, 200, map[string]any{"gcc": gccRuta != "", "version": versionGcc(), "so": runtime.GOOS, "token": token})
 }
 
 type pedido struct {
@@ -313,6 +327,7 @@ func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/api/info", apiInfo)
 	mux.HandleFunc("/api/gcc", apiGcc)
+	mux.HandleFunc("/api/actualizar", apiActualizar)
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if !origenValido(r) {
 			http.Error(w, "dirección no permitida", http.StatusForbidden)
