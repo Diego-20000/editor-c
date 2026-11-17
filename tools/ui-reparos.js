@@ -391,6 +391,25 @@ const check = (c, m) => { if (c) { ok++; console.log('  ok   ' + m); } else { fa
     }
   }
 
+  // 12) Instalar la app: con file:// se explica; con http el botón aparece cuando el navegador avisa y llama a prompt()
+  {
+    const http = require('http'); const fs = require('fs'); const pathm = require('path'); const raiz = pathm.join(__dirname, '..');
+    const web = http.createServer((rq, rs) => { const u = decodeURIComponent(rq.url.split('?')[0]); const f = u === '/' ? 'index.html' : u.slice(1); const p2 = pathm.join(raiz, f); if (!p2.startsWith(raiz) || !fs.existsSync(p2) || fs.statSync(p2).isDirectory()) { rs.statusCode = 404; rs.end('no'); return; } rs.end(fs.readFileSync(p2)); });
+    await new Promise((r) => web.listen(0, '127.0.0.1', r));
+    let cx = await br.newContext({ viewport: { width: 1280, height: 800 } }); let pg = await cx.newPage();
+    await pg.goto(url); await pg.waitForSelector('#code'); await pg.click('#settings');
+    check(/p[aá]gina de internet/.test(await pg.textContent('#instMsg')) && await pg.isHidden('#instBtn'), 'instalar: con archivo suelto explica que hay que abrir la página');
+    await cx.close();
+    cx = await br.newContext({ viewport: { width: 1280, height: 800 } }); pg = await cx.newPage();
+    await pg.goto('http://127.0.0.1:' + web.address().port + '/'); await pg.waitForSelector('#code'); await pg.click('#settings'); await pg.waitForSelector('#dSet[open]');
+    check(await pg.isHidden('#instBtn') && /Instalar Editor C/.test(await pg.textContent('#instMsg')), 'instalar: sin aviso del navegador muestra los pasos a mano');
+    await pg.evaluate(() => { const e = new Event('beforeinstallprompt', { cancelable: true }); e.prompt = () => { window.__prompt = 1; }; window.dispatchEvent(e); });
+    check(await pg.isVisible('#instBtn'), 'instalar: cuando el navegador avisa aparece el botón');
+    await pg.click('#instBtn');
+    check(await pg.evaluate(() => window.__prompt === 1), 'instalar: el botón abre el cuadro de instalación del navegador');
+    await cx.close(); web.close();
+  }
+
   await br.close();
   console.log(ok + ' ok, ' + fallas + ' fallas');
   process.exit(fallas ? 1 : 0);

@@ -3,7 +3,7 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-fU/QoskQuRctWlhECw3JlI6RrDSje0vtV21uFbUnqKQ=' 'sha256-wm7GsMty5KTzqStZRdJc4AsPRHIhKeVxzZNfSV/D7DE=' 'sha256-pZVFs1YVsdy2azF75ymoYrdNRc5OZVrrfu7C+JcNW4U=' 'sha256-9zvWeljVCsD4A/ghvUPZzT4c9slTDfe9sD7ZDEfcd04=' 'sha256-d0r8qG1rRfO0g7pvRkggbnm/91lK3CO+Mt6dUoqwNFw=' 'sha256-gulZ4uD1j9wrWrUJTM0i0CfFQRLjijuxwfAI5nM7EFo=' 'sha256-+XsugEb0C36pww+OgtuDPTlpzG8i5z6JB4GfD7nnMSQ=' 'sha256-D5eNFhJM5caNHsqiKB7XBhlV8Y/ARxp5llSr91wXSdw=' 'sha256-roqfeKHX31qnhNACUzx3ptrcftZMZBB97BGtw/Z3ojs=' 'sha256-eDnOIzEinYAB2tOTqOA5fuAMar6Rl/n1njISU2FFeCY=' 'sha256-rgiSH12iMr5IUIltfKReOQmwgPX6XvqRC3qq4U3+BPk=' 'unsafe-eval'; worker-src blob:; child-src blob:; style-src 'sha256-quNhzIrgLxjnhAAdzZV8GZ7qL+7HLG4bmluPmVpExok='; img-src data: blob:; font-src data:; connect-src blob:; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-fU/QoskQuRctWlhECw3JlI6RrDSje0vtV21uFbUnqKQ=' 'sha256-wm7GsMty5KTzqStZRdJc4AsPRHIhKeVxzZNfSV/D7DE=' 'sha256-pZVFs1YVsdy2azF75ymoYrdNRc5OZVrrfu7C+JcNW4U=' 'sha256-9zvWeljVCsD4A/ghvUPZzT4c9slTDfe9sD7ZDEfcd04=' 'sha256-MYDneO0Wg4Vqg3gRX9ZyX/se0JBF0BkpYndit4UgtOs=' 'sha256-gulZ4uD1j9wrWrUJTM0i0CfFQRLjijuxwfAI5nM7EFo=' 'sha256-YWfTPglgy6A16Gqj4KpASJehPD+VJDIA7DGWmY79UM0=' 'sha256-D5eNFhJM5caNHsqiKB7XBhlV8Y/ARxp5llSr91wXSdw=' 'sha256-roqfeKHX31qnhNACUzx3ptrcftZMZBB97BGtw/Z3ojs=' 'sha256-eDnOIzEinYAB2tOTqOA5fuAMar6Rl/n1njISU2FFeCY=' 'sha256-rgiSH12iMr5IUIltfKReOQmwgPX6XvqRC3qq4U3+BPk=' 'unsafe-eval'; worker-src blob:; child-src blob:; style-src 'sha256-quNhzIrgLxjnhAAdzZV8GZ7qL+7HLG4bmluPmVpExok='; img-src data: blob:; font-src data:; connect-src blob:; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="dark light">
 <title>Editor C</title>
@@ -607,7 +607,6 @@ fieldset > .group + .group { margin-top: 8px; }
     <div class="pane-head"><span>Consola</span><span id="status" class="chip" role="status">Listo</span>
       <span class="tools">
         <button id="inBtn" class="btn mini" aria-expanded="false" aria-controls="inbox" title="Datos de entrada para precargar lo que lee scanf"><svg class="i" aria-hidden="true"><use href="#i-entrada"/></svg>Entrada<i id="inDot" class="dot" hidden></i></button>
-        <button id="gccBtn" class="btn mini" hidden title="Compila y ejecuta este programa con gcc de verdad (solo está en la versión local del editor)"><svg class="i" aria-hidden="true"><use href="#i-quees"/></svg>gcc real</button>
         <button id="copy" class="btn mini" title="Copiar la salida"><svg class="i" aria-hidden="true"><use href="#i-copiar"/></svg>Copiar</button>
         <button id="clear" class="btn mini" title="Limpiar la consola"><svg class="i" aria-hidden="true"><use href="#i-limpiar"/></svg>Limpiar</button>
       </span></div>
@@ -681,6 +680,8 @@ fieldset > .group + .group { margin-top: 8px; }
   <fieldset><legend>Versión</legend>
     <div class="group"><div class="srow"><span id="verTxt">Versión</span><button id="updBtn" class="btn" type="button">Buscar actualización</button></div></div>
     <p class="foot" id="updMsg" role="status"></p>
+    <div class="group"><div class="srow"><span>Instalar la app</span><button id="instBtn" class="btn" type="button" hidden>Instalar</button></div></div>
+    <p class="foot" id="instMsg"></p>
   </fieldset>
   <fieldset><legend>Casos para enviar</legend>
     <p class="lead">Cuando el editor no sabe explicar algo, guarda el caso solo en este dispositivo. Nada se envía solo: tú miras qué se manda y eliges si se lo envías a Diego.</p>
@@ -6807,7 +6808,9 @@ self.postMessage({ type: 'ready' });`;
     if (!('serviceWorker' in navigator) || !/^https?:$/.test(location.protocol) || !document.querySelector('link[rel="manifest"]')) return;
     const hadController = !!navigator.serviceWorker.controller;
     let reloading = false;
-    const offer = (sw) => toast('Hay una versión nueva del editor.', 'Recargar', () => { flushSave(); sw.postMessage({ type: 'SKIP_WAITING' }); }, true);
+    let tocado = false;   // si todavía no escribió nada, la versión nueva se aplica sola al abrir; si ya escribió, se le pregunta
+    ta.addEventListener('input', () => { tocado = true; });
+    const offer = (sw) => { if (!tocado) { flushSave(); sw.postMessage({ type: 'SKIP_WAITING' }); return; } toast('Hay una versión nueva del editor.', 'Recargar', () => { flushSave(); sw.postMessage({ type: 'SKIP_WAITING' }); }, true); };
     navigator.serviceWorker.addEventListener('controllerchange', () => { if (!hadController || reloading) return; reloading = true; flushSave(); location.reload(); });
     navigator.serviceWorker.register('sw.js').then((reg) => {
       if (reg.waiting && navigator.serviceWorker.controller) offer(reg.waiting);
@@ -6838,43 +6841,6 @@ self.postMessage({ type: 'ready' });`;
   })();
   recibirEnlace();
 
-  // Versión local (EditorC.exe): si el editor se abre desde 127.0.0.1 y hay un gcc al lado, aparece «gcc real».
-  // En el sitio publicado y con doble clic (file://) no se hace ningún pedido: el botón queda oculto.
-  (function () {
-    if (!document.querySelector('meta[name="editorc-local"]')) return;   // la marca la pone EditorC.exe al servir el editor
-    if (!/^https?:$/.test(location.protocol) || !/^(127\.0\.0\.1|localhost)$/.test(location.hostname)) return;
-    let tk = '', ver = '', so = '';
-    fetch('/api/info', { cache: 'no-store' }).then((r) => (r.ok ? r.json() : null)).then((j) => {
-      if (!j || !j.gcc || typeof j.token !== 'string') return;
-      tk = j.token; ver = String(j.version || '').slice(0, 20); so = j.so === 'windows' ? 'Windows' : 'Linux';
-      $('gccBtn').hidden = false;
-    }).catch(() => { /* sin versión local: nada que mostrar */ });
-    $('gccBtn').addEventListener('click', () => {
-      const btn = $('gccBtn'); if (btn.disabled) return;
-      btn.disabled = true;
-      let entrada = inTxt.value; if (entrada && !entrada.endsWith('\n')) entrada += '\n';
-      fetch('/api/gcc', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Token': tk }, body: JSON.stringify({ code: ta.value, input: entrada }) })
-        .then((r) => (r.ok ? r.json() : Promise.reject(new Error('http'))))
-        .then((j) => {
-          if (!endsWithNewline()) appendText('\n');
-          appendText('— gcc real ' + ver + ' (' + so + ') —\n', 'dim');
-          if (!j.compiled) {
-            appendText(nivelAyuda >= 2 ? String(j.messages || '') + '\n' : 'gcc no pudo compilar el programa.\n', 'er');
-            return;
-          }
-          if (nivelAyuda >= 2 && j.messages) appendText(String(j.messages) + '\n', 'dim');
-          appendText(String(j.output || ''));
-          if (!endsWithNewline()) appendText('\n');
-          if (j.truncated) appendText('(salida cortada: demasiado texto)\n', 'er');
-          if (j.timeout) appendText('— se detuvo: tardó más de 5 segundos —\n', 'er');
-          else appendText('— gcc: código de salida ' + (j.exit | 0) + ' —\n', j.exit ? 'er' : 'ok');
-        })
-        .catch(() => { appendText('No se pudo hablar con la versión local. Ábrela de nuevo.\n', 'er'); })
-        .then(() => { btn.disabled = false; });
-    });
-  })();
-
-
   // Ajustes → Versión: comprobar si hay una versión más nueva y pasarse a ella (no se manda nada del alumno: solo se pide un archivo público)
   (function () {
     const btn = $('updBtn'), msg = $('updMsg');
@@ -6885,19 +6851,10 @@ self.postMessage({ type: 'ready' });`;
     const dichoWeb = 'https://diego-20000.github.io/editor-c/';
     btn.addEventListener('click', async () => {
       if (btn.disabled) return;
-      const local = !!document.querySelector('meta[name="editorc-local"]');
-      if (!local && !/^https?:$/.test(location.protocol)) { msg.textContent = 'Esta copia es un archivo suelto y no se actualiza sola. Abre ' + dichoWeb + ' para usar siempre la última versión.'; return; }
+      if (!/^https?:$/.test(location.protocol)) { msg.textContent = 'Esta copia es un archivo suelto y no se actualiza sola. Abre ' + dichoWeb + ' para usar siempre la última versión.'; return; }
       btn.disabled = true;
       try {
-        if (local) {
-          msg.textContent = 'Buscando…';
-          const inf = await (await fetch('/api/info', { cache: 'no-store' })).json();
-          const r = await fetch('/api/actualizar', { method: 'POST', headers: { 'X-Token': inf.token } });
-          const j = await r.json();
-          if (j.error) msg.textContent = 'No se pudo comprobar. ¿Hay conexión a internet?';
-          else if (j.changed) { msg.textContent = 'Actualizado a la versión ' + String(j.version).slice(0, 8) + '. Recargando…'; flushSave(); setTimeout(() => location.reload(), 800); }
-          else msg.textContent = 'Ya tienes la última versión (' + String(j.version).slice(0, 8) + ').';
-        } else if (nueva) {
+        if (nueva) {
           msg.textContent = 'Instalando…'; flushSave();
           const ks = window.caches ? await caches.keys() : [];
           await Promise.all(ks.filter((k) => /^editor-c-/.test(k)).map((k) => caches.delete(k)));
@@ -6917,6 +6874,20 @@ self.postMessage({ type: 'ready' });`;
     });
   })();
 
+
+  // Instalar la app (PWA): el navegador avisa con «beforeinstallprompt» cuando se puede; si no, se explica a mano
+  (function () {
+    const btn = $('instBtn'), msg = $('instMsg');
+    const instalada = () => (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
+    let ev = null;
+    if (instalada()) { msg.textContent = 'Ya estás usando la app instalada.'; btn.hidden = true; return; }
+    if (!/^https?:$/.test(location.protocol)) { btn.hidden = true; msg.textContent = 'Para instalarla, abre el editor desde su página de internet.'; return; }
+    msg.textContent = 'En Edge o Chrome: menú ⋯ → Aplicaciones → Instalar Editor C. Queda con ícono, se abre sin barra del navegador y se actualiza sola.';
+    window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); ev = e; btn.hidden = false; msg.textContent = 'Se instala como un programa más, funciona sin internet y se actualiza sola. No tiene acceso a tus archivos.'; });
+    window.addEventListener('appinstalled', () => { ev = null; btn.hidden = true; msg.textContent = 'Instalada. Ábrela desde el menú Inicio o el escritorio.'; });
+    btn.addEventListener('click', () => { if (!ev) return; const e = ev; ev = null; try { e.prompt(); } catch (x) { /* nada */ } });
+  })();
+
   window.__editorc = { run, cfg, nivelAyuda: () => nivelAyuda, setNivel: (n) => { nivelAyuda = +n === 2 ? 2 : 1; store.set('ayuda', String(nivelAyuda)); segSet($('ayudaSel'), String(nivelAyuda)); $('ayudaDesc').textContent = NIVELES_TXT[nivelAyuda]; }, setCode: (s) => { ta.value = s; refresh(); scheduleSave(); }, compile: (s) => CCompiler.compile(s), showDiag: (r) => { lastRes = r; showDiag(r); } };
 })();
 </script>
@@ -6928,7 +6899,7 @@ window.KB_DATA={"errores":[{"id":"ARR-001","categoria":"arreglos y textos","nomb
    (por ejemplo '5491112345678'). Vacío = el botón abre WhatsApp sin destinatario. */
 (function (root) {
   'use strict';
-  var CONFIG = { WHATSAPP_NUMERO: '5491137781528', VERSION: 'c40466c166c9' };
+  var CONFIG = { WHATSAPP_NUMERO: '5491137781528', VERSION: '924ab9413356' };
   if (typeof module !== 'undefined' && module.exports) module.exports = CONFIG;
   else root.CONFIG = CONFIG;
 })(typeof self !== 'undefined' ? self : this);

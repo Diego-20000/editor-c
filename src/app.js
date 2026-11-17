@@ -2104,7 +2104,9 @@ self.postMessage({ type: 'ready' });`;
     if (!('serviceWorker' in navigator) || !/^https?:$/.test(location.protocol) || !document.querySelector('link[rel="manifest"]')) return;
     const hadController = !!navigator.serviceWorker.controller;
     let reloading = false;
-    const offer = (sw) => toast('Hay una versión nueva del editor.', 'Recargar', () => { flushSave(); sw.postMessage({ type: 'SKIP_WAITING' }); }, true);
+    let tocado = false;   // si todavía no escribió nada, la versión nueva se aplica sola al abrir; si ya escribió, se le pregunta
+    ta.addEventListener('input', () => { tocado = true; });
+    const offer = (sw) => { if (!tocado) { flushSave(); sw.postMessage({ type: 'SKIP_WAITING' }); return; } toast('Hay una versión nueva del editor.', 'Recargar', () => { flushSave(); sw.postMessage({ type: 'SKIP_WAITING' }); }, true); };
     navigator.serviceWorker.addEventListener('controllerchange', () => { if (!hadController || reloading) return; reloading = true; flushSave(); location.reload(); });
     navigator.serviceWorker.register('sw.js').then((reg) => {
       if (reg.waiting && navigator.serviceWorker.controller) offer(reg.waiting);
@@ -2135,43 +2137,6 @@ self.postMessage({ type: 'ready' });`;
   })();
   recibirEnlace();
 
-  // Versión local (EditorC.exe): si el editor se abre desde 127.0.0.1 y hay un gcc al lado, aparece «gcc real».
-  // En el sitio publicado y con doble clic (file://) no se hace ningún pedido: el botón queda oculto.
-  (function () {
-    if (!document.querySelector('meta[name="editorc-local"]')) return;   // la marca la pone EditorC.exe al servir el editor
-    if (!/^https?:$/.test(location.protocol) || !/^(127\.0\.0\.1|localhost)$/.test(location.hostname)) return;
-    let tk = '', ver = '', so = '';
-    fetch('/api/info', { cache: 'no-store' }).then((r) => (r.ok ? r.json() : null)).then((j) => {
-      if (!j || !j.gcc || typeof j.token !== 'string') return;
-      tk = j.token; ver = String(j.version || '').slice(0, 20); so = j.so === 'windows' ? 'Windows' : 'Linux';
-      $('gccBtn').hidden = false;
-    }).catch(() => { /* sin versión local: nada que mostrar */ });
-    $('gccBtn').addEventListener('click', () => {
-      const btn = $('gccBtn'); if (btn.disabled) return;
-      btn.disabled = true;
-      let entrada = inTxt.value; if (entrada && !entrada.endsWith('\n')) entrada += '\n';
-      fetch('/api/gcc', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Token': tk }, body: JSON.stringify({ code: ta.value, input: entrada }) })
-        .then((r) => (r.ok ? r.json() : Promise.reject(new Error('http'))))
-        .then((j) => {
-          if (!endsWithNewline()) appendText('\n');
-          appendText('— gcc real ' + ver + ' (' + so + ') —\n', 'dim');
-          if (!j.compiled) {
-            appendText(nivelAyuda >= 2 ? String(j.messages || '') + '\n' : 'gcc no pudo compilar el programa.\n', 'er');
-            return;
-          }
-          if (nivelAyuda >= 2 && j.messages) appendText(String(j.messages) + '\n', 'dim');
-          appendText(String(j.output || ''));
-          if (!endsWithNewline()) appendText('\n');
-          if (j.truncated) appendText('(salida cortada: demasiado texto)\n', 'er');
-          if (j.timeout) appendText('— se detuvo: tardó más de 5 segundos —\n', 'er');
-          else appendText('— gcc: código de salida ' + (j.exit | 0) + ' —\n', j.exit ? 'er' : 'ok');
-        })
-        .catch(() => { appendText('No se pudo hablar con la versión local. Ábrela de nuevo.\n', 'er'); })
-        .then(() => { btn.disabled = false; });
-    });
-  })();
-
-
   // Ajustes → Versión: comprobar si hay una versión más nueva y pasarse a ella (no se manda nada del alumno: solo se pide un archivo público)
   (function () {
     const btn = $('updBtn'), msg = $('updMsg');
@@ -2182,19 +2147,10 @@ self.postMessage({ type: 'ready' });`;
     const dichoWeb = 'https://diego-20000.github.io/editor-c/';
     btn.addEventListener('click', async () => {
       if (btn.disabled) return;
-      const local = !!document.querySelector('meta[name="editorc-local"]');
-      if (!local && !/^https?:$/.test(location.protocol)) { msg.textContent = 'Esta copia es un archivo suelto y no se actualiza sola. Abre ' + dichoWeb + ' para usar siempre la última versión.'; return; }
+      if (!/^https?:$/.test(location.protocol)) { msg.textContent = 'Esta copia es un archivo suelto y no se actualiza sola. Abre ' + dichoWeb + ' para usar siempre la última versión.'; return; }
       btn.disabled = true;
       try {
-        if (local) {
-          msg.textContent = 'Buscando…';
-          const inf = await (await fetch('/api/info', { cache: 'no-store' })).json();
-          const r = await fetch('/api/actualizar', { method: 'POST', headers: { 'X-Token': inf.token } });
-          const j = await r.json();
-          if (j.error) msg.textContent = 'No se pudo comprobar. ¿Hay conexión a internet?';
-          else if (j.changed) { msg.textContent = 'Actualizado a la versión ' + String(j.version).slice(0, 8) + '. Recargando…'; flushSave(); setTimeout(() => location.reload(), 800); }
-          else msg.textContent = 'Ya tienes la última versión (' + String(j.version).slice(0, 8) + ').';
-        } else if (nueva) {
+        if (nueva) {
           msg.textContent = 'Instalando…'; flushSave();
           const ks = window.caches ? await caches.keys() : [];
           await Promise.all(ks.filter((k) => /^editor-c-/.test(k)).map((k) => caches.delete(k)));
@@ -2212,6 +2168,20 @@ self.postMessage({ type: 'ready' });`;
       } catch (e) { msg.textContent = 'No se pudo comprobar. ¿Hay conexión a internet?'; }
       btn.disabled = false;
     });
+  })();
+
+
+  // Instalar la app (PWA): el navegador avisa con «beforeinstallprompt» cuando se puede; si no, se explica a mano
+  (function () {
+    const btn = $('instBtn'), msg = $('instMsg');
+    const instalada = () => (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
+    let ev = null;
+    if (instalada()) { msg.textContent = 'Ya estás usando la app instalada.'; btn.hidden = true; return; }
+    if (!/^https?:$/.test(location.protocol)) { btn.hidden = true; msg.textContent = 'Para instalarla, abre el editor desde su página de internet.'; return; }
+    msg.textContent = 'En Edge o Chrome: menú ⋯ → Aplicaciones → Instalar Editor C. Queda con ícono, se abre sin barra del navegador y se actualiza sola.';
+    window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); ev = e; btn.hidden = false; msg.textContent = 'Se instala como un programa más, funciona sin internet y se actualiza sola. No tiene acceso a tus archivos.'; });
+    window.addEventListener('appinstalled', () => { ev = null; btn.hidden = true; msg.textContent = 'Instalada. Ábrela desde el menú Inicio o el escritorio.'; });
+    btn.addEventListener('click', () => { if (!ev) return; const e = ev; ev = null; try { e.prompt(); } catch (x) { /* nada */ } });
   })();
 
   window.__editorc = { run, cfg, nivelAyuda: () => nivelAyuda, setNivel: (n) => { nivelAyuda = +n === 2 ? 2 : 1; store.set('ayuda', String(nivelAyuda)); segSet($('ayudaSel'), String(nivelAyuda)); $('ayudaDesc').textContent = NIVELES_TXT[nivelAyuda]; }, setCode: (s) => { ta.value = s; refresh(); scheduleSave(); }, compile: (s) => CCompiler.compile(s), showDiag: (r) => { lastRes = r; showDiag(r); } };
