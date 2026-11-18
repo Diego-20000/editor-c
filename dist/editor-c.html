@@ -3,7 +3,7 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-fU/QoskQuRctWlhECw3JlI6RrDSje0vtV21uFbUnqKQ=' 'sha256-wm7GsMty5KTzqStZRdJc4AsPRHIhKeVxzZNfSV/D7DE=' 'sha256-pZVFs1YVsdy2azF75ymoYrdNRc5OZVrrfu7C+JcNW4U=' 'sha256-9zvWeljVCsD4A/ghvUPZzT4c9slTDfe9sD7ZDEfcd04=' 'sha256-TVAZordt+6meZa5eBWThNHUUfXfsLorvN0Hr3tVWdC8=' 'sha256-gulZ4uD1j9wrWrUJTM0i0CfFQRLjijuxwfAI5nM7EFo=' 'sha256-HP9lSDKElpjVcS60V4O++RddK/Aveuxy1KMREMs3oYU=' 'sha256-D5eNFhJM5caNHsqiKB7XBhlV8Y/ARxp5llSr91wXSdw=' 'sha256-roqfeKHX31qnhNACUzx3ptrcftZMZBB97BGtw/Z3ojs=' 'sha256-eDnOIzEinYAB2tOTqOA5fuAMar6Rl/n1njISU2FFeCY=' 'sha256-rgiSH12iMr5IUIltfKReOQmwgPX6XvqRC3qq4U3+BPk=' 'unsafe-eval'; worker-src blob:; child-src blob:; style-src 'sha256-R5aR2anWSIktPBGLRAuWuiFG/RetIIh78ptIn1OBzEU='; img-src data: blob:; font-src data:; connect-src blob:; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-fU/QoskQuRctWlhECw3JlI6RrDSje0vtV21uFbUnqKQ=' 'sha256-wm7GsMty5KTzqStZRdJc4AsPRHIhKeVxzZNfSV/D7DE=' 'sha256-pZVFs1YVsdy2azF75ymoYrdNRc5OZVrrfu7C+JcNW4U=' 'sha256-9zvWeljVCsD4A/ghvUPZzT4c9slTDfe9sD7ZDEfcd04=' 'sha256-TVAZordt+6meZa5eBWThNHUUfXfsLorvN0Hr3tVWdC8=' 'sha256-gulZ4uD1j9wrWrUJTM0i0CfFQRLjijuxwfAI5nM7EFo=' 'sha256-vL4wfuEnhhJ2PGqe0mELXe1cDtAClnIqfZbgECCpgCE=' 'sha256-D5eNFhJM5caNHsqiKB7XBhlV8Y/ARxp5llSr91wXSdw=' 'sha256-roqfeKHX31qnhNACUzx3ptrcftZMZBB97BGtw/Z3ojs=' 'sha256-eDnOIzEinYAB2tOTqOA5fuAMar6Rl/n1njISU2FFeCY=' 'sha256-rgiSH12iMr5IUIltfKReOQmwgPX6XvqRC3qq4U3+BPk=' 'unsafe-eval'; worker-src blob:; child-src blob:; style-src 'sha256-R5aR2anWSIktPBGLRAuWuiFG/RetIIh78ptIn1OBzEU='; img-src data: blob:; font-src data:; connect-src blob:; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="dark light">
 <title>Editor C</title>
@@ -641,10 +641,10 @@ fieldset > .group + .group { margin-top: 8px; }
   <fieldset><legend>Mis datos (cabecera de los programas nuevos y de las capturas)</legend>
     <div class="group">
       <label>Apellido y nombre<input id="uName" type="text" autocomplete="name" placeholder="Apellido, Nombre"></label>
-      <label>DNI (opcional)<input id="uDni" type="text" inputmode="numeric" autocomplete="off" placeholder="12345678"></label>
-      <label>Curso<input id="uCurso" type="text" placeholder="5° 2da"></label>
-      <label>Materia<input id="uMat" type="text" placeholder="Lenguajes Electrónicos V"></label>
-      <label>Ciclo lectivo<input id="uCiclo" type="text" inputmode="numeric" placeholder="2026"></label>
+      <label>DNI (opcional)<input id="uDni" type="text" inputmode="numeric" autocomplete="off" placeholder="Solo números"></label>
+      <label>Curso<input id="uCurso" type="text" placeholder="Curso y división"></label>
+      <label>Materia<input id="uMat" type="text" placeholder="Nombre de la materia"></label>
+      <label>Ciclo lectivo<input id="uCiclo" type="text" inputmode="numeric" placeholder="Año"></label>
     </div>
   </fieldset>
   <fieldset><legend>Apariencia</legend>
@@ -6958,7 +6958,7 @@ window.KB_DATA={"errores":[{"id":"ARR-001","categoria":"arreglos y textos","nomb
    (por ejemplo '5491112345678'). Vacío = el botón abre WhatsApp sin destinatario. */
 (function (root) {
   'use strict';
-  var CONFIG = { WHATSAPP_NUMERO: '5491137781528', VERSION: 'c1f57f63504e' };
+  var CONFIG = { WHATSAPP_NUMERO: '5491137781528', VERSION: 'fa082e2d90df' };
   if (typeof module !== 'undefined' && module.exports) module.exports = CONFIG;
   else root.CONFIG = CONFIG;
 })(typeof self !== 'undefined' ? self : this);
