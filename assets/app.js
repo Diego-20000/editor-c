@@ -84,7 +84,7 @@
   // un programa guardado: solo los campos conocidos, cada uno con su tipo (lo demás se descarta)
   function progLimpio(p) {
     if (!p || typeof p !== 'object' || Array.isArray(p) || typeof p.code !== 'string' || !(typeof p.id === 'string' || typeof p.id === 'number') || p.id === '') return null;
-    return { id: String(p.id).slice(0, 40), name: nombreLimpio(p.name) || 'Programa', code: p.code, input: typeof p.input === 'string' ? p.input : '', t: typeof p.t === 'number' && isFinite(p.t) ? p.t : Date.now(), tests: pruLimpiar(p.tests) };
+    return { id: String(p.id).slice(0, 40), name: nombreLimpio(p.name) || 'Programa', code: p.code, input: typeof p.input === 'string' ? p.input : '', t: typeof p.t === 'number' && isFinite(p.t) ? p.t : Date.now(), tests: pruLimpiar(p.tests) , auto: p.auto === true || (p.auto === undefined && /^Programa( \d+)?$/.test(nombreLimpio(p.name))) };
   }
   let progs = store.json('progs', []);
   if (!Array.isArray(progs)) progs = [];
@@ -97,6 +97,28 @@
     if (!names.has(base)) return base;
     for (let i = 2; ; i++) if (!names.has(base + ' ' + i)) return base + ' ' + i;
   }
+
+  // Nombre automático: si el primer printf del programa dice «Ejercicio 20-a», «Ejemplo 3», «TP 9»… el programa se llama así,
+  // y cambia cuando cambia ese texto. Si el alumno le pone un nombre a mano, deja de cambiar solo.
+  const RE_TIT = /^(ejercicio|ejemplo|ej\.?|actividad|problema|tp|trabajo pr[aá]ctico)\s*[\wº°#.\-]+/i;
+  function tituloDelPrimerPrintf(code) {
+    const sin = code.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/(^|[^:"'])\/\/.*$/gm, '$1');
+    const m = /\bprintf\s*\(\s*"((?:[^"\\\n]|\\.)*)"/.exec(sin);
+    if (!m) return '';
+    let t = m[1].replace(/\\[nrt]/g, ' ').replace(/\\(.)/g, '$1').replace(/\s+/g, ' ').trim().replace(/^[^A-Za-zÁÉÍÓÚáéíóú]+/, '').replace(/[\s:*\-–—=_.]+$/, '');
+    return RE_TIT.test(t) ? nombreLimpio(t, 40) : '';
+  }
+  function aplicarNombre(v) {
+    cur.name = v; $('pnameTxt').textContent = v; $('pname').setAttribute('aria-label', 'Programa actual: ' + v + '. Abrir lista de programas');
+  }
+  function autoNombre() {
+    if (!cur || !cur.auto) return;
+    const t = tituloDelPrimerPrintf(cur.code);
+    if (!t || t === cur.name) return;
+    const otros = new Set(progs.filter((x) => x !== cur).map((x) => x.name));
+    let v = t; for (let i = 2; otros.has(v); i++) v = t + ' (' + i + ')';
+    if (v !== cur.name) aplicarNombre(v);
+  }
   let guardadoOk = true;   // ¿entró el último guardado? (si el navegador se quedó sin espacio, no)
   function persist(callado) { guardadoOk = store.set('progs', JSON.stringify(progs), callado); store.set('cur', cur ? cur.id : '', true); return guardadoOk; }
   let saveTimer = null;
@@ -105,6 +127,7 @@
     clearTimeout(saveTimer); saveTimer = null;
     if (!cur) return;
     cur.code = ta.value; cur.input = inTxt.value; cur.t = Date.now();
+    autoNombre();
     persist();
   }
   window.addEventListener('pagehide', flushSave);
@@ -126,7 +149,7 @@
   }
   function newProgram(name, code, input) {
     if (cur) flushSave();
-    const p = { id: uid(), name: nextName(name), code: code === undefined ? template() : code, input: input || '', t: Date.now() };
+    const p = { id: uid(), name: nextName(name), code: code === undefined ? template() : code, input: input || '', t: Date.now(), auto: name === undefined };
     progs.push(p); showProgram(p, code === undefined ? 'a' : 'c');
     return p;
   }
@@ -1773,7 +1796,7 @@ self.postMessage({ type: 'ready' });`;
         const commit = (ok) => {
           if (done) return; done = true;
           const v = inp.value.trim();
-          if (ok && v && v !== p.name) { p.name = v; if (p === cur) { $('pnameTxt').textContent = v; $('pname').setAttribute('aria-label', 'Programa actual: ' + v + '. Abrir lista de programas'); } persist(); }
+          if (ok && v && v !== p.name) { p.name = v; p.auto = false; if (p === cur) { $('pnameTxt').textContent = v; $('pname').setAttribute('aria-label', 'Programa actual: ' + v + '. Abrir lista de programas'); } persist(); }
           renderProgs();
         };
         inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); commit(true); } else if (e.key === 'Escape') { e.stopPropagation(); e.preventDefault(); commit(false); } });
@@ -2130,7 +2153,7 @@ self.postMessage({ type: 'ready' });`;
     let p = progs.find((x) => x.id === id) || progs.slice().sort((a, b) => b.t - a.t)[0];
     if (!p) {
       const old = store.get('code', '');           // versión anterior: un solo programa
-      p = { id: uid(), name: 'Programa 1', code: old && old.trim() ? old : template(), input: '', t: Date.now() };
+      p = { id: uid(), name: 'Programa 1', code: old && old.trim() ? old : template(), input: '', t: Date.now(), auto: true };
       progs.push(p);
       showProgram(p, old && old.trim() ? 'u' : 'a');
     } else showProgram(p);

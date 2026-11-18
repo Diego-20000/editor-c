@@ -436,6 +436,36 @@ const check = (c, m) => { if (c) { ok++; console.log('  ok   ' + m); } else { fa
     await cx.close();
   }
 
+  // 15) Nombre automático: el primer printf que dice «Ejercicio …» le pone el nombre al programa, y cambia cuando cambia ese texto
+  {
+    const cx = await br.newContext({ viewport: { width: 1280, height: 800 } }); const pg = await cx.newPage();
+    await pg.goto(url); await pg.waitForSelector('#code');
+    const nombre = async () => (await pg.textContent('#pnameTxt')).trim();
+    const poner = async (cod) => { await pg.fill('#code', cod); await pg.waitForTimeout(700); };
+    check((await nombre()) === 'Programa 1', 'nombre: arranca como «Programa 1»');
+    await poner('#include <stdio.h>\nint main() {\n    printf("\\n Ejercicio 20-a \\n");\n}\n');
+    check((await nombre()) === 'Ejercicio 20-a', 'nombre: el primer printf con «Ejercicio 20-a» le pone el nombre (' + (await nombre()) + ')');
+    await poner('#include <stdio.h>\nint main() {\n    printf("\\ Ejercicio 21: promedio \\n");\n}\n');
+    check((await nombre()) === 'Ejercicio 21: promedio', 'nombre: cambia cuando cambia el texto del printf (' + (await nombre()) + ')');
+    await poner('#include <stdio.h>\nint main() {\n    printf("Hola\\n");\n}\n');
+    check((await nombre()) === 'Ejercicio 21: promedio', 'nombre: si el printf ya no dice «Ejercicio», conserva el nombre');
+    await poner('#include <stdio.h>\nint main() {\n    // printf("Ejercicio 99");\n    printf("Ejemplo 3");\n}\n');
+    check((await nombre()) === 'Ejemplo 3', 'nombre: ignora los comentarios y entiende «Ejemplo» (' + (await nombre()) + ')');
+    // un nombre puesto a mano ya no cambia solo
+    await pg.click('#progs'); await pg.waitForSelector('#dProgs[open]'); await pg.click('#plist .btn[title="Cambiar nombre"]');
+    await pg.fill('#plist input', 'Mi tarea'); await pg.keyboard.press('Enter'); await pg.keyboard.press('Escape');
+    await poner('#include <stdio.h>\nint main() {\n    printf("Ejercicio 30");\n}\n');
+    check((await nombre()) === 'Mi tarea', 'nombre: si lo cambió a mano, ya no cambia solo (' + (await nombre()) + ')');
+    // un programa nuevo repite el título de otro: se distingue
+    await pg.click('#progs'); await pg.waitForSelector('#dProgs[open]'); await pg.click('#pnew');
+    await poner('#include <stdio.h>\nint main() {\n    printf("Ejercicio 30");\n}\n');
+    check((await nombre()) === 'Ejercicio 30', 'nombre: un programa nuevo toma el título (' + (await nombre()) + ')');
+    await pg.click('#progs'); await pg.waitForSelector('#dProgs[open]'); await pg.click('#pnew');
+    await poner('#include <stdio.h>\nint main() {\n    printf("Ejercicio 30");\n}\n');
+    check((await nombre()) === 'Ejercicio 30 (2)', 'nombre: si ya existe uno igual, agrega (2) (' + (await nombre()) + ')');
+    await cx.close();
+  }
+
   await br.close();
   console.log(ok + ' ok, ' + fallas + ' fallas');
   process.exit(fallas ? 1 : 0);
