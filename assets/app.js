@@ -1508,15 +1508,17 @@ self.postMessage({ type: 'ready' });`;
     });
     const pruebasImg = opts.pruebas && pruRes && pruRes.code === ta.value ? pruSegs() : null;
     if (pruebasImg) { outSegs.length = 0; pruebasImg.forEach((x) => outSegs.push(x)); }
+    if (opts.segs) { outSegs.length = 0; opts.segs.forEach((x) => outSegs.push(x)); }   // una captura por prueba: la salida de esa prueba
     const colsR = opts.lado ? 46 : cols + 3;
     let outRows = rowsOf(outSegs, colsR);
     while (outRows.length > 1 && !outRows[outRows.length - 1].length) outRows.pop();
     // salidas muy largas (por ejemplo cuando se leen 150 valores y cada uno se repite en pantalla): se deja el principio y el final, que es donde está el resultado
     if (outRows.length > (pruebasImg ? 120 : 32)) { const lim = pruebasImg ? 120 : 32, om = outRows.length - (lim - 2); outRows = outRows.slice(0, lim - 12).concat([[['dim', '… (' + om + ' líneas omitidas) …']]], outRows.slice(-10)); }
     // si la entrada son muchas líneas cortas (números), se muestra en pocas filas y no una por renglón; si es muy larga se recorta
-    let inTxtImg = inTxt.value.replace(/\n+$/, '');
+    const entradaImg = typeof opts.entrada === 'string' ? opts.entrada : inTxt.value;
+    let inTxtImg = entradaImg.replace(/\n+$/, '');
     { const ls = inTxtImg.split('\n'); if (ls.length > 4 && ls.every((l) => l.length <= 14)) inTxtImg = ls.join('   '); }
-    let inRows = opts.input !== false && !pruebasImg && inTxt.value.trim() ? rowsOf([['in', inTxtImg]], colsR) : [];
+    let inRows = opts.input !== false && !pruebasImg && entradaImg.trim() ? rowsOf([['in', inTxtImg]], colsR) : [];
     if (inRows.length > 8) { const mas = inRows.length - 7; inRows = inRows.slice(0, 7); inRows.push([['dim', '… (' + mas + ' filas más de entrada)']]); }
     // la segunda línea de la cabecera (DNI, curso, materia, ciclo) pasa a dos líneas si no entra junto a la fecha
     const datosPartes = [user.dni && 'DNI ' + user.dni, user.curso, user.mat, user.ciclo && (/ciclo/i.test(user.ciclo) ? user.ciclo : 'Ciclo lectivo ' + user.ciclo)].filter(Boolean);
@@ -1697,6 +1699,92 @@ self.postMessage({ type: 'ready' });`;
     $('pruEstado').textContent = bien === items.length ? 'Las ' + items.length + ' pruebas terminaron.' : bien + ' de ' + items.length + ' pruebas terminaron; revisa las demás.';
     pruRender(); return true;
   }
+
+  /* ---------- una captura por prueba: vista previa, nombre y descarga de todas juntas (.zip) ---------- */
+  const dPC = $('dPruCap');
+  let pcItems = [];
+  const limpiaNombre = (t) => String(t).replace(/[\u0000-\u001f\u007f\\/:*?"<>|]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 60);
+  const pcArchivo = (n) => (limpiaNombre(n).replace(/^[. ]+|[. ]+$/g, '') || 'captura');
+  const TABLA_CRC = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+  function crc32(u8) { let c = 0xFFFFFFFF; for (let i = 0; i < u8.length; i++) c = TABLA_CRC[(c ^ u8[i]) & 255] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; }
+  // .zip sin compresión (las imágenes PNG ya vienen comprimidas): se arma aquí, sin librerías
+  function armarZip(archivos) {
+    const enc = new TextEncoder(), partes = [], central = []; let off = 0;
+    const d = new Date(), hora = (d.getHours() << 11) | (d.getMinutes() << 5) | (d.getSeconds() >> 1), fecha = ((d.getFullYear() - 1980) << 9) | ((d.getMonth() + 1) << 5) | d.getDate();
+    archivos.forEach((a) => {
+      const nm = enc.encode(a.nombre), crc = crc32(a.datos), sz = a.datos.length;
+      const lh = new DataView(new ArrayBuffer(30));
+      lh.setUint32(0, 0x04034b50, true); lh.setUint16(4, 20, true); lh.setUint16(6, 0x0800, true); lh.setUint16(8, 0, true); lh.setUint16(10, hora, true); lh.setUint16(12, fecha, true);
+      lh.setUint32(14, crc, true); lh.setUint32(18, sz, true); lh.setUint32(22, sz, true); lh.setUint16(26, nm.length, true); lh.setUint16(28, 0, true);
+      partes.push(new Uint8Array(lh.buffer), nm, a.datos);
+      const ch = new DataView(new ArrayBuffer(46));
+      ch.setUint32(0, 0x02014b50, true); ch.setUint16(4, 20, true); ch.setUint16(6, 20, true); ch.setUint16(8, 0x0800, true); ch.setUint16(10, 0, true); ch.setUint16(12, hora, true); ch.setUint16(14, fecha, true);
+      ch.setUint32(16, crc, true); ch.setUint32(20, sz, true); ch.setUint32(24, sz, true); ch.setUint16(28, nm.length, true); ch.setUint32(42, off, true);
+      central.push(new Uint8Array(ch.buffer), nm); off += 30 + nm.length + sz;
+    });
+    const tam = central.reduce((s, p) => s + p.length, 0), fin = new DataView(new ArrayBuffer(22));
+    fin.setUint32(0, 0x06054b50, true); fin.setUint16(8, archivos.length, true); fin.setUint16(10, archivos.length, true); fin.setUint32(12, tam, true); fin.setUint32(16, off, true);
+    return new Blob(partes.concat(central, [new Uint8Array(fin.buffer)]), { type: 'application/zip' });
+  }
+  function pcLiberar() { pcItems.forEach((it) => { if (it.url) URL.revokeObjectURL(it.url); }); pcItems = []; }
+  function pcRender(it) {
+    return new Promise((resolve) => {
+      let cv;
+      try {
+        const segs = []; if (it.r.out) segs.push([null, it.r.out]);
+        const e = pruEstadoTxt(it.r); if (e) segs.push([it.r.estado === 'ok' ? 'dim' : 'er', (it.r.out && !/\n$/.test(it.r.out) ? '\n' : '') + e + '\n']);
+        cv = makePng({ input: true, lado: $('pcLay').value === 'lado', nombre: it.nombre || 'Prueba', segs, entrada: it.entrada });
+      } catch (e) { it.chip.textContent = '✗ No se pudo armar la imagen'; resolve(); return; }
+      cv.toBlob((b) => {
+        if (!b) { it.chip.textContent = '✗ No se pudo armar la imagen'; resolve(); return; }
+        if (it.url) URL.revokeObjectURL(it.url);
+        it.blob = b; it.url = URL.createObjectURL(b); it.img.src = it.url; it.dl.disabled = false; resolve();
+      }, 'image/png');
+    });
+  }
+  function pcFila(it, k) {
+    const li = el('li', 'pc');
+    it.img = el('img'); it.img.alt = 'Vista previa de la captura de la prueba ' + (k + 1);
+    const der = el('div', 'pcder');
+    it.inp = el('input'); it.inp.type = 'text'; it.inp.maxLength = 60; it.inp.value = it.nombre; it.inp.setAttribute('aria-label', 'Nombre de la captura de la prueba ' + (k + 1));
+    let tm = null;
+    it.inp.addEventListener('input', () => { clearTimeout(tm); tm = setTimeout(() => { it.nombre = limpiaNombre(it.inp.value) || it.nombre; pcRender(it); }, 350); });
+    const ok = it.r.estado === 'ok' && it.r.code === 0;
+    it.chip = el('span', 'pcchip' + (ok ? ' ok' : ' er')); it.chip.textContent = (ok ? '✓ Terminó bien' : '✗ ' + (pruEstadoTxt(it.r) || 'Revisa esta prueba'));
+    const ent = el('small'); ent.textContent = 'Entrada: ' + (it.entrada.trim() ? it.entrada.replace(/\n+$/, '').split('\n').join('  ') : '(ninguna)');
+    it.dl = btnEl('Descargar', 'mini', () => { if (it.blob) download(it.blob, pcArchivo(it.nombre) + '.png'); }, 'Descargar la captura ' + (k + 1)); it.dl.disabled = true;
+    der.appendChild(it.inp); der.appendChild(it.chip); der.appendChild(ent); der.appendChild(it.dl);
+    li.appendChild(it.img); li.appendChild(der); $('pcList').appendChild(li);
+  }
+  async function pcAbrir() {
+    pcLiberar(); $('pcList').textContent = ''; $('pcZip').disabled = true; $('pcEstado').textContent = 'Armando las imágenes…';
+    $('pcLay').value = !coarse && window.innerWidth >= 1000 ? 'lado' : 'abajo';
+    const T = pruTests(), prog = (cur && cur.name) || 'Programa';
+    pcItems = T.map((p, i) => ({ nombre: limpiaNombre(prog + ' - ' + (p.n && p.n.trim() ? p.n.trim() : 'Prueba ' + (i + 1))), r: pruRes.items[i], entrada: p.i }));
+    dPC.showModal();
+    for (let k = 0; k < pcItems.length; k++) { pcFila(pcItems[k], k); await pcRender(pcItems[k]); await new Promise((r) => setTimeout(r, 0)); }
+    const bien = pcItems.filter((it) => it.r.estado === 'ok' && it.r.code === 0).length;
+    $('pcEstado').textContent = pcItems.length + (pcItems.length === 1 ? ' imagen lista' : ' imágenes listas') + (bien === pcItems.length ? '. Todas las pruebas terminaron bien.' : ': ' + bien + ' terminaron bien; revisa las marcadas con ✗.');
+    $('pcZip').disabled = false;
+  }
+  $('pruCaps').addEventListener('click', async () => {
+    if (!(pruRes && pruRes.code === ta.value && pruRes.items.length === pruTests().length)) { if (!(await pruEjecutarTodas())) return; }
+    dPru.close(); pcAbrir();
+  });
+  $('pcLay').addEventListener('change', async () => { $('pcZip').disabled = true; for (const it of pcItems) await pcRender(it); $('pcZip').disabled = false; });
+  $('pcZip').addEventListener('click', async () => {
+    const usados = new Set(), archivos = [];
+    for (const it of pcItems) {
+      if (!it.blob) continue;
+      let base = pcArchivo(it.nombre), n = base, k = 2; while (usados.has(n.toLowerCase())) n = base + ' (' + k++ + ')';
+      usados.add(n.toLowerCase()); archivos.push({ nombre: n + '.png', datos: new Uint8Array(await it.blob.arrayBuffer()) });
+    }
+    if (!archivos.length) return;
+    const zn = pcArchivo(((cur && cur.name) || 'Programa') + ' - pruebas') + '.zip';
+    download(armarZip(archivos), zn); toast('Descargado: ' + zn + ' (' + archivos.length + (archivos.length === 1 ? ' imagen)' : ' imágenes)'));
+  });
+  dPC.addEventListener('close', pcLiberar);
+
   function pruAbrir() { flushSave(); $('pruEstado').textContent = ''; pruRender(); dPru.showModal(); }
   /* ---------- ordenar código: solo la forma (sangría y espacios); se puede deshacer con Ctrl+Z ---------- */
   $('ordenar').addEventListener('click', () => {
