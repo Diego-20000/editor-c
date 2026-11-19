@@ -39,7 +39,7 @@
     M_SQRT2: [Math.SQRT2, 'double'], M_LN2: [Math.LN2, 'double'], M_LN10: [Math.LN10, 'double'], M_PI_2: [Math.PI / 2, 'double'], M_PI_4: [Math.PI / 4, 'double']
   };
 
-  const HDR_FUNCS = { 'stdio.h': ['printf', 'scanf', 'puts', 'getchar', 'putchar', 'fgets'], 'math.h': ['sqrt', 'pow', 'fabs', 'floor', 'ceil'], 'string.h': ['strlen', 'strcpy', 'strcmp', 'strcat'], 'stdlib.h': ['rand', 'srand', 'abs', 'exit', 'atoi', 'system'], 'ctype.h': ['toupper', 'tolower', 'isdigit', 'isalpha'] };
+  const HDR_FUNCS = { 'stdio.h': ['printf', 'scanf', 'puts', 'getchar', 'putchar', 'fgets'], 'math.h': ['sqrt', 'pow', 'fabs', 'floor', 'ceil'], 'string.h': ['strlen', 'strcpy', 'strcmp', 'strcat', 'strcspn', 'strspn'], 'stdlib.h': ['rand', 'srand', 'abs', 'exit', 'atoi', 'system'], 'ctype.h': ['toupper', 'tolower', 'isdigit', 'isalpha'] };
   /* ================= LEXER ================= */
   function tokenize(text, line0, top, includes, defines) {
     const out = [];
@@ -48,12 +48,61 @@
     let atStart = true;
     const cs = []; // pila de #if/#ifdef: { on, taken, par }
     const active = () => cs.every((x) => x.on);
+    // #if: expresión de enteros como en C (BigInt: la división trunca, && y || cortan, ?: ); las macros se reemplazan por su texto y lo que no se conoce vale 0
     const ppVal = (txt, ln) => {
-      let e = txt.replace(/defined\s*\(\s*(\w+)\s*\)|defined\s+(\w+)/g, (_, a, b) => (defines.has(a || b) ? '1' : '0'));
-      e = e.replace(/[A-Za-z_]\w*/g, (id) => { const b = defines.get(id); return Array.isArray(b) && b.length === 1 && b[0].t === 'num' ? String(b[0].v) : '0'; });
-      e = e.replace(/(\d)[uUlL]+/g, '$1');
-      if (!/^[\d\s+\-*\/%()<>=!&|^~?:]*$/.test(e)) throw new CErr('la condición del #if no se entiende', ln);
-      try { return !!Number(Function('return (' + (e.trim() || '0') + ')')()); } catch (x) { throw new CErr('la condición del #if no se entiende', ln); }
+      const mal = () => new CErr('la condición del #if no se entiende', ln);
+      let e = txt.replace(/defined\s*\(\s*(\w+)\s*\)|defined\s+(\w+)/g, (_, a, b) => (defines.has(a || b) ? ' 1 ' : ' 0 '));
+      for (let paso = 0; paso < 12 && /[A-Za-z_]/.test(e.replace(/0[xX][0-9a-fA-F]+[uUlL]*|\d+[uUlL]*/g, '')); paso++) {
+        const antes = e;
+        e = e.replace(/0[xX][0-9a-fA-F]+[uUlL]*|\d+[uUlL]*|[A-Za-z_]\w*/g, (id) => {
+          if (/^\d/.test(id)) return id;
+          const b = defines.get(id);
+          return Array.isArray(b) ? ' ' + b.map((x) => (x.t === 'num' ? String(x.v) : x.t === 'id' ? '0' : String(x.v))).join(' ') + ' ' : ' 0 ';
+        });
+        if (e === antes) break;
+      }
+      e = e.replace(/\b(0[xX][0-9a-fA-F]+|\d+)[uUlL]+/g, '$1');
+      const tk = e.match(/0[xX][0-9a-fA-F]+|\d+|<<|>>|<=|>=|==|!=|&&|\|\||[-+*\/%()<>!~&|^?:]|\S/g) || [];
+      let p = 0;
+      const peek = () => tk[p], next = () => tk[p++];
+      const num = (s) => { try { return /^0[xX]/.test(s) ? BigInt(s) : /^0\d/.test(s) ? BigInt('0o' + s.slice(1)) : BigInt(s); } catch (x) { throw mal(); } };
+      const bin = (nivel) => {   // nivel = lista de grupos de operadores, del que menos liga al que más
+        if (nivel === NIV.length) return un();
+        let a = bin(nivel + 1);
+        while (NIV[nivel].includes(peek())) { const op = next(), b = bin(nivel + 1); a = aplica(op, a, b); }
+        return a;
+      };
+      const NIV = [['|'], ['^'], ['&'], ['==', '!='], ['<', '>', '<=', '>='], ['<<', '>>'], ['+', '-'], ['*', '/', '%']];
+      const aplica = (op, a, b) => {
+        switch (op) {
+          case '|': return a | b; case '^': return a ^ b; case '&': return a & b;
+          case '==': return a === b ? 1n : 0n; case '!=': return a !== b ? 1n : 0n;
+          case '<': return a < b ? 1n : 0n; case '>': return a > b ? 1n : 0n; case '<=': return a <= b ? 1n : 0n; case '>=': return a >= b ? 1n : 0n;
+          case '<<': return a << b; case '>>': return a >> b;
+          case '+': return a + b; case '-': return a - b; case '*': return a * b;
+          case '/': case '%': if (b === 0n) throw new CErr('división por cero en la condición del #if', ln); return op === '/' ? a / b : a % b;
+        }
+        throw mal();
+      };
+      function un() {
+        const t = next();
+        if (t === undefined) throw mal();
+        if (t === '!') return un() === 0n ? 1n : 0n;
+        if (t === '~') return ~un();
+        if (t === '-') return -un();
+        if (t === '+') return un();
+        if (t === '(') { const v = cond(); if (next() !== ')') throw mal(); return v; }
+        if (/^(0[xX][0-9a-fA-F]+|\d+)$/.test(t)) return num(t);
+        throw mal();
+      }
+      function land() { let a = bin(0); while (peek() === '&&') { next(); const b = bin(0); a = (a !== 0n && b !== 0n) ? 1n : 0n; } return a; }
+      function lor() { let a = land(); while (peek() === '||') { next(); const b = land(); a = (a !== 0n || b !== 0n) ? 1n : 0n; } return a; }
+      function cond() { const c0 = lor(); if (peek() === '?') { next(); const x = cond(); if (next() !== ':') throw mal(); const y = cond(); return c0 !== 0n ? x : y; } return c0; }
+      if (!tk.length) throw mal();
+      let v;
+      try { v = cond(); } catch (x) { if (x instanceof CErr) throw x; throw mal(); }   // por ejemplo, paréntesis anidados de más: error del programa, no se cae el editor
+      if (p < tk.length) throw mal();
+      return v !== 0n;
     };
     const OPS = ['<<=', '>>=', '...', '++', '--', '+=', '-=', '*=', '/=', '%=', '&=', '|=', '^=', '==', '!=', '<=', '>=', '&&', '||', '<<', '>>', '->'];
     while (i < n) {
@@ -855,7 +904,7 @@
       while (ch) { ch = false; for (const f of this.funcs.values()) if (!f.async) for (const c of f.calls) { const g = this.funcs.get(c); if (g && g.async) { f.async = true; ch = true; break; } } }
       if (this.opts.yieldLoops) for (const f of this.funcs.values()) f.async = true;
       // 3) código
-      const out = ['const $={neg:$rt.neg,nn:$rt.nn,fabs:$rt.fabs,fmax:$rt.fmax,fmin:$rt.fmin,NANP:$rt.NANP,asin:$rt.asin,acos:$rt.acos,log10:$rt.log10,printf:$rt.printf,puts:$rt.puts,putchar:$rt.putchar,scanf:$rt.scanf,getchar:$rt.getchar,idiv:$rt.idiv,imod:$rt.imod,ix:$rt.ix,d2i:$rt.d2i,mk:$rt.mk,pad:$rt.pad,init:$rt.init,rand:$rt.rand,srand:$rt.srand,time:$rt.time,exit:$rt.exit,round:$rt.round,rint:$rt.rint,fmod:$rt.fmod,lop:$rt.lop,ldiv:$rt.ldiv,lmod:$rt.lmod,f2l:$rt.f2l,f2ul:$rt.f2ul,clock:$rt.clock,yield:$rt.yield,cstr:$rt.cstr,tostr:$rt.tostr,strlen:$rt.strlen,strcpy:$rt.strcpy,strncpy:$rt.strncpy,strcat:$rt.strcat,strncat:$rt.strncat,strcmp:$rt.strcmp,strncmp:$rt.strncmp,atoi:$rt.atoi,atol:$rt.atol,atof:$rt.atof,sprintf:$rt.sprintf,snprintf:$rt.snprintf,fgets:$rt.fgets,gets:$rt.gets};', 'let $t;let $y=0;'];
+      const out = ['const $={neg:$rt.neg,nn:$rt.nn,fabs:$rt.fabs,fmax:$rt.fmax,fmin:$rt.fmin,NANP:$rt.NANP,asin:$rt.asin,acos:$rt.acos,log10:$rt.log10,printf:$rt.printf,puts:$rt.puts,putchar:$rt.putchar,scanf:$rt.scanf,getchar:$rt.getchar,idiv:$rt.idiv,imod:$rt.imod,ix:$rt.ix,d2i:$rt.d2i,mk:$rt.mk,pad:$rt.pad,init:$rt.init,rand:$rt.rand,srand:$rt.srand,time:$rt.time,exit:$rt.exit,round:$rt.round,rint:$rt.rint,fmod:$rt.fmod,lop:$rt.lop,ldiv:$rt.ldiv,lmod:$rt.lmod,f2l:$rt.f2l,f2ul:$rt.f2ul,clock:$rt.clock,yield:$rt.yield,cstr:$rt.cstr,tostr:$rt.tostr,strlen:$rt.strlen,strcpy:$rt.strcpy,strncpy:$rt.strncpy,strcat:$rt.strcat,strncat:$rt.strncat,strcmp:$rt.strcmp,strncmp:$rt.strncmp,strcspn:$rt.strcspn,strspn:$rt.strspn,atoi:$rt.atoi,atol:$rt.atol,atof:$rt.atof,sprintf:$rt.sprintf,snprintf:$rt.snprintf,fgets:$rt.fgets,gets:$rt.gets};', 'let $t;let $y=0;'];
       for (const it of this.items) if (it.k === 'decl') out.push(this.declCode(it, true));
       const fcs = [];
       for (const it of this.items) if (it.k === 'func') fcs.push(this.funcCode(it));
@@ -1536,7 +1585,7 @@
 
     /* ----- llamadas ----- */
     needInclude(name, line) {
-      const H = { 'stdio.h': ['printf', 'scanf', 'getchar', 'putchar', 'puts', 'fprintf', 'fputs', 'putc', 'fputc', 'sprintf', 'snprintf', 'fgets', 'gets'], 'string.h': ['strlen', 'strcpy', 'strncpy', 'strcat', 'strncat', 'strcmp', 'strncmp'], 'math.h': ['sqrt', 'pow', 'fabs', 'floor', 'ceil', 'round', 'trunc', 'sin', 'cos', 'tan', 'asin', 'acos', 'atan', 'atan2', 'exp', 'log', 'log10', 'log2', 'cbrt', 'sinh', 'cosh', 'tanh', 'asinh', 'acosh', 'atanh', 'exp2', 'expm1', 'log1p', 'isnan', 'isinf', 'isfinite', 'signbit', 'rint', 'nearbyint', 'lround', 'llround', 'copysign', 'fdim', 'fmod', 'fmax', 'fmin', 'hypot'], 'stdlib.h': ['rand', 'srand', 'abs', 'labs', 'exit', 'system', 'atoi', 'atol', 'atof'], 'ctype.h': ['isdigit', 'isalpha', 'isalnum', 'isspace', 'isupper', 'islower', 'ispunct', 'isprint', 'isgraph', 'iscntrl', 'isxdigit', 'isblank', 'toupper', 'tolower'], 'time.h': ['time', 'clock'], 'conio.h': ['getch', 'getche'] };
+      const H = { 'stdio.h': ['printf', 'scanf', 'getchar', 'putchar', 'puts', 'fprintf', 'fputs', 'putc', 'fputc', 'sprintf', 'snprintf', 'fgets', 'gets'], 'string.h': ['strlen', 'strcpy', 'strncpy', 'strcat', 'strncat', 'strcmp', 'strncmp', 'strcspn', 'strspn'], 'math.h': ['sqrt', 'pow', 'fabs', 'floor', 'ceil', 'round', 'trunc', 'sin', 'cos', 'tan', 'asin', 'acos', 'atan', 'atan2', 'exp', 'log', 'log10', 'log2', 'cbrt', 'sinh', 'cosh', 'tanh', 'asinh', 'acosh', 'atanh', 'exp2', 'expm1', 'log1p', 'isnan', 'isinf', 'isfinite', 'signbit', 'rint', 'nearbyint', 'lround', 'llround', 'copysign', 'fdim', 'fmod', 'fmax', 'fmin', 'hypot'], 'stdlib.h': ['rand', 'srand', 'abs', 'labs', 'exit', 'system', 'atoi', 'atol', 'atof'], 'ctype.h': ['isdigit', 'isalpha', 'isalnum', 'isspace', 'isupper', 'islower', 'ispunct', 'isprint', 'isgraph', 'iscntrl', 'isxdigit', 'isblank', 'toupper', 'tolower'], 'time.h': ['time', 'clock'], 'conio.h': ['getch', 'getche'] };
       for (const h in H) if (H[h].indexOf(name) >= 0 && !this.incl.has(h)) {
         const k = 'inc|' + h; if (this.undeclared.has(k)) return; this.undeclared.add(k);
         this.err('usas ' + name + ' pero falta #include <' + h + '> al principio del programa', line, INC_KB[name]);
@@ -1599,7 +1648,7 @@
       if (name === 'getchar' || name === 'getch' || name === 'getche') { return { c: '(await $.getchar())', t: 'int' }; }
       if (name === 'putchar' && !args[0]) { this.err('putchar necesita un carácter entre paréntesis, por ejemplo putchar(65)', n.line); return { c: '0', t: 'int' }; }
       if (name === 'putchar') { const r = this.expr(args[0]); return { c: '$.putchar(' + this.conv(r, 'int') + ')', t: 'int' }; }
-      const TEXTO = { strlen: 1, strcpy: 2, strncpy: 3, strcat: 2, strncat: 3, strcmp: 2, strncmp: 3, atoi: 1, atol: 1, atof: 1 };
+      const TEXTO = { strlen: 1, strcpy: 2, strncpy: 3, strcat: 2, strncat: 3, strcmp: 2, strncmp: 3, strcspn: 2, strspn: 2, atoi: 1, atol: 1, atof: 1 };
       if (own(TEXTO, name)) {
         if (args.length !== TEXTO[name]) { this.err("'" + name + "' recibe " + TEXTO[name] + ' argumento(s)', n.line); return { c: '0', t: 'int' }; }
         const SA = (a) => { if (a.k === 'str') return JSON.stringify(a.v); const ca = this.charArr(a); if (ca) return ca.c; this.err("el argumento de '" + name + "' tiene que ser un texto: un arreglo de char o un texto entre comillas", n.line, a.k === 'id' && this.lookup(a.name) && this.lookup(a.name).array && name === 'strlen' ? 'ARR-057' : undefined); return '""'; };
@@ -1607,6 +1656,7 @@
         const num3 = args[2] ? this.val(this.expr(args[2])) : '0';
         switch (name) {
           case 'strlen': return { c: '$.strlen(' + SA(args[0]) + ')', t: 'ulong' };
+          case 'strcspn': case 'strspn': return { c: '$.' + name + '(' + SA(args[0]) + ',' + SA(args[1]) + ')', t: 'ulong' };
           case 'strcpy': case 'strcat': return { c: '$.' + name + '(' + DA(args[0]) + ',' + SA(args[1]) + ',' + n.line + ')', t: 'void' };
           case 'strncpy': case 'strncat': return { c: '$.' + name + '(' + DA(args[0]) + ',' + SA(args[1]) + ',' + num3 + ',' + n.line + ')', t: 'void' };
           case 'strcmp': return { c: '$.strcmp(' + SA(args[0]) + ',' + SA(args[1]) + ')', t: 'int' };
@@ -1983,7 +2033,7 @@
         case 'idx': { const nm = rootName(e); const v = nm && this.info(nm); return v ? v.type : null; }
         case 'call': {
           if (MATH_DOUBLE.has(e.name) || e.name === 'atof') return 'double';
-          if (e.name === 'strlen') return 'ulong';
+          if (e.name === 'strlen' || e.name === 'strcspn' || e.name === 'strspn') return 'ulong';
           if (['abs', 'atoi', 'rand', 'toupper', 'tolower', 'getchar'].indexOf(e.name) >= 0) return 'int';
           const f = this.g.funcs.get(e.name); return f ? f.ret : null;
         }

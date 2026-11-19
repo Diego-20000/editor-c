@@ -32,6 +32,7 @@ function crearServidor(getDir, puertoBase, opts) {
     if (host !== '127.0.0.1:' + puerto && host !== 'localhost:' + puerto) { rs.statusCode = 403; rs.end('direccion no permitida'); return; }   // contra DNS rebinding
     let u;
     try { u = decodeURIComponent(rq.url.split('?')[0]); } catch (e) { rs.statusCode = 400; rs.end('mal pedido'); return; }
+    if (u.indexOf('\0') >= 0) { rs.statusCode = 400; rs.end('mal pedido'); return; }   // un byte nulo hace fallar a fs (y cerraría el programa)
     if (u === '/api/info' && rq.method === 'GET') {
       if (!mismoOrigen(rq)) { rs.statusCode = 404; rs.end('no'); return; }
       if (gccRuta && versionG === null) versionG = versionGcc(gccRuta);
@@ -66,7 +67,9 @@ function crearServidor(getDir, puertoBase, opts) {
         fs.readFile(f, 'utf8', (e2, t) => { if (e2) { rs.statusCode = 500; rs.end('no'); return; } rs.end(t.replace('<head>', '<head>\n<meta name="editorc-local" content="1">')); });
         return;
       }
-      fs.createReadStream(f).pipe(rs);
+      const flujo = fs.createReadStream(f);   // si el archivo desaparece justo ahora (una actualización lo está cambiando), se corta la respuesta y nada más
+      flujo.on('error', () => { rs.destroy(); });
+      flujo.pipe(rs);
     });
   });
   return new Promise((resolve, reject) => {

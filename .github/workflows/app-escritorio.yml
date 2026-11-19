@@ -16,6 +16,8 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false   # el token no queda guardado en el repositorio mientras corren los scripts de instalación
       - uses: actions/setup-node@v4
         with:
           node-version: 20
