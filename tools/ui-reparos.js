@@ -538,6 +538,30 @@ const check = (c, m) => { if (c) { ok++; console.log('  ok   ' + m); } else { fa
     await c3.close();
   }
 
+  // 18) Revisión visual: la barra no desaparece al tocar «Pasar a otro dispositivo» (archivo suelto), botones de los diálogos a la vista en 1024x600 y filas de Ajustes sin cortar en el celular
+  {
+    let cx = await br.newContext({ viewport: { width: 1366, height: 768 } }); let pg = await cx.newPage();
+    await pg.goto(url); await pg.waitForSelector('#code'); await pg.click('#enlace'); await pg.waitForTimeout(400);
+    check(await pg.isVisible('#progs') && await pg.isVisible('#settings'), 'barra: sigue visible después de tocar «Pasar a otro dispositivo» desde un archivo suelto');
+    await pg.click('#avisar'); await pg.waitForSelector('dialog[open]'); await pg.keyboard.press('Escape'); await pg.waitForTimeout(200);
+    check(await pg.isVisible('#progs'), 'barra: sigue visible después de «Avisar a Diego»');
+    await cx.close();
+    cx = await br.newContext({ viewport: { width: 1024, height: 600 } }); pg = await cx.newPage();
+    await pg.goto(url); await pg.waitForSelector('#code');
+    for (const [id, nombre] of [['#shot', 'Captura'], ['#avisar', 'Avisar a Diego'], ['#exBtn', 'Ejemplos'], ['#pruebas', 'Pruebas']]) {
+      await pg.click(id); await pg.waitForSelector('dialog[open]'); await pg.waitForTimeout(600);
+      const ok2 = await pg.evaluate(() => { const b = document.querySelector('dialog[open] > .drow:last-of-type .btn'); if (!b) return false; const r = b.getBoundingClientRect(); return r.bottom <= innerHeight + 1 && r.top >= 0; });
+      check(ok2, 'diálogo ' + nombre + ' (1024x600): los botones de abajo se ven sin desplazar');
+      await pg.keyboard.press('Escape'); await pg.waitForTimeout(250);
+    }
+    await cx.close();
+    cx = await br.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true }); pg = await cx.newPage();
+    await pg.goto(url); await pg.waitForSelector('#code'); await pg.click('#more summary'); await pg.click('#settings'); await pg.waitForSelector('#dSet[open]');
+    const cortadas = await pg.evaluate(() => [...document.querySelectorAll('#dSet label.chk')].filter((l) => l.offsetParent).filter((l) => { const rg = document.createRange(); rg.selectNodeContents(l); const t = [...rg.getClientRects()].some((r) => r.left < l.getBoundingClientRect().left - 1 || r.right > l.getBoundingClientRect().right + 1); return t; }).map((l) => l.textContent.trim().slice(0, 30)));
+    check(cortadas.length === 0, 'ajustes (celular): ninguna fila con interruptor queda cortada' + (cortadas.length ? ': ' + cortadas.join(' | ') : ''));
+    await cx.close();
+  }
+
   await br.close();
   console.log(ok + ' ok, ' + fallas + ' fallas');
   process.exit(fallas ? 1 : 0);

@@ -1038,9 +1038,10 @@
   }
   $('cNota2').addEventListener('input', () => pintarVistaCasos());
   $('casosBtn').addEventListener('click', () => abrirCasos());
+  // (en pantalla ancha la barra de botones es fija: «Más» no se cierra, porque ocultaría toda la barra)
   // «Avisar a Diego»: arma un caso con el programa actual y el último mensaje, lo deja elegido y abre la vista previa (nada se manda solo)
   $('avisar').addEventListener('click', () => {
-    $('more').open = false;
+    $('more').open = matchMedia('(min-width: 900px)').matches;
     const it = (typeof problems !== 'undefined' && problems && problems[0]) || { k: 'e', code: '', msg: '', line: 0 };
     const clave = guardarCaso(it);
     abrirCasos(clave ? [clave] : undefined);
@@ -2029,7 +2030,7 @@ self.postMessage({ type: 'ready' });`;
     return { name: nombreLimpio(o.n) || 'Programa recibido', code: o.c.replace(/\r\n?/g, '\n'), input: typeof o.i === 'string' ? o.i.slice(0, MAX_ENTRADA_ENLACE) : '' };
   }
   $('enlace').addEventListener('click', async () => {
-    $('more').open = false; flushSave();
+    $('more').open = matchMedia('(min-width: 900px)').matches; flushSave();
     if (!/^https?:$/.test(location.protocol)) { toast('El enlace funciona desde la página publicada. Desde un archivo usa «Guardar .c».'); return; }
     if (cur.code.length > MAX_ENLACE) { toast('El programa es demasiado largo para un enlace. Usa «Guardar .c».'); return; }
     let url;

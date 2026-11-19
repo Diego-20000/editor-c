@@ -3,7 +3,7 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-fU/QoskQuRctWlhECw3JlI6RrDSje0vtV21uFbUnqKQ=' 'sha256-k3KO2AEZIeDxKJUM+t//g9GUzt+42UTfCnOPR56xTcY=' 'sha256-uMagy7tAfRotrv0iVd8hhg9a57+eqnbs3x97ihYAUFc=' 'sha256-9zvWeljVCsD4A/ghvUPZzT4c9slTDfe9sD7ZDEfcd04=' 'sha256-qQXpDe/dgSqIUbMzBIFFBMdHhyFO4gLTd7AvTNrv+xY=' 'sha256-gulZ4uD1j9wrWrUJTM0i0CfFQRLjijuxwfAI5nM7EFo=' 'sha256-e6s8tjV3nQNDwSN8XsHAN0DT20LqidddqhFqXmhWsc0=' 'sha256-D5eNFhJM5caNHsqiKB7XBhlV8Y/ARxp5llSr91wXSdw=' 'sha256-roqfeKHX31qnhNACUzx3ptrcftZMZBB97BGtw/Z3ojs=' 'sha256-eDnOIzEinYAB2tOTqOA5fuAMar6Rl/n1njISU2FFeCY=' 'sha256-rgiSH12iMr5IUIltfKReOQmwgPX6XvqRC3qq4U3+BPk=' 'unsafe-eval'; worker-src blob:; child-src blob:; style-src 'sha256-Iqsrf0vVkpmrUikmSdU8c8M699wVnkzf9/mkbpdEqzI='; img-src data: blob:; font-src data:; connect-src blob:; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-fU/QoskQuRctWlhECw3JlI6RrDSje0vtV21uFbUnqKQ=' 'sha256-k3KO2AEZIeDxKJUM+t//g9GUzt+42UTfCnOPR56xTcY=' 'sha256-uMagy7tAfRotrv0iVd8hhg9a57+eqnbs3x97ihYAUFc=' 'sha256-9zvWeljVCsD4A/ghvUPZzT4c9slTDfe9sD7ZDEfcd04=' 'sha256-475niJQFZPTqDs+a9cH3Ny0Kt/zB8RPXO9GLE7WdKfw=' 'sha256-gulZ4uD1j9wrWrUJTM0i0CfFQRLjijuxwfAI5nM7EFo=' 'sha256-5c6noRQH8JeniMwjUqsZf0mzBLjjT61NmNS4uGhH7xQ=' 'sha256-D5eNFhJM5caNHsqiKB7XBhlV8Y/ARxp5llSr91wXSdw=' 'sha256-roqfeKHX31qnhNACUzx3ptrcftZMZBB97BGtw/Z3ojs=' 'sha256-eDnOIzEinYAB2tOTqOA5fuAMar6Rl/n1njISU2FFeCY=' 'sha256-rgiSH12iMr5IUIltfKReOQmwgPX6XvqRC3qq4U3+BPk=' 'unsafe-eval'; worker-src blob:; child-src blob:; style-src 'sha256-OskXRTk3dYjk1WZW33ev/3PoUB1GTtNH2F2sz07K2JU='; img-src data: blob:; font-src data:; connect-src blob:; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="dark light">
 <title>Editor C</title>
@@ -556,6 +556,15 @@ fieldset > .group + .group { margin-top: 8px; }
 .pcchip { justify-self: start; padding: 3px 10px; border-radius: 999px; background: var(--fill); font: 600 13px var(--ui); }
 .pcchip.ok { color: var(--ok); } .pcchip.er { color: var(--danger); }
 @media (max-width: 700px) { .pc { grid-template-columns: 1fr; } }
+
+/* revisión visual: en ventanas bajas (netbook 1024x600) los botones de acción del diálogo quedan siempre a la vista */
+dialog > .drow:last-of-type { position: sticky; bottom: 0; z-index: 2; background: var(--bg); padding: 10px 0 4px; margin-top: 10px; }
+/* celular: avisos con ancho propio, fila de la prueba que se parte, ayuda que no se sale */
+.toast { width: max-content; max-width: calc(100vw - 32px); }
+.prucab { flex-wrap: wrap; }
+.adet, .adet * { overflow-wrap: anywhere; min-width: 0; }
+dialog.ayuda { overflow-x: hidden; }
+.group > label.chk { white-space: normal; }
 </style>
 </head>
 <body>
@@ -5824,9 +5833,10 @@ int main() {
   }
   $('cNota2').addEventListener('input', () => pintarVistaCasos());
   $('casosBtn').addEventListener('click', () => abrirCasos());
+  // (en pantalla ancha la barra de botones es fija: «Más» no se cierra, porque ocultaría toda la barra)
   // «Avisar a Diego»: arma un caso con el programa actual y el último mensaje, lo deja elegido y abre la vista previa (nada se manda solo)
   $('avisar').addEventListener('click', () => {
-    $('more').open = false;
+    $('more').open = matchMedia('(min-width: 900px)').matches;
     const it = (typeof problems !== 'undefined' && problems && problems[0]) || { k: 'e', code: '', msg: '', line: 0 };
     const clave = guardarCaso(it);
     abrirCasos(clave ? [clave] : undefined);
@@ -6815,7 +6825,7 @@ self.postMessage({ type: 'ready' });`;
     return { name: nombreLimpio(o.n) || 'Programa recibido', code: o.c.replace(/\r\n?/g, '\n'), input: typeof o.i === 'string' ? o.i.slice(0, MAX_ENTRADA_ENLACE) : '' };
   }
   $('enlace').addEventListener('click', async () => {
-    $('more').open = false; flushSave();
+    $('more').open = matchMedia('(min-width: 900px)').matches; flushSave();
     if (!/^https?:$/.test(location.protocol)) { toast('El enlace funciona desde la página publicada. Desde un archivo usa «Guardar .c».'); return; }
     if (cur.code.length > MAX_ENLACE) { toast('El programa es demasiado largo para un enlace. Usa «Guardar .c».'); return; }
     let url;
@@ -7175,7 +7185,7 @@ window.KB_DATA={"errores":[{"id":"ARR-001","categoria":"arreglos y textos","nomb
    (por ejemplo '5491112345678'). Vacío = el botón abre WhatsApp sin destinatario. */
 (function (root) {
   'use strict';
-  var CONFIG = { WHATSAPP_NUMERO: '5491137781528', VERSION: '6d4acf8ed208' };
+  var CONFIG = { WHATSAPP_NUMERO: '5491137781528', VERSION: '141009deb8ec' };
   if (typeof module !== 'undefined' && module.exports) module.exports = CONFIG;
   else root.CONFIG = CONFIG;
 })(typeof self !== 'undefined' ? self : this);
