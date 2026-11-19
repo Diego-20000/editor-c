@@ -99,13 +99,15 @@
 
   // Nombre automático: si el primer printf del programa dice «Ejercicio 20-a», «Ejemplo 3», «TP 9»… el programa se llama así,
   // y cambia cuando cambia ese texto. Si el alumno le pone un nombre a mano, deja de cambiar solo.
-  const RE_TIT = /^(ejercicio|ejemplo|ej\.?|actividad|problema|tp|trabajo pr[aá]ctico)\s*[\wº°#.\-]+/i;
+  // «Ejercicio 20-a», «Ej. 3», «TP 9», «Problema B»: la palabra, y enseguida un número o una letra mayúscula suelta (así «Ejecutando suma» o «Ejemplo de uso» no cuentan)
+  const RE_TIT = /^(?:ejercicio|ejemplo|actividad|problema|trabajo pr[aá]ctico|tp|ej)\b[\s.:\-]*(?:n[º°.]?\s*)?(.*)$/i;
+  const esTitulo = (t) => { const m = RE_TIT.exec(t); return !!m && /^(\d|[A-Z](?![A-Za-zÁÉÍÓÚáéíóúñÑ]))/.test(m[1]); };
   function tituloDelPrimerPrintf(code) {
     const sin = code.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/(^|[^:"'])\/\/.*$/gm, '$1');
     const m = /\bprintf\s*\(\s*"((?:[^"\\\n]|\\.)*)"/.exec(sin);
     if (!m) return '';
     let t = m[1].replace(/\\[nrt]/g, ' ').replace(/\\(.)/g, '$1').replace(/\s+/g, ' ').trim().replace(/^[^A-Za-zÁÉÍÓÚáéíóú]+/, '').replace(/[\s:*\-–—=_.]+$/, '');
-    return RE_TIT.test(t) ? nombreLimpio(t, 40) : '';
+    return esTitulo(t) ? nombreLimpio(t, 40) : '';
   }
   function aplicarNombre(v) {
     cur.name = v; $('pnameTxt').textContent = v; $('pname').setAttribute('aria-label', 'Programa actual: ' + v + '. Abrir lista de programas');
@@ -119,14 +121,38 @@
     if (v !== cur.name) aplicarNombre(v);
   }
   let guardadoOk = true;   // ¿entró el último guardado? (si el navegador se quedó sin espacio, no)
-  function persist(callado) { guardadoOk = store.set('progs', JSON.stringify(progs), callado); store.set('cur', cur ? cur.id : '', true); return guardadoOk; }
+  // Dos pestañas o ventanas (por ejemplo el sitio y la app instalada) comparten lo guardado: antes de escribir se suman los programas
+  // que la otra guardó y, de los que están en las dos, se queda la versión más nueva. Lo borrado acá no se vuelve a sumar.
+  const borrados = new Set();
+  function fusionarGuardado() {
+    let g; try { g = store.json('progs', []); } catch (e) { return; }
+    if (!Array.isArray(g)) return;
+    const sinCambios = !!cur && ta.value === cur.code && inTxt.value === cur.input;
+    g.map(progLimpio).filter(Boolean).forEach((q) => {
+      if (borrados.has(q.id)) return;
+      const mio = progs.find((x) => x.id === q.id);
+      if (!mio) progs.push(q);
+      else if (q.t > mio.t && (mio !== cur || sinCambios)) Object.assign(mio, q);
+    });
+  }
+  // al volver a una pestaña, o cuando otra guarda: si acá no se había escrito nada, se muestra lo más nuevo
+  function sincronizarOtraVentana() {
+    if (!cur) return;
+    const sinCambios = ta.value === cur.code && inTxt.value === cur.input;
+    fusionarGuardado();
+    if (sinCambios && (ta.value !== cur.code || inTxt.value !== cur.input)) {
+      ta.value = cur.code; inTxt.value = cur.input; refresh(); updateInDot(); $('pnameTxt').textContent = cur.name;
+    }
+  }
+  window.addEventListener('storage', (e) => { if (e.key === 'editorc.progs') sincronizarOtraVentana(); });
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') sincronizarOtraVentana(); });
+  function persist(callado) { fusionarGuardado(); guardadoOk = store.set('progs', JSON.stringify(progs), callado); store.set('cur', cur ? cur.id : '', true); return guardadoOk; }
   let saveTimer = null;
   function scheduleSave() { clearTimeout(saveTimer); saveTimer = setTimeout(flushSave, 350); }
   function flushSave() {
     clearTimeout(saveTimer); saveTimer = null;
     if (!cur) return;
-    cur.code = ta.value; cur.input = inTxt.value; cur.t = Date.now();
-    autoNombre();
+    if (cur.code !== ta.value || cur.input !== inTxt.value) { cur.code = ta.value; cur.input = inTxt.value; cur.t = Date.now(); autoNombre(); }   // si no se tocó nada, no se pisa lo que otra ventana pudo guardar
     persist();
   }
   window.addEventListener('pagehide', flushSave);
@@ -1012,9 +1038,10 @@
   }
   $('cNota2').addEventListener('input', () => pintarVistaCasos());
   $('casosBtn').addEventListener('click', () => abrirCasos());
+  // (en pantalla ancha la barra de botones es fija: «Más» no se cierra, porque ocultaría toda la barra)
   // «Avisar a Diego»: arma un caso con el programa actual y el último mensaje, lo deja elegido y abre la vista previa (nada se manda solo)
   $('avisar').addEventListener('click', () => {
-    $('more').open = false;
+    $('more').open = matchMedia('(min-width: 900px)').matches;
     const it = (typeof problems !== 'undefined' && problems && problems[0]) || { k: 'e', code: '', msg: '', line: 0 };
     const clave = guardarCaso(it);
     abrirCasos(clave ? [clave] : undefined);
@@ -1725,8 +1752,10 @@ self.postMessage({ type: 'ready' });`;
     fin.setUint32(0, 0x06054b50, true); fin.setUint16(8, archivos.length, true); fin.setUint16(10, archivos.length, true); fin.setUint32(12, tam, true); fin.setUint32(16, off, true);
     return new Blob(partes.concat(central, [new Uint8Array(fin.buffer)]), { type: 'application/zip' });
   }
-  function pcLiberar() { pcItems.forEach((it) => { if (it.url) URL.revokeObjectURL(it.url); }); pcItems = []; }
+  let pcSeq = 0;   // cada vez que se abre o se cierra el diálogo cambia: lo que quedó armándose a medias se descarta
+  function pcLiberar() { pcSeq++; pcItems.forEach((it) => { if (it.url) URL.revokeObjectURL(it.url); }); pcItems = []; }
   function pcRender(it) {
+    const seq = pcSeq;
     return new Promise((resolve) => {
       let cv;
       try {
@@ -1735,6 +1764,7 @@ self.postMessage({ type: 'ready' });`;
         cv = makePng({ input: true, lado: $('pcLay').value === 'lado', nombre: it.nombre || 'Prueba', segs, entrada: it.entrada });
       } catch (e) { it.chip.textContent = '✗ No se pudo armar la imagen'; resolve(); return; }
       cv.toBlob((b) => {
+        if (seq !== pcSeq) { resolve(); return; }
         if (!b) { it.chip.textContent = '✗ No se pudo armar la imagen'; resolve(); return; }
         if (it.url) URL.revokeObjectURL(it.url);
         it.blob = b; it.url = URL.createObjectURL(b); it.img.src = it.url; it.dl.disabled = false; resolve();
@@ -1756,18 +1786,21 @@ self.postMessage({ type: 'ready' });`;
     li.appendChild(it.img); li.appendChild(der); $('pcList').appendChild(li);
   }
   async function pcAbrir() {
-    pcLiberar(); $('pcList').textContent = ''; $('pcZip').disabled = true; $('pcEstado').textContent = 'Armando las imágenes…';
+    pcLiberar(); const seq = pcSeq, res = pruRes; $('pcList').textContent = ''; $('pcZip').disabled = true; $('pcEstado').textContent = 'Armando las imágenes…';
     $('pcLay').value = !coarse && window.innerWidth >= 1000 ? 'lado' : 'abajo';
     const T = pruTests(), prog = (cur && cur.name) || 'Programa';
-    pcItems = T.map((p, i) => ({ nombre: limpiaNombre(prog + ' - ' + (p.n && p.n.trim() ? p.n.trim() : 'Prueba ' + (i + 1))), r: pruRes.items[i], entrada: p.i }));
+    pcItems = T.map((p, i) => ({ nombre: limpiaNombre(prog + ' - ' + (p.n && p.n.trim() ? p.n.trim() : 'Prueba ' + (i + 1))), r: res.items[i] || { estado: 'sin', out: '' }, entrada: p.i }));
     dPC.showModal();
-    for (let k = 0; k < pcItems.length; k++) { pcFila(pcItems[k], k); await pcRender(pcItems[k]); await new Promise((r) => setTimeout(r, 0)); }
+    for (let k = 0; k < pcItems.length; k++) { if (seq !== pcSeq) return; pcFila(pcItems[k], k); await pcRender(pcItems[k]); await new Promise((r) => setTimeout(r, 0)); }
+    if (seq !== pcSeq) return;
     const bien = pcItems.filter((it) => it.r.estado === 'ok' && it.r.code === 0).length;
     $('pcEstado').textContent = pcItems.length + (pcItems.length === 1 ? ' imagen lista' : ' imágenes listas') + (bien === pcItems.length ? '. Todas las pruebas terminaron bien.' : ': ' + bien + ' terminaron bien; revisa las marcadas con ✗.');
     $('pcZip').disabled = false;
   }
   $('pruCaps').addEventListener('click', async () => {
+    const prog0 = cur;
     if (!(pruRes && pruRes.code === ta.value && pruRes.items.length === pruTests().length)) { if (!(await pruEjecutarTodas())) return; }
+    if (cur !== prog0 || !(pruRes && pruRes.code === ta.value && pruRes.items.length === pruTests().length)) return;   // mientras corrían se cambió de programa o de pruebas
     dPru.close(); pcAbrir();
   });
   $('pcLay').addEventListener('change', async () => { $('pcZip').disabled = true; for (const it of pcItems) await pcRender(it); $('pcZip').disabled = false; });
@@ -1892,10 +1925,10 @@ self.postMessage({ type: 'ready' });`;
       const del = document.createElement('button'); del.type = 'button'; del.className = 'btn mini ico'; del.appendChild(ico('borrar')); del.title = 'Borrar'; del.setAttribute('aria-label', 'Borrar ' + p.name);
       del.addEventListener('click', () => {
         const idx = progs.indexOf(p); if (p === cur) flushSave();
-        progs.splice(idx, 1);
+        progs.splice(idx, 1); borrados.add(p.id);
         if (p === cur) { if (progs.length) showProgram(progs.slice().sort((a, b) => b.t - a.t)[0]); else newProgram(); }
         persist(); renderProgs();
-        toast('Programa borrado.', 'Deshacer', () => { progs.splice(Math.min(idx, progs.length), 0, p); persist(); if (dProgs.open) renderProgs(); });
+        toast('Programa borrado.', 'Deshacer', () => { borrados.delete(p.id); progs.splice(Math.min(idx, progs.length), 0, p); persist(); if (dProgs.open) renderProgs(); });
       });
       li.appendChild(ob); li.appendChild(rn); li.appendChild(del); ul2.appendChild(li);
     });
@@ -1997,7 +2030,7 @@ self.postMessage({ type: 'ready' });`;
     return { name: nombreLimpio(o.n) || 'Programa recibido', code: o.c.replace(/\r\n?/g, '\n'), input: typeof o.i === 'string' ? o.i.slice(0, MAX_ENTRADA_ENLACE) : '' };
   }
   $('enlace').addEventListener('click', async () => {
-    $('more').open = false; flushSave();
+    $('more').open = matchMedia('(min-width: 900px)').matches; flushSave();
     if (!/^https?:$/.test(location.protocol)) { toast('El enlace funciona desde la página publicada. Desde un archivo usa «Guardar .c».'); return; }
     if (cur.code.length > MAX_ENLACE) { toast('El programa es demasiado largo para un enlace. Usa «Guardar .c».'); return; }
     let url;
@@ -2312,6 +2345,7 @@ self.postMessage({ type: 'ready' });`;
           else msg.textContent = 'Ya tienes la última versión (' + String(j.version).slice(0, 8) + ').';
         } else if (nueva) {
           msg.textContent = 'Instalando…'; flushSave();
+          const prueba = await fetch('index.html', { cache: 'no-store' }); if (!prueba.ok) throw new Error('sin conexión');   // antes de borrar la copia guardada, se comprueba que la nueva se pueda bajar
           const ks = window.caches ? await caches.keys() : [];
           await Promise.all(ks.filter((k) => /^editor-c-/.test(k)).map((k) => caches.delete(k)));
           const regs = navigator.serviceWorker ? await navigator.serviceWorker.getRegistrations() : [];

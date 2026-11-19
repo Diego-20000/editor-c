@@ -453,6 +453,8 @@
       puts(s) { io.write(tostr(s) + '\n'); return 1; },
       cstr, tostr,
       strlen(a) { return BigInt(aBytes(a).length); },
+      strcspn(a, b) { const x = aBytes(a), y = new Set(aBytes(b)); let i = 0; while (i < x.length && !y.has(x[i])) i++; return BigInt(i); },
+      strspn(a, b) { const x = aBytes(a), y = new Set(aBytes(b)); let i = 0; while (i < x.length && y.has(x[i])) i++; return BigInt(i); },
       strcpy(dst, src, line) { escribir(dst, aBytes(src), true, 'strcpy', line); return 1; },
       strncpy(dst, src, n, line) {
         n = Number(n); const b = aBytes(src).slice(0, n);

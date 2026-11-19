@@ -491,6 +491,77 @@ const check = (c, m) => { if (c) { ok++; console.log('  ok   ' + m); } else { fa
     await cx.close();
   }
 
+  // 17) Revisión: nombre automático más estricto, varias pestañas sin pisarse y capturas por prueba con el programa correcto
+  {
+    const cx = await br.newContext({ viewport: { width: 1280, height: 800 } });
+    const pg = await cx.newPage(); const errs = []; pg.on('pageerror', (e) => errs.push(e.message));
+    await pg.goto(url); await pg.waitForSelector('#code');
+    const nombre = async () => (await pg.textContent('#pnameTxt')).trim();
+    const poner = async (cod) => { await pg.fill('#code', cod); await pg.waitForTimeout(700); };
+    for (const txt of ['Ejecutando suma', 'Ejemplo de uso', 'Problema al leer', 'Actividad finalizada', 'Ejercito', 'Ej']) {
+      await poner('#include <stdio.h>\nint main() {\n    printf("' + txt + '\\n");\n}\n');
+      check((await nombre()) === 'Programa 1', 'nombre: «' + txt + '» no es un título de ejercicio (' + (await nombre()) + ')');
+    }
+    for (const [txt, esp] of [['Ej. 3', 'Ej. 3'], ['TP 9', 'TP 9'], ['Ejercicio N°5', 'Ejercicio N°5'], ['Problema B', 'Problema B']]) {
+      await pg.evaluate(() => { document.getElementById('pnameTxt').textContent = 'Programa 1'; });
+      await poner('#include <stdio.h>\nint main() {\n    printf("\\n ' + txt + ' \\n");\n}\n' + ' ');
+      check((await nombre()) === esp, 'nombre: «' + txt + '» sí es un título (' + (await nombre()) + ')');
+    }
+    await cx.close();
+    // dos pestañas: la que quedó vieja no pisa lo que guardó la otra
+    const c2 = await br.newContext({ viewport: { width: 1280, height: 800 } });
+    const A = await c2.newPage(), B = await c2.newPage();
+    await A.goto(url); await A.waitForSelector('#code'); await B.goto(url); await B.waitForSelector('#code');
+    await A.evaluate(() => { document.getElementById('progs').click(); }); await A.waitForSelector('#dProgs[open]'); await A.click('#pnew');
+    await A.fill('#code', '#include <stdio.h>\nint main() {\n    printf("TRABAJO DE A");\n}\n'); await A.waitForTimeout(800);
+    await B.evaluate(() => window.__editorc.setCode('int main() {\n}\n')); await B.waitForTimeout(800);
+    await B.evaluate(() => window.dispatchEvent(new Event('pagehide'))); await B.waitForTimeout(300);
+    const guardado = await A.evaluate(() => JSON.parse(localStorage.getItem('editorc.progs')).map((p) => p.code));
+    check(guardado.some((c) => /TRABAJO DE A/.test(c)) && guardado.some((c) => c === 'int main() {\n}\n'), 'varias pestañas: lo que guardó A sigue ahí después de que B escribió (' + guardado.length + ' programas)');
+    // la pestaña vieja que no tocó nada no pisa el programa que la otra editó
+    await A.fill('#code', '//A editó esto\n'); await A.waitForTimeout(800);
+    await B.evaluate(() => { window.dispatchEvent(new Event('pagehide')); }); await B.waitForTimeout(300);
+    const aun = await A.evaluate(() => JSON.parse(localStorage.getItem('editorc.progs')).some((p) => p.code === '//A editó esto\n'));
+    check(aun, 'varias pestañas: una pestaña que no escribió nada no pisa lo que editó la otra');
+    await c2.close();
+    // capturas por prueba: si se cambia de programa mientras corren, no se abre con resultados ajenos
+    const c3 = await br.newContext({ viewport: { width: 1280, height: 800 } });
+    const mk = (id, nombre, n) => ({ id, name: nombre, code: '#include <stdio.h>\nint main() {\n    printf("x");\n}\n', input: '', t: Date.now() + (id === 'a' ? 1 : 0), auto: false, tests: Array.from({ length: n }, (_, i) => ({ n: 'P' + (i + 1), i: '' })) });
+    await c3.addInitScript((p) => { try { localStorage.setItem('editorc.progs', JSON.stringify(p)); localStorage.setItem('editorc.cur', 'a'); } catch (e) { /* nada */ } }, [mk('a', 'Uno', 12), mk('b', 'Dos', 2)]);
+    const P = await c3.newPage(); const e3 = []; P.on('pageerror', (e) => e3.push(e.message));
+    await P.goto(url); await P.waitForSelector('#code');
+    await P.click('#pruebas'); await P.waitForSelector('#dPru[open]');
+    // todo en el mismo instante: se pide la captura, se cierra y se abre el otro programa antes de que terminen de correr las pruebas
+    await P.evaluate(() => { document.getElementById('pruCaps').click(); document.getElementById('dPru').close(); document.getElementById('progs').click(); document.querySelector('#plist li:nth-child(2) .open').click(); });
+    await P.waitForTimeout(6000);
+    check(!(await P.isVisible('#dPruCap[open]')) && e3.length === 0, 'capturas por prueba: al cambiar de programa a mitad no se abre con resultados de otro' + (e3.length ? ': ' + e3.join(' | ') : ''));
+    await c3.close();
+  }
+
+  // 18) Revisión visual: la barra no desaparece al tocar «Pasar a otro dispositivo» (archivo suelto), botones de los diálogos a la vista en 1024x600 y filas de Ajustes sin cortar en el celular
+  {
+    let cx = await br.newContext({ viewport: { width: 1366, height: 768 } }); let pg = await cx.newPage();
+    await pg.goto(url); await pg.waitForSelector('#code'); await pg.click('#enlace'); await pg.waitForTimeout(400);
+    check(await pg.isVisible('#progs') && await pg.isVisible('#settings'), 'barra: sigue visible después de tocar «Pasar a otro dispositivo» desde un archivo suelto');
+    await pg.click('#avisar'); await pg.waitForSelector('dialog[open]'); await pg.keyboard.press('Escape'); await pg.waitForTimeout(200);
+    check(await pg.isVisible('#progs'), 'barra: sigue visible después de «Avisar a Diego»');
+    await cx.close();
+    cx = await br.newContext({ viewport: { width: 1024, height: 600 } }); pg = await cx.newPage();
+    await pg.goto(url); await pg.waitForSelector('#code');
+    for (const [id, nombre] of [['#shot', 'Captura'], ['#avisar', 'Avisar a Diego'], ['#exBtn', 'Ejemplos'], ['#pruebas', 'Pruebas']]) {
+      await pg.click(id); await pg.waitForSelector('dialog[open]'); await pg.waitForTimeout(600);
+      const ok2 = await pg.evaluate(() => { const b = document.querySelector('dialog[open] > .drow:last-of-type .btn'); if (!b) return false; const r = b.getBoundingClientRect(); return r.bottom <= innerHeight + 1 && r.top >= 0; });
+      check(ok2, 'diálogo ' + nombre + ' (1024x600): los botones de abajo se ven sin desplazar');
+      await pg.keyboard.press('Escape'); await pg.waitForTimeout(250);
+    }
+    await cx.close();
+    cx = await br.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true }); pg = await cx.newPage();
+    await pg.goto(url); await pg.waitForSelector('#code'); await pg.click('#more summary'); await pg.click('#settings'); await pg.waitForSelector('#dSet[open]');
+    const cortadas = await pg.evaluate(() => [...document.querySelectorAll('#dSet label.chk')].filter((l) => l.offsetParent).filter((l) => { const rg = document.createRange(); rg.selectNodeContents(l); const t = [...rg.getClientRects()].some((r) => r.left < l.getBoundingClientRect().left - 1 || r.right > l.getBoundingClientRect().right + 1); return t; }).map((l) => l.textContent.trim().slice(0, 30)));
+    check(cortadas.length === 0, 'ajustes (celular): ninguna fila con interruptor queda cortada' + (cortadas.length ? ': ' + cortadas.join(' | ') : ''));
+    await cx.close();
+  }
+
   await br.close();
   console.log(ok + ' ok, ' + fallas + ' fallas');
   process.exit(fallas ? 1 : 0);

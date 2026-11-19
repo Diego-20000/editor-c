@@ -1,7 +1,7 @@
 'use strict';
 // Editor C para escritorio: una ventana que abre el editor servido desde esta misma computadora (127.0.0.1).
 // El editor corre dentro de la ventana, sin acceso a archivos ni al sistema (igual que en el navegador).
-const { app, BrowserWindow, shell, Menu } = require('electron');
+const { app, BrowserWindow, shell, Menu, dialog } = require('electron');
 const fs = require('fs');
 const path = require('path');
 const { crearServidor } = require('./servidor');
@@ -19,7 +19,10 @@ if (!app.requestSingleInstanceLock()) { app.quit(); } else {
     const dir = () => (fs.existsSync(path.join(dirUsuario, 'index.html')) ? dirUsuario : dirEmbebida);
     // gcc real (opcional): viene dentro de la app, en resources/gcc; sin esa carpeta el editor funciona igual
     const gcc = path.join(process.resourcesPath || '', 'gcc', 'bin', 'gcc.exe');
-    servidor = await crearServidor(dir, PUERTO, { gcc: fs.existsSync(gcc) ? gcc : '', marcar: true, actualizar: () => actualizar(dirUsuario, dirEmbebida) });
+    try { servidor = await crearServidor(dir, PUERTO, { gcc: fs.existsSync(gcc) ? gcc : '', marcar: true, actualizar: () => actualizar(dirUsuario, dirEmbebida) }); }
+    catch (e) { dialog.showErrorBox('Editor C', 'No se pudo abrir: otro programa está usando los puertos 8137 a 8147 de esta computadora. Ciérralo y vuelve a abrir Editor C.'); app.quit(); return; }
+    // el puerto es parte de la dirección donde el navegador guarda los programas: si no es el de siempre, lo guardado no aparece
+    if (servidor.port !== PUERTO) dialog.showMessageBox({ type: 'warning', title: 'Editor C', message: 'El puerto ' + PUERTO + ' está ocupado por otro programa.', detail: 'Editor C se abrió en el puerto ' + servidor.port + ' y tus programas guardados no van a aparecer en esta ventana. Cierra el otro programa y vuelve a abrir Editor C: se conservan.' });
     const origen = 'http://127.0.0.1:' + servidor.port + '/';
     ventana = new BrowserWindow({
       width: 1280, height: 800, minWidth: 700, minHeight: 500, autoHideMenuBar: true, title: 'Editor C',

@@ -18,6 +18,10 @@ const escuchar = (s) => new Promise((r) => s.listen(0, '127.0.0.1', r));
   r = await estado(S.port, h, '/%2e%2e/secreto.txt'); check(r.s === 404, 'no sale de la carpeta (..codificado)');
   r = await estado(S.port, h, '/no-existe.js'); check(r.s === 404, 'archivo que no existe: 404');
   const S2 = await crearServidor(() => sitio, S.port); check(S2.port === S.port + 1, 'si el puerto está ocupado usa el siguiente'); await S2.close(); await S.close();
+  // robustez: una dirección con byte nulo (antes hacía caer el programa) da 400 y el servidor sigue
+  const S3 = await crearServidor(() => sitio, 18637); const h3 = '127.0.0.1:' + S3.port;
+  r = await estado(S3.port, h3, '/index.html%00.png'); check(r.s === 400, 'una dirección con byte nulo da 400');
+  r = await estado(S3.port, h3, '/'); check(r.s === 200, 'el servidor sigue andando después de una dirección rara'); await S3.close();
   // gcc real (con el gcc de esta máquina)
   const gccSis = require('child_process').execFileSync('which', ['gcc']).toString().trim();
   const SG = await crearServidor(() => sitio, 18237, { gcc: gccSis, marcar: true });
@@ -58,6 +62,7 @@ const escuchar = (s) => new Promise((r) => s.listen(0, '127.0.0.1', r));
   const dir = path.join(tmp, 'editor');
   let u = await actualizar(dir, emb, { base }); check(u.cambio && u.version === ver && fs.existsSync(path.join(dir, 'assets', 'app.js')) && fs.readFileSync(path.join(dir, 'VERSION'), 'utf8').trim() === ver, 'baja el editor nuevo y deja su versión');
   check(fs.existsSync(path.join(dir, 'sw.js')) && fs.existsSync(path.join(dir, 'index.html')) && !fs.existsSync(dir + '.nuevo') && !fs.existsSync(dir + '.viejo'), 'deja sw.js e index.html y no deja carpetas temporales');
+  { const dirC = path.join(tmp, 'editorC'); const [u1, u2] = await Promise.all([actualizar(dirC, emb, { base }), actualizar(dirC, emb, { base })]); check(u1 === u2 && u1.cambio === true, 'dos actualizaciones a la vez comparten el mismo resultado'); check(!fs.existsSync(dirC + '.nuevo'), 'dos actualizaciones a la vez no dejan carpetas temporales'); }
   u = await actualizar(dir, emb, { base }); check(!u.cambio && u.version === ver, 'con la misma versión no vuelve a bajar');
   fs.writeFileSync(path.join(dir, 'VERSION'), '111111111111\n');
   let fallo = ''; try { await actualizar(dir, emb, { base: 'http://127.0.0.1:1/' }); } catch (e) { fallo = e.message; }

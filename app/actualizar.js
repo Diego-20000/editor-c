@@ -24,8 +24,14 @@ async function leer(url, max, fetchFn) {
 function versionLocal(dir) { try { return fs.readFileSync(path.join(dir, 'VERSION'), 'utf8').trim(); } catch (e) { return ''; } }
 function versionDeSw(dir) { try { const m = RE_VERSION.exec(fs.readFileSync(path.join(dir, 'sw.js'), 'utf8')); return m ? m[1] : ''; } catch (e) { return ''; } }
 
-// devuelve { version, cambio } o lanza un Error
-async function actualizar(dirEditor, dirEmbebida, opts) {
+// devuelve { version, cambio } o lanza un Error. Si ya hay una actualización en curso (al abrir y el botón de Ajustes a la vez), se espera esa.
+let enCurso = null;
+function actualizar(dirEditor, dirEmbebida, opts) {
+  if (enCurso) return enCurso;
+  enCurso = actualizarYa(dirEditor, dirEmbebida, opts).finally(() => { enCurso = null; });
+  return enCurso;
+}
+async function actualizarYa(dirEditor, dirEmbebida, opts) {
   opts = opts || {};
   const base = (opts.base || URL_PUBLICADA).replace(/\/*$/, '/');
   const fetchFn = opts.fetch || fetch;
@@ -54,10 +60,10 @@ async function actualizar(dirEditor, dirEmbebida, opts) {
     fs.writeFileSync(path.join(tmp, 'sw.js'), sw);   // el sw.js (con su versión) va también: la página lo usa para avisar y aplicar la nueva
     fs.writeFileSync(path.join(tmp, 'VERSION'), nueva + '\n');
   } catch (e) { fs.rmSync(tmp, { recursive: true, force: true }); throw e; }
-  fs.rmSync(viejo, { recursive: true, force: true });
-  if (fs.existsSync(dirEditor)) fs.renameSync(dirEditor, viejo);
-  try { fs.renameSync(tmp, dirEditor); } catch (e) { if (fs.existsSync(viejo)) fs.renameSync(viejo, dirEditor); throw e; }
-  fs.rmSync(viejo, { recursive: true, force: true });
+  try { fs.rmSync(viejo, { recursive: true, force: true }); } catch (e) { /* queda de antes: no impide seguir */ }
+  try { if (fs.existsSync(dirEditor)) fs.renameSync(dirEditor, viejo); } catch (e) { fs.rmSync(tmp, { recursive: true, force: true }); throw new Error('no se pudo reemplazar el editor (¿está en uso?)'); }
+  try { fs.renameSync(tmp, dirEditor); } catch (e) { try { if (fs.existsSync(viejo)) fs.renameSync(viejo, dirEditor); } catch (x) { /* nada */ } throw e; }
+  try { fs.rmSync(viejo, { recursive: true, force: true }); } catch (e) { /* ya se aplicó: la copia vieja se borra la próxima vez */ }
   return { version: nueva, cambio: true };
 }
 

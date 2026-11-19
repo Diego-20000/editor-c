@@ -3,6 +3,7 @@
 // El programa corre como un programa común de la computadora (con los permisos del usuario): por eso hay límites de
 // tiempo y de salida, y se corta todo el árbol de procesos si se pasa.
 const { spawn, spawnSync } = require('child_process');
+const { StringDecoder } = require('string_decoder');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
@@ -30,7 +31,8 @@ function correr(cmd, args, { cwd, env, entrada, tiempo, max }) {
   return new Promise((resolve) => {
     let salida = '', cortada = false, vencio = false, listo = false;
     const hijo = spawn(cmd, args, { cwd, env, windowsHide: true, detached: !WIN, stdio: ['pipe', 'pipe', 'pipe'] });
-    const juntar = (d) => { if (salida.length < max) { salida += d.toString('utf8'); if (salida.length > max) { salida = salida.slice(0, max); cortada = true; } } else cortada = true; };
+    const dec = new StringDecoder('utf8');   // un carácter con acento puede quedar partido entre dos trozos
+    const juntar = (d) => { if (salida.length < max) { salida += dec.write(d); if (salida.length > max) { salida = salida.slice(0, max); cortada = true; } } else cortada = true; };
     hijo.stdout.on('data', juntar); hijo.stderr.on('data', juntar);
     hijo.stdin.on('error', () => {});
     try { hijo.stdin.end(entrada || ''); } catch (e) { /* el programa no leyó */ }

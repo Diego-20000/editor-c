@@ -542,3 +542,12 @@ fieldset > .group + .group { margin-top: 8px; }
 .pcchip { justify-self: start; padding: 3px 10px; border-radius: 999px; background: var(--fill); font: 600 13px var(--ui); }
 .pcchip.ok { color: var(--ok); } .pcchip.er { color: var(--danger); }
 @media (max-width: 700px) { .pc { grid-template-columns: 1fr; } }
+
+/* revisión visual: en ventanas bajas (netbook 1024x600) los botones de acción del diálogo quedan siempre a la vista */
+dialog > .drow:last-of-type { position: sticky; bottom: 0; z-index: 2; background: var(--bg); padding: 10px 0 4px; margin-top: 10px; }
+/* celular: avisos con ancho propio, fila de la prueba que se parte, ayuda que no se sale */
+.toast { width: max-content; max-width: calc(100vw - 32px); }
+.prucab { flex-wrap: wrap; }
+.adet, .adet * { overflow-wrap: anywhere; min-width: 0; }
+dialog.ayuda { overflow-x: hidden; }
+.group > label.chk { white-space: normal; }
