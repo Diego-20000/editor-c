@@ -531,3 +531,15 @@ html.lectura .pane-head .hint { margin-right: 8px; }
 fieldset > .group + .group { margin-top: 8px; }
 @media (hover: hover) and (pointer: fine) { .solo-tactil { display: none; } }
 @media (hover: hover) and (pointer: fine) { .exchips { flex-wrap: wrap; overflow: visible; row-gap: 8px; } .exlist { max-height: min(38dvh, 400px); } }
+
+/* una captura por prueba */
+#pcLayRow { flex-direction: row; }
+.pclist { list-style: none; margin: 10px 0; padding: 0; display: grid; gap: 12px; max-height: 52dvh; overflow: auto; }
+.pc { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 12px; align-items: start; border: 1px solid var(--line); border-radius: 12px; padding: 10px; background: var(--panel); }
+.pc img { display: block; width: 100%; height: auto; border-radius: 8px; box-shadow: 0 0 0 1px var(--line); background: #fff; min-height: 60px; }
+.pcder { display: grid; gap: 8px; align-content: start; }
+.pcder input { width: 100%; padding: 7px 9px; border-radius: 8px; border: 1px solid var(--lineS); background: var(--bg); color: var(--text); font: 600 14px var(--ui); }
+.pcder small { color: var(--muted); font: 13px/1.35 var(--mono); overflow-wrap: anywhere; }
+.pcchip { justify-self: start; padding: 3px 10px; border-radius: 999px; background: var(--fill); font: 600 13px var(--ui); }
+.pcchip.ok { color: var(--ok); } .pcchip.er { color: var(--danger); }
+@media (max-width: 700px) { .pc { grid-template-columns: 1fr; } }

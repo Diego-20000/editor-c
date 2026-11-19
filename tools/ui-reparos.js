@@ -466,6 +466,31 @@ const check = (c, m) => { if (c) { ok++; console.log('  ok   ' + m); } else { fa
     await cx.close();
   }
 
+  // 16) Una captura por prueba: vista previa con ✓/✗, nombre editable y descarga de todas juntas en un .zip
+  {
+    const cx = await br.newContext({ viewport: { width: 1366, height: 768 }, acceptDownloads: true, timezoneId: 'America/Argentina/Buenos_Aires' });
+    const cod = '#include <stdio.h>\nint main() {\n    int A;\n    printf("\\nEjercicio 5\\n");\n    scanf("%d", &A);\n    printf("doble: %d\\n", A * 2);\n}\n';
+    const prog = { id: 'p1', name: 'Ejercicio 5', code: cod, input: '', t: Date.now(), auto: false, tests: [{ n: 'Prueba 1', i: '21' }, { n: 'Negativo', i: '-4' }, { n: 'Sin datos', i: '' }] };
+    await cx.addInitScript((p) => { try { localStorage.setItem('editorc.progs', JSON.stringify([p])); localStorage.setItem('editorc.cur', p.id); } catch (e) { /* nada */ } }, prog);
+    const pg = await cx.newPage(); const errs = []; pg.on('pageerror', (e) => errs.push(e.message));
+    await pg.goto(url + '?ayuda=2'); await pg.waitForSelector('#code');
+    await pg.click('#pruebas'); await pg.waitForSelector('#dPru[open]'); await pg.click('#pruCaps');
+    await pg.waitForSelector('#dPruCap[open]'); await pg.waitForFunction(() => document.querySelectorAll('#pcList .pc').length === 3 && !document.getElementById('pcZip').disabled, null, { timeout: 20000 });
+    const filas = await pg.evaluate(() => [...document.querySelectorAll('#pcList .pc')].map((l) => ({ w: l.querySelector('img').naturalWidth, chip: l.querySelector('.pcchip').textContent, nombre: l.querySelector('input').value })));
+    check(filas.every((f) => f.w > 300), 'capturas por prueba: las 3 vistas previas se arman');
+    check(/✓/.test(filas[0].chip) && /✓/.test(filas[1].chip) && /Ejercicio 5 - Negativo/.test(filas[1].nombre), 'capturas por prueba: marca ✓ y el nombre por defecto trae el programa y la prueba (' + filas[1].nombre + ')');
+    await pg.fill('#pcList .pc:nth-child(1) input', 'Mi captura 1'); await pg.waitForTimeout(900);
+    const [dl] = await Promise.all([pg.waitForEvent('download'), pg.click('#pcZip')]);
+    const dst = require('path').join(require('os').tmpdir(), 'pc-' + Date.now() + '.zip'); await dl.saveAs(dst);
+    const r = require('child_process').execFileSync('python3', ['-I', '-c', "import zipfile,sys\nz=zipfile.ZipFile(sys.argv[1]); print(z.testzip() is None); print('|'.join(z.namelist())); print(all(z.read(n)[:8]==b'\\x89PNG\\r\\n\\x1a\\n' for n in z.namelist()))", dst]).toString().trim().split('\n');
+    require('fs').unlinkSync(dst);
+    check(r[0] === 'True' && r[2] === 'True', 'capturas por prueba: el .zip es válido y todos los archivos son PNG');
+    check(r[1] === 'Mi captura 1.png|Ejercicio 5 - Negativo.png|Ejercicio 5 - Sin datos.png', 'capturas por prueba: el .zip lleva los nombres elegidos (' + r[1] + ')');
+    check(/Ejercicio 5 - pruebas\.zip$/.test(dl.suggestedFilename()), 'capturas por prueba: el .zip se llama como el programa (' + dl.suggestedFilename() + ')');
+    check(errs.length === 0, 'capturas por prueba: consola limpia' + (errs.length ? ': ' + errs.join(' | ') : ''));
+    await cx.close();
+  }
+
   await br.close();
   console.log(ok + ' ok, ' + fallas + ' fallas');
   process.exit(fallas ? 1 : 0);
