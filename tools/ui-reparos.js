@@ -382,7 +382,7 @@ const check = (c, m) => { if (c) { ok++; console.log('  ok   ' + m); } else { fa
       const cx = await br.newContext({ viewport: { width: w, height: 700 } });
       const pg = await cx.newPage();
       await pg.goto(url + '?ayuda=2'); await pg.waitForSelector('#code');
-      await pg.click('#settings'); await pg.waitForSelector('#dSet[open]');
+      if (w < 1100 && await pg.evaluate(() => !document.getElementById('more').open)) await pg.click('#more summary'); await pg.click('#settings'); await pg.waitForSelector('#dSet[open]');
       const cortadas = await pg.evaluate(() => [...document.querySelectorAll('#dSet label, #dSet .srow span, #dSet .foot')].filter((e) => e.offsetParent && (e.scrollWidth > e.clientWidth + 1)).map((e) => e.textContent.trim().slice(0, 40)));
       check(cortadas.length === 0, 'ajustes (' + w + ' px): ningún texto queda cortado' + (cortadas.length ? ': ' + cortadas.join(' | ') : ''));
       check(/Versi[oó]n [0-9a-f]{8}/.test(await pg.textContent('#verTxt')), 'ajustes: muestra la versión instalada');
@@ -416,7 +416,7 @@ const check = (c, m) => { if (c) { ok++; console.log('  ok   ' + m); } else { fa
       const cx = await br.newContext({ viewport: { width: w, height: w === 1024 ? 600 : 700 } });
       const pg = await cx.newPage();
       await pg.goto(url); await pg.waitForSelector('#code');
-      await pg.click('#exBtn'); await pg.waitForSelector('#dEx[open], dialog[open]');
+      if (w < 1100 && await pg.evaluate(() => !document.getElementById('more').open)) await pg.click('#more summary'); await pg.click('#exBtn'); await pg.waitForSelector('#dEx[open], dialog[open]');
       const d = await pg.evaluate(() => { const e = document.getElementById('exChips'); return { cut: e.scrollWidth > e.clientWidth + 1, n: e.children.length }; });
       check(!d.cut && d.n > 4, 'ejemplos (' + w + ' px): las ' + d.n + ' categorías se ven completas');
       const dentro = await pg.evaluate(() => { const r = document.querySelector('dialog[open]').getBoundingClientRect(); return r.top >= 0 && r.bottom <= innerHeight + 1; });
@@ -549,6 +549,7 @@ const check = (c, m) => { if (c) { ok++; console.log('  ok   ' + m); } else { fa
     cx = await br.newContext({ viewport: { width: 1024, height: 600 } }); pg = await cx.newPage();
     await pg.goto(url); await pg.waitForSelector('#code');
     for (const [id, nombre] of [['#shot', 'Captura'], ['#avisar', 'Avisar a Diego'], ['#exBtn', 'Ejemplos'], ['#pruebas', 'Pruebas']]) {
+      if (await pg.evaluate(() => !document.getElementById('more').open)) await pg.click('#more summary');
       await pg.click(id); await pg.waitForSelector('dialog[open]'); await pg.waitForTimeout(600);
       const ok2 = await pg.evaluate(() => { const b = document.querySelector('dialog[open] > .drow:last-of-type .btn'); if (!b) return false; const r = b.getBoundingClientRect(); return r.bottom <= innerHeight + 1 && r.top >= 0; });
       check(ok2, 'diálogo ' + nombre + ' (1024x600): los botones de abajo se ven sin desplazar');

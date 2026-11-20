@@ -258,8 +258,7 @@ dialog > .group { margin-top: 12px; }
 .more > summary::-webkit-details-marker { display: none; }
 .menu { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
 .menu .btn span.l { display: inline; }
-@media (max-width: 1099px) { .menu .btn span.l { display: none; } .menu .btn.sel { max-width: 120px; } }
-@media (max-width: 899px) {
+@media (max-width: 1099px) {
   .more { display: block; }
   .more > summary { display: inline-flex; }
   .menu { position: absolute; right: 0; top: calc(100% + 8px); z-index: 10; width: min(300px, calc(100vw - 32px)); padding: 6px 0; flex-direction: column; flex-wrap: nowrap; align-items: stretch; gap: 0; background: var(--panel); border-radius: var(--rl); box-shadow: 0 0 0 1px var(--line), var(--pop); }
@@ -506,7 +505,7 @@ html.lectura .pane-head::before { content: "Modo lectura"; font: 600 14px var(--
 html.lectura .pane-head .hint { margin-right: 8px; }
 
 /* ajustes finos */
-@media (max-width: 899px) { .actions { flex-wrap: nowrap; } .more > summary { white-space: nowrap; } }
+@media (max-width: 1099px) { .actions { flex-wrap: nowrap; } .more > summary { white-space: nowrap; } }
 .group > label { white-space: nowrap; }
 .group > label > input:focus-visible { outline-offset: -2px; border-radius: 8px; padding: 0 6px; }
 @media (max-width: 440px) { .bar .btn { padding: 0 8px; } .bar .btn.primary { padding: 0 12px; margin-right: 0; } .actions { gap: 0; } }

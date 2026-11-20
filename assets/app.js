@@ -1042,7 +1042,7 @@
   // (en pantalla ancha la barra de botones es fija: «Más» no se cierra, porque ocultaría toda la barra)
   // «Avisar a Diego»: arma un caso con el programa actual y el último mensaje, lo deja elegido y abre la vista previa (nada se manda solo)
   $('avisar').addEventListener('click', () => {
-    $('more').open = matchMedia('(min-width: 900px)').matches;
+    $('more').open = matchMedia('(min-width: 1100px)').matches;
     const it = (typeof problems !== 'undefined' && problems && problems[0]) || { k: 'e', code: '', msg: '', line: 0 };
     const clave = guardarCaso(it);
     abrirCasos(clave ? [clave] : undefined);
@@ -1824,7 +1824,7 @@ self.postMessage({ type: 'ready' });`;
     if (!window.Ordenar) { toast('Todavía se está cargando. Prueba de nuevo en un momento.'); return; }
     if (ta.readOnly) return;
     const antes = ta.value, despues = window.Ordenar.ordenar(antes, SP());
-    $('more').open = matchMedia('(min-width: 900px)').matches;
+    $('more').open = matchMedia('(min-width: 1100px)').matches;
     if (despues === antes) { toast('El código ya estaba ordenado.'); return; }
     const linea = antes.slice(0, ta.selectionStart).split('\n').length - 1, col = ta.selectionStart - (antes.lastIndexOf('\n', ta.selectionStart - 1) + 1);
     ta.focus({ preventScroll: true }); ta.setSelectionRange(0, antes.length);
@@ -1834,7 +1834,7 @@ self.postMessage({ type: 'ready' });`;
     pos += Math.min(l.length, Math.max(sang, col)); ta.setSelectionRange(pos, pos);
     toast('Código ordenado. Si no te gusta, Ctrl+Z lo deshace.');
   });
-  $('pruebas').addEventListener('click', () => { $('more').open = matchMedia('(min-width: 900px)').matches; pruAbrir(); });
+  $('pruebas').addEventListener('click', () => { $('more').open = matchMedia('(min-width: 1100px)').matches; pruAbrir(); });
   $('pruAdd').addEventListener('click', () => {
     const T = pruTests(); if (!cur) return;
     if (T.length >= MAX_PRUEBAS) { toast('Hay un máximo de ' + MAX_PRUEBAS + ' pruebas por programa.'); return; }
@@ -1890,7 +1890,7 @@ self.postMessage({ type: 'ready' });`;
     else { newProgram(ex.t, ex.c, ex.e || ''); toast('Ejemplo abierto como programa nuevo; el anterior sigue en "Programas".'); }
     dEj.close();
   }
-  $('exBtn').addEventListener('click', () => { $('more').open = matchMedia('(min-width: 900px)').matches; pintarEjemplos(); dEj.showModal(); });
+  $('exBtn').addEventListener('click', () => { $('more').open = matchMedia('(min-width: 1100px)').matches; pintarEjemplos(); dEj.showModal(); });
 
   /* ---------- lista de programas ---------- */
   const dProgs = $('dProgs');
@@ -1948,7 +1948,7 @@ self.postMessage({ type: 'ready' });`;
       if (e.target.closest && e.target.closest('[data-close]')) { d.close(); return; }
       if (e.target === d) { const r = d.getBoundingClientRect(); if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) d.close(); }
     });
-    d.addEventListener('close', () => { $('more').open = matchMedia('(min-width: 900px)').matches; });
+    d.addEventListener('close', () => { $('more').open = matchMedia('(min-width: 1100px)').matches; });
   });
   $('settings').addEventListener('click', () => {
     $('uName').value = user.name; $('uDni').value = user.dni; $('uCurso').value = user.curso; $('uMat').value = user.mat; $('uCiclo').value = user.ciclo;
@@ -1984,7 +1984,7 @@ self.postMessage({ type: 'ready' });`;
 
   const more = $('more');
   if (window.matchMedia) {
-    const mq = window.matchMedia('(min-width: 900px)');
+    const mq = window.matchMedia('(min-width: 1100px)');
     const sync = () => { more.open = mq.matches; };
     sync(); (mq.addEventListener ? mq.addEventListener('change', sync) : mq.addListener(sync));
     document.addEventListener('click', (e) => { if (!mq.matches && more.open && !more.contains(e.target)) more.open = false; });
@@ -2031,7 +2031,7 @@ self.postMessage({ type: 'ready' });`;
     return { name: nombreLimpio(o.n) || 'Programa recibido', code: o.c.replace(/\r\n?/g, '\n'), input: typeof o.i === 'string' ? o.i.slice(0, MAX_ENTRADA_ENLACE) : '' };
   }
   $('enlace').addEventListener('click', async () => {
-    $('more').open = matchMedia('(min-width: 900px)').matches; flushSave();
+    $('more').open = matchMedia('(min-width: 1100px)').matches; flushSave();
     if (!/^https?:$/.test(location.protocol)) { toast('El enlace funciona desde la página publicada. Desde un archivo usa «Guardar .c».'); return; }
     if (cur.code.length > MAX_ENLACE) { toast('El programa es demasiado largo para un enlace. Usa «Guardar .c».'); return; }
     let url;

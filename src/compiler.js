@@ -215,8 +215,10 @@
             const resto = text.slice(i, j);
             throw new CErr('cadena sin cerrar (falta la comilla ")', line, /\)/.test(resto) ? 'PRF-019' : 'SIN-042');
           }
-          if (text[j] === '\\') { const r = esc(text, j, { includes, line }); s += r[0]; j = r[1]; } else s += text[j++];
+          if (text[j] === '\\') { const r = esc(text, j, { includes, line, str: true }); s += r[0]; j = r[1]; } else s += text[j++];
         }
+        // los escapes numéricos mayores a 127 (\303\261, \xc3\xb1) son bytes: si juntos forman UTF-8 válido (ñ) se vuelven ese carácter, como en gcc; si no, quedan como antes
+        if (/[\uF780-\uF7FF]/.test(s)) s = s.replace(/[\uF780-\uF7FF]+/g, (run) => { const b = Uint8Array.from(Array.from(run, (ch) => ch.charCodeAt(0) - 0xF700)); try { return new TextDecoder('utf-8', { fatal: true }).decode(b); } catch (e) { return Array.from(b, (x) => String.fromCharCode(x)).join(''); } });
         if (j >= n) throw new CErr('cadena sin cerrar (falta la comilla ")', line, 'PRF-019');
         out.push({ t: 'str', v: s, line }); i = j + 1; continue;
       }
@@ -276,10 +278,10 @@
   }
   function esc(text, j, ctx) { // text[j] === '\\'
     const c = text[j + 1];
-    if (c >= '0' && c <= '7') { const mo = /^[0-7]{1,3}/.exec(text.slice(j + 1)); return [String.fromCharCode(parseInt(mo[0], 8) & 255), j + 1 + mo[0].length]; }
+    if (c >= '0' && c <= '7') { const mo = /^[0-7]{1,3}/.exec(text.slice(j + 1)), v = parseInt(mo[0], 8) & 255; return [ctx && ctx.str && v > 127 ? String.fromCharCode(0xF700 + v) : String.fromCharCode(v), j + 1 + mo[0].length]; }
     if (c === 'e' || c === 'E') return ['\x1b', j + 2];
     const map = { n: '\n', t: '\t', r: '\r', a: '\x07', b: '\b', f: '\f', v: '\v', '\\': '\\', '"': '"', "'": "'", '?': '?' };
-    if (c === 'x') { const m = /^[0-9a-fA-F]{1,2}/.exec(text.slice(j + 2)); if (m) return [String.fromCharCode(parseInt(m[0], 16)), j + 2 + m[0].length]; }
+    if (c === 'x') { const m = /^[0-9a-fA-F]{1,2}/.exec(text.slice(j + 2)); if (m) { const v = parseInt(m[0], 16); return [ctx && ctx.str && v > 127 ? String.fromCharCode(0xF700 + v) : String.fromCharCode(v), j + 2 + m[0].length]; } }
     if (c in map) return [map[c], j + 2];
     if (ctx && c !== 'u' && c !== 'U' && c !== '\n' && c !== undefined) ctx.includes.avisos.push({ line: ctx.line, kb: 'SIN-043', msg: "'\\" + c + "' no es una secuencia de escape conocida: C la reemplaza por el carácter " + c + " solo" });
     return [c, j + 2];
