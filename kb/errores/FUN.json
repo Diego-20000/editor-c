@@ -624,13 +624,13 @@
   "codigo_bien": "#include <stdio.h>\nint main()\n{\n  int N = 4;\n  printf(\"%d\\n\", N);\n}",
   "entrada": "",
   "que_dice_gcc": "archivo.c:2: warning: return type of 'main' is not 'int' [-Wmain]",
-  "mensaje_editor": "Línea 2: main debe ser int main() y terminar con return 0.",
+  "mensaje_editor": "Línea 2: main debe ser int main().",
   "explicacion": "El estándar de C pide que main devuelva int: ese número le indica al sistema si el programa terminó bien. Con void, gcc avisa y otros compiladores directamente fallan.",
-  "como_arreglarlo": "Escribe int main() y agrega return 0; al final.",
+  "como_arreglarlo": "Escribe int main().",
   "pistas": [
    "Fíjate la primera palabra de tu función principal.",
    "main debe devolver un entero.",
-   "Cambia void por int y pon return 0; antes de la última llave."
+   "Cambia void por int."
   ],
   "relacion_con_la_materia": "estructura del programa",
   "deteccion": "estatica",

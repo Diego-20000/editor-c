@@ -97,11 +97,11 @@ int main() {
   { g: 'Salida con formato', t: 'Tabla de cuadrados y cubos', d: 'Columnas alineadas con un for y anchos en printf.', e: '', c: `#include <stdio.h>
 
 int main() {
-    int I;
+    int i;
 
     printf(" N  cuadrado  cubo\\n");
-    for (I = 1; I <= 8; I++) {
-        printf("%2d %8d %6d\\n", I, I * I, I * I * I);
+    for (i = 1; i <= 8; i++) {
+        printf("%2d %8d %6d\\n", i, i * i, i * i * i);
     }
 }
 ` },
@@ -109,8 +109,9 @@ int main() {
 `, c: `#include <stdio.h>
 
 int main() {
-    float TOTAL, DESCUENTO = 0;
+    float TOTAL, DESCUENTO;
 
+    DESCUENTO = 0;
     printf("Total de la compra: ");
     scanf("%f", &TOTAL);
 
@@ -186,13 +187,13 @@ int main() {
 `, c: `#include <stdio.h>
 
 int main() {
-    int N, I;
+    int N, i;
 
     printf("Desde: ");
     scanf("%d", &N);
 
-    for (I = N; I >= 1; I--) {
-        printf("%d\\n", I);
+    for (i = N; i >= 1; i--) {
+        printf("%d\\n", i);
     }
     printf("Despegue!\\n");
 }
@@ -201,8 +202,9 @@ int main() {
 `, c: `#include <stdio.h>
 
 int main() {
-    int N, SUMA = 0;
+    int N, SUMA;
 
+    SUMA = 0;
     printf("Número: ");
     scanf("%d", &N);
 
@@ -216,8 +218,9 @@ int main() {
   { g: 'Repetitivas', t: 'Potencias de 2 hasta 1000', d: 'while con una condición sobre el valor que crece.', e: '', c: `#include <stdio.h>
 
 int main() {
-    int P = 1;
+    int P;
 
+    P = 1;
     while (P <= 1000) {
         printf("%d ", P);
         P = P * 2;
@@ -297,8 +300,8 @@ int main() {
 }
 
 void LINEA(int LARGO) {
-    int I;
-    for (I = 0; I < LARGO; I++) {
+    int i;
+    for (i = 0; i < LARGO; i++) {
         printf("*");
     }
     printf("\\n");
@@ -325,44 +328,49 @@ long FACTORIAL(int N) {
     return N * FACTORIAL(N - 1);
 }
 ` },
-  { g: 'Funciones', t: 'Potencia entera', d: 'Una función con un for adentro.', e: `3 4
+  { g: 'Funciones', t: 'Suma de impares', d: 'Una función con un for adentro.', e: `5
 `, c: `#include <stdio.h>
 
-int POTENCIA(int BASE, int EXPONENTE);
+int SUMAIMPARES(int CANTIDAD);
 
 int main() {
-    int B, E;
+    int N;
 
-    printf("Base y exponente: ");
-    scanf("%d %d", &B, &E);
+    printf("Cuántos impares: ");
+    scanf("%d", &N);
 
-    printf("%d elevado a %d es %d\\n", B, E, POTENCIA(B, E));
+    printf("La suma de los primeros %d impares es %d\\n", N, SUMAIMPARES(N));
 }
 
-int POTENCIA(int BASE, int EXPONENTE) {
-    int RESULTADO = 1, I;
-    for (I = 0; I < EXPONENTE; I++) {
-        RESULTADO = RESULTADO * BASE;
+int SUMAIMPARES(int CANTIDAD) {
+    int SUMA, IMPAR, i;
+    SUMA = 0;
+    IMPAR = 1;
+    for (i = 0; i < CANTIDAD; i++) {
+        SUMA = SUMA + IMPAR;
+        IMPAR = IMPAR + 2;
     }
-    return RESULTADO;
+    return SUMA;
 }
 ` },
   { g: 'Arreglos', t: 'Temperaturas sobre el promedio', d: 'Un arreglo de float y dos recorridos con for.', e: `21.5 19 25 30.5 18
 `, c: `#include <stdio.h>
 
 int main() {
-    float T[5], SUMA = 0, PROMEDIO;
-    int I, CANT = 0;
+    float T[5], SUMA, PROMEDIO;
+    int i, CANT;
 
+    SUMA = 0;
+    CANT = 0;
     printf("Cinco temperaturas: ");
-    for (I = 0; I < 5; I++) {
-        scanf("%f", &T[I]);
-        SUMA = SUMA + T[I];
+    for (i = 0; i < 5; i++) {
+        scanf("%f", &T[i]);
+        SUMA = SUMA + T[i];
     }
     PROMEDIO = SUMA / 5;
 
-    for (I = 0; I < 5; I++) {
-        if (T[I] > PROMEDIO) {
+    for (i = 0; i < 5; i++) {
+        if (T[i] > PROMEDIO) {
             CANT++;
         }
     }
@@ -374,16 +382,16 @@ int main() {
 `, c: `#include <stdio.h>
 
 int main() {
-    int V[6], I;
+    int V[6], i;
 
     printf("Seis números: ");
-    for (I = 0; I < 6; I++) {
-        scanf("%d", &V[I]);
+    for (i = 0; i < 6; i++) {
+        scanf("%d", &V[i]);
     }
 
     printf("Al revés: ");
-    for (I = 5; I >= 0; I--) {
-        printf("%d ", V[I]);
+    for (i = 5; i >= 0; i--) {
+        printf("%d ", V[i]);
     }
     printf("\\n");
 }
@@ -394,13 +402,14 @@ int main() {
 
 int main() {
     char TEXTO[80];
-    int I, VOCALES = 0;
+    int i, VOCALES;
 
+    VOCALES = 0;
     printf("Escribe una frase: ");
     fgets(TEXTO, 80, stdin);
 
-    for (I = 0; TEXTO[I] != '\\0'; I++) {
-        switch (tolower(TEXTO[I])) {
+    for (i = 0; TEXTO[i] != '\\0'; i++) {
+        switch (tolower(TEXTO[i])) {
             case 'a': case 'e': case 'i': case 'o': case 'u':
                 VOCALES++;
         }
@@ -415,14 +424,14 @@ int main() {
 
 int main() {
     char PALABRA[30];
-    int I;
+    int i;
 
     printf("Una palabra: ");
     scanf("%29s", PALABRA);
 
     printf("Tiene %d letras\\n", (int)strlen(PALABRA));
-    for (I = 0; PALABRA[I] != '\\0'; I++) {
-        PALABRA[I] = toupper(PALABRA[I]);
+    for (i = 0; PALABRA[i] != '\\0'; i++) {
+        PALABRA[i] = toupper(PALABRA[i]);
     }
     printf("En mayúsculas: %s\\n", PALABRA);
 }
