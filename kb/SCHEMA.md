@@ -68,7 +68,7 @@ El **id** de un error es `PREFIJO-NNN` (tres dígitos, desde 001 en cada categor
 
 ## Reglas de contenido
 - Español rioplatense (vos, usá, fijate), tono de compañero mayor, sin retar, sin humor forzado.
-- Solo el C del nivel de la materia (ver `docs/COMPATIBILIDAD.md` y el apunte en `Diego-20000/brizuela`). Variables de los ejemplos en MAYÚSCULAS, como en la materia; `scanf`/`printf` con `%d %f %c`.
+- Solo el C del nivel de la materia (ver `docs/COMPATIBILIDAD.md`). Variables de los ejemplos en MAYÚSCULAS, como en la materia; `scanf`/`printf` con `%d %f %c`.
 - Las pistas son progresivas y **no dan la solución completa de un ejercicio**: la idea es que el alumno piense y tipee.
 - Todo corre sin conexión: ninguna regla puede depender de un servidor.
 - Sin registros repetidos ni casi repetidos.

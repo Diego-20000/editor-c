@@ -1,13 +1,13 @@
 # Casos de la base que el editor todavía NO detecta (LOG, TIP y OPE) y por qué
 
-Regla de oro del entrenador: **ningún falso positivo**. Un aviso que molesta a un alumno que tiene razón es peor que un aviso que falta. Estos casos se dejaron sin regla porque no se puede cumplir esa condición con reglas fijas (los controles son: el `codigo_bien` de todos los casos, `test/cases`, los programas de la materia de `Diego-20000/brizuela` y los programas «bien escritos» de `test/diag/ok_materia_*.c`).
+Regla de oro del entrenador: **ningún falso positivo**. Un aviso que molesta a un alumno que tiene razón es peor que un aviso que falta. Estos casos se dejaron sin regla porque no se puede cumplir esa condición con reglas fijas (los controles son: el `codigo_bien` de todos los casos, `test/cases`, y los programas «bien escritos» de `test/diag/ok_materia_*.c`).
 
 ## Sin implementar
 
 | Caso | Nombre | Motivo |
 |---|---|---|
 | LOG-021 | Extremos del rango en orden inverso | Depende del enunciado (si garantiza LI < LS no hay error). Avisaría en todo `for` con `N = LS - LI + 1`. |
-| LOG-026 | Promedio de positivos sin controlar que haya alguno | **Falso positivo comprobado.** Las soluciones de la materia (`Ej20A_prom_pos_neg_no_nulos`, `EvalU3_T1/T2/T3`, y los `test/cases/mat_u4_*`) hacen `PROMP = AP / CP` sin controlar `CP`, porque el enunciado garantiza datos. La regla avisaba en 20 programas correctos del profesor. |
+| LOG-026 | Promedio de positivos sin controlar que haya alguno | **Falso positivo comprobado.** Los programas de la materia hacen `PROMP = AP / CP` sin controlar `CP`, porque el enunciado garantiza datos. La regla avisaba en 20 programas correctos de la materia. |
 | LOG-030 | Máximo inicializado en 0 con datos negativos | `MAYOR = 0` es correcto con datos positivos (edades, notas, cantidades). Sin el enunciado avisaría en programas correctos. (Su gemelo LOG-029, mínimo en 0, sí está: con datos positivos el resultado siempre es 0.) |
 | LOG-031 | Mostrar el total dentro del lazo | Un total parcial mostrado a propósito («suma acumulada») es válido y no se distingue del error sin el enunciado. |
 | LOG-043 | Corte con `> 0` en vez de `!= 0` | Hay muchos lazos legítimos que cortan con `> 0`; solo se podría avisar leyendo el enunciado («termina con 0»). |
@@ -61,7 +61,7 @@ Los diagnósticos que ya existían ahora llevan `kb` según el contexto (qué se
 
 | Caso | Motivo |
 |---|---|
-| POR-006, SIN-062, FUN-024 (`main()` sin tipo), FUN-044 (función sin tipo) | **Falso positivo comprobado:** las soluciones del profesor (`Ej05`, `Ej06`, `Ej09LC`, `Ej14B`, `Ej16`… en `brizuela/resoluciones`) escriben `main() {`. |
+| POR-006, SIN-062, FUN-024 (`main()` sin tipo), FUN-044 (función sin tipo) | **Falso positivo comprobado:** los programas de la materia escriben `main() {`. |
 | DEC-012, DEC-013 (variable sin usar) | pendiente: falta el análisis de lecturas con cuidado de los modismos; no se arriesgó. |
 | FUN-016, FUN-017, FUN-042, FUN-021, DEC-009, DEC-021, DEC-036, ARR-026, ARR-053 | reglas pensadas (pureza de la función, sombreado, producto en 0) pero sin implementar en esta tanda por tiempo; ninguna es segura sin probar contra toda la materia. |
 | CTL-005, CTL-009, CTL-017, CTL-018, CTL-026, CTL-028, CTL-030, CTL-045, CTL-047, CTL-015 | dependen del enunciado (vueltas de más/de menos, mostrar dentro del lazo) o son informativos (switch sin default aparece en código correcto). |
