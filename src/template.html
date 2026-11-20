@@ -262,13 +262,13 @@
 
 <dialog id="dlg" aria-labelledby="tHelp">
   <h2 id="tHelp">Atajos y alcance</h2>
-  <p>Interpreta el C que se usa en la materia. No es gcc: si algo se comporta distinto, avisa.</p>
+  <p>Interpreta el C de la materia y algo más. No es gcc: si algo se comporta distinto, avisa.</p>
   <ul>
     <li><b>Tipos:</b> int, float, double, char, long, unsigned.</li>
-    <li><b>Control:</b> if / else, switch, while, do-while, for, break, continue.</li>
-    <li><b>Funciones</b> con parámetros, retorno y recursión; <b>arreglos</b> de 1 y 2 dimensiones.</li>
+    <li><b>Control:</b> if / else, switch, while, for, break, continue (además entiende do-while, que la materia no usa).</li>
+    <li><b>Funciones</b> con parámetros y retorno; además entiende recursión y <b>arreglos</b> de 1 y 2 dimensiones.</li>
     <li><b>Entrada y salida:</b> printf, scanf, getchar, putchar, puts (con todos los formatos: %d %f %.2f %c %e %g %x …).</li>
-    <li><b>Biblioteca:</b> math.h (sqrt, pow, abs…), rand, ctype.h básico, #define de constantes.</li>
+    <li><b>Archivos cabecera:</b> stdio.h, math.h (sqrt, pow, abs…), rand, ctype.h básico, #define de constantes.</li>
     <li><b>Avisos útiles:</b> te marca %d con float, scanf sin &amp;, variables sin valor inicial, = dentro de if…</li>
     <li><b>Todavía no:</b> punteros en general, struct, enum, typedef, archivos.</li>
   </ul>

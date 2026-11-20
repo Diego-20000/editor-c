@@ -1,4 +1,4 @@
-// espera: E-sin-tipo-retorno
+// espera: W-otro
 #include <stdio.h>
 main() {
     printf("Hola\n");

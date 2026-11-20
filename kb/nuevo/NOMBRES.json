@@ -228,7 +228,7 @@
   "cuando_aplica": "Variable escalar inicializada explícitamente en 0 que, dentro de un bloque repetitivo, aumenta mediante ++, += 1 o una asignación equivalente.",
   "titulo": "Contador {NOMBRE}",
   "que_es": "{NOMBRE} cumple el patrón de contador: parte de cero y se incrementa durante la ejecución. Su declaración está en la línea {LINEA_DECL}.",
-  "como_se_usa": "Registra cuántas veces ocurre algo o cuántas iteraciones se completaron. Su inicialización y sus incrementos aparecen en {LINEAS_ASIGNA}; se detectaron {CANT_USOS} usos.",
+  "como_se_usa": "Registra cuántas veces ocurre algo o cuántas vueltas del lazo se completaron. Su inicialización y sus incrementos aparecen en {LINEAS_ASIGNA}; se detectaron {CANT_USOS} usos.",
   "error_tipico": "Olvidar inicializarlo en cero o incrementarlo en el lugar incorrecto, de modo que el total quede desplazado.",
   "detalle": "Un contador representa una cantidad de eventos o repeticiones.\nEl patrón detectado comienza con una inicialización en cero.\nDespués aumenta de uno en uno.\nEl incremento suele estar dentro de un for o while.\nComprueba que aumente exactamente una vez por evento contado.\nLa línea {LINEA_DECL} señala dónde se declara.",
   "variantes": [
@@ -246,7 +246,7 @@
   "que_es": "{NOMBRE} cumple el patrón de acumulador: conserva un total parcial y recibe nuevas sumas. Su declaración está en la línea {LINEA_DECL}.",
   "como_se_usa": "Se inicializa antes de comenzar a sumar y se actualiza cada vez que llega un nuevo valor. Las asignaciones detectadas aparecen en {LINEAS_ASIGNA}; el código registra {CANT_USOS} usos.",
   "error_tipico": "No inicializarlo antes del primer uso o reiniciarlo dentro del lazo, perdiendo lo que ya se había sumado.",
-  "detalle": "Un acumulador guarda un resultado que se construye con varias sumas.\nSu valor inicial suele ser cero cuando se suman cantidades.\nLa operación += agrega un nuevo dato al total anterior.\nLa actualización puede aparecer dentro de un lazo.\nEl acumulador conserva el total entre iteraciones.\nLa línea {LINEA_DECL} indica dónde se declaró.",
+  "detalle": "Un acumulador guarda un resultado que se construye con varias sumas.\nSu valor inicial suele ser cero cuando se suman cantidades.\nLa instrucción A = A + dato (o A += dato) agrega un nuevo dato al total anterior.\nLa actualización puede aparecer dentro de un lazo.\nEl acumulador conserva el total entre vuelta y vuelta.\nLa línea {LINEA_DECL} indica dónde se declaró.",
   "variantes": [
    "Esta variable va reuniendo una suma parcial.",
    "{NOMBRE} conserva lo acumulado hasta el momento.",
@@ -308,7 +308,7 @@
   "cuando_aplica": "Dentro de un condicional se compara un dato candidato con {NOMBRE} mediante < y, si es menor, se asigna el candidato a {NOMBRE}; el nombre por sí solo no cuenta.",
   "titulo": "Valor mínimo guardado en {NOMBRE}",
   "que_es": "{NOMBRE} conserva el menor valor encontrado hasta el momento. La asignación que lo actualiza aparece en {LINEAS_ASIGNA}.",
-  "como_se_usa": "Se compara cada dato nuevo con el mínimo actual. Si el candidato es menor, reemplaza el valor guardado. La inicialización debe partir de un dato válido o de un límite que no altere el resultado.",
+  "como_se_usa": "Se compara cada dato nuevo con el mínimo actual. Si el candidato es menor, reemplaza el valor guardado. La inicialización debe partir de un dato válido.",
   "error_tipico": "Inicializar el mínimo en cero cuando todos los datos podrían ser positivos: el cero podría quedar como mínimo aunque nunca haya aparecido.",
   "detalle": "El mínimo es el menor valor observado en una serie.\nLa variable conserva el menor dato encontrado hasta ese momento.\nCada dato nuevo se compara con el valor actual.\nSolo se actualiza cuando el candidato es menor.\nTomar el primer dato como inicial evita inventar un valor.\nLa asignación detectada aparece en {LINEAS_ASIGNA}.",
   "variantes": [

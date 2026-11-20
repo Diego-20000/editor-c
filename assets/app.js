@@ -68,8 +68,8 @@
   })();
   function headerText() {
     const c = user.ciclo || String(new Date().getFullYear());
-    return ['// ' + (user.name || 'Apellido, Nombre'), '// ' + (user.curso || 'Curso'), '// ' + (user.mat || 'Materia'),
-      '// ' + (/ciclo/i.test(c) ? c : 'Ciclo lectivo ' + c)].join('\n');
+    return ['// ' + (user.name || 'Apellido/s, Nombre/s'), '// ' + (user.curso || 'Curso'), '// ' + (user.mat || 'Materia'),
+      '// ' + (/ciclo/i.test(c) ? c : 'Ciclo ' + c)].join('\n');
   }
   function template() { return headerText() + '\n\n#include <stdio.h>\n\nint main() {\n    \n}\n'; }
 

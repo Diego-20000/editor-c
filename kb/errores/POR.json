@@ -540,7 +540,7 @@
   "nombre_corto": "Coma decimal en lugar de punto",
   "frecuencia": "alta",
   "codigo_mal": "#include <stdio.h>\nint main() {\n  float V;\n  scanf(\"%f\", &V);\n  printf(\"%.2f\\n\", V * 2);\n}",
-  "codigo_bien": "#include <stdio.h>\nint main() {\n  float V;\n  char C;\n  scanf(\"%f%c\", &V, &C);\n  if (C == ',') { printf(\"Usá punto decimal, no coma\\n\"); }\n  else { printf(\"%.2f\\n\", V * 2); }\n}",
+  "codigo_bien": "#include <stdio.h>\nint main() {\n  float V;\n  char C;\n  scanf(\"%f%c\", &V, &C);\n  if (C == ',') { printf(\"Usa punto decimal, no coma\\n\"); }\n  else { printf(\"%.2f\\n\", V * 2); }\n}",
   "entrada": "3,5",
   "que_dice_gcc": "nada",
   "mensaje_editor": "scanf lee 3 y deja ',5' sin leer porque el programa espera un punto decimal. Escribe los decimales con punto.",
