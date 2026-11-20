@@ -477,14 +477,14 @@
         for (;;) {
           const pt = this.typeSpec();
           if (!pt || pt === 'void') throw new CErr('parámetro mal escrito: se esperaba un tipo (int, float, ...)', this.peek().line, 'FUN-035');
-          let pdims = 0;
+          let pdims = 0, ptrLine = 0;
           if (this.isOp('*')) {
             if (pt === 'char' || pt === 'uchar') { this.next(); pdims = 1; if (this.isOp('*')) { this.next(); pdims = 2; if (this.isOp('*')) throw new CErr('tres niveles de punteros no están soportados en este editor', this.peek().line); } }
-            else throw new CErr('los punteros todavía no están soportados en este editor (solo char * para textos)', this.peek().line);
+            else { ptrLine = this.peek().line; while (this.isOp('*')) this.next(); }
           }
           const pn = (this.isOp(',') || this.isOp(')') || this.isOp('[')) ? { v: null, line: this.peek().line } : this.ident();
           while (this.accept('[')) { if (!this.isOp(']')) this.assign(); this.expect(']', { k: 'dim' }); pdims++; }
-          params.push({ name: pn.v, type: pt, line: pn.line, array: pdims > 0, dims: pdims });
+          params.push({ name: pn.v, type: pt, line: pn.line, array: pdims > 0, dims: pdims, ptr: ptrLine });
           if (!this.accept(',')) break;
         }
       }
@@ -492,6 +492,8 @@
       if (!this.isOp(';') && !this.isOp('{') && this.peek().t !== 'eof' && this.peek().line > this.prevLine() && (this.isTypeStart() || this.peek().t === 'id')) throw new CErr("falta un ';' al final de este prototipo (la declaración de la función)", this.prevLine(), 'FUN-032');
       const sinParams = params.length === 0 && !vacioVoid;
       if (this.accept(';')) return { k: 'proto', name: nameTok.v, ret, params, line, unspec: sinParams };
+      const conPtr = params.find((p) => p.ptr);
+      if (conPtr) throw new CErr('los punteros todavía no están soportados en este editor (solo char * para textos)', conPtr.ptr);
       const sinNombre = params.find((p) => p.name === null);
       if (sinNombre) throw new CErr('al definir la función falta el nombre de un parámetro', sinNombre.line);
       const body = this.block();
