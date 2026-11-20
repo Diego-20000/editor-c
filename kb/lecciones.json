@@ -715,15 +715,16 @@
   "id": "L-022",
   "titulo": "Cómo funciona un for",
   "explicacion": [
-   "El for tiene inicio, condición y actualización.",
-   "Primero ejecuta el inicio una sola vez.",
-   "Después evalúa la condición; si es verdadera, ejecuta el cuerpo.",
-   "Al terminar el cuerpo, realiza la actualización y vuelve a evaluar.",
-   "Cuando la condición resulta falsa, sale del lazo."
+   "for repite un bloque y reúne tres partes: inicio, condición y avance.",
+   "El inicio se ejecuta una sola vez, antes de la primera vuelta.",
+   "Antes de cada vuelta se comprueba la condición; si es verdadera, se ejecuta el cuerpo.",
+   "Al terminar el cuerpo se realiza el avance y se vuelve a comprobar la condición.",
+   "Cuando la condición es falsa, el lazo termina.",
+   "La variable del contador debe estar declarada antes del for."
   ],
-  "ejemplo": "#include <stdio.h>\nint main(){\n for(int i=1;i<=3;i++) printf(\"%d\\n\",i);\n}",
+  "ejemplo": "#include <stdio.h>\nint main() {\n int i;\n for(i=1;i<=3;i++) {\n  printf(\"Vuelta %d\\n\",i);\n }\n}",
   "entrada": "",
-  "resultado": "1\n2\n3\n",
+  "resultado": "Vuelta 1\nVuelta 2\nVuelta 3\n",
   "errores_ids": [
    "SIN-005",
    "SIN-032",
@@ -755,15 +756,15 @@
   "id": "L-023",
   "titulo": "Cómo funciona un while",
   "explicacion": [
-   "while evalúa la condición antes de ejecutar el cuerpo.",
-   "Si la condición es falsa al principio, el cuerpo no se ejecuta.",
-   "Si es verdadera, ejecuta las instrucciones y vuelve a comprobarla.",
-   "Alguna instrucción debe permitir que la condición cambie si se espera que el lazo termine.",
-   "Sin una salida posible, el programa puede quedar repitiéndose."
+   "while revisa una condición antes de ejecutar su bloque.",
+   "Si la condición es falsa desde el comienzo, no realiza ninguna vuelta.",
+   "Si es verdadera, ejecuta el cuerpo y luego vuelve a comprobarla.",
+   "Alguna instrucción del cuerpo debe permitir que la condición cambie.",
+   "Si la condición nunca se vuelve falsa, el lazo no termina."
   ],
-  "ejemplo": "#include <stdio.h>\nint main(){\n int i=1;\n while(i<=3){ printf(\"%d\\n\",i); i++; }\n}",
+  "ejemplo": "#include <stdio.h>\nint main() {\n int i;\n i=1;\n while(i<=3) {\n  printf(\"Vuelta %d\\n\",i);\n  i=i+1;\n }\n}",
   "entrada": "",
-  "resultado": "1\n2\n3\n",
+  "resultado": "Vuelta 1\nVuelta 2\nVuelta 3\n",
   "errores_ids": [
    "SIN-058",
    "CTL-021",
@@ -814,15 +815,15 @@
   "id": "L-025",
   "titulo": "Switch y caída entre case",
   "explicacion": [
-   "switch compara una expresión entera con distintas etiquetas case.",
-   "Cuando encuentra una coincidencia, empieza a ejecutar desde esa etiqueta.",
-   "No se detiene automáticamente al terminar las instrucciones del case.",
-   "break permite salir del switch.",
-   "Sin break puede continuar ejecutando el siguiente case."
+   "switch compara el valor de una expresión entera o de un carácter con distintos case.",
+   "Cuando encuentra una coincidencia, comienza a ejecutar las instrucciones de ese caso.",
+   "No se detiene automáticamente al llegar al siguiente case.",
+   "break permite salir del switch y continuar después de su llave de cierre.",
+   "Sin break, la ejecución puede seguir por los casos que aparecen debajo."
   ],
-  "ejemplo": "#include <stdio.h>\nint main(){\n int A=1;\n switch(A){case 1: printf(\"Uno\\n\"); break; default: printf(\"Otro\\n\");}\n}",
+  "ejemplo": "#include <stdio.h>\nint main() {\n int OPCION;\n OPCION=2;\n switch(OPCION) {\n  case 1: printf(\"Alta\\n\"); break;\n  case 2: printf(\"Consulta\\n\"); break;\n  default: printf(\"Opción no válida\\n\");\n }\n}",
   "entrada": "",
-  "resultado": "Uno\n",
+  "resultado": "Consulta\n",
   "errores_ids": [
    "SIN-034",
    "SIN-036",
@@ -884,13 +885,13 @@
   "id": "L-027",
   "titulo": "Argumentos y parámetros",
   "explicacion": [
-   "Los parámetros son los nombres y tipos que aparecen en la definición de una función.",
-   "Los argumentos son los valores concretos que se pasan al llamarla.",
-   "La cantidad y los tipos deben corresponder con lo que declara la función.",
-   "El orden también importa: cada argumento ocupa la posición de su parámetro.",
-   "Una llamada con cantidad incorrecta puede ser rechazada por el compilador."
+   "Los parámetros son los nombres y tipos que aparecen en el encabezado de una función.",
+   "Los argumentos son los valores concretos que se envían al llamar a esa función.",
+   "La cantidad de argumentos debe corresponder con la cantidad de parámetros.",
+   "El orden importa: cada argumento ocupa el lugar del parámetro correspondiente.",
+   "La función trabaja con los valores recibidos durante esa llamada."
   ],
-  "ejemplo": "#include <stdio.h>\nint SUMA(int A,int B){ return A+B; }\nint main(){ int X=SUMA(2,3); printf(\"%d\\n\",X);}",
+  "ejemplo": "#include <stdio.h>\nint SUMAR(int A,int B);\nint main() {\n int TOTAL;\n TOTAL=SUMAR(2,3);\n printf(\"%d\\n\",TOTAL);\n}\nint SUMAR(int A,int B) {\n return A+B;\n}",
   "entrada": "",
   "resultado": "5\n",
   "errores_ids": [
@@ -919,13 +920,13 @@
   "id": "L-028",
   "titulo": "Función que devuelve un valor",
   "explicacion": [
-   "Una función con retorno int debe entregar un valor entero cuando termina normalmente.",
-   "return finaliza la ejecución de esa llamada y entrega el resultado.",
-   "Una función void no entrega un valor que pueda guardarse en una variable.",
-   "No alcanza con calcular el resultado si nunca se lo devuelve.",
-   "Revisa todos los caminos posibles de la función."
+   "Una función cuyo tipo de retorno es int debe entregar un valor entero al terminar normalmente.",
+   "return termina esa llamada y entrega el resultado a quien la llamó.",
+   "Ese resultado puede guardarse en una variable, utilizarse en una cuenta o mostrarse con printf.",
+   "Una función void realiza una tarea, pero no entrega un valor para guardar.",
+   "Comprueba que cada camino de una función con retorno entregue un resultado."
   ],
-  "ejemplo": "#include <stdio.h>\nint DOBLE(int A){ return A*2; }\nint main(){ int B=DOBLE(4); printf(\"%d\\n\",B);}",
+  "ejemplo": "#include <stdio.h>\nint DOBLE(int A);\nint main() {\n int B;\n B=DOBLE(4);\n printf(\"%d\\n\",B);\n}\nint DOBLE(int A) {\n return A*2;\n}",
   "entrada": "",
   "resultado": "8\n",
   "errores_ids": [
@@ -1091,15 +1092,15 @@
   "id": "L-033",
   "titulo": "Índices de arreglos",
   "explicacion": [
-   "Un arreglo de tamaño N tiene N posiciones.",
+   "Un arreglo de tamaño N tiene N posiciones disponibles.",
    "La primera posición se identifica con el índice 0.",
-   "La última posición válida es N-1.",
-   "Intentar leer o escribir V[N] queda fuera de los límites.",
-   "Ese acceso puede producir comportamiento indefinido en C."
+   "Por eso, la última posición válida es N-1.",
+   "En un arreglo de tres elementos se puede acceder a los índices 0, 1 y 2.",
+   "Intentar leer o escribir V[3] queda fuera del arreglo y puede provocar resultados imprevisibles."
   ],
-  "ejemplo": "#include <stdio.h>\nint main(){ int V[3]={4,5,6}; printf(\"%d\\n\",V[0]);}",
+  "ejemplo": "#include <stdio.h>\nint main() {\n int V[3];\n V[0]=4; V[1]=5; V[2]=6;\n printf(\"Primero: %d\\n\",V[0]);\n printf(\"Último: %d\\n\",V[2]);\n}",
   "entrada": "",
-  "resultado": "4\n",
+  "resultado": "Primero: 4\nÚltimo: 6\n",
   "errores_ids": [
    "ARR-001",
    "ARR-002",
@@ -1129,13 +1130,14 @@
   "id": "L-034",
   "titulo": "Recorrer un arreglo",
   "explicacion": [
-   "Un recorrido por posiciones suele comenzar con índice 0.",
-   "La condición habitual es i < N, donde N es la cantidad de elementos.",
-   "En cada vuelta se procesa V[i].",
+   "Para recorrer un arreglo se suele comenzar con el índice 0.",
+   "La condición habitual es i<N, donde N es la cantidad de elementos.",
+   "En cada vuelta se procesa el elemento V[i].",
    "Después se incrementa i para avanzar a la siguiente posición.",
-   "Usar i <= N intenta acceder a una posición que no existe."
+   "Usar i<=N intenta acceder a una posición que no existe.",
+   "Declara i antes del for, tal como se hace en los ejemplos de este proyecto."
   ],
-  "ejemplo": "#include <stdio.h>\nint main(){ int V[3]={4,5,6}; for(int i=0;i<3;i++) printf(\"%d\\n\",V[i]);}",
+  "ejemplo": "#include <stdio.h>\nint main() {\n int V[3], i;\n V[0]=4; V[1]=5; V[2]=6;\n for(i=0;i<3;i++) {\n  printf(\"%d\\n\",V[i]);\n }\n}",
   "entrada": "",
   "resultado": "4\n5\n6\n",
   "errores_ids": [
@@ -1197,15 +1199,15 @@
   "id": "L-036",
   "titulo": "Contador: contar cuántas veces pasa algo",
   "explicacion": [
-   "Un contador es una variable que sube de a 1 cada vez que ocurre un hecho.",
-   "Se inicia en 0 antes del lazo, nunca adentro: si no, arranca de cero en cada vuelta.",
-   "Se incrementa solo cuando se cumple lo que quieres contar (dentro de un if).",
-   "No se confunde con un acumulador: el contador suma siempre 1, el acumulador suma el dato.",
-   "Al final del lazo, el contador tiene la cantidad que buscabas."
+   "Un contador guarda cuántas veces ocurre un hecho.",
+   "Se inicia en cero antes del lazo para comenzar una cuenta nueva.",
+   "Dentro del lazo aumenta cuando se cumple la condición que interesa.",
+   "Si se inicia dentro del lazo, vuelve a cero en cada vuelta y se pierde lo contado.",
+   "El contador suma una unidad; un acumulador, en cambio, suma el dato que llega."
   ],
-  "ejemplo": "#include <stdio.h>\nint main() {\n int TEMP[6] = {18, 25, 31, 22, 35, 29};\n int i, CALOR = 0;\n for (i = 0; i < 6; i++) {\n  if (TEMP[i] > 30) CALOR++;\n }\n printf(\"Dias de calor: %d\\n\", CALOR);\n}",
+  "ejemplo": "#include <stdio.h>\nint main() {\n int TEMP[6], i, CALOR;\n TEMP[0]=18; TEMP[1]=25; TEMP[2]=31;\n TEMP[3]=22; TEMP[4]=35; TEMP[5]=29;\n CALOR=0;\n for(i=0;i<6;i++) {\n  if(TEMP[i]>30) CALOR=CALOR+1;\n }\n printf(\"Días de calor: %d\\n\",CALOR);\n}",
   "entrada": "",
-  "resultado": "Dias de calor: 2\n",
+  "resultado": "Días de calor: 2\n",
   "errores_ids": [
    "DEC-006",
    "LOG-025",
@@ -1227,13 +1229,13 @@
   "id": "L-037",
   "titulo": "Acumulador: ir sumando valores",
   "explicacion": [
-   "Un acumulador junta en una variable la suma de los datos que van llegando.",
-   "Se inicia en 0 antes del lazo (en 1 si lo que acumulas es un producto).",
-   "Dentro del lazo se le suma el dato: SUMA = SUMA + A.",
-   "Si lo inicias o lo declaras adentro del lazo, se borra en cada vuelta y solo queda el último dato.",
-   "Muestra el total después del lazo, no adentro."
+   "Un acumulador reúne en una variable los datos que llegan y conserva el total parcial.",
+   "Para sumar se inicia en cero antes del lazo.",
+   "Dentro de cada vuelta se agrega el nuevo dato al valor anterior.",
+   "Si se reinicia dentro del lazo, solo queda el valor de la última vuelta.",
+   "El total se muestra después de completar el recorrido."
   ],
-  "ejemplo": "#include <stdio.h>\nint main() {\n float PRECIO[4] = {120.5, 80, 45.25, 10};\n float TOTAL = 0;\n int i;\n for (i = 0; i < 4; i++) {\n  TOTAL = TOTAL + PRECIO[i];\n }\n printf(\"Total: %.2f\\n\", TOTAL);\n}",
+  "ejemplo": "#include <stdio.h>\nint main() {\n float PRECIO[4], TOTAL;\n int i;\n PRECIO[0]=120.5f; PRECIO[1]=80.0f;\n PRECIO[2]=45.25f; PRECIO[3]=10.0f;\n TOTAL=0;\n for(i=0;i<4;i++) {\n  TOTAL=TOTAL+PRECIO[i];\n }\n printf(\"Total: %.2f\\n\",TOTAL);\n}",
   "entrada": "",
   "resultado": "Total: 255.75\n",
   "errores_ids": [
@@ -1261,16 +1263,15 @@
   "id": "L-038",
   "titulo": "Promedio sin dividir por cero",
   "explicacion": [
-   "El promedio es la suma dividida por la cantidad de datos.",
-   "Si no se cargó ningún dato, la cantidad es 0 y dividir por cero no da un resultado válido (con enteros el programa se cierra con error).",
-   "Por eso se pregunta con un if si la cantidad es mayor que 0 antes de dividir.",
-   "Además, si SUMA y CANT son enteros, la división pierde los decimales: para conservarlos, el dato que se divide tiene que ser float.",
-   "Por eso se declara float GOLES y se divide GOLES / PARTIDOS.",
-   "Prueba cambiar PARTIDOS a 5: con la cuenta hecha en decimales el resultado conserva los decimales."
+   "El promedio se obtiene al dividir la suma de los datos por la cantidad de datos.",
+   "La suma se conserva en un acumulador y la cantidad en un contador.",
+   "Si la cantidad es cero, no se debe realizar la división.",
+   "Si la suma y la cantidad son enteros, la división puede perder los decimales; utiliza un operando decimal.",
+   "Primero comprueba que la cantidad sea mayor que cero y luego calcula el promedio."
   ],
-  "ejemplo": "#include <stdio.h>\nint main() {\n float GOLES;\n int PARTIDOS;\n float PROM;\n GOLES = 12;\n PARTIDOS = 0;\n if (PARTIDOS > 0) {\n  PROM = GOLES / PARTIDOS;\n  printf(\"Goles por partido: %.2f\\n\", PROM);\n } else {\n  printf(\"Todavia no se jugo ningun partido\\n\");\n }\n}",
+  "ejemplo": "#include <stdio.h>\nint main() {\n int SUMA, CANT;\n float PROM;\n SUMA=85;\n CANT=4;\n if(CANT>0) {\n  PROM=SUMA/(CANT*1.0);\n  printf(\"Promedio: %.2f\\n\",PROM);\n } else {\n  printf(\"Sin datos\\n\");\n }\n}",
   "entrada": "",
-  "resultado": "Todavia no se jugo ningun partido\n",
+  "resultado": "Promedio: 21.25\n",
   "errores_ids": [
    "LOG-026",
    "LOG-027",
@@ -1295,15 +1296,15 @@
   "id": "L-039",
   "titulo": "Mayor y menor de una serie",
   "explicacion": [
-   "Para hallar el mayor se guarda el mejor valor visto hasta ahora y se compara con cada dato nuevo.",
-   "El valor inicial importa: si arrancas MAYOR en 0 y todos los datos son negativos, el resultado queda mal.",
-   "Lo más seguro es inicializar con el primer dato que se lee.",
-   "Lo mismo vale para el menor: no lo inicies en 0.",
-   "Después, dentro del lazo, un if actualiza MAYOR o MENOR cuando el dato lo supera."
+   "El máximo es el mayor valor de una serie y el mínimo es el menor.",
+   "Para no elegir un valor inicial equivocado, comienza con el primer dato de la serie.",
+   "Después compara cada dato nuevo con el máximo y el mínimo guardados.",
+   "Si un dato supera el máximo, reemplaza ese valor; si es menor que el mínimo, también se actualiza.",
+   "El recorrido termina cuando ya se revisaron todos los elementos."
   ],
-  "ejemplo": "#include <stdio.h>\nint main() {\n int T[5] = {-3, -8, -1, -6, -4};\n int i, MAX, MIN;\n MAX = T[0];\n MIN = T[0];\n for (i = 1; i < 5; i++) {\n  if (T[i] > MAX) MAX = T[i];\n  if (T[i] < MIN) MIN = T[i];\n }\n printf(\"Maxima: %d Minima: %d\\n\", MAX, MIN);\n}",
+  "ejemplo": "#include <stdio.h>\nint main() {\n int V[5], i, MAXIMO, MINIMO;\n V[0]=4; V[1]=9; V[2]=2; V[3]=7; V[4]=5;\n MAXIMO=V[0];\n MINIMO=V[0];\n for(i=1;i<5;i++) {\n  if(V[i]>MAXIMO) MAXIMO=V[i];\n  if(V[i]<MINIMO) MINIMO=V[i];\n }\n printf(\"Máximo: %d\\n\",MAXIMO);\n printf(\"Mínimo: %d\\n\",MINIMO);\n}",
   "entrada": "",
-  "resultado": "Maxima: -1 Minima: -8\n",
+  "resultado": "Máximo: 9\nMínimo: 2\n",
   "errores_ids": [
    "LOG-029",
    "LOG-030",
@@ -1590,6 +1591,150 @@
    "por",
    "contador",
    "inverso"
+  ]
+ },
+ {
+  "id": "L-048",
+  "titulo": "Menú con while y switch",
+  "explicacion": [
+   "Un menú permite que la persona elija una acción mediante un número.",
+   "while mantiene el menú disponible mientras la opción no sea la de salida.",
+   "switch selecciona qué instrucciones ejecutar según la opción ingresada.",
+   "Cada case termina con break para no continuar por el caso siguiente.",
+   "La opción default permite responder cuando se ingresa un número que no existe.",
+   "La lectura de la opción vuelve a realizarse en cada vuelta del lazo."
+  ],
+  "ejemplo": "#include <stdio.h>\nint main() {\n int OPCION, A, B;\n OPCION=0;\n A=8; B=3;\n while(OPCION!=4) {\n  printf(\"1 Sumar\\n2 Restar\\n3 Multiplicar\\n4 Salir\\n\");\n  printf(\"Opción: \");\n  scanf(\"%d\",&OPCION);\n  switch(OPCION) {\n   case 1: printf(\"Resultado: %d\\n\",A+B); break;\n   case 2: printf(\"Resultado: %d\\n\",A-B); break;\n   case 3: printf(\"Resultado: %d\\n\",A*B); break;\n   case 4: printf(\"Fin\\n\"); break;\n   default: printf(\"Opción no válida\\n\");\n  }\n }\n}",
+  "entrada": "1\n3\n4\n",
+  "resultado": "1 Sumar\n2 Restar\n3 Multiplicar\n4 Salir\nOpción: Resultado: 11\n1 Sumar\n2 Restar\n3 Multiplicar\n4 Salir\nOpción: Resultado: 24\n1 Sumar\n2 Restar\n3 Multiplicar\n4 Salir\nOpción: Fin\n",
+  "errores_ids": [
+   "CTL-007",
+   "CTL-021",
+   "CTL-022",
+   "CTL-016",
+   "SIN-034"
+  ],
+  "buscar": [
+   "menu",
+   "menú",
+   "while",
+   "switch",
+   "case",
+   "opciones",
+   "repetir menú"
+  ]
+ },
+ {
+  "id": "L-049",
+  "titulo": "Máximo y mínimo de un arreglo",
+  "explicacion": [
+   "El máximo es el mayor valor de una lista y el mínimo es el menor.",
+   "Primero se carga el arreglo con los datos que se van a analizar.",
+   "Se inicia MAXIMO y MINIMO con el primer elemento, no con cero.",
+   "Luego se recorre desde la segunda posición y se compara cada dato.",
+   "Al finalizar el recorrido, ambas variables guardan los extremos de la serie."
+  ],
+  "ejemplo": "#include <stdio.h>\nint main() {\n int V[5], i, MAXIMO, MINIMO;\n V[0]=14; V[1]=8; V[2]=21; V[3]=5; V[4]=17;\n MAXIMO=V[0];\n MINIMO=V[0];\n for(i=1;i<5;i++) {\n  if(V[i]>MAXIMO) MAXIMO=V[i];\n  if(V[i]<MINIMO) MINIMO=V[i];\n }\n printf(\"Máximo: %d\\n\",MAXIMO);\n printf(\"Mínimo: %d\\n\",MINIMO);\n}",
+  "entrada": "",
+  "resultado": "Máximo: 21\nMínimo: 5\n",
+  "errores_ids": [
+   "LOG-029",
+   "LOG-030",
+   "ARR-001",
+   "ARR-014"
+  ],
+  "buscar": [
+   "máximo",
+   "minimo",
+   "máximo y mínimo",
+   "arreglo",
+   "mayor",
+   "menor"
+  ]
+ },
+ {
+  "id": "L-050",
+  "titulo": "Promedio con acumulador y contador",
+  "explicacion": [
+   "El acumulador reúne la suma de todos los datos que se leen.",
+   "El contador guarda cuántos datos válidos se cargaron.",
+   "Ambos se inician antes del lazo y se actualizan dentro de cada vuelta.",
+   "El promedio se calcula cuando termina la lectura y la cantidad es mayor que cero.",
+   "Se utiliza un operando decimal para no perder la parte fraccionaria.",
+   "El valor cero funciona como señal para terminar y no se suma."
+  ],
+  "ejemplo": "#include <stdio.h>\nint main() {\n int DATO, CANTIDAD, SUMA;\n float PROMEDIO;\n SUMA=0;\n CANTIDAD=0;\n printf(\"Dato (0 para terminar): \");\n scanf(\"%d\",&DATO);\n while(DATO!=0) {\n  SUMA=SUMA+DATO;\n  CANTIDAD=CANTIDAD+1;\n  printf(\"Dato (0 para terminar): \");\n  scanf(\"%d\",&DATO);\n }\n if(CANTIDAD>0) {\n  PROMEDIO=SUMA/(CANTIDAD*1.0);\n  printf(\"Cantidad: %d\\n\",CANTIDAD);\n  printf(\"Promedio: %.2f\\n\",PROMEDIO);\n } else {\n  printf(\"No se ingresaron datos\\n\");\n }\n}",
+  "entrada": "10\n20\n5\n0\n",
+  "resultado": "Dato (0 para terminar): Dato (0 para terminar): Dato (0 para terminar): Dato (0 para terminar): Cantidad: 3\nPromedio: 11.67\n",
+  "errores_ids": [
+   "LOG-024",
+   "LOG-025",
+   "LOG-026",
+   "LOG-027",
+   "LOG-028"
+  ],
+  "buscar": [
+   "promedio",
+   "acumulador",
+   "contador",
+   "centinela",
+   "division entera"
+  ]
+ },
+ {
+  "id": "L-051",
+  "titulo": "Recorrer una matriz con dos for",
+  "explicacion": [
+   "Una matriz es un arreglo con filas y columnas.",
+   "El primer índice indica la fila y el segundo indica la columna.",
+   "Se necesitan dos lazos: uno para recorrer las filas y otro para las columnas.",
+   "En cada vuelta del lazo interno se procesa un elemento de la fila actual.",
+   "Los dos índices comienzan en cero y deben respetar sus límites."
+  ],
+  "ejemplo": "#include <stdio.h>\nint main() {\n int M[2][3], F, C, SUMA;\n M[0][0]=2; M[0][1]=4; M[0][2]=6;\n M[1][0]=1; M[1][1]=3; M[1][2]=5;\n SUMA=0;\n for(F=0;F<2;F++) {\n  for(C=0;C<3;C++) {\n   printf(\"%d \",M[F][C]);\n   SUMA=SUMA+M[F][C];\n  }\n  printf(\"\\n\");\n }\n printf(\"Suma: %d\\n\",SUMA);\n}",
+  "entrada": "",
+  "resultado": "2 4 6 \n1 3 5 \nSuma: 21\n",
+  "errores_ids": [
+   "ARR-001",
+   "ARR-014",
+   "ARR-015",
+   "LOG-022"
+  ],
+  "buscar": [
+   "matriz",
+   "arreglo de dos dimensiones",
+   "dos for",
+   "filas",
+   "columnas"
+  ]
+ },
+ {
+  "id": "L-052",
+  "titulo": "Funciones que se llaman entre sí",
+  "explicacion": [
+   "Una función puede llamar a otra para dividir una tarea en pasos más pequeños.",
+   "Cada función debe tener un prototipo si se utiliza antes de su definición.",
+   "Los parámetros permiten enviar los datos que necesita la función llamada.",
+   "Una función puede devolver un resultado y otra puede utilizarlo.",
+   "Las llamadas se ejecutan en orden: primero termina la función interna y luego continúa la externa."
+  ],
+  "ejemplo": "#include <stdio.h>\nint ABSOLUTO(int N);\nint MAYOR_ABSOLUTO(int A,int B);\nint main() {\n int RESULTADO;\n RESULTADO=MAYOR_ABSOLUTO(-8,5);\n printf(\"Mayor absoluto: %d\\n\",RESULTADO);\n}\nint ABSOLUTO(int N) {\n if(N<0) return -N;\n return N;\n}\nint MAYOR_ABSOLUTO(int A,int B) {\n int X, Y;\n X=ABSOLUTO(A);\n Y=ABSOLUTO(B);\n if(X>Y) return X;\n return Y;\n}",
+  "entrada": "",
+  "resultado": "Mayor absoluto: 8\n",
+  "errores_ids": [
+   "FUN-001",
+   "FUN-002",
+   "FUN-007",
+   "FUN-011",
+   "FUN-012",
+   "FUN-017"
+  ],
+  "buscar": [
+   "funciones",
+   "llamar una función",
+   "prototipo",
+   "parámetros",
+   "return"
   ]
  }
 ]

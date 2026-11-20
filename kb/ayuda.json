@@ -670,9 +670,9 @@
  {
   "elemento": "if",
   "tipo": "palabra clave",
-  "que_es": "Ejecuta una instrucción (o un bloque entre llaves) solo si la condición es verdadera.",
-  "como_se_usa": "if(EDAD>=18) printf(\"Mayor\\n\");",
-  "error_tipico": "Poner un ; justo después del paréntesis: el if queda con cuerpo vacío.",
+  "que_es": "Permite tomar una decisión: ejecuta una instrucción o un bloque cuando la condición es verdadera.",
+  "como_se_usa": "if(TEMP>30){ printf(\"Calor\\n\"); }  // con TEMP=32, muestra: Calor",
+  "error_tipico": "Poner un punto y coma inmediatamente después de la condición, o usar = cuando se quería comparar con ==.",
   "en_la_materia": "BC",
   "errores_ids": [
    "CTL-001",
@@ -712,17 +712,17 @@
    "condición",
    "operadores relacionales"
   ],
-  "detalle": "Ejecuta una instrucción solo si su condición es verdadera. Si es falsa, la salta.\nPara C, una condición es verdadera cuando vale cualquier número distinto de cero, y falsa cuando vale cero. Por eso if(N) equivale a if(N!=0).\nSin llaves, el if gobierna una sola instrucción: la que está justo después. Para varias hay que agruparlas entre { }.\nDetalle que confunde: la sangría (los espacios al inicio del renglón) no importa para C. Una segunda instrucción sin llaves se ejecuta siempre, aunque esté corrida a la derecha.\nOtro detalle: = guarda un valor y == compara. if(GOLES=2) cambia GOLES a 2 y entra siempre; gcc avisa que se usó una asignación como condición.\nError típico: poner ; después del paréntesis, como en if(T>30);. El if queda con cuerpo vacío y la instrucción siguiente se ejecuta siempre.",
+  "detalle": "if permite elegir qué instrucciones ejecutar según una condición. Si la condición es verdadera, se ejecuta el bloque; si es falsa, se salta y puede ejecutarse el bloque de else. Se usa para validar datos, comparar cantidades y decidir entre dos caminos. Ejemplo: con TEMP igual a 32, if(TEMP>30) printf(\"Calor\\n\"); muestra Calor. Error típico: escribir un punto y coma justo después del paréntesis, como if(TEMP>30);, porque la instrucción siguiente deja de depender de la condición.",
   "ocasiones": [
    {
-    "cuando": "Con una sola instrucción, sin llaves.",
-    "que_es": "Solo la primera instrucción depende del if; la segunda se ejecuta siempre.",
-    "ejemplo": "int T=20;\nif(T>30) printf(\"Calor\\n\");\nprintf(\"Fin\\n\");"
+    "cuando": "Para ejecutar una instrucción solo si se cumple una condición.",
+    "que_es": "Si TEMP vale 32, la condición TEMP>30 es verdadera y se muestra «Calor».",
+    "ejemplo": "int TEMP;\nTEMP=32;\nif(TEMP>30) printf(\"Calor\\n\");"
    },
    {
-    "cuando": "Con varias instrucciones, entre llaves.",
-    "que_es": "Las llaves agrupan: las dos instrucciones dependen de la condición.",
-    "ejemplo": "int T=35;\nif(T>30){\n printf(\"Calor\\n\");\n printf(\"Toma agua\\n\");\n}"
+    "cuando": "Para elegir entre dos caminos con else.",
+    "que_es": "Con EDAD igual a 16 se muestra «Menor»; con 20 se muestra «Mayor».",
+    "ejemplo": "int EDAD;\nEDAD=16;\nif(EDAD>=18) printf(\"Mayor\\n\");\nelse printf(\"Menor\\n\");"
    }
   ]
  },
@@ -805,9 +805,9 @@
  {
   "elemento": "for",
   "tipo": "palabra clave",
-  "que_es": "Lazo con tres partes entre paréntesis separadas por ;: inicio, condición y avance. Repite su cuerpo mientras la condición sea verdadera.",
-  "como_se_usa": "for(i=1;i<=3;i++) printf(\"%d\\n\",i);",
-  "error_tipico": "Separar las partes con comas en lugar de ;, o poner ; después del paréntesis.",
+  "que_es": "Repite un bloque de instrucciones y permite indicar dónde comienza el contador, cuándo continuar y cómo avanzar.",
+  "como_se_usa": "for(i=1;i<=3;i++) printf(\"%d\\n\",i);  // muestra 1, 2 y 3",
+  "error_tipico": "Separar las tres partes con comas en lugar de punto y coma, agregar un punto y coma después del paréntesis o recorrer una posición de más.",
   "en_la_materia": "LR",
   "errores_ids": [
    "CTL-016",
@@ -845,21 +845,26 @@
    "contador",
    "continue"
   ],
-  "detalle": "Es un lazo (instrucciones que se repiten) con tres partes entre paréntesis, separadas por ;: inicio, condición y avance.\nEl inicio se hace una sola vez. Antes de cada ciclo (cada vuelta) se mira la condición, y si es verdadera se ejecuta el cuerpo. Al terminar el cuerpo se hace el avance y se vuelve a mirar la condición.\nSe usa cuando se sabe cuántas veces repetir, o cuando hay un contador que sube o baja de forma regular.\nDetalle que confunde: al terminar el lazo, la variable no vale el último número que se mostró sino uno más. Con i<3 se muestra 0, 1 y 2, pero i queda valiendo 3.\nError típico: poner ; después del paréntesis, como en for(i=0;i<3;i++);. El lazo se repite con cuerpo vacío y la instrucción siguiente se ejecuta una sola vez. Otro: separar las partes con comas en vez de ;.",
+  "detalle": "for es un lazo que reúne tres partes entre paréntesis: inicio, condición y avance. El inicio se ejecuta una sola vez; antes de cada vuelta se revisa la condición y, al terminar el bloque, se realiza el avance. Se usa cuando se conoce la cantidad de repeticiones o se recorre un arreglo desde la primera posición hasta la última. Ejemplo: con i desde 1 hasta 3, printf muestra 1, 2 y 3; después el lazo termina. Error típico: usar <= con el tamaño de un arreglo o colocar un punto y coma inmediatamente después del paréntesis, lo que deja el cuerpo vacío.",
   "ocasiones": [
    {
-    "cuando": "Para repetir un número de veces conocido.",
-    "que_es": "Cuenta de 0 a 2 y la variable queda valiendo 3 al terminar.",
-    "ejemplo": "for(i=0;i<3;i++) printf(\"%d\\n\",i);\nprintf(\"i=%d\\n\",i);"
+    "cuando": "Para repetir tres veces y mostrar el contador.",
+    "que_es": "El inicio pone i en 1, la condición permite llegar hasta 3 y el avance suma uno al final de cada vuelta. La salida es 1, 2 y 3.",
+    "ejemplo": "int i;\nfor(i=1;i<=3;i++) printf(\"%d\\n\",i);"
+   },
+   {
+    "cuando": "Para recorrer todas las posiciones de un arreglo.",
+    "que_es": "Si el arreglo tiene 4 elementos, los índices válidos van de 0 a 3; por eso la condición utiliza i<4.",
+    "ejemplo": "int V[4], i;\nfor(i=0;i<4;i++) V[i]=i+1;\nprintf(\"%d\\n\",V[3]);  // muestra: 4"
    }
   ]
  },
  {
   "elemento": "while",
   "tipo": "palabra clave",
-  "que_es": "Lazo que repite su cuerpo mientras la condición sea verdadera. La condición se mira antes de cada vuelta, así que puede no ejecutarse nunca.",
-  "como_se_usa": "while(N>0){\n N--;\n}",
-  "error_tipico": "Olvidarse de modificar algo dentro del lazo y que no termine nunca.",
+  "que_es": "Repite un bloque mientras una condición sea verdadera; revisa la condición antes de cada vuelta.",
+  "como_se_usa": "while(N>0){ printf(\"%d\\n\",N); N--; }  // con N=3, muestra 3, 2 y 1",
+  "error_tipico": "Olvidar actualizar la variable que controla la condición, por lo que el lazo nunca termina; también puede quedar vacío por un punto y coma extra.",
   "en_la_materia": "LC",
   "errores_ids": [
    "CTL-021",
@@ -887,12 +892,17 @@
    "for",
    "lazo infinito"
   ],
-  "detalle": "Repite su cuerpo mientras la condición sea verdadera.\nLa condición se mira antes de cada ciclo. Si ya es falsa al llegar, el cuerpo no se ejecuta ni una vez.\nSe usa cuando no se sabe cuántas veces repetir: hasta que algo cambie, como que baje una temperatura o se agote un valor.\nDetalle que confunde: la condición se evalúa de nuevo en cada ciclo, pero nada la modifica por sí solo. Algo del cuerpo tiene que cambiar la variable que se compara.\nError típico: olvidar ese cambio y que el lazo no termine nunca. También pasa con ; después del paréntesis, como en while(T>37);, porque el cuerpo queda vacío y T nunca cambia.",
+  "detalle": "while es un lazo que primero revisa una condición y solo después ejecuta su bloque. Si la condición ya es falsa al llegar, no realiza ninguna vuelta. Se usa cuando no se conoce de antemano cuántas veces habrá que repetir, por ejemplo al leer datos hasta recibir un valor especial. Ejemplo: si N comienza en 3 y dentro del bloque se resta uno, se muestran 3, 2 y 1. Error típico: no modificar ningún dato que intervenga en la condición y dejar el lazo repitiéndose para siempre.",
   "ocasiones": [
    {
-    "cuando": "Cuando se repite hasta que algo cambie.",
-    "que_es": "Baja la temperatura de a un grado mientras sea mayor que 37.",
-    "ejemplo": "int T=40;\nwhile(T>37){\n T=T-1;\n}\nprintf(\"%d\\n\",T);"
+    "cuando": "Para repetir mientras un contador sea mayor que cero.",
+    "que_es": "N comienza en 3 y disminuye una unidad por vuelta. La salida es 3, 2 y 1.",
+    "ejemplo": "int N;\nN=3;\nwhile(N>0){\n printf(\"%d\\n\",N);\n N=N-1;\n}"
+   },
+   {
+    "cuando": "Para leer datos hasta encontrar un valor de cierre.",
+    "que_es": "El lazo continúa mientras el dato sea distinto de 0. El cero indica que ya no se deben sumar más valores.",
+    "ejemplo": "int DATO, SUMA;\nSUMA=0;\nscanf(\"%d\",&DATO);\nwhile(DATO!=0){\n SUMA=SUMA+DATO;\n scanf(\"%d\",&DATO);\n}\nprintf(\"%d\\n\",SUMA);"
    }
   ]
  },
@@ -931,9 +941,9 @@
  {
   "elemento": "switch",
   "tipo": "palabra clave",
-  "que_es": "Elige entre varias opciones comparando una expresión entera con los valores de cada case.",
-  "como_se_usa": "switch(OP){\n case 1: printf(\"Uno\\n\"); break;\n default: printf(\"Otro\\n\");\n}",
-  "error_tipico": "Usar un decimal o un texto como expresión del switch: solo sirven enteros y caracteres.",
+  "que_es": "Selecciona una opción según el valor de una expresión entera o de un carácter.",
+  "como_se_usa": "switch(OP){ case 1: printf(\"Uno\\n\"); break; default: printf(\"Otra opción\\n\"); }",
+  "error_tipico": "Olvidar break al final de un caso y ejecutar también las instrucciones del siguiente, o intentar comparar decimales o textos con switch.",
   "en_la_materia": "SS, BC",
   "errores_ids": [
    "CTL-007",
@@ -959,17 +969,17 @@
    "default",
    "break"
   ],
-  "detalle": "Elige entre varias opciones comparando el valor de una expresión con los valores de cada case.\nSe usa cuando una misma variable se compara con muchos valores fijos, como un número de opción o una letra. Es una alternativa más ordenada a una cadena larga de else if.\nLa expresión tiene que dar un entero o un carácter. Con un decimal o un texto, gcc da error: \"switch quantity not an integer\".\nDetalle que confunde: switch solo compara si es igual; no sirve para rangos como mayor que 10.\nOtro detalle: al encontrar el case que coincide, C sigue ejecutando todo lo que viene debajo, también los otros case, hasta llegar a un break.\nError típico: olvidar el break al final de un case y que se muestren también los mensajes de los casos siguientes.",
+  "detalle": "switch permite elegir entre varios valores posibles de una misma variable, como un número de menú o una letra. Cada opción se escribe con case y default indica qué hacer cuando ninguna coincide. Se usa cuando hay varias alternativas fijas y evita escribir muchos if seguidos. Ejemplo: si OP vale 2 y existe case 2, se ejecuta ese caso y se muestra Dos. Error típico: olvidar break; sin él, la ejecución puede continuar por los casos que aparecen debajo.",
   "ocasiones": [
    {
-    "cuando": "Con un break al final de cada case.",
-    "que_es": "Se ejecuta solo el caso que coincide.",
-    "ejemplo": "int OP=2;\nswitch(OP){\n case 1: printf(\"Uno\\n\"); break;\n case 2: printf(\"Dos\\n\"); break;\n}"
+    "cuando": "Para elegir una opción de un menú.",
+    "que_es": "Cuando OP vale 2, se ejecuta el segundo caso y se muestra «Dos».",
+    "ejemplo": "int OP;\nOP=2;\nswitch(OP){\n case 1: printf(\"Uno\\n\"); break;\n case 2: printf(\"Dos\\n\"); break;\n default: printf(\"Otra opción\\n\");\n}"
    },
    {
-    "cuando": "Con varios case seguidos, sin break entre ellos.",
-    "que_es": "Dos valores comparten la misma instrucción.",
-    "ejemplo": "int D=6;\nswitch(D){\n case 6: case 7: printf(\"Fin de semana\\n\"); break;\n default: printf(\"Semana\\n\");\n}"
+    "cuando": "Para compartir una acción entre dos opciones.",
+    "que_es": "Los casos 6 y 7 llegan a la misma instrucción porque no hay break entre ellos.",
+    "ejemplo": "int DIA;\nDIA=6;\nswitch(DIA){\n case 6: case 7: printf(\"Fin de semana\\n\"); break;\n default: printf(\"Día de semana\\n\");\n}"
    }
   ]
  },
@@ -1416,9 +1426,9 @@
  {
   "elemento": "/",
   "tipo": "operador",
-  "que_es": "Divide el valor de la izquierda por el de la derecha. Si los dos son enteros, el resultado es entero: 7/2 da 3.",
-  "como_se_usa": "C=7/2;\nD=7/2.0;",
-  "error_tipico": "Dividir dos enteros y esperar decimales: hay que convertir uno a float o escribirlo con .0.",
+  "que_es": "Divide el número de la izquierda por el de la derecha; con dos enteros realiza una división entera.",
+  "como_se_usa": "printf(\"%d %.1f\\n\",7/2,7.0/2);  // muestra: 3 3.5",
+  "error_tipico": "Esperar 3.5 al dividir dos int: la operación da 3; para conservar decimales, uno de los operandos debe ser decimal.",
   "en_la_materia": "Operadores",
   "errores_ids": [
    "EJE-001",
@@ -1445,25 +1455,22 @@
    "7/2 da 3",
    "int con float"
   ],
-  "detalle": "Si los dos operandos son int, la división es entera: 7/2 da 3 y 1/2 da 0.\nEn C99, el cociente entero se trunca hacia cero: -7/2 da -3.\nSi uno de los operandos es float o double, la cuenta se hace en punto flotante: 7/2.0f da 3.5.\nGuardar 7/2 en una variable float no recupera el decimal perdido: primero se obtuvo 3.\nPara forzar una división decimal, convierte un operando antes de dividir, por ejemplo (float)7/2.\nLa división por cero no tiene comportamiento definido y puede terminar el programa.",
+  "detalle": "El operador / divide el valor de la izquierda por el de la derecha. Si ambos valores son enteros, el resultado también es entero: 7/2 da 3 y 1/2 da 0 porque se descarta la parte decimal. Si uno de los valores es decimal, la cuenta conserva los decimales: 7.0/2 da 3.5. Guardar 7/2 en una variable float no recupera lo que ya se descartó. Error típico: calcular un promedio con dos int y esperar un resultado decimal; utiliza un dato decimal desde el comienzo de la división.",
   "ocasiones": [
    {
-    "cuando": "Entre dos enteros, como división entera.",
-    "que_es": "El resultado es entero y se descarta la parte fraccionaria: 7/2 da 3 y 1/2 da 0.",
-    "ejemplo": "printf(\"%d\\n\", 7/2);",
-    "error_tipico": "Esperar 3.5 o 0.5 cuando ambos operandos son int."
+    "cuando": "Al dividir dos enteros.",
+    "que_es": "El cociente no conserva la parte decimal: 9/4 da 2 y 9%4 permite conocer el resto, que es 1.",
+    "ejemplo": "int A, B;\nA=9; B=4;\nprintf(\"%d %d\\n\",A/B,A%B);  // muestra: 2 1"
    },
    {
-    "cuando": "Cuando al menos un operando es float o double.",
-    "que_es": "La cuenta se hace en punto flotante: 7/2.0f da 3.5.",
-    "ejemplo": "printf(\"%.1f\\n\", 7/2.0f);",
-    "error_tipico": "Convertir el resultado después de dividir: (float)(7/2) ya perdió el decimal."
+    "cuando": "Al dividir con un operando decimal.",
+    "que_es": "La cuenta se realiza con decimales. 9.0/4 da 2.25.",
+    "ejemplo": "printf(\"%.2f\\n\",9.0/4);  // muestra: 2.25"
    },
    {
-    "cuando": "Cuando se mezclan variables int y float.",
-    "que_es": "El int se convierte para esa operación y el resultado puede conservar decimales.",
-    "ejemplo": "int A=7;\nfloat B=2.0f;\nprintf(\"%.1f\\n\", A/B);",
-    "error_tipico": "Creer que la variable donde se guarda el resultado cambia la división ya calculada."
+    "cuando": "Al calcular un promedio.",
+    "que_es": "La variable PROM debe recibir una división decimal y la cantidad debe ser mayor que cero.",
+    "ejemplo": "float PROM;\nint SUMA, CANT;\nSUMA=85; CANT=4;\nif(CANT>0){ PROM=SUMA/(CANT*1.0); }\nprintf(\"%.2f\\n\",PROM);  // muestra: 21.25"
    }
   ],
   "relacionados": [
@@ -3364,9 +3371,9 @@
  {
   "elemento": "%d",
   "tipo": "formato",
-  "que_es": "Formato para mostrar o leer un int en decimal. Es el que más se usa.",
-  "como_se_usa": "scanf(\"%d\",&EDAD);\nprintf(\"%d\\n\",EDAD);  // muestra: 17",
-  "error_tipico": "Usarlo con un float (sale un número raro) o en scanf sin el & delante de la variable.",
+  "que_es": "Formato que muestra o lee un número entero de tipo int en base decimal.",
+  "como_se_usa": "printf(\"%d\\n\",EDAD);  // muestra: 18\nscanf(\"%d\",&EDAD);",
+  "error_tipico": "Usarlo con float o long, o llamar a scanf sin & delante de una variable int.",
   "en_la_materia": "printf y scanf",
   "errores_ids": [
    "PRF-001",
@@ -3396,19 +3403,17 @@
    "formato printf",
    "formato scanf"
   ],
-  "detalle": "La letra d indica conversión decimal con signo.\nEn printf el argumento correspondiente debe ser un int promovido.\nEn scanf la variable va con & delante: scanf necesita su dirección para guardar el número.\nEl signo & va en la lista de argumentos de scanf y no dentro del formato.\nEl ancho opcional limita los caracteres consumidos durante una lectura.\nRelaciona este formato con int y con la diferencia entre valor y dirección.",
+  "detalle": "%d representa un número entero en base decimal, como 18 o -4. En printf se coloca el valor después del texto de formato; en scanf se coloca & antes de la variable simple para indicar dónde guardar lo leído. El formato debe coincidir con el tipo de dato: para un int se utiliza %d. Ejemplo: si EDAD vale 18, printf(\"%d\\n\",EDAD); muestra 18. Error típico: usar %d con un float o escribir scanf(\"%d\",EDAD) sin el signo &.",
   "ocasiones": [
    {
-    "cuando": "En printf, para mostrar un int en base decimal.",
-    "que_es": "Muestra el entero en base 10.",
-    "ejemplo": "printf(\"%d\\n\",EDAD);",
-    "error_tipico": "Pasar un double o long sin una conversión compatible."
+    "cuando": "En printf, para mostrar un entero.",
+    "que_es": "El valor de EDAD se reemplaza en el lugar de %d. Si vale 18, la salida es 18.",
+    "ejemplo": "int EDAD;\nEDAD=18;\nprintf(\"%d\\n\",EDAD);"
    },
    {
-    "cuando": "En scanf, para leer un int.",
-    "que_es": "Lee dígitos decimales y asigna el resultado a la dirección de un int.",
-    "ejemplo": "scanf(\"%d\",&EDAD);",
-    "error_tipico": "Olvidar &: scanf necesita la dirección del destino."
+    "cuando": "En scanf, para leer un entero.",
+    "que_es": "Los dígitos ingresados se guardan en EDAD. La dirección se indica con &.",
+    "ejemplo": "int EDAD;\nscanf(\"%d\",&EDAD);"
    }
   ],
   "relacionados": [
@@ -3615,9 +3620,9 @@
  {
   "elemento": "%f",
   "tipo": "formato",
-  "que_es": "Formato para decimales. En printf muestra float o double (6 decimales por defecto). En scanf lee un float.",
-  "como_se_usa": "printf(\"%f\\n\",NOTA);\nscanf(\"%f\",&NOTA);  // muestra: 7.500000",
-  "error_tipico": "Mostrar un int con %f, o leer un double con %f (para double es %lf).",
+  "que_es": "Formato que muestra valores decimales y que, en scanf, lee un dato para una variable float.",
+  "como_se_usa": "printf(\"%.1f\\n\",NOTA);  // muestra: 7.5\nscanf(\"%f\",&NOTA);",
+  "error_tipico": "Usar %f en scanf para leer un double, o usarlo para mostrar un int que debería llevar %d.",
   "en_la_materia": "printf y scanf",
   "errores_ids": [
    "PRF-002",
@@ -3642,19 +3647,17 @@
    "formato printf",
    "formato scanf"
   ],
-  "detalle": "Conversión de punto flotante en notación fija; printf recibe double y scanf con %f lee float.\nEn printf, el formato controla cómo se convierte un argumento en texto.\nEn scanf, controla cómo se interpreta la entrada y el tipo de destino que recibe el dato.\nEl ancho de campo y la precisión tienen significados diferentes según la función.\nComprueba siempre que el tipo de la variable coincida con el formato.\nNo agregues espacios dentro del formato.",
+  "detalle": "%f se utiliza para trabajar con números decimales. En printf muestra un valor float o double; si no se indica precisión, aparecen seis cifras decimales, y con %.2f se muestran dos. En scanf, %f corresponde a una variable float y se escribe & antes de su nombre. Ejemplo: si NOTA vale 7.5, printf(\"%.1f\\n\",NOTA); muestra 7.5. Error típico: usar %f en scanf para una variable double; en ese caso corresponde %lf.",
   "ocasiones": [
    {
-    "cuando": "En printf, para mostrar float o double con seis decimales por defecto.",
-    "que_es": "Muestra el valor en notación fija.",
-    "ejemplo": "printf(\"%f\\n\",NOTA);",
-    "error_tipico": "Los argumentos float se promocionan a double al llamar printf."
+    "cuando": "En printf, para mostrar un decimal con una cifra.",
+    "que_es": "%.1f deja una cifra después del punto. El valor 7.5 se muestra como 7.5.",
+    "ejemplo": "float NOTA;\nNOTA=7.5f;\nprintf(\"%.1f\\n\",NOTA);"
    },
    {
     "cuando": "En scanf, para leer una variable float.",
-    "que_es": "Lee el dato y lo guarda en una variable float; por eso se escribe con & delante.",
-    "ejemplo": "scanf(\"%f\",&NOTA);",
-    "error_tipico": "Para una variable double se utiliza %lf."
+    "que_es": "La lectura guarda el decimal en la variable NOTA.",
+    "ejemplo": "float NOTA;\nscanf(\"%f\",&NOTA);"
    }
   ],
   "relacionados": [
@@ -3874,9 +3877,9 @@
  {
   "elemento": "%c",
   "tipo": "formato",
-  "que_es": "Muestra o lee un carácter. Si se le pasa un número, muestra el carácter con ese código ASCII.",
-  "como_se_usa": "printf(\"%c\\n\",LETRA);\nscanf(\" %c\",&LETRA);  // muestra: Z",
-  "error_tipico": "Leer sin el espacio antes de %c: toma el Enter que quedó pendiente.",
+  "que_es": "Formato que muestra o lee un solo carácter, como una letra, un dígito o un símbolo.",
+  "como_se_usa": "printf(\"%c\\n\",LETRA);  // muestra: A\nscanf(\" %c\",&LETRA);",
+  "error_tipico": "Leer con scanf(\"%c\",&LETRA) justo después de otra lectura: puede tomar el Enter pendiente; suele convenir \" %c\".",
   "en_la_materia": "printf y scanf",
   "errores_ids": [
    "PRF-004",
@@ -3901,19 +3904,17 @@
    "formato printf",
    "formato scanf"
   ],
-  "detalle": "Conversión de un carácter; printf muestra un carácter y scanf lo guarda en una variable char.\nEn printf, el formato controla cómo se convierte un argumento en texto.\nEn scanf, controla cómo se interpreta la entrada y el tipo de destino que recibe el dato.\nEl ancho de campo y la precisión tienen significados diferentes según la función.\nComprueba siempre que el tipo de la variable coincida con el formato.\nNo agregues espacios dentro del formato.",
+  "detalle": "%c trabaja con un solo carácter guardado en una variable char. En printf muestra ese carácter y en scanf lo lee desde la entrada; para leerlo se escribe & antes de la variable. Un espacio antes de %c en el formato de scanf hace que se salten espacios y saltos de línea que hayan quedado pendientes. Ejemplo: si LETRA vale 'A', printf(\"%c\\n\",LETRA); muestra A. Error típico: usar scanf(\"%c\",&LETRA) después de leer un número y recibir el Enter pendiente en lugar de la letra esperada.",
   "ocasiones": [
    {
-    "cuando": "En printf, para mostrar un carácter.",
-    "que_es": "Muestra el carácter correspondiente al valor entero entregado.",
-    "ejemplo": "printf(\"%c\\n\",LETRA);",
-    "error_tipico": "Una cadena entre comillas dobles no es un carácter único."
+    "cuando": "En printf, para mostrar una letra.",
+    "que_es": "%c muestra el carácter guardado en LETRA.",
+    "ejemplo": "char LETRA;\nLETRA='A';\nprintf(\"%c\\n\",LETRA);"
    },
    {
-    "cuando": "En scanf, para leer el siguiente carácter disponible.",
-    "que_es": "Lee incluso espacios y saltos de línea si no se agrega un espacio previo en el formato.",
-    "ejemplo": "scanf(\" %c\",&LETRA);",
-    "error_tipico": "El espacio previo del formato descarta blancos pendientes."
+    "cuando": "En scanf, para leer el siguiente carácter que no sea un espacio en blanco.",
+    "que_es": "El espacio escrito antes de %c descarta saltos de línea y espacios pendientes.",
+    "ejemplo": "char LETRA;\nscanf(\" %c\",&LETRA);"
    }
   ],
   "relacionados": [
@@ -3925,9 +3926,9 @@
  {
   "elemento": "%s",
   "tipo": "formato",
-  "que_es": "Muestra o lee un texto (cadena de caracteres). Con scanf lee una palabra, hasta el primer espacio.",
-  "como_se_usa": "char NOMBRE[20];\nscanf(\"%s\",NOMBRE);\nprintf(\"%s\\n\",NOMBRE);",
-  "error_tipico": "Poner & delante del arreglo en scanf, o leer un texto más largo que el arreglo.",
+  "que_es": "Formato que muestra un texto o lee una palabra en un arreglo de caracteres.",
+  "como_se_usa": "scanf(\"%19s\",NOMBRE);\nprintf(\"%s\\n\",NOMBRE);  // con Ana, muestra: Ana",
+  "error_tipico": "Leer una palabra más larga que el arreglo o escribir &NOMBRE en scanf: el nombre del arreglo ya representa la dirección de su primer elemento.",
   "en_la_materia": "Texto",
   "errores_ids": [
    "ARR-032",
@@ -3950,19 +3951,17 @@
    "formato printf",
    "formato scanf"
   ],
-  "detalle": "Conversión de texto: printf muestra una cadena y scanf lee una palabra hasta el primer espacio.\nEn printf, el formato controla cómo se convierte un argumento en texto.\nEn scanf, controla cómo se interpreta la entrada y el tipo de destino que recibe el dato.\nEl ancho de campo y la precisión tienen significados diferentes según la función.\nComprueba siempre que el tipo de la variable coincida con el formato.\nNo agregues espacios dentro del formato.",
+  "detalle": "%s representa un texto terminado con el carácter especial \\0. En printf muestra sus caracteres; en scanf lee una palabra y se detiene al encontrar un espacio. Para leer en un arreglo de tamaño 20, utiliza %19s: así queda un lugar disponible para el terminador. Ejemplo: con la entrada Ana, scanf(\"%19s\",NOMBRE); y printf(\"%s\\n\",NOMBRE); muestran Ana. Error típico: olvidar limitar el ancho y permitir que la entrada supere la capacidad del arreglo; tampoco se escribe & delante del nombre del arreglo.",
   "ocasiones": [
    {
-    "cuando": "En printf, para mostrar una cadena terminada en cero.",
-    "que_es": "Imprime los bytes hasta el terminador nulo.",
-    "ejemplo": "printf(\"%s\\n\",NOMBRE);",
-    "error_tipico": "El arreglo debe contener un terminador nulo válido."
+    "cuando": "En printf, para mostrar un texto.",
+    "que_es": "Muestra los caracteres del arreglo hasta el terminador.",
+    "ejemplo": "char NOMBRE[20];\nNOMBRE[0]='A'; NOMBRE[1]='n'; NOMBRE[2]='a'; NOMBRE[3]='\\0';\nprintf(\"%s\\n\",NOMBRE);"
    },
    {
     "cuando": "En scanf, para leer una palabra sin espacios.",
-    "que_es": "Guarda bytes y agrega un terminador nulo.",
-    "ejemplo": "scanf(\"%19s\",NOMBRE);",
-    "error_tipico": "El ancho debe ser como máximo la capacidad del arreglo menos uno."
+    "que_es": "El ancho 19 evita guardar más caracteres de los que entran en NOMBRE[20].",
+    "ejemplo": "char NOMBRE[20];\nscanf(\"%19s\",NOMBRE);"
    }
   ],
   "relacionados": [
@@ -5202,9 +5201,9 @@
  {
   "elemento": "printf",
   "tipo": "función",
-  "que_es": "Muestra texto y valores en pantalla (stdio.h). El primer argumento es el texto con formatos (%d, %f, %c, %s...) y después van los valores en el mismo orden.",
-  "como_se_usa": "printf(\"Total: %d\\n\",TOTAL);  // muestra: Total: 12",
-  "error_tipico": "Poner un formato que no coincide con el tipo del dato (%d con un float) o menos datos que formatos.",
+  "que_es": "Muestra texto y valores en pantalla con formatos que indican cómo presentar cada dato; pertenece a <stdio.h>.",
+  "como_se_usa": "printf(\"Edad: %d\\n\",EDAD);  // salida: Edad: 18",
+  "error_tipico": "Usar un formato que no coincide con el tipo, por ejemplo %d para un float, o dejar un formato sin su valor correspondiente.",
   "en_la_materia": "Salida de datos",
   "errores_ids": [
    "PRE-001",
@@ -5245,17 +5244,29 @@
    "valor de retorno",
    "stdio.h"
   ],
-  "detalle": "Se usa así: printf(FORMATO, ...).\nCabecera: <stdio.h>.\nValor de retorno: cantidad de caracteres escritos (int).\nEn Editor C: Escribe en la salida del editor; admite conversiones, banderas, ancho y precisión documentados.\nError típico: Los formatos y sus argumentos deben coincidir en cantidad y tipo.\nRelación con otros elementos: scanf.",
+  "detalle": "printf muestra el texto que escribes entre comillas y reemplaza cada formato por el dato que colocas después. Se incluye el archivo cabecera <stdio.h> y sirve para presentar mensajes, resultados y tablas. %d muestra un entero, %f un decimal, %c un carácter y %s un texto; cada formato debe coincidir con su dato. Ejemplo: si EDAD vale 18, printf(\"Edad: %d\\n\",EDAD); muestra Edad: 18. Error típico: usar %d con una variable float o escribir más formatos que valores; la salida puede ser incorrecta.",
   "relacionados": [
    "scanf"
+  ],
+  "ocasiones": [
+   {
+    "cuando": "Para mostrar un mensaje junto con una variable entera.",
+    "que_es": "El formato %d se reemplaza por el valor de EDAD. Si EDAD vale 18, la salida es «Edad: 18».",
+    "ejemplo": "int EDAD;\nEDAD=18;\nprintf(\"Edad: %d\\n\",EDAD);"
+   },
+   {
+    "cuando": "Para mostrar un resultado decimal con dos cifras.",
+    "que_es": "%.2f muestra dos cifras después del punto decimal. Si TOTAL vale 25.5, la salida es «Total: 25.50».",
+    "ejemplo": "float TOTAL;\nTOTAL=25.5f;\nprintf(\"Total: %.2f\\n\",TOTAL);"
+   }
   ]
  },
  {
   "elemento": "scanf",
   "tipo": "función",
-  "que_es": "Lee datos que escribe el usuario (stdio.h). Lleva el formato y, para cada dato, la dirección de la variable con &. Devuelve cuántos datos pudo leer.",
-  "como_se_usa": "scanf(\"%d\",&EDAD);",
-  "error_tipico": "Olvidar el & delante de la variable, o usar un formato que no coincide con su tipo.",
+  "que_es": "Lee datos de la entrada y los guarda en variables; pertenece a <stdio.h>.",
+  "como_se_usa": "scanf(\"%d\",&EDAD);  // si la entrada es 18, EDAD recibe 18",
+  "error_tipico": "Olvidar & en una variable simple, como scanf(\"%d\",EDAD), o elegir un formato que no coincide con el tipo que se quiere leer.",
   "en_la_materia": "Entrada de datos",
   "errores_ids": [
    "PRE-002",
@@ -5293,11 +5304,28 @@
    "valor de retorno",
    "stdio.h"
   ],
-  "detalle": "Se usa así: scanf(FORMATO, ...).\nCabecera: <stdio.h>.\nValor de retorno: cantidad de asignaciones completadas; EOF si falla antes de asignar datos.\nEn Editor C: Lee desde la entrada del editor; admite conversiones y clases de caracteres implementadas.\nError típico: Olvidar & en variables escalares o no limitar el ancho de %s.\nRelación con otros elementos: printf.",
+  "detalle": "scanf lee datos de la entrada y los guarda en las variables indicadas después del formato. Se incluye <stdio.h> y se utiliza, por ejemplo, para pedir una edad, una cantidad o una nota. En variables simples se escribe & antes del nombre porque scanf necesita saber dónde guardar el dato; en un arreglo de caracteres usado con %s no se agrega ese signo. Ejemplo: con la entrada 18, scanf(\"%d\",&EDAD); guarda 18 en EDAD. Error típico: olvidar & o elegir un formato que no corresponde al tipo de la variable.",
   "relacionados": [
    "printf"
   ],
-  "nivel": "avanzado"
+  "nivel": "avanzado",
+  "ocasiones": [
+   {
+    "cuando": "Para leer un número entero.",
+    "que_es": "%d interpreta los dígitos como un int y &EDAD indica dónde guardar el valor. Con la entrada 18, EDAD queda en 18.",
+    "ejemplo": "int EDAD;\nscanf(\"%d\",&EDAD);"
+   },
+   {
+    "cuando": "Para leer un decimal en una variable float.",
+    "que_es": "%f lee un número decimal y lo guarda en la dirección de la variable. Con la entrada 7.5, NOTA recibe 7.5.",
+    "ejemplo": "float NOTA;\nscanf(\"%f\",&NOTA);"
+   },
+   {
+    "cuando": "Para leer una palabra en un arreglo.",
+    "que_es": "%19s guarda como máximo 19 caracteres y agrega el terminador. NOMBRE[20] reserva un lugar para ese terminador.",
+    "ejemplo": "char NOMBRE[20];\nscanf(\"%19s\",NOMBRE);"
+   }
+  ]
  },
  {
   "elemento": "getchar",
@@ -9272,9 +9300,9 @@
  {
   "elemento": "función",
   "tipo": "concepto",
-  "que_es": "Un bloque de instrucciones con nombre que se puede llamar desde otras partes. Puede recibir datos (parámetros) y devolver un resultado.",
-  "como_se_usa": "int DOBLE(int X){\n return X*2;\n}",
-  "error_tipico": "Llamarla antes de definirla sin haber puesto su prototipo.",
+  "que_es": "Es un bloque de instrucciones con nombre que se puede llamar desde otras partes del programa.",
+  "como_se_usa": "int DOBLE(int X){ return X*2; }\nprintf(\"%d\\n\",DOBLE(5));  // muestra: 10",
+  "error_tipico": "Llamarla antes de que el compilador conozca su prototipo, o no devolver el resultado en una función cuyo tipo no es void.",
   "en_la_materia": "Funciones",
   "errores_ids": [
    "FUN-001",
@@ -9291,17 +9319,22 @@
    "definir funcion",
    "llamar funcion"
   ],
-  "detalle": "Una función es un bloque de instrucciones con nombre. Cuando la llamas, el programa va a ese bloque, lo ejecuta y vuelve al lugar desde donde la llamaste.\nSirve para no repetir las mismas instrucciones y para dividir un problema grande en partes pequeñas, cada una con un nombre que dice qué hace.\nSe ve así: tipo de retorno, nombre, parámetros entre paréntesis y el cuerpo entre llaves. Se llama escribiendo el nombre con los datos entre paréntesis: R=DOBLE(5);\nLo que suele confundir: escribir la función no la ejecuta; solo corre cuando alguien la llama. Además, printf y scanf también son funciones: ya vienen hechas y por eso se incluye stdio.h.\nOtro detalle: si la función devuelve un valor y no lo guardas ni lo muestras, se pierde. DOBLE(5); solo, en una línea, no muestra nada en pantalla.\nError típico: llamar a la función antes de definirla sin haber escrito su prototipo. gcc avisa implicit declaration of function y, si el tipo no coincide, da error.",
+  "detalle": "Una función reúne instrucciones que realizan una tarea y permite darles un nombre. Sirve para dividir un problema en partes pequeñas y evitar repetir el mismo código. Puede recibir datos entre paréntesis y devolver un resultado con return; si su tipo es void, realiza una acción sin entregar un valor. Ejemplo: DOBLE(5) devuelve 10 y printf puede mostrar ese resultado. Error típico: llamar a una función antes de declarar su prototipo o calcular un valor sin devolverlo con return.",
   "ocasiones": [
    {
-    "cuando": "Función que devuelve un valor.",
-    "que_es": "Recibe un dato, calcula y lo entrega con return. Muestra 10.",
+    "cuando": "Una función que devuelve un valor.",
+    "que_es": "Recibe un entero, lo multiplica por dos y devuelve el resultado; DOBLE(5) produce 10.",
     "ejemplo": "int DOBLE(int X){ return X*2; }\nint main(){ printf(\"%d\\n\",DOBLE(5)); }"
    },
    {
-    "cuando": "Función que no devuelve nada.",
-    "que_es": "Con void solo hace una tarea (mostrar). Muestra el texto una vez por llamada.",
+    "cuando": "Una función que realiza una acción sin devolver un valor.",
+    "que_es": "SALUDAR muestra un mensaje cada vez que se llama.",
     "ejemplo": "void SALUDAR(){ printf(\"Hola\\n\"); }\nint main(){ SALUDAR(); }"
+   },
+   {
+    "cuando": "Una función que usa el resultado de otra función.",
+    "que_es": "MAYOR llama a ABSOLUTO para comparar los valores positivos y devuelve el mayor.",
+    "ejemplo": "int ABSOLUTO(int N){ if(N<0) return -N; return N; }\nint MAYOR(int A,int B){ if(ABSOLUTO(A)>ABSOLUTO(B)) return ABSOLUTO(A); return ABSOLUTO(B); }"
    }
   ],
   "relacionados": [
@@ -9588,9 +9621,9 @@
  {
   "elemento": "contador",
   "tipo": "concepto",
-  "que_es": "Variable que sube (o baja) siempre la misma cantidad, normalmente de a 1, cada vez que pasa algo. Cuenta cuántas veces ocurre un hecho.",
-  "como_se_usa": "CONT=0;\nCONT=CONT+1;",
-  "error_tipico": "No iniciarlo en 0 antes del lazo.",
+  "que_es": "Es una variable que aumenta o disminuye en una cantidad fija para contar cuántas veces ocurre algo.",
+  "como_se_usa": "CONT=0;\nCONT=CONT+1;  // después de tres aumentos, CONT vale 3",
+  "error_tipico": "Inicializarlo dentro del lazo o incrementarlo en todas las vueltas cuando solo debería contar las que cumplen una condición.",
   "en_la_materia": "LC, LR",
   "errores_ids": [
    "DEC-006",
@@ -9604,22 +9637,17 @@
    "cantidad de veces",
    "conteo"
   ],
-  "detalle": "Un contador es una variable que cuenta cuántas veces ocurre algo. Sube siempre la misma cantidad (casi siempre de a 1) cada vez que se cumple el hecho que interesa.\nSirve para responder preguntas del tipo ¿cuántos?: cuántos días llovió, cuántos goles se hicieron, cuántos precios superan un valor.\nSe ve en tres pasos: se inicia antes del lazo (CONT=0;), se incrementa dentro (CONT=CONT+1;) y se usa después. También puede bajar: CONT=CONT-1; para una cuenta regresiva.\nLo que suele confundir: el contador cuenta hechos, no suma datos. Si lo que sumas es el dato mismo (el precio, los milímetros) eso es un acumulador.\nOtro detalle: un contador también puede decidir cuándo termina un lazo condicional, por ejemplo cuando llegó a cierta cantidad.\nError típico: iniciarlo dentro del lazo. Se pone en 0 en cada vuelta y al final siempre vale 1 (o 0).",
+  "detalle": "Un contador guarda la cantidad de veces que ocurre un hecho. Se inicia antes del lazo, normalmente en cero, y se aumenta cuando se cumple la condición que interesa. Se utiliza para contar días con lluvia, productos agotados o datos que superan un límite. Ejemplo: si tres temperaturas superan 30, el contador termina en 3. Error típico: volver a ponerlo en cero dentro del lazo; así se pierde lo contado en las vueltas anteriores.",
   "ocasiones": [
    {
-    "cuando": "Contar los días que cumplen una condición.",
-    "que_es": "El contador sube solo cuando el dato es mayor que 0. Hay 3 días de lluvia en el arreglo, y se muestra 3.",
-    "ejemplo": "int MM[5]={0,12,0,3,8};\nint i, LLUVIA=0;\nfor(i=0;i<5;i++){ if(MM[i]>0){ LLUVIA=LLUVIA+1; } }\nprintf(\"%d\\n\",LLUVIA);"
+    "cuando": "Contar los elementos que cumplen una condición.",
+    "que_es": "El contador aumenta solo cuando la cantidad de lluvia es mayor que cero; el resultado es 3.",
+    "ejemplo": "int MM[5], i, LLUVIA;\nLLUVIA=0;\nMM[0]=0; MM[1]=12; MM[2]=0; MM[3]=3; MM[4]=8;\nfor(i=0;i<5;i++){ if(MM[i]>0) LLUVIA=LLUVIA+1; }\nprintf(\"%d\\n\",LLUVIA);  // muestra: 3"
    },
    {
-    "cuando": "Contador que baja.",
-    "que_es": "Cuenta regresiva: se resta 1 en cada vuelta hasta llegar a 0. Muestra 3, 2 y 1.",
-    "ejemplo": "int FALTAN=3;\nwhile(FALTAN>0){ printf(\"%d\\n\",FALTAN); FALTAN=FALTAN-1; }"
-   },
-   {
-    "cuando": "Error: iniciarlo adentro del lazo.",
-    "que_es": "Se vuelve a poner en 0 en cada vuelta; solo queda lo que cuenta la última. Muestra 1, aunque hay 3 días de lluvia.",
-    "ejemplo": "int MM[5]={0,12,0,3,8};\nint i, LLUVIA;\nfor(i=0;i<5;i++){ LLUVIA=0; if(MM[i]>0){ LLUVIA=LLUVIA+1; } }\nprintf(\"%d\\n\",LLUVIA);"
+    "cuando": "Hacer una cuenta regresiva.",
+    "que_es": "El contador disminuye una unidad por vuelta y se detiene al llegar a cero.",
+    "ejemplo": "int FALTAN;\nFALTAN=3;\nwhile(FALTAN>0){\n printf(\"%d\\n\",FALTAN);\n FALTAN=FALTAN-1;\n}"
    }
   ],
   "relacionados": [
@@ -9634,9 +9662,9 @@
  {
   "elemento": "acumulador",
   "tipo": "concepto",
-  "que_es": "Variable donde se va sumando (o multiplicando) un valor distinto en cada vuelta. Se inicia en 0 para sumas y en 1 para productos.",
-  "como_se_usa": "SUMA=0;\nSUMA=SUMA+A;",
-  "error_tipico": "Iniciar en 0 un acumulador de productos: todo da 0.",
+  "que_es": "Es una variable que conserva un total parcial y lo actualiza al sumar o multiplicar nuevos datos.",
+  "como_se_usa": "SUMA=0;\nSUMA=SUMA+DATO;  // agrega el dato al total anterior",
+  "error_tipico": "Olvidar darle un valor inicial antes de sumar o reiniciarlo dentro del lazo; para un producto, empezar en cero hace que el resultado siempre sea cero.",
   "en_la_materia": "LC, LR",
   "errores_ids": [
    "DEC-005",
@@ -9654,17 +9682,17 @@
    "total",
    "sumatoria"
   ],
-  "detalle": "Un acumulador es una variable en la que se va juntando un resultado: en cada vuelta se le suma (o se le multiplica) el dato que corresponde, y el valor total queda al final.\nSirve para obtener totales: la plata de una compra, los goles de un torneo, los milímetros de lluvia de un mes.\nSe ve en tres pasos: se inicia antes del lazo, se actualiza adentro (TOTAL=TOTAL+PRECIO;) y se usa al terminar. Para sumar se inicia en 0; para multiplicar, en 1.\nLo que suele confundir: contador y acumulador se parecen. El contador suma siempre lo mismo (+1); el acumulador suma el dato, que cambia en cada vuelta.\nOtro detalle: con float las sumas pueden tener una diferencia mínima (sumar diez veces 0.1 puede dar 1.0000001 si se muestran 7 decimales). Por eso se muestra con %.2f y no con todos los decimales.\nError típico: iniciar en 0 un acumulador de productos (todo da 0) o no iniciarlo (arranca en basura).",
+  "detalle": "Un acumulador reúne varios valores en una sola variable para obtener un total o un producto. Para sumar se inicia en cero; para multiplicar, normalmente se inicia en uno. Dentro del lazo se actualiza usando el valor anterior, por ejemplo SUMA=SUMA+PRECIO. Ejemplo: al acumular 12, 8 y 5, el total final es 25. Error típico: no inicializarlo antes del lazo o volver a ponerlo en cero en cada vuelta, porque se pierde el resultado parcial.",
   "ocasiones": [
    {
-    "cuando": "Acumulador de suma.",
-    "que_es": "Se suma cada precio al total. 12.5 + 8 + 20.25 + 5 da 45.75.",
-    "ejemplo": "float PRECIO[4]={12.5,8,20.25,5};\nfloat TOTAL=0; int i;\nfor(i=0;i<4;i++){ TOTAL=TOTAL+PRECIO[i]; }\nprintf(\"%.2f\\n\",TOTAL);"
+    "cuando": "Acumular una suma.",
+    "que_es": "Cada precio se agrega al total anterior; 12.5 + 8 + 20.25 + 5 da 45.75.",
+    "ejemplo": "float PRECIO[4], TOTAL;\nint i;\nPRECIO[0]=12.5f; PRECIO[1]=8.0f; PRECIO[2]=20.25f; PRECIO[3]=5.0f;\nTOTAL=0;\nfor(i=0;i<4;i++) TOTAL=TOTAL+PRECIO[i];\nprintf(\"%.2f\\n\",TOTAL);  // muestra: 45.75"
    },
    {
-    "cuando": "Acumulador de producto.",
-    "que_es": "Se inicia en 1 y se multiplica en cada vuelta: 1x2x3x4 da 24. Muestra 24.",
-    "ejemplo": "int P=1, i;\nfor(i=1;i<=4;i++){ P=P*i; }\nprintf(\"%d\\n\",P);"
+    "cuando": "Acumular un producto.",
+    "que_es": "El valor inicial es uno y en cada vuelta se multiplica por el siguiente número. El resultado de 1 por 2 por 3 por 4 es 24.",
+    "ejemplo": "int PRODUCTO, i;\nPRODUCTO=1;\nfor(i=1;i<=4;i++) PRODUCTO=PRODUCTO*i;\nprintf(\"%d\\n\",PRODUCTO);  // muestra: 24"
    }
   ],
   "relacionados": [
@@ -9887,9 +9915,9 @@
  {
   "elemento": "arreglo",
   "tipo": "concepto",
-  "que_es": "Conjunto de variables del mismo tipo con un solo nombre; cada una se elige con un índice que empieza en 0. También se llama vector o array.",
-  "como_se_usa": "int V[3]={10,20,30};\nprintf(\"%d\\n\",V[1]);",
-  "error_tipico": "Usar el índice igual al tamaño: V[3] en un arreglo de 3 está fuera de rango.",
+  "que_es": "Es un conjunto de elementos del mismo tipo que comparten un nombre y se distinguen por su posición.",
+  "como_se_usa": "int V[3];\nV[0]=10; V[1]=20; V[2]=30;\nprintf(\"%d\\n\",V[1]);  // muestra: 20",
+  "error_tipico": "Usar el índice igual al tamaño del arreglo: en V[3], las posiciones válidas son 0, 1 y 2.",
   "en_la_materia": "Arreglos",
   "errores_ids": [
    "ARR-001",
@@ -9914,17 +9942,17 @@
    "segmentation fault",
    "se sale del arreglo"
   ],
-  "detalle": "Un arreglo es un conjunto de variables del mismo tipo que comparten un nombre. Cada una se elige con un número, el índice, que empieza en 0.\nSirve para guardar varios datos parecidos (5 notas, 7 temperaturas) sin tener que inventar un nombre distinto para cada uno.\nSe declara con el tamaño entre corchetes: int NOTAS[4]; y puede llevar valores desde el inicio: int NOTAS[4]={7,9,6,10};. Se usa con NOTAS[2], que es el tercer elemento.\nLo que suele confundir: el número de la declaración es la cantidad, pero el número al usarlo es la posición. En int NOTAS[4] las posiciones válidas son 0, 1, 2 y 3; NOTAS[4] ya está fuera.\nOtro detalle: si das menos valores que el tamaño, el resto queda en 0. Si no das ninguno y es local, tiene basura.\nError típico: copiar un arreglo con B=A; (gcc: assignment to expression with array type) o usar un índice igual al tamaño, que se sale del arreglo.",
+  "detalle": "Un arreglo permite guardar varios datos del mismo tipo bajo un solo nombre. Se utiliza cuando se necesita trabajar con una lista de temperaturas, precios, edades u otros valores relacionados. Cada elemento se consulta con un índice entre corchetes y el primer índice es 0; por eso, un arreglo de 3 elementos tiene las posiciones 0, 1 y 2. Ejemplo: si V[1] vale 20, printf(\"%d\\n\",V[1]); muestra 20. Error típico: intentar acceder a V[3] cuando el arreglo tiene tamaño 3, porque esa posición no existe.",
   "ocasiones": [
    {
-    "cuando": "Leer un elemento.",
-    "que_es": "La posición 2 es el tercer valor. Muestra 6.",
-    "ejemplo": "int NOTAS[4]={7,9,6,10};\nprintf(\"%d\\n\",NOTAS[2]);"
+    "cuando": "Al consultar un elemento por su índice.",
+    "que_es": "El índice 1 señala el segundo elemento, no el primero.",
+    "ejemplo": "int V[3];\nV[0]=10; V[1]=20; V[2]=30;\nprintf(\"%d\\n\",V[1]);  // muestra: 20"
    },
    {
-    "cuando": "Menos valores que el tamaño.",
-    "que_es": "Los que no se escriben quedan en 0. Muestra 1 2 0 0 0.",
-    "ejemplo": "int V[5]={1,2};\nint i;\nfor(i=0;i<5;i++){ printf(\"%d \",V[i]); }"
+    "cuando": "Al recorrer todos los elementos.",
+    "que_es": "El lazo visita las posiciones 0, 1 y 2 de un arreglo con tres elementos.",
+    "ejemplo": "int V[3], i;\nfor(i=0;i<3;i++){\n V[i]=i+1;\n printf(\"%d \",V[i]);\n}\n// muestra: 1 2 3"
    }
   ],
   "relacionados": [
@@ -10180,9 +10208,9 @@
  {
   "elemento": "división entera",
   "tipo": "concepto",
-  "que_es": "Cuando los dos operandos de / son enteros, el resultado también es entero y se pierde la parte decimal: 7/2 da 3 y 1/2 da 0.",
-  "como_se_usa": "printf(\"%d\\n\",7/2);",
-  "error_tipico": "Esperar 3.5: para eso uno de los dos tiene que ser decimal, como 7/2.0.",
+  "que_es": "Ocurre cuando se dividen dos enteros: el resultado también es entero y se descarta la parte decimal.",
+  "como_se_usa": "printf(\"%d %.1f\\n\",7/2,7.0/2);  // muestra: 3 3.5",
+  "error_tipico": "Guardar la división entera en una variable float y esperar que aparezcan los decimales perdidos.",
   "en_la_materia": "Operadores, tipos",
   "errores_ids": [
    "LOG-003",
@@ -10204,17 +10232,17 @@
    "sin decimales",
    "division"
   ],
-  "detalle": "Cuando los dos lados de / son enteros, C hace una división de enteros: da el cociente y descarta lo que sobra.\nNo redondea, corta: 7/2 da 3, 1/2 da 0 y -7/2 da -3 (se corta hacia el cero).\nLo que sobra lo da el operador %: 7%2 da 1.\nPara tener decimales alcanza con que UNO de los dos lados sea decimal: 7/2.0 o (float)7/2 dan 3.5.\nLo que confunde: el tipo de la variable donde guardas el resultado no cambia la cuenta. En float R=7/2; la división ya se hizo entera y R vale 3.000000.\nError típico: esperar 3.5 de 7/2, o escribir (float)(A/B), donde los decimales ya se perdieron dentro del paréntesis.",
+  "detalle": "La división entera aparece cuando los dos operandos de / son enteros. C calcula el cociente y descarta lo que sobra: 7/2 da 3 y 1/2 da 0. El operador % permite obtener el resto; por ejemplo, 7%2 da 1. Para obtener decimales, uno de los operandos debe ser decimal antes de realizar la división, como en 7.0/2, que da 3.5. Error típico: guardar 7/2 en una variable float y esperar 3.5; el resultado ya se calculó como entero antes de guardarse.",
   "ocasiones": [
    {
-    "cuando": "Con dos int.",
-    "que_es": "Cociente sin decimales, y % da lo que sobra.",
-    "ejemplo": "int A=9, B=4;\nprintf(\"%d %d\\n\",A/B,A%B);  // muestra: 2 1"
+    "cuando": "Con dos valores enteros.",
+    "que_es": "La salida muestra primero el cociente y después el resto: 7 dividido 2 da 3 y sobra 1.",
+    "ejemplo": "printf(\"%d %d\\n\",7/2,7%2);  // muestra: 3 1"
    },
    {
-    "cuando": "Cuando uno de los dos es decimal.",
-    "que_es": "La cuenta se hace con decimales.",
-    "ejemplo": "int A=9, B=4;\nprintf(\"%.2f\\n\",(float)A/B);  // muestra: 2.25"
+    "cuando": "Al necesitar un resultado decimal.",
+    "que_es": "El número 7.0 hace que la división se realice con decimales.",
+    "ejemplo": "printf(\"%.1f\\n\",7.0/2);  // muestra: 3.5"
    }
   ],
   "relacionados": [
@@ -10525,9 +10553,9 @@
  {
   "elemento": "promedio",
   "tipo": "concepto",
-  "que_es": "La suma de los datos dividida por la cantidad. Hay que evitar dividir por cero si no se cargó ningún dato, y convertir a decimal para no perder la parte decimal.",
-  "como_se_usa": "PROM=(float)SUMA/N;\nprintf(\"%g\\n\",PROM);  // muestra: 3.5",
-  "error_tipico": "Dividir dos enteros: el promedio sale truncado. Dividir con N=0: con enteros el programa se cierra con error; con decimales da inf o nan.",
+  "que_es": "Es el resultado de dividir la suma de varios datos por la cantidad de datos.",
+  "como_se_usa": "PROMEDIO=SUMA/(CANTIDAD*1.0);  // con 85 y 4, da 21.25",
+  "error_tipico": "Dividir por cero cuando no hay datos o dividir dos enteros y perder la parte decimal del promedio.",
   "en_la_materia": "LC, acumulador",
   "errores_ids": [
    "LOG-002",
@@ -10544,17 +10572,17 @@
    "promedio da 0",
    "promedio sin decimales"
   ],
-  "detalle": "El promedio de unos datos es la suma de todos dividida por cuántos son. Por eso necesitas dos cosas: una suma y una cantidad.\nCon precios 10, 20, 25 y 30 la suma es 85, hay 4 datos y el promedio es 21.25.\nEn C la suma se guarda en una variable (acumulador) y la cantidad en otra (contador), y se divide recién al final.\nLo que confunde: la división entera. Con SUMA y N enteros, SUMA/N corta los decimales y da 21, no 21.25. Convierte uno de los dos: (float)SUMA/N.\nOtra trampa es no tener ningún dato: N vale 0. Con enteros, el programa se cierra con error; con decimales sale inf o nan.\nPor eso conviene preguntar if(N>0) antes de dividir.\nError típico: dividir dentro del lazo en cada vuelta, en vez de esperar a tener la suma completa.",
+  "detalle": "Para calcular un promedio necesitas sumar los datos y contar cuántos hay. La suma se guarda en un acumulador y la cantidad en un contador; al terminar, divides la suma por esa cantidad. Si ambos valores son enteros, la división entera puede quitar los decimales, por eso uno de los operandos debe ser decimal. Ejemplo: 85 dividido por 4.0 da 21.25. Error típico: dividir cuando la cantidad vale cero o usar una división entera sin darse cuenta.",
   "ocasiones": [
    {
-    "cuando": "Con enteros y con conversión.",
-    "que_es": "Sin la conversión se pierde la parte decimal.",
-    "ejemplo": "int SUMA=85, N=4;\nprintf(\"%d %.2f\\n\",SUMA/N,(float)SUMA/N);  // muestra: 21 21.25"
+    "cuando": "Calcular el promedio de una suma entera.",
+    "que_es": "85/4 da 21 por división entera, mientras que 85/4.0 conserva el decimal y da 21.25.",
+    "ejemplo": "int SUMA, CANT;\nfloat PROM;\nSUMA=85; CANT=4;\nPROM=SUMA/(CANT*1.0);\nprintf(\"%.2f\\n\",PROM);  // muestra: 21.25"
    },
    {
-    "cuando": "Cuando puede no haber datos.",
-    "que_es": "Se evita dividir por cero.",
-    "ejemplo": "int SUMA=0, N=0;\nif(N>0) printf(\"%.2f\\n\",(float)SUMA/N);\nelse puts(\"Sin datos\");  // muestra: Sin datos"
+    "cuando": "Evitar una división cuando no se cargaron datos.",
+    "que_es": "El programa comprueba que la cantidad sea mayor que cero antes de calcular.",
+    "ejemplo": "int SUMA, CANT;\nSUMA=0; CANT=0;\nif(CANT>0) printf(\"%.2f\\n\",SUMA/(CANT*1.0));\nelse printf(\"Sin datos\\n\");"
    }
   ],
   "relacionados": [
@@ -10569,9 +10597,9 @@
  {
   "elemento": "máximo y mínimo",
   "tipo": "concepto",
-  "que_es": "Para hallar el mayor (o menor) de una serie se guarda el mejor valor visto hasta el momento y se lo compara con cada dato nuevo.",
-  "como_se_usa": "if(A>MAX) MAX=A;",
-  "error_tipico": "Iniciar MAX en 0: si todos los datos son negativos, queda mal. Mejor iniciarlo con el primer dato.",
+  "que_es": "Son el mayor y el menor valor de una serie de datos.",
+  "como_se_usa": "if(DATO>MAXIMO) MAXIMO=DATO;\nif(DATO<MINIMO) MINIMO=DATO;",
+  "error_tipico": "Iniciar el máximo o el mínimo con cero sin saber si los datos pueden ser negativos o positivos; utiliza el primer dato como referencia inicial.",
   "en_la_materia": "LC, BC",
   "errores_ids": [
    "LOG-029",
@@ -10588,17 +10616,17 @@
    "el mas chico",
    "mayor de una serie"
   ],
-  "detalle": "Para hallar el mayor de unos datos (el máximo) se guarda el mejor valor visto hasta ahora y se compara con cada dato nuevo. Para el menor (el mínimo) se hace lo mismo con la comparación al revés.\nLa comparación cambia la variable solo cuando el dato nuevo le gana: if(DATO>MAX) MAX=DATO;. Con el menor, if(DATO<MIN) MIN=DATO;.\nCon goles 2, 5, 1 y 4, MAX pasa por 2, luego 5, y ahí se queda.\nLo que confunde: con datos iguales, > deja el primero que apareció y >= deja el último. Elige según lo que pida el enunciado.\nError típico: iniciar MAX en 0. Si todos los datos son negativos (temperaturas bajo cero, por ejemplo), MAX se queda en 0, que no es ningún dato.\nLo seguro es iniciarlo con el primer dato; si el valor inicial es fijo, debe ser menor que cualquier dato posible.",
+  "detalle": "Para encontrar el máximo se guarda el mayor valor encontrado hasta el momento; para el mínimo se guarda el menor. Al leer el primer dato, se puede usar como valor inicial de ambos, y luego comparar cada dato nuevo. Si el dato supera MAXIMO, se actualiza MAXIMO; si es menor que MINIMO, se actualiza MINIMO. Ejemplo: en la serie 4, 9 y 2, el máximo es 9 y el mínimo es 2. Error típico: iniciar el máximo en cero cuando todos los datos podrían ser negativos; conviene comenzar con el primer dato real.",
   "ocasiones": [
    {
-    "cuando": "Cada dato nuevo se compara con el mejor hasta ahora.",
-    "que_es": "Solo cambia si el nuevo es mayor.",
-    "ejemplo": "int MAX=3;\nint G=5;\nif(G>MAX) MAX=G;\nprintf(\"%d\\n\",MAX);  // muestra: 5"
+    "cuando": "Actualizar el máximo con un dato nuevo.",
+    "que_es": "El máximo cambia de 3 a 5 porque el nuevo dato es mayor.",
+    "ejemplo": "int MAXIMO, DATO;\nMAXIMO=3; DATO=5;\nif(DATO>MAXIMO) MAXIMO=DATO;\nprintf(\"%d\\n\",MAXIMO);  // muestra: 5"
    },
    {
-    "cuando": "Con temperaturas bajo cero.",
-    "que_es": "Si MAX arranca en 0, ningún dato negativo le gana.",
-    "ejemplo": "int MAX=0;\nint T=-3;\nif(T>MAX) MAX=T;\nprintf(\"%d\\n\",MAX);  // muestra: 0 (no es ningún dato)"
+    "cuando": "Trabajar con números negativos.",
+    "que_es": "Al comenzar con el primer dato, el máximo puede ser negativo y sigue representando un valor real de la serie.",
+    "ejemplo": "int MAXIMO, DATO;\nMAXIMO=-8; DATO=-3;\nif(DATO>MAXIMO) MAXIMO=DATO;\nprintf(\"%d\\n\",MAXIMO);  // muestra: -3"
    }
   ],
   "relacionados": [
@@ -11014,9 +11042,9 @@
  {
   "elemento": "operador",
   "tipo": "concepto",
-  "que_es": "Símbolo que hace una operación con uno o más valores: + - * / % = == != < > && || !",
-  "como_se_usa": "R=A+B;\nprintf(\"%d\\n\",R);  // muestra: 3",
-  "error_tipico": "Escribir operadores de otros lenguajes (<>, and, ^ para potencia).",
+  "que_es": "Es un símbolo que realiza una operación con uno o más valores, como sumar, comparar o asignar.",
+  "como_se_usa": "RESULTADO=A+B;\nif(RESULTADO>=10) printf(\"Alcanza\\n\");",
+  "error_tipico": "Confundir = con ==, escribir <> para comparar o usar ^ como potencia: son símbolos con otros significados en C.",
   "en_la_materia": "Operadores",
   "errores_ids": [
    "OPE-028",
@@ -11029,17 +11057,17 @@
    "simbolo",
    "operadores"
   ],
-  "detalle": "Un operador es un símbolo que hace una operación con uno o más valores, que se llaman operandos.\nHay operadores de cuenta (+ - * / %), de comparación (== != < > <= >=), de lógica (&& || !) y de asignación (= += -=).\nLos hay con dos operandos (A+B), con uno (-A, !A, A++) y uno con tres (?:).\nCada operador da un valor, y por eso se pueden combinar en una sola expresión; la prioridad decide cuál se hace primero.\nLo que confunde: el mismo símbolo puede hacer cosas distintas. El - resta entre dos valores y cambia el signo delante de uno.\nError típico: usar los operadores de otros lenguajes: <> en vez de !=, and en vez de && y ^ para la potencia. En C, ^ es otra operación (o exclusivo bit a bit): 2^3 da 1. La potencia es pow(2,3), de math.h.",
+  "detalle": "Los operadores permiten realizar cuentas, comparar valores y combinar condiciones. Los aritméticos incluyen +, -, * y /; los de comparación incluyen ==, !=, < y >=; los lógicos son &&, || y !. El símbolo = asigna un valor, mientras que == comprueba si dos valores son iguales. Ejemplo: si A vale 4 y B vale 6, A+B produce 10 y A==B resulta falso. Error típico: escribir and u or como en otros lenguajes, o usar ^ pensando que representa una potencia; en C la potencia se calcula con funciones de <math.h>.",
   "ocasiones": [
    {
-    "cuando": "Operador con dos operandos.",
-    "que_es": "Suma los dos valores.",
-    "ejemplo": "int A=2, B=1;\nprintf(\"%d\\n\",A+B);  // muestra: 3"
+    "cuando": "Con operadores aritméticos.",
+    "que_es": "La suma de 4 y 6 produce 10.",
+    "ejemplo": "int A, B;\nA=4; B=6;\nprintf(\"%d\\n\",A+B);  // muestra: 10"
    },
    {
-    "cuando": "^ no es la potencia.",
-    "que_es": "Es el o exclusivo; la potencia se hace con pow.",
-    "ejemplo": "int A=2, B=3;\nprintf(\"%d %.0f\\n\",A^B,pow(A,B));  // muestra: 1 8"
+    "cuando": "Con operadores lógicos.",
+    "que_es": "La condición es verdadera porque A es mayor que cero y B es menor que diez.",
+    "ejemplo": "int A, B;\nA=4; B=6;\nif(A>0 && B<10) printf(\"Correcto\\n\");"
    }
   ],
   "relacionados": [

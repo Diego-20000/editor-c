@@ -150,9 +150,9 @@ const check = (c, m) => { if (c) { ok++; console.log('  ok   ' + m); } else { fa
     await p9.goto(url); await p9.waitForSelector('#code');
     if (lab === 'celular') await p9.click('#more summary');
     await p9.click('#exBtn'); await p9.waitForSelector('#dEj[open]');
-    check((await p9.$$('#exList h3')).length >= 8, 'ejemplos (' + lab + '): se listan los temas');
-    await p9.click('.chipbtn:has-text("Repetitivas")');
-    check((await p9.$$('#exList h3')).length === 1, 'ejemplos (' + lab + '): filtrar por tema muestra solo ese tema');
+    check((await p9.$$('#exList h3')).length >= 4, 'ejemplos (' + lab + '): se listan los niveles');
+    await p9.click('.chipbtn:has-text("Medio")');
+    check((await p9.$$('#exList h3')).length === 1, 'ejemplos (' + lab + '): filtrar por nivel muestra solo ese nivel');
     await p9.click('.exrow:has-text("Suma de los dígitos")'); await p9.waitForTimeout(300);
     check(!(await p9.$('#dEj[open]')), 'ejemplos (' + lab + '): el diálogo se cierra al elegir');
     check((await p9.inputValue('#inTxt')) === '4825\n', 'ejemplos (' + lab + '): la entrada de muestra queda cargada');
@@ -418,7 +418,7 @@ const check = (c, m) => { if (c) { ok++; console.log('  ok   ' + m); } else { fa
       await pg.goto(url); await pg.waitForSelector('#code');
       if (w < 1100 && await pg.evaluate(() => !document.getElementById('more').open)) await pg.click('#more summary'); await pg.click('#exBtn'); await pg.waitForSelector('#dEx[open], dialog[open]');
       const d = await pg.evaluate(() => { const e = document.getElementById('exChips'); return { cut: e.scrollWidth > e.clientWidth + 1, n: e.children.length }; });
-      check(!d.cut && d.n > 4, 'ejemplos (' + w + ' px): las ' + d.n + ' categorías se ven completas');
+      check(!d.cut && d.n >= 4, 'ejemplos (' + w + ' px): las ' + d.n + ' categorías se ven completas');
       const dentro = await pg.evaluate(() => { const r = document.querySelector('dialog[open]').getBoundingClientRect(); return r.top >= 0 && r.bottom <= innerHeight + 1; });
       check(dentro, 'ejemplos (' + w + ' px): el diálogo entra en la pantalla (el botón Cerrar se ve)');
       await cx.close();
