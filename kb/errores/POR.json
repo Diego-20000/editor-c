@@ -122,11 +122,11 @@
   "que_dice_gcc": "archivo.c:2: warning: return type of 'main' is not 'int' [-Wmain]",
   "mensaje_editor": "Línea 2: main tiene que devolver int. Con void main funciona en Code::Blocks pero gcc avisa.",
   "explicacion": "El estándar de C pide que main devuelva un int: ese número le dice al sistema si el programa terminó bien (0). Algunos compiladores de Windows aceptan void main, pero gcc avisa y otros pueden rechazarlo.",
-  "como_arreglarlo": "Escribe int main() y termina con return 0;.",
+  "como_arreglarlo": "Escribe int main().",
   "pistas": [
    "gcc avisa algo sobre el tipo de main. ¿Qué tipo tiene que tener?",
    "main devuelve un número al sistema operativo.",
-   "Cambia void por int y pon return 0; al final."
+   "Cambia void por int."
   ],
   "relacion_con_la_materia": "estructura del programa",
   "deteccion": "estatica",

@@ -3,7 +3,7 @@
    (por ejemplo '5491112345678'). Vacío = el botón abre WhatsApp sin destinatario. */
 (function (root) {
   'use strict';
-  var CONFIG = { WHATSAPP_NUMERO: '5491137781528', VERSION: '1f0c277c8977' };
+  var CONFIG = { WHATSAPP_NUMERO: '5491137781528', VERSION: '1291ea4593ba' };
   if (typeof module !== 'undefined' && module.exports) module.exports = CONFIG;
   else root.CONFIG = CONFIG;
 })(typeof self !== 'undefined' ? self : this);

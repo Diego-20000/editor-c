@@ -1264,11 +1264,11 @@
    "El promedio es la suma dividida por la cantidad de datos.",
    "Si no se cargó ningún dato, la cantidad es 0 y dividir por cero no da un resultado válido (con enteros el programa se cierra con error).",
    "Por eso se pregunta con un if si la cantidad es mayor que 0 antes de dividir.",
-   "Además, si SUMA y CANT son enteros, la división pierde los decimales: convierte uno a float con un cast.",
-   "Con (float)SUMA/CANT primero se convierte SUMA y recién después se divide.",
+   "Además, si SUMA y CANT son enteros, la división pierde los decimales: para conservarlos, el dato que se divide tiene que ser float.",
+   "Por eso se declara float GOLES y se divide GOLES / PARTIDOS.",
    "Prueba cambiar PARTIDOS a 5: con la cuenta hecha en decimales el resultado conserva los decimales."
   ],
-  "ejemplo": "#include <stdio.h>\nint main() {\n int GOLES = 12, PARTIDOS = 0;\n float PROM;\n if (PARTIDOS > 0) {\n  PROM = (float)GOLES / PARTIDOS;\n  printf(\"Goles por partido: %.2f\\n\", PROM);\n } else {\n  printf(\"Todavia no se jugo ningun partido\\n\");\n }\n}",
+  "ejemplo": "#include <stdio.h>\nint main() {\n float GOLES;\n int PARTIDOS;\n float PROM;\n GOLES = 12;\n PARTIDOS = 0;\n if (PARTIDOS > 0) {\n  PROM = GOLES / PARTIDOS;\n  printf(\"Goles por partido: %.2f\\n\", PROM);\n } else {\n  printf(\"Todavia no se jugo ningun partido\\n\");\n }\n}",
   "entrada": "",
   "resultado": "Todavia no se jugo ningun partido\n",
   "errores_ids": [
