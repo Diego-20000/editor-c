@@ -333,7 +333,7 @@
    "%u",
    "%lu"
   ],
-  "detalle": "Se escribe antes de un tipo entero y significa \"sin signo\": solo guarda el cero y los positivos.\nComo no reserva lugar para el signo, llega al doble de alto: un unsigned int va de 0 a 4294967295.\nEscrito solo, unsigned equivale a unsigned int. Se muestra con %u (y %lu si es unsigned long).\nDetalle que confunde: restar de más no da un negativo. Con unsigned, 3-4 da 4294967295, porque el valor da la vuelta desde cero.\nPor eso -1<1u da falso: el -1 se convierte a unsigned y pasa a ser enorme. Mezclar con int en una comparación es fuente de errores.\nError típico: for(I=3;I>=0;I--) con I unsigned. Nunca es menor que cero, así que el lazo no termina; gcc avisa que la comparación siempre es verdadera.",
+  "detalle": "Se escribe antes de un tipo entero y significa \"sin signo\": solo guarda el cero y los positivos.\nComo no reserva lugar para el signo, llega al doble de alto: un unsigned int va de 0 a 4294967295.\nEscrito solo, unsigned equivale a unsigned int. Se muestra con %u (y %lu si es unsigned long).\nDetalle que confunde: restar de más no da un negativo. Con unsigned, 3-4 da 4294967295, porque el valor da la vuelta desde cero.\nPor eso -1<1u da falso: el -1 se convierte a unsigned y pasa a ser enorme. Mezclar con int en una comparación es fuente de errores.\nError típico: for(i=3;i>=0;i--) con i unsigned. Nunca es menor que cero, así que el lazo no termina; gcc avisa que la comparación siempre es verdadera.",
   "ocasiones": [
    {
     "cuando": "Al restar más de lo que hay.",
@@ -547,7 +547,7 @@
   "elemento": "register",
   "tipo": "palabra clave",
   "que_es": "Pide al compilador que guarde la variable en un registro del procesador. Hoy el compilador decide solo; casi no se usa.",
-  "como_se_usa": "register int I;\nfor(I=0;I<3;I++) printf(\"%d\\n\",I);",
+  "como_se_usa": "register int i;\nfor(i=0;i<3;i++) printf(\"%d\\n\",i);",
   "error_tipico": "Esperar que el programa corra más rápido: no lo hace.",
   "en_la_materia": null,
   "errores_ids": [],
@@ -806,7 +806,7 @@
   "elemento": "for",
   "tipo": "palabra clave",
   "que_es": "Lazo con tres partes entre paréntesis separadas por ;: inicio, condición y avance. Repite su cuerpo mientras la condición sea verdadera.",
-  "como_se_usa": "for(I=1;I<=3;I++) printf(\"%d\\n\",I);",
+  "como_se_usa": "for(i=1;i<=3;i++) printf(\"%d\\n\",i);",
   "error_tipico": "Separar las partes con comas en lugar de ;, o poner ; después del paréntesis.",
   "en_la_materia": "LR",
   "errores_ids": [
@@ -845,12 +845,12 @@
    "contador",
    "continue"
   ],
-  "detalle": "Es un lazo (instrucciones que se repiten) con tres partes entre paréntesis, separadas por ;: inicio, condición y avance.\nEl inicio se hace una sola vez. Antes de cada ciclo (cada vuelta) se mira la condición, y si es verdadera se ejecuta el cuerpo. Al terminar el cuerpo se hace el avance y se vuelve a mirar la condición.\nSe usa cuando se sabe cuántas veces repetir, o cuando hay un contador que sube o baja de forma regular.\nDetalle que confunde: al terminar el lazo, la variable no vale el último número que se mostró sino uno más. Con I<3 se muestra 0, 1 y 2, pero I queda valiendo 3.\nError típico: poner ; después del paréntesis, como en for(I=0;I<3;I++);. El lazo se repite con cuerpo vacío y la instrucción siguiente se ejecuta una sola vez. Otro: separar las partes con comas en vez de ;.",
+  "detalle": "Es un lazo (instrucciones que se repiten) con tres partes entre paréntesis, separadas por ;: inicio, condición y avance.\nEl inicio se hace una sola vez. Antes de cada ciclo (cada vuelta) se mira la condición, y si es verdadera se ejecuta el cuerpo. Al terminar el cuerpo se hace el avance y se vuelve a mirar la condición.\nSe usa cuando se sabe cuántas veces repetir, o cuando hay un contador que sube o baja de forma regular.\nDetalle que confunde: al terminar el lazo, la variable no vale el último número que se mostró sino uno más. Con i<3 se muestra 0, 1 y 2, pero i queda valiendo 3.\nError típico: poner ; después del paréntesis, como en for(i=0;i<3;i++);. El lazo se repite con cuerpo vacío y la instrucción siguiente se ejecuta una sola vez. Otro: separar las partes con comas en vez de ;.",
   "ocasiones": [
    {
     "cuando": "Para repetir un número de veces conocido.",
     "que_es": "Cuenta de 0 a 2 y la variable queda valiendo 3 al terminar.",
-    "ejemplo": "for(I=0;I<3;I++) printf(\"%d\\n\",I);\nprintf(\"I=%d\\n\",I);"
+    "ejemplo": "for(i=0;i<3;i++) printf(\"%d\\n\",i);\nprintf(\"i=%d\\n\",i);"
    }
   ]
  },
@@ -1030,7 +1030,7 @@
   "elemento": "break",
   "tipo": "palabra clave",
   "que_es": "Sale de inmediato del switch o del lazo más cercano.",
-  "como_se_usa": "for(I=0;I<10;I++){\n if(I==3) break;\n}",
+  "como_se_usa": "for(i=0;i<10;i++){\n if(i==3) break;\n}",
   "error_tipico": "Olvidarlo en un case y que se ejecuten también los siguientes.",
   "en_la_materia": "BC, LC",
   "errores_ids": [
@@ -1062,7 +1062,7 @@
    {
     "cuando": "Dentro de un lazo.",
     "que_es": "Corta el lazo antes de terminar; el 3 ya no se muestra.",
-    "ejemplo": "for(I=0;I<10;I++){\n if(I==3) break;\n printf(\"%d\\n\",I);\n}"
+    "ejemplo": "for(i=0;i<10;i++){\n if(i==3) break;\n printf(\"%d\\n\",i);\n}"
    }
   ]
  },
@@ -1070,7 +1070,7 @@
   "elemento": "continue",
   "tipo": "palabra clave",
   "que_es": "Salta lo que falta de la vuelta actual y pasa a la siguiente vuelta del lazo.",
-  "como_se_usa": "for(I=0;I<5;I++){\n if(I==2) continue;\n printf(\"%d\\n\",I);\n}",
+  "como_se_usa": "for(i=0;i<5;i++){\n if(i==2) continue;\n printf(\"%d\\n\",i);\n}",
   "error_tipico": "Usarlo en un while sin avanzar antes la variable: el lazo queda trabado.",
   "en_la_materia": "LC",
   "errores_ids": [
@@ -1088,12 +1088,12 @@
    "do",
    "break"
   ],
-  "detalle": "Salta lo que falta del ciclo actual y pasa directo al siguiente ciclo del lazo.\nSe usa para saltear un caso puntual sin salir del lazo: se ignora un valor y se sigue con los demás.\nDetalle que confunde: en un for, después de continue se ejecuta igual el avance (el I++), y luego se mira la condición.\nEn un while no hay avance automático: continue vuelve directo a la condición. Si el cambio de la variable estaba después del continue, nunca se hace.\nSolo se puede usar dentro de un lazo. Dentro de un switch suelto, gcc da error: \"continue statement not within a loop\".\nError típico: usarlo en un while sin cambiar antes la variable, y que el lazo quede trabado.",
+  "detalle": "Salta lo que falta del ciclo actual y pasa directo al siguiente ciclo del lazo.\nSe usa para saltear un caso puntual sin salir del lazo: se ignora un valor y se sigue con los demás.\nDetalle que confunde: en un for, después de continue se ejecuta igual el avance (el i++), y luego se mira la condición.\nEn un while no hay avance automático: continue vuelve directo a la condición. Si el cambio de la variable estaba después del continue, nunca se hace.\nSolo se puede usar dentro de un lazo. Dentro de un switch suelto, gcc da error: \"continue statement not within a loop\".\nError típico: usarlo en un while sin cambiar antes la variable, y que el lazo quede trabado.",
   "ocasiones": [
    {
     "cuando": "Dentro de un for.",
     "que_es": "Se saltea el 2, pero el lazo sigue con el 3 y el 4.",
-    "ejemplo": "for(I=0;I<5;I++){\n if(I==2) continue;\n printf(\"%d\\n\",I);\n}"
+    "ejemplo": "for(i=0;i<5;i++){\n if(i==2) continue;\n printf(\"%d\\n\",i);\n}"
    }
   ]
  },
@@ -2187,7 +2187,7 @@
   "elemento": "++",
   "tipo": "operador",
   "que_es": "Suma 1 a la variable. A++ y ++A hacen lo mismo cuando están solos en una instrucción.",
-  "como_se_usa": "I++;\nprintf(\"%d\\n\",I);  // muestra: 1",
+  "como_se_usa": "i++;\nprintf(\"%d\\n\",i);  // muestra: 1",
   "error_tipico": "Escribir A++ + A++ en una misma expresión: el resultado no está definido.",
   "en_la_materia": "Operadores, LC",
   "errores_ids": [
@@ -2247,7 +2247,7 @@
   "elemento": "--",
   "tipo": "operador",
   "que_es": "Resta 1 a la variable.",
-  "como_se_usa": "I--;\nprintf(\"%d\\n\",I);  // muestra: 4",
+  "como_se_usa": "i--;\nprintf(\"%d\\n\",i);  // muestra: 4",
   "error_tipico": "Usarlo en un lazo en el sentido contrario al que hace falta y que no termine nunca.",
   "en_la_materia": "Operadores, LC",
   "errores_ids": [
@@ -2366,7 +2366,7 @@
   "elemento": "*=",
   "tipo": "operador",
   "que_es": "Multiplica la variable por el valor de la derecha y guarda el resultado.",
-  "como_se_usa": "FACT*=I;\nprintf(\"%d\\n\",FACT);  // muestra: 5",
+  "como_se_usa": "FACT*=i;\nprintf(\"%d\\n\",FACT);  // muestra: 5",
   "error_tipico": "Olvidar iniciar la variable en 1: si arranca en 0 todo da 0.",
   "en_la_materia": "Operadores, acumulador",
   "errores_ids": [],
@@ -2641,7 +2641,7 @@
    {
     "cuando": "En la inicialización y la actualización de un for cuando se escriben varias expresiones.",
     "que_es": "El operador coma permite ejecutar más de una expresión en la primera o en la tercera parte del for.",
-    "ejemplo": "for (I=0, J=0; I<3; I++, J++) {\n    A=A+1;\n}",
+    "ejemplo": "for (i=0, J=0; i<3; i++, J++) {\n    A=A+1;\n}",
     "error_tipico": "Confundir las comas internas con los dos puntos y coma que separan las tres partes del for."
    },
    {
@@ -2714,7 +2714,7 @@
    {
     "cuando": "En la cabecera de un for.",
     "que_es": "Encierran inicialización, condición y actualización, separadas por dos puntos y coma.",
-    "ejemplo": "for (I=0; I<3; I++) {\n    A=A+1;\n}",
+    "ejemplo": "for (i=0; i<3; i++) {\n    A=A+1;\n}",
     "error_tipico": "Desbalancear los paréntesis o colocar uno antes de terminar las tres partes del encabezado."
    },
    {
@@ -2969,7 +2969,7 @@
    {
     "cuando": "En la cabecera de un for, entre inicialización, condición y actualización.",
     "que_es": "Los dos puntos y coma separan las tres partes del encabezado; no son instrucciones independientes.",
-    "ejemplo": "for (I=0; I<3; I++) {\n    A=A+1;\n}",
+    "ejemplo": "for (i=0; i<3; i++) {\n    A=A+1;\n}",
     "error_tipico": "Poner una coma en lugar de uno de los dos puntos y coma o dejar uno fuera desordena la cabecera."
    },
    {
@@ -2993,7 +2993,7 @@
    {
     "cuando": "Inmediatamente después de la cabecera de un for.",
     "que_es": "El punto y coma es el cuerpo vacío del for; las instrucciones siguientes no forman parte del lazo.",
-    "ejemplo": "for (I=0; I<3; I++);\nA=A+1;",
+    "ejemplo": "for (i=0; i<3; i++);\nA=A+1;",
     "error_tipico": "El lazo realiza sus iteraciones sin ejecutar la instrucción que se pensaba repetir."
    },
    {
@@ -9497,7 +9497,7 @@
    "no esta declarada",
    "undeclared"
   ],
-  "detalle": "El ámbito de un nombre es la parte del programa donde ese nombre existe y se puede usar. Una variable nace en la línea donde se declara y deja de existir al cerrarse la llave } del bloque donde está.\nSirve para que las funciones no se pisen entre sí: cada una puede tener su propia variable I sin que se mezclen.\nSe ve en las llaves: lo declarado dentro de { } solo se ve ahí adentro (y en los bloques que estén más adentro todavía).\nLo que suele confundir: desde adentro de un bloque puedes ver lo de afuera, pero desde afuera no ves lo de adentro. Y si repites un nombre adentro, el nuevo tapa al de afuera mientras dure el bloque.\nError típico: declarar una variable dentro de un bloque y usarla después de cerrarlo. gcc dice 'B' undeclared (first use in this function), como si nunca la hubieras declarado.",
+  "detalle": "El ámbito de un nombre es la parte del programa donde ese nombre existe y se puede usar. Una variable nace en la línea donde se declara y deja de existir al cerrarse la llave } del bloque donde está.\nSirve para que las funciones no se pisen entre sí: cada una puede tener su propia variable i sin que se mezclen.\nSe ve en las llaves: lo declarado dentro de { } solo se ve ahí adentro (y en los bloques que estén más adentro todavía).\nLo que suele confundir: desde adentro de un bloque puedes ver lo de afuera, pero desde afuera no ves lo de adentro. Y si repites un nombre adentro, el nuevo tapa al de afuera mientras dure el bloque.\nError típico: declarar una variable dentro de un bloque y usarla después de cerrarlo. gcc dice 'B' undeclared (first use in this function), como si nunca la hubieras declarado.",
   "ocasiones": [
    {
     "cuando": "Adentro se ve lo de afuera.",
@@ -9609,7 +9609,7 @@
    {
     "cuando": "Contar los días que cumplen una condición.",
     "que_es": "El contador sube solo cuando el dato es mayor que 0. Hay 3 días de lluvia en el arreglo, y se muestra 3.",
-    "ejemplo": "int MM[5]={0,12,0,3,8};\nint I, LLUVIA=0;\nfor(I=0;I<5;I++){ if(MM[I]>0){ LLUVIA=LLUVIA+1; } }\nprintf(\"%d\\n\",LLUVIA);"
+    "ejemplo": "int MM[5]={0,12,0,3,8};\nint i, LLUVIA=0;\nfor(i=0;i<5;i++){ if(MM[i]>0){ LLUVIA=LLUVIA+1; } }\nprintf(\"%d\\n\",LLUVIA);"
    },
    {
     "cuando": "Contador que baja.",
@@ -9619,7 +9619,7 @@
    {
     "cuando": "Error: iniciarlo adentro del lazo.",
     "que_es": "Se vuelve a poner en 0 en cada vuelta; solo queda lo que cuenta la última. Muestra 1, aunque hay 3 días de lluvia.",
-    "ejemplo": "int MM[5]={0,12,0,3,8};\nint I, LLUVIA;\nfor(I=0;I<5;I++){ LLUVIA=0; if(MM[I]>0){ LLUVIA=LLUVIA+1; } }\nprintf(\"%d\\n\",LLUVIA);"
+    "ejemplo": "int MM[5]={0,12,0,3,8};\nint i, LLUVIA;\nfor(i=0;i<5;i++){ LLUVIA=0; if(MM[i]>0){ LLUVIA=LLUVIA+1; } }\nprintf(\"%d\\n\",LLUVIA);"
    }
   ],
   "relacionados": [
@@ -9659,12 +9659,12 @@
    {
     "cuando": "Acumulador de suma.",
     "que_es": "Se suma cada precio al total. 12.5 + 8 + 20.25 + 5 da 45.75.",
-    "ejemplo": "float PRECIO[4]={12.5,8,20.25,5};\nfloat TOTAL=0; int I;\nfor(I=0;I<4;I++){ TOTAL=TOTAL+PRECIO[I]; }\nprintf(\"%.2f\\n\",TOTAL);"
+    "ejemplo": "float PRECIO[4]={12.5,8,20.25,5};\nfloat TOTAL=0; int i;\nfor(i=0;i<4;i++){ TOTAL=TOTAL+PRECIO[i]; }\nprintf(\"%.2f\\n\",TOTAL);"
    },
    {
     "cuando": "Acumulador de producto.",
     "que_es": "Se inicia en 1 y se multiplica en cada vuelta: 1x2x3x4 da 24. Muestra 24.",
-    "ejemplo": "int P=1, I;\nfor(I=1;I<=4;I++){ P=P*I; }\nprintf(\"%d\\n\",P);"
+    "ejemplo": "int P=1, i;\nfor(i=1;i<=4;i++){ P=P*i; }\nprintf(\"%d\\n\",P);"
    }
   ],
   "relacionados": [
@@ -9701,12 +9701,12 @@
    {
     "cuando": "Recorrer hasta el valor de corte.",
     "que_es": "Con datos fijos: el lazo se detiene en -99 y el 30 de después no se procesa. Muestra 21, 24 y 19.",
-    "ejemplo": "int T[5]={21,24,19,-99,30};\nint I=0;\nwhile(T[I]!=-99){ printf(\"%d\\n\",T[I]); I=I+1; }"
+    "ejemplo": "int T[5]={21,24,19,-99,30};\nint i=0;\nwhile(T[i]!=-99){ printf(\"%d\\n\",T[i]); i=i+1; }"
    },
    {
     "cuando": "Elegir un centinela que no sea dato válido.",
     "que_es": "Con goles, 0 es un dato posible (un 0 a 0), así que no sirve de corte; -1 sí. El 0 se procesa y el lazo sigue. Muestra 2, 0 y 3.",
-    "ejemplo": "int G[4]={2,0,3,-1};\nint I=0;\nwhile(G[I]!=-1){ printf(\"%d\\n\",G[I]); I=I+1; }"
+    "ejemplo": "int G[4]={2,0,3,-1};\nint i=0;\nwhile(G[i]!=-1){ printf(\"%d\\n\",G[i]); i=i+1; }"
    }
   ],
   "relacionados": [
@@ -9721,7 +9721,7 @@
   "elemento": "lazo",
   "tipo": "concepto",
   "que_es": "Estructura que repite un grupo de instrucciones. En la materia se resuelve con for y while. También se le dice bucle.",
-  "como_se_usa": "for(I=0;I<3;I++){\n printf(\"%d\\n\",I);\n}",
+  "como_se_usa": "for(i=0;i<3;i++){\n printf(\"%d\\n\",i);\n}",
   "error_tipico": "Un lazo que nunca llega a su condición de corte no termina.",
   "en_la_materia": "LR, LC",
   "errores_ids": [
@@ -9742,22 +9742,22 @@
    "iteracion",
    "repetir"
   ],
-  "detalle": "Un lazo es una estructura que repite un grupo de instrucciones. Cada repetición se llama vuelta o ciclo.\nSirve para no escribir lo mismo muchas veces: mostrar 100 números, sumar una lista, repetir hasta que pase algo.\nEn C se escribe con for o con while. El for junta en un solo renglón el inicio, la condición y el paso: for(I=1;I<=3;I++). El while lleva solo la condición, y lo demás se escribe aparte.\nEn la materia hay dos clases: el lazo repetitivo (LR), con cantidad de vueltas conocida, y el lazo condicional (LC), que repite mientras se cumpla una condición.\nLo que suele confundir: la condición se evalúa antes de cada vuelta. Si es falsa de entrada, el lazo no se ejecuta ni una vez.\nError típico: poner un ; justo después del for o del while. Ese ; es el cuerpo vacío, así que el lazo da todas sus vueltas sin hacer nada y las instrucciones de abajo se ejecutan una sola vez.",
+  "detalle": "Un lazo es una estructura que repite un grupo de instrucciones. Cada repetición se llama vuelta o ciclo.\nSirve para no escribir lo mismo muchas veces: mostrar 100 números, sumar una lista, repetir hasta que pase algo.\nEn C se escribe con for o con while. El for junta en un solo renglón el inicio, la condición y el paso: for(i=1;i<=3;i++). El while lleva solo la condición, y lo demás se escribe aparte.\nEn la materia hay dos clases: el lazo repetitivo (LR), con cantidad de vueltas conocida, y el lazo condicional (LC), que repite mientras se cumpla una condición.\nLo que suele confundir: la condición se evalúa antes de cada vuelta. Si es falsa de entrada, el lazo no se ejecuta ni una vez.\nError típico: poner un ; justo después del for o del while. Ese ; es el cuerpo vacío, así que el lazo da todas sus vueltas sin hacer nada y las instrucciones de abajo se ejecutan una sola vez.",
   "ocasiones": [
    {
     "cuando": "for básico.",
-    "que_es": "Tres partes: inicio (I=1), condición (I<=3) y paso (I++). Muestra 1, 4 y 9.",
-    "ejemplo": "int I;\nfor(I=1;I<=3;I++){ printf(\"%d\\n\",I*I); }"
+    "que_es": "Tres partes: inicio (i=1), condición (i<=3) y paso (i++). Muestra 1, 4 y 9.",
+    "ejemplo": "int i;\nfor(i=1;i<=3;i++){ printf(\"%d\\n\",i*i); }"
    },
    {
     "cuando": "Cero vueltas.",
     "que_es": "La condición es falsa desde el principio, así que no se muestra nada.",
-    "ejemplo": "int I=10;\nwhile(I<5){ printf(\"%d\\n\",I); I=I+1; }"
+    "ejemplo": "int i=10;\nwhile(i<5){ printf(\"%d\\n\",i); i=i+1; }"
    },
    {
     "cuando": "Error: ; después del for.",
-    "que_es": "El lazo da 3 vueltas vacías y el printf se ejecuta una sola vez, con I valiendo 3. Muestra 3.",
-    "ejemplo": "int I;\nfor(I=0;I<3;I++);\nprintf(\"%d\\n\",I);"
+    "que_es": "El lazo da 3 vueltas vacías y el printf se ejecuta una sola vez, con i valiendo 3. Muestra 3.",
+    "ejemplo": "int i;\nfor(i=0;i<3;i++);\nprintf(\"%d\\n\",i);"
    }
   ],
   "relacionados": [
@@ -9774,7 +9774,7 @@
   "elemento": "lazo repetitivo",
   "tipo": "concepto",
   "que_es": "En la materia, lazo cuya cantidad de vueltas se conoce de antemano (LR). Se resuelve con for.",
-  "como_se_usa": "for(I=1;I<=5;I++){\n printf(\"%d\\n\",I);\n}",
+  "como_se_usa": "for(i=1;i<=5;i++){\n printf(\"%d\\n\",i);\n}",
   "error_tipico": "Usar un for cuando el corte depende de datos que se leen dentro del lazo: ahí corresponde un lazo condicional.",
   "en_la_materia": "LR",
   "errores_ids": [],
@@ -9784,17 +9784,17 @@
    "for con cantidad fija",
    "repetir n veces"
   ],
-  "detalle": "El lazo repetitivo (LR) es el lazo que repite un grupo de instrucciones una cantidad de veces que se conoce antes de empezar. Se resuelve con for.\nSirve cuando el enunciado dice cuántas veces: repetir 5 veces, hacerlo para cada uno de los 7 días, recorrer las posiciones de un arreglo.\nSe ve así: for(I=1;I<=5;I++){ ... }. La variable I lleva la cuenta de la vuelta, la condición decide si sigue y el paso la hace avanzar.\nLo que suele confundir: la cantidad puede ser un número fijo o un dato que ya tienes guardado antes de entrar al lazo (N). Lo que lo hace repetitivo es que sabes cuántas vueltas habrá antes de la primera.\nOtro detalle: el paso no siempre es +1. Puede ser I=I+5 o I-- para ir hacia atrás.\nError típico: equivocarse en un límite. Con I<=3 desde I=0 hay 4 vueltas, no 3; con I<3 hay 3. Si el enunciado habla de datos que se leen hasta un valor de corte, ya no es un LR sino un LC.",
+  "detalle": "El lazo repetitivo (LR) es el lazo que repite un grupo de instrucciones una cantidad de veces que se conoce antes de empezar. Se resuelve con for.\nSirve cuando el enunciado dice cuántas veces: repetir 5 veces, hacerlo para cada uno de los 7 días, recorrer las posiciones de un arreglo.\nSe ve así: for(i=1;i<=5;i++){ ... }. La variable i lleva la cuenta de la vuelta, la condición decide si sigue y el paso la hace avanzar.\nLo que suele confundir: la cantidad puede ser un número fijo o un dato que ya tienes guardado antes de entrar al lazo (N). Lo que lo hace repetitivo es que sabes cuántas vueltas habrá antes de la primera.\nOtro detalle: el paso no siempre es +1. Puede ser i=i+5 o i-- para ir hacia atrás.\nError típico: equivocarse en un límite. Con i<=3 desde i=0 hay 4 vueltas, no 3; con i<3 hay 3. Si el enunciado habla de datos que se leen hasta un valor de corte, ya no es un LR sino un LC.",
   "ocasiones": [
    {
     "cuando": "Paso distinto de 1.",
     "que_es": "Se avanza de a 5, así que son 3 vueltas. Muestra 0, 5 y 10.",
-    "ejemplo": "int I;\nfor(I=0;I<=10;I=I+5){ printf(\"%d\\n\",I); }"
+    "ejemplo": "int i;\nfor(i=0;i<=10;i=i+5){ printf(\"%d\\n\",i); }"
    },
    {
     "cuando": "Contar las vueltas.",
     "que_es": "Con <= se hace una vuelta más que con <. Muestra 3 y 4.",
-    "ejemplo": "int I, A=0, B=0;\nfor(I=0;I<3;I++){ A=A+1; }\nfor(I=0;I<=3;I++){ B=B+1; }\nprintf(\"%d %d\\n\",A,B);"
+    "ejemplo": "int i, A=0, B=0;\nfor(i=0;i<3;i++){ A=A+1; }\nfor(i=0;i<=3;i++){ B=B+1; }\nprintf(\"%d %d\\n\",A,B);"
    }
   ],
   "relacionados": [
@@ -9863,17 +9863,17 @@
    "lazo infinito",
    "se queda trabado"
   ],
-  "detalle": "Un lazo infinito es un lazo cuya condición nunca deja de ser verdadera, así que el programa no termina por sí solo.\nCasi siempre es un error y el programa parece trabado: la pantalla repite lo mismo sin parar o no muestra nada y no responde.\nSe ve cuando la condición no depende de nada que cambie, como while(1), o cuando lo que cambia no acerca al final.\nCausas típicas: no actualizar la variable de la condición, actualizarla en sentido contrario (contar hacia arriba cuando se espera bajar) o poner un ; justo después del while, que lo deja con el cuerpo vacío.\nLo que suele confundir: el compilador no lo detecta, porque escrito así es válido. Solo se nota al ejecutar. A veces se escribe a propósito con while(1) y se sale con break.\nError típico: escribir while(I<3){ printf(...); } sin I=I+1;. I siempre vale lo mismo y el lazo no termina.",
+  "detalle": "Un lazo infinito es un lazo cuya condición nunca deja de ser verdadera, así que el programa no termina por sí solo.\nCasi siempre es un error y el programa parece trabado: la pantalla repite lo mismo sin parar o no muestra nada y no responde.\nSe ve cuando la condición no depende de nada que cambie, como while(1), o cuando lo que cambia no acerca al final.\nCausas típicas: no actualizar la variable de la condición, actualizarla en sentido contrario (contar hacia arriba cuando se espera bajar) o poner un ; justo después del while, que lo deja con el cuerpo vacío.\nLo que suele confundir: el compilador no lo detecta, porque escrito así es válido. Solo se nota al ejecutar. A veces se escribe a propósito con while(1) y se sale con break.\nError típico: escribir while(i<3){ printf(...); } sin i=i+1;. i siempre vale lo mismo y el lazo no termina.",
   "ocasiones": [
    {
     "cuando": "Error: no se actualiza la variable.",
-    "que_es": "I nunca cambia, así que 0<3 es siempre verdadero y se muestra 0 sin parar. Compila, pero no debe ejecutarse sin detenerlo.",
-    "ejemplo": "int I=0;\nwhile(I<3){ printf(\"%d\\n\",I); }"
+    "que_es": "i nunca cambia, así que 0<3 es siempre verdadero y se muestra 0 sin parar. Compila, pero no debe ejecutarse sin detenerlo.",
+    "ejemplo": "int i=0;\nwhile(i<3){ printf(\"%d\\n\",i); }"
    },
    {
     "cuando": "Lazo infinito a propósito, con salida.",
-    "que_es": "while(1) no termina solo, pero break lo corta cuando I llega a 3. Muestra 3.",
-    "ejemplo": "int I=0;\nwhile(1){ I=I+1; if(I==3){ break; } }\nprintf(\"%d\\n\",I);"
+    "que_es": "while(1) no termina solo, pero break lo corta cuando i llega a 3. Muestra 3.",
+    "ejemplo": "int i=0;\nwhile(1){ i=i+1; if(i==3){ break; } }\nprintf(\"%d\\n\",i);"
    }
   ],
   "relacionados": [
@@ -9924,7 +9924,7 @@
    {
     "cuando": "Menos valores que el tamaño.",
     "que_es": "Los que no se escriben quedan en 0. Muestra 1 2 0 0 0.",
-    "ejemplo": "int V[5]={1,2};\nint I;\nfor(I=0;I<5;I++){ printf(\"%d \",V[I]); }"
+    "ejemplo": "int V[5]={1,2};\nint i;\nfor(i=0;i<5;i++){ printf(\"%d \",V[i]); }"
    }
   ],
   "relacionados": [
@@ -9959,17 +9959,17 @@
    "fuera de rango",
    "fuera de limites"
   ],
-  "detalle": "El índice es el número que elige un elemento de un arreglo. Va entre corchetes, y el primer elemento es el 0.\nSirve para llegar a cualquier posición directamente y para recorrer todas con un lazo, usando como índice la variable del for.\nPara un arreglo de N elementos, los índices válidos van de 0 a N-1. En V[3], el último es V[2].\nLo que suele confundir: el índice puede ser un número, una variable o una cuenta: V[2], V[I] o V[I-1]. Tiene que ser un entero; V[1.5] da error (gcc: array subscript is not an integer).\nOtro detalle: C no comprueba el índice. Con V[7] en un arreglo de 3 el programa no se detiene: lee o escribe memoria que no es del arreglo (comportamiento indefinido).\nError típico: recorrer con I<=N en vez de I<N. La última vuelta usa el índice N, que está fuera.",
+  "detalle": "El índice es el número que elige un elemento de un arreglo. Va entre corchetes, y el primer elemento es el 0.\nSirve para llegar a cualquier posición directamente y para recorrer todas con un lazo, usando como índice la variable del for.\nPara un arreglo de N elementos, los índices válidos van de 0 a N-1. En V[3], el último es V[2].\nLo que suele confundir: el índice puede ser un número, una variable o una cuenta: V[2], V[i] o V[i-1]. Tiene que ser un entero; V[1.5] da error (gcc: array subscript is not an integer).\nOtro detalle: C no comprueba el índice. Con V[7] en un arreglo de 3 el programa no se detiene: lee o escribe memoria que no es del arreglo (comportamiento indefinido).\nError típico: recorrer con i<=N en vez de i<N. La última vuelta usa el índice N, que está fuera.",
   "ocasiones": [
    {
     "cuando": "Índice con variable y con cuenta.",
-    "que_es": "I vale 2: V[I] es el tercer elemento y V[I-1] el segundo. Muestra 30 y 20.",
-    "ejemplo": "int V[3]={10,20,30};\nint I=2;\nprintf(\"%d %d\\n\",V[I],V[I-1]);"
+    "que_es": "i vale 2: V[i] es el tercer elemento y V[i-1] el segundo. Muestra 30 y 20.",
+    "ejemplo": "int V[3]={10,20,30};\nint i=2;\nprintf(\"%d %d\\n\",V[i],V[i-1]);"
    },
    {
     "cuando": "Recorrido correcto.",
-    "que_es": "Con I<3 se usan los índices 0, 1 y 2. Muestra 10, 20 y 30.",
-    "ejemplo": "int V[3]={10,20,30};\nint I;\nfor(I=0;I<3;I++){ printf(\"%d\\n\",V[I]); }"
+    "que_es": "Con i<3 se usan los índices 0, 1 y 2. Muestra 10, 20 y 30.",
+    "ejemplo": "int V[3]={10,20,30};\nint i;\nfor(i=0;i<3;i++){ printf(\"%d\\n\",V[i]); }"
    }
   ],
   "relacionados": [
@@ -11409,7 +11409,7 @@
    {
     "cuando": "Al declarar o preparar un contador de un lazo.",
     "que_es": "El 0 o el 1 determina desde qué valor empieza el recorrido; no existe una regla universal para todos los lazos.",
-    "ejemplo": "#include <stdio.h>\nint main(){ int I=1; for(;I<=3;I++) printf(\"%d \",I);}",
+    "ejemplo": "#include <stdio.h>\nint main(){ int i=1; for(;i<=3;i++) printf(\"%d \",i);}",
     "error_tipico": "Empezar en 1 cuando el algoritmo necesita recorrer posiciones que comienzan en 0, o al revés."
    },
    {

@@ -399,7 +399,7 @@
    "Como instrucción independiente, ambos actualizan la variable.",
    "No se pueden aplicar a una constante ni a una expresión que no se pueda modificar."
   ],
-  "ejemplo": "#include <stdio.h>\nint main(){\n int I=2;\n I++;\n printf(\"%d\\n\",I);\n}",
+  "ejemplo": "#include <stdio.h>\nint main(){\n int i=2;\n i++;\n printf(\"%d\\n\",i);\n}",
   "entrada": "",
   "resultado": "3\n",
   "errores_ids": [
@@ -721,7 +721,7 @@
    "Al terminar el cuerpo, realiza la actualización y vuelve a evaluar.",
    "Cuando la condición resulta falsa, sale del lazo."
   ],
-  "ejemplo": "#include <stdio.h>\nint main(){\n for(int I=1;I<=3;I++) printf(\"%d\\n\",I);\n}",
+  "ejemplo": "#include <stdio.h>\nint main(){\n for(int i=1;i<=3;i++) printf(\"%d\\n\",i);\n}",
   "entrada": "",
   "resultado": "1\n2\n3\n",
   "errores_ids": [
@@ -761,7 +761,7 @@
    "Alguna instrucción debe permitir que la condición cambie si se espera que el lazo termine.",
    "Sin una salida posible, el programa puede quedar repitiéndose."
   ],
-  "ejemplo": "#include <stdio.h>\nint main(){\n int I=1;\n while(I<=3){ printf(\"%d\\n\",I); I++; }\n}",
+  "ejemplo": "#include <stdio.h>\nint main(){\n int i=1;\n while(i<=3){ printf(\"%d\\n\",i); i++; }\n}",
   "entrada": "",
   "resultado": "1\n2\n3\n",
   "errores_ids": [
@@ -794,7 +794,7 @@
    "La estructura termina con punto y coma.",
    "En la materia no se usa do-while; se explica porque en C existe y puede aparecer en otros programas."
   ],
-  "ejemplo": "#include <stdio.h>\nint main(){\n int I=5;\n do { printf(\"%d\\n\",I); } while(I<0);\n}",
+  "ejemplo": "#include <stdio.h>\nint main(){\n int i=5;\n do { printf(\"%d\\n\",i); } while(i<0);\n}",
   "entrada": "",
   "resultado": "5\n",
   "errores_ids": [
@@ -1130,12 +1130,12 @@
   "titulo": "Recorrer un arreglo",
   "explicacion": [
    "Un recorrido por posiciones suele comenzar con índice 0.",
-   "La condición habitual es I < N, donde N es la cantidad de elementos.",
-   "En cada vuelta se procesa V[I].",
-   "Después se incrementa I para avanzar a la siguiente posición.",
-   "Usar I <= N intenta acceder a una posición que no existe."
+   "La condición habitual es i < N, donde N es la cantidad de elementos.",
+   "En cada vuelta se procesa V[i].",
+   "Después se incrementa i para avanzar a la siguiente posición.",
+   "Usar i <= N intenta acceder a una posición que no existe."
   ],
-  "ejemplo": "#include <stdio.h>\nint main(){ int V[3]={4,5,6}; for(int I=0;I<3;I++) printf(\"%d\\n\",V[I]);}",
+  "ejemplo": "#include <stdio.h>\nint main(){ int V[3]={4,5,6}; for(int i=0;i<3;i++) printf(\"%d\\n\",V[i]);}",
   "entrada": "",
   "resultado": "4\n5\n6\n",
   "errores_ids": [
@@ -1203,7 +1203,7 @@
    "No se confunde con un acumulador: el contador suma siempre 1, el acumulador suma el dato.",
    "Al final del lazo, el contador tiene la cantidad que buscabas."
   ],
-  "ejemplo": "#include <stdio.h>\nint main() {\n int TEMP[6] = {18, 25, 31, 22, 35, 29};\n int I, CALOR = 0;\n for (I = 0; I < 6; I++) {\n  if (TEMP[I] > 30) CALOR++;\n }\n printf(\"Dias de calor: %d\\n\", CALOR);\n}",
+  "ejemplo": "#include <stdio.h>\nint main() {\n int TEMP[6] = {18, 25, 31, 22, 35, 29};\n int i, CALOR = 0;\n for (i = 0; i < 6; i++) {\n  if (TEMP[i] > 30) CALOR++;\n }\n printf(\"Dias de calor: %d\\n\", CALOR);\n}",
   "entrada": "",
   "resultado": "Dias de calor: 2\n",
   "errores_ids": [
@@ -1233,7 +1233,7 @@
    "Si lo inicias o lo declaras adentro del lazo, se borra en cada vuelta y solo queda el último dato.",
    "Muestra el total después del lazo, no adentro."
   ],
-  "ejemplo": "#include <stdio.h>\nint main() {\n float PRECIO[4] = {120.5, 80, 45.25, 10};\n float TOTAL = 0;\n int I;\n for (I = 0; I < 4; I++) {\n  TOTAL = TOTAL + PRECIO[I];\n }\n printf(\"Total: %.2f\\n\", TOTAL);\n}",
+  "ejemplo": "#include <stdio.h>\nint main() {\n float PRECIO[4] = {120.5, 80, 45.25, 10};\n float TOTAL = 0;\n int i;\n for (i = 0; i < 4; i++) {\n  TOTAL = TOTAL + PRECIO[i];\n }\n printf(\"Total: %.2f\\n\", TOTAL);\n}",
   "entrada": "",
   "resultado": "Total: 255.75\n",
   "errores_ids": [
@@ -1301,7 +1301,7 @@
    "Lo mismo vale para el menor: no lo inicies en 0.",
    "Después, dentro del lazo, un if actualiza MAYOR o MENOR cuando el dato lo supera."
   ],
-  "ejemplo": "#include <stdio.h>\nint main() {\n int T[5] = {-3, -8, -1, -6, -4};\n int I, MAX, MIN;\n MAX = T[0];\n MIN = T[0];\n for (I = 1; I < 5; I++) {\n  if (T[I] > MAX) MAX = T[I];\n  if (T[I] < MIN) MIN = T[I];\n }\n printf(\"Maxima: %d Minima: %d\\n\", MAX, MIN);\n}",
+  "ejemplo": "#include <stdio.h>\nint main() {\n int T[5] = {-3, -8, -1, -6, -4};\n int i, MAX, MIN;\n MAX = T[0];\n MIN = T[0];\n for (i = 1; i < 5; i++) {\n  if (T[i] > MAX) MAX = T[i];\n  if (T[i] < MIN) MIN = T[i];\n }\n printf(\"Maxima: %d Minima: %d\\n\", MAX, MIN);\n}",
   "entrada": "",
   "resultado": "Maxima: -1 Minima: -8\n",
   "errores_ids": [
@@ -1486,7 +1486,7 @@
    "srand(time(NULL)) cambia la semilla con la hora y se llama una sola vez, al principio.",
    "rand está en stdlib.h y time en time.h; los números que salen dependen del sistema, así que no los uses para comparar resultados."
   ],
-  "ejemplo": "#include <stdio.h>\n#include <stdlib.h>\n#include <time.h>\nint main(){\n int I, D;\n srand(time(NULL));\n for(I=0;I<3;I++){\n  D=rand()%6+1;\n  if(D>=1 && D<=6) printf(\"Dado valido\\n\");\n }\n}",
+  "ejemplo": "#include <stdio.h>\n#include <stdlib.h>\n#include <time.h>\nint main(){\n int i, D;\n srand(time(NULL));\n for(i=0;i<3;i++){\n  D=rand()%6+1;\n  if(D>=1 && D<=6) printf(\"Dado valido\\n\");\n }\n}",
   "entrada": "",
   "resultado": "Dado valido\nDado valido\nDado valido\n",
   "errores_ids": [
@@ -1580,7 +1580,7 @@
   "id": "L-047",
   "titulo": "lazo infinito por contador inverso",
   "explicacion": "El contador se aleja del límite que debería terminar el lazo. Revisa hacia dónde cambia el contador.",
-  "ejemplo": "#include <stdio.h>\nint main() {\n int I=1; while(I<5){I++;}\n}",
+  "ejemplo": "#include <stdio.h>\nint main() {\n int i=1; while(i<5){i++;}\n}",
   "entrada": "",
   "resultado": "",
   "errores_ids": [],
