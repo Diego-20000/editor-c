@@ -215,8 +215,10 @@
             const resto = text.slice(i, j);
             throw new CErr('cadena sin cerrar (falta la comilla ")', line, /\)/.test(resto) ? 'PRF-019' : 'SIN-042');
           }
-          if (text[j] === '\\') { const r = esc(text, j, { includes, line }); s += r[0]; j = r[1]; } else s += text[j++];
+          if (text[j] === '\\') { const r = esc(text, j, { includes, line, str: true }); s += r[0]; j = r[1]; } else s += text[j++];
         }
+        // los escapes numéricos mayores a 127 (\303\261, \xc3\xb1) son bytes: si juntos forman UTF-8 válido (ñ) se vuelven ese carácter, como en gcc; si no, quedan como antes
+        if (/[\uF780-\uF7FF]/.test(s)) s = s.replace(/[\uF780-\uF7FF]+/g, (run) => { const b = Uint8Array.from(Array.from(run, (ch) => ch.charCodeAt(0) - 0xF700)); try { return new TextDecoder('utf-8', { fatal: true }).decode(b); } catch (e) { return Array.from(b, (x) => String.fromCharCode(x)).join(''); } });
         if (j >= n) throw new CErr('cadena sin cerrar (falta la comilla ")', line, 'PRF-019');
         out.push({ t: 'str', v: s, line }); i = j + 1; continue;
       }
@@ -276,10 +278,10 @@
   }
   function esc(text, j, ctx) { // text[j] === '\\'
     const c = text[j + 1];
-    if (c >= '0' && c <= '7') { const mo = /^[0-7]{1,3}/.exec(text.slice(j + 1)); return [String.fromCharCode(parseInt(mo[0], 8) & 255), j + 1 + mo[0].length]; }
+    if (c >= '0' && c <= '7') { const mo = /^[0-7]{1,3}/.exec(text.slice(j + 1)), v = parseInt(mo[0], 8) & 255; return [ctx && ctx.str && v > 127 ? String.fromCharCode(0xF700 + v) : String.fromCharCode(v), j + 1 + mo[0].length]; }
     if (c === 'e' || c === 'E') return ['\x1b', j + 2];
     const map = { n: '\n', t: '\t', r: '\r', a: '\x07', b: '\b', f: '\f', v: '\v', '\\': '\\', '"': '"', "'": "'", '?': '?' };
-    if (c === 'x') { const m = /^[0-9a-fA-F]{1,2}/.exec(text.slice(j + 2)); if (m) return [String.fromCharCode(parseInt(m[0], 16)), j + 2 + m[0].length]; }
+    if (c === 'x') { const m = /^[0-9a-fA-F]{1,2}/.exec(text.slice(j + 2)); if (m) { const v = parseInt(m[0], 16); return [ctx && ctx.str && v > 127 ? String.fromCharCode(0xF700 + v) : String.fromCharCode(v), j + 2 + m[0].length]; } }
     if (c in map) return [map[c], j + 2];
     if (ctx && c !== 'u' && c !== 'U' && c !== '\n' && c !== undefined) ctx.includes.avisos.push({ line: ctx.line, kb: 'SIN-043', msg: "'\\" + c + "' no es una secuencia de escape conocida: C la reemplaza por el carácter " + c + " solo" });
     return [c, j + 2];
@@ -444,7 +446,7 @@
         let type = this.typeSpec();
         if (type === null) {
           // función sin tipo (ej. main() ) = int implícito
-          if (this.peek().t === 'id' && this.isOp('(', 1)) { const a2 = this.peek(2); if (a2.t === 'str' || a2.t === 'num') throw new CErr('esta instrucción está fuera de una función: va adentro de main() { ... }', this.peek().line); throw new CErr("falta el tipo de la función '" + this.peek().v + "': se escribe con el tipo adelante (int " + this.peek().v + '() { ... })', this.peek().line); }
+          if (this.peek().t === 'id' && this.isOp('(', 1)) { const a2 = this.peek(2); if (a2.t === 'str' || a2.t === 'num') throw new CErr('esta instrucción está fuera de una función: va adentro de main() { ... }', this.peek().line); { if (this.peek().v === 'main') { type = 'int'; this.mainSinTipo = this.peek().line; } else throw new CErr("falta el tipo de la función '" + this.peek().v + "': se escribe con el tipo adelante (int " + this.peek().v + '() { ... })', this.peek().line); } }
           else {
             const t = this.peek();
             const ult = items[items.length - 1];
@@ -464,6 +466,7 @@
         if (this.isOp('(')) { if (ptrTok) throw new CErr('las funciones que devuelven char * (un puntero a un texto) todavía no están soportadas en este editor', nameTok.line, 'NOS-014'); items.push(this.funcRest(type, nameTok, line)); }
         else { this.p--; if (ptrTok) this.p--; const d = this.declRest(type, line); d.const = cn; items.push(d); }
       }
+      if (this.mainSinTipo) items.mainSinTipo = this.mainSinTipo;
       return items;
     }
     funcRest(ret, nameTok, line) {
@@ -842,7 +845,7 @@
         else if (ok.indexOf(nm) < 0) {
           const sg = nm === 'studio.h' || nm === 'stdoi.h' || nm === 'stido.h' || nm === 'stdio' ? 'stdio.h' : (nm === 'maths.h' || nm === 'math' ? 'math.h' : null);
           const KBH = { 'studio.h': 'PRE-012', stdio: 'PRE-013', 'STDIO.H': 'PRE-017', 'stdafx.h': 'POR-024', 'windows.h': 'POR-017', 'dos.h': 'POR-019' };
-          this.warn('no se conoce la biblioteca <' + nm + '>' + (sg ? ': ¿quisiste escribir <' + sg + '>?' : ''), 1, own(KBH, nm) ? KBH[nm] : undefined);
+          this.warn('no se conoce el archivo cabecera <' + nm + '>' + (sg ? ': ¿quisiste escribir <' + sg + '>?' : ''), 1, own(KBH, nm) ? KBH[nm] : undefined);
         }
       }
     }
@@ -892,6 +895,7 @@
       if (!this.funcs.has('main')) this.err("no hay función main(): el programa empieza en 'main() { ... }'", 1);
       else {
         const mf = this.funcs.get('main');
+        if (this.items.mainSinTipo) this.warn("main sin tipo: gcc lo acepta y lo toma como int. Se recomienda escribir int main()", this.items.mainSinTipo, 'POR-006');
         if (mf.ret === 'void') this.warn("main tiene que devolver int: con 'void main' funciona en algunos compiladores (Code::Blocks), pero gcc avisa", mf.line, 'POR-005', 'FUN-023');
         if (mf.params.length === 1) this.warn("main recibe cero parámetros o dos (argc y argv), no uno solo", mf.line, 'FUN-025');
       }
@@ -1164,7 +1168,7 @@
     }
     zero(t) { return '0'; }
     checkIntDiv(r, to, line) {
-      if (r.intdiv && FLOATLIKE.has(to)) this.warn('la división es entre dos enteros y se trunca (7/2 da 3, no 3.5): guardarla en ' + to + ' no recupera los decimales; usa 7/2.0 o (float)7/2', line, 'TIP-001');
+      if (r.intdiv && FLOATLIKE.has(to)) this.warn('la división es entre dos enteros y se trunca (7/2 da 3, no 3.5): guardarla en ' + to + ' no recupera los decimales; uno de los dos tiene que ser float', line, 'TIP-001');
     }
 
     declCode(d, global, inFor) {

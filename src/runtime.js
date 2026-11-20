@@ -600,7 +600,7 @@
       if (e instanceof CRuntimeError) return { error: e.message, line: e.cline, code: 136 };
       if (e instanceof RangeError && /Invalid (string|array) length|allocation/i.test(e.message)) return { error: 'el programa pidió más memoria de la que el editor puede darle', code: 139 };
       if (e instanceof RangeError && /call stack/i.test(e.message)) return { error: 'desbordamiento de la pila (recursión infinita o muy profunda)', code: 139 };
-      return { error: 'Error inesperado del editor (no es culpa de tu programa): ' + (e && e.message) + '. Avísale al profe.', code: 1 };
+      return { error: 'Error inesperado del editor (no es culpa de tu programa): ' + (e && e.message) + '. Usa «Avisar a Diego».', code: 1 };
     }
   }
 

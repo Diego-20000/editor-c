@@ -364,7 +364,7 @@
    "La multiplicación y la división tienen mayor prioridad que la suma y la resta.",
    "Las comparaciones se realizan después de resolver las expresiones aritméticas que contienen.",
    "Los paréntesis permiten dejar explícito el orden que quieres.",
-   "Usalos cuando una expresión no sea fácil de leer."
+   "Úsalos cuando una expresión no sea fácil de leer."
   ],
   "ejemplo": "#include <stdio.h>\nint main(){\n printf(\"%d\\n\",2+3*4);\n printf(\"%d\\n\",(2+3)*4);\n}",
   "entrada": "",

@@ -10613,8 +10613,8 @@
  {
   "elemento": "SS",
   "tipo": "concepto",
-  "que_es": "Secuencia simple: estructura de la materia en la que las instrucciones se ejecutan una detrás de otra, sin decisiones ni repeticiones.",
-  "como_se_usa": "LEER A;\nB = A * 2;",
+  "que_es": "Sentencia simple (SS): estructura de la materia en la que las instrucciones se ejecutan una detrás de otra, sin decisiones ni repeticiones.",
+  "como_se_usa": "leer A\nB = A * 2",
   "error_tipico": "Agregar decisiones o repeticiones a un ejercicio que se resuelve en secuencia.",
   "en_la_materia": "SS",
   "errores_ids": [],
@@ -10623,7 +10623,7 @@
    "secuencia simple",
    "estructura secuencial"
   ],
-  "detalle": "SS significa secuencia simple. Es una de las estructuras de la materia: las instrucciones se ejecutan una detrás de otra, sin decidir y sin repetir.\nSirve para los pasos más comunes: leer los datos, hacer las cuentas y mostrar el resultado.\nEn el diagrama N-S son cajas apiladas; en C son instrucciones seguidas dentro de main, cada una ejecutada una sola vez.\nLo que confunde: que el programa sea corto no lo hace SS. Si aparece un if o un lazo, ya no es solo secuencia simple.\nEl orden importa: no puedes usar un dato antes de leerlo o de calcularlo.\nError típico: calcular el total antes de darle valor a las variables que usa la cuenta. El resultado sale con basura.",
+  "detalle": "SS significa sentencia simple: una instrucción de una sola línea (leer, asignar o mostrar), una detrás de otra. Es una de las estructuras de la materia: las instrucciones se ejecutan una detrás de otra, sin decidir y sin repetir.\nSirve para los pasos más comunes: leer los datos, hacer las cuentas y mostrar el resultado.\nEn el diagrama N-S son cajas apiladas; en C son instrucciones seguidas dentro de main, cada una ejecutada una sola vez.\nLo que confunde: que el programa sea corto no lo hace SS. Si aparece un if o un lazo, ya no es solo secuencia simple.\nEl orden importa: no puedes usar un dato antes de leerlo o de calcularlo.\nError típico: calcular el total antes de darle valor a las variables que usa la cuenta. El resultado sale con basura.",
   "ocasiones": [
    {
     "cuando": "Con los datos ya cargados.",

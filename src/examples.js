@@ -224,25 +224,23 @@ int main() {
     printf("\\n");
 }
 ` },
-  { g: 'Repetitivas', t: 'Repetir mientras diga s', d: 'do-while: el cuerpo se ejecuta al menos una vez.', e: `10
-s
+  { g: 'Repetitivas', t: 'Sumar hasta el cero', d: 'Lazo condicional con lectura adelantada: termina cuando se lee 0.', e: `10
 20
-s
 5
-n
+0
 `, c: `#include <stdio.h>
 
 int main() {
-    int V, SUMA = 0;
-    char OTRO;
+    int V, SUMA;
 
-    do {
-        printf("Número: ");
-        scanf("%d", &V);
+    SUMA = 0;
+    printf("Número (0 para terminar): ");
+    scanf("%d", &V);
+    while (V != 0) {
         SUMA = SUMA + V;
-        printf("Otro? (s/n): ");
-        scanf(" %c", &OTRO);
-    } while (OTRO == 's');
+        printf("Número (0 para terminar): ");
+        scanf("%d", &V);
+    }
 
     printf("Suma total: %d\\n", SUMA);
 }
