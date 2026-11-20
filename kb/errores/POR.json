@@ -162,8 +162,8 @@
   "riesgo_falso_positivo": "En la materia el profesor escribe main() sin tipo en las pizarras: marcar como informacion y no como error.",
   "nivel": "informacion",
   "verificado_gcc13": true,
-  "detectado_editor": false,
-  "mensaje_editor_actual": null,
+  "detectado_editor": true,
+  "mensaje_editor_actual": "main sin tipo: gcc lo acepta y lo toma como int. Se recomienda escribir int main()",
   "codigo_editor_actual": null,
   "verificado_editor_corrige": true,
   "notas": "El profesor escribe main() sin tipo en sus resoluciones: el editor debe aceptarlo; el aviso es solo informativo."
