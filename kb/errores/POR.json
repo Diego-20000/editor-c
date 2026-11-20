@@ -159,14 +159,14 @@
   "relacion_con_la_materia": "estructura del programa",
   "deteccion": "estatica",
   "como_detectarlo": "Definición de función sin tipo de retorno, en especial main.",
-  "riesgo_falso_positivo": "En la materia el profesor escribe main() sin tipo en las pizarras: marcar como informacion y no como error.",
+  "riesgo_falso_positivo": "En la materia se escribe main() sin tipo en las pizarras: marcar como informacion y no como error.",
   "nivel": "informacion",
   "verificado_gcc13": true,
   "detectado_editor": true,
   "mensaje_editor_actual": "main sin tipo: gcc lo acepta y lo toma como int. Se recomienda escribir int main()",
   "codigo_editor_actual": null,
   "verificado_editor_corrige": true,
-  "notas": "El profesor escribe main() sin tipo en sus resoluciones: el editor debe aceptarlo; el aviso es solo informativo."
+  "notas": "En la materia se escribe main() sin tipo en las resoluciones: el editor debe aceptarlo; el aviso es solo informativo."
  },
  {
   "id": "POR-007",

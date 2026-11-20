@@ -3,7 +3,7 @@
 Leé esto antes de proponer o cambiar algo. Está escrito para cualquier sesión de Claude, agente o ChatGPT que trabaje en el repo.
 
 ## Qué es
-Un editor de C que corre en el navegador, para alumnos de 5.º año de la E.E.S.T. N.º 8 de Morón (materia Lenguajes Electrónicos V, profesor Esteban Brizuela, repo de la materia: `Diego-20000/brizuela`). Lo hace Diego Segurotti (ArtPrograms Studio) para él, sus compañeros y los alumnos del profesor. Objetivo: un entorno de verificación **tan fiel a gcc como sea posible** para los programas de la materia, mejor que Programiz u OnlineGDB.
+Un editor de C que corre en el navegador, para alumnos de 5.º año de la E.E.S.T. N.º 8 de Morón (materia Lenguajes Electrónicos V). Lo hace Diego Segurotti (ArtPrograms Studio) para él, sus compañeros y los alumnos del profesor. Objetivo: un entorno de verificación **tan fiel a gcc como sea posible** para los programas de la materia, mejor que Programiz u OnlineGDB.
 
 ## Restricción de arquitectura que no se negocia: es un sitio ESTÁTICO en GitHub Pages
 - **No hay servidor, ni backend, ni base de datos, ni cuentas, ni API.** Solo archivos que el navegador descarga y ejecuta. (`index.html` + `assets/`, y `dist/editor-c.html` en un solo archivo.)
@@ -29,11 +29,11 @@ Un editor de C que corre en el navegador, para alumnos de 5.º año de la E.E.S.
 
 ## Idioma y términos (decisión de Diego, 14/11/2026)
 - Todo lo que lee el alumno está en **español neutro**, sin voseo ni regionalismos (nada de «usá», «tenés», «vos», «fijate», «tipear», «pisar»). Trato de «tú» o impersonal. Lo vigila `node test/neutro.test.js`. (Este archivo es para agentes y quedó como estaba.)
-- Términos de la materia (Brizuela): **lazo** (lazo repetitivo LR, lazo condicional LC; no «bucle»), **instrucción** (no «sentencia»), **aviso** (no «advertencia»), **archivo cabecera** (.h), **ciclo** solo para cada vuelta. En el código, `main` va como `int main()` **sin `return 0`** (la materia no lo usa); tampoco `do-while` en los ejemplos.
+- Términos de la materia: **lazo** (lazo repetitivo LR, lazo condicional LC; no «bucle»), **instrucción** (no «sentencia»), **aviso** (no «advertencia»), **archivo cabecera** (.h), **ciclo** solo para cada vuelta. En el código, `main` va como `int main()` **sin `return 0`** (la materia no lo usa); tampoco `do-while` en los ejemplos.
 - La ayuda no copia ejercicios de la materia: las lecciones usan otros datos y las fichas de errores que traían la solución de un ejercicio llevan `solucion_ejercicio: true` (no se muestra «Así queda bien»).
 
 ## Lo que enseña la materia (alcance del lenguaje)
-ANSI C básico: `char`, `int`, `float`, `double`, operadores, `printf`/`scanf` (`%d %f %5.2f %10d`), `if`/`else`, `for`, `while`, `switch`, funciones con prototipos, arreglos, `math.h`. Variables en MAYÚSCULAS. El método: algoritmo en papel → diagrama Nassi-Shneiderman → verificación → código C → pruebas en computadora. El apunte y las reglas están en `Diego-20000/brizuela` (`CLAUDE.md`, `REFERENCIA_CLAUDE_BRIZUELA.md`, PDFs).
+ANSI C básico: `char`, `int`, `float`, `double`, operadores, `printf`/`scanf` (`%d %f %5.2f %10d`), `if`/`else`, `for`, `while`, `switch`, funciones con prototipos, arreglos, `math.h`. Variables en MAYÚSCULAS. El método: algoritmo en papel → diagrama Nassi-Shneiderman → verificación → código C → pruebas en computadora.
 
 ## Reglas del producto
 - Mensajes en español, cortos, con el número de línea. Un aviso nunca impide ejecutar; solo un error de compilación lo impide.
