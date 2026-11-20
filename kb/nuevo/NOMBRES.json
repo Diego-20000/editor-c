@@ -1,498 +1,498 @@
 [
- {
-  "rol": "variable_int",
-  "cuando_aplica": "Declaración de variable escalar local cuyo tipo base es exactamente int; excluye parámetros y variables declaradas fuera de una función.",
-  "titulo": "Variable entera {NOMBRE}",
-  "que_es": "{NOMBRE} es una variable de tipo {TIPO}, declarada en la línea {LINEA_DECL}. Valor al declararla: {VALOR_INICIAL}{SIN_VALOR_INICIAL}.",
-  "como_se_usa": "Guarda números enteros, como cantidades o resultados sin parte decimal. Sus asignaciones aparecen en {LINEAS_ASIGNA}. En printf suele mostrarse con %d: {LINEAS_USO_PRINTF}.",
-  "error_tipico": "Usar %f para mostrarla o esperar que una división entre dos int conserve decimales.",
-  "detalle": "int guarda números enteros, positivos, negativos o cero.\nLa declaración reserva un espacio para un valor de ese tipo.\nLas asignaciones muestran cuándo cambia {NOMBRE}.\nLa lectura y la salida deben respetar el tipo declarado.\nUna operación entre enteros puede descartar la parte decimal.\nLa línea {LINEA_DECL} permite localizar la declaración.",
-  "variantes": [
-   "Este nombre corresponde a un entero del programa.",
-   "Aquí se guarda un valor sin decimales.",
-   "El tipo de {NOMBRE} es int."
-  ],
-  "ejemplo": "int main() { int CANTIDAD = 4; return CANTIDAD != 4;}",
-  "verificado_gcc13": false
- },
- {
-  "rol": "variable_float",
-  "cuando_aplica": "Declaración de variable escalar local de tipo float; excluye parámetros y variables globales.",
-  "titulo": "Variable decimal float {NOMBRE}",
-  "que_es": "{NOMBRE} es una variable de tipo {TIPO}, declarada en la línea {LINEA_DECL}. Valor al declararla: {VALOR_INICIAL}{SIN_VALOR_INICIAL}.",
-  "como_se_usa": "Guarda números con parte decimal y precisión simple. Sus asignaciones aparecen en {LINEAS_ASIGNA}. En printf se suele utilizar %f: {LINEAS_USO_PRINTF}.",
-  "error_tipico": "Leer un float con %lf en scanf; para float se utiliza %f.",
-  "detalle": "float permite trabajar con valores decimales.\nSu precisión es menor que la de double.\nLas asignaciones detectadas muestran dónde cambia {NOMBRE}.\nEn scanf el formato habitual para este tipo es %f.\nEn printf se utiliza %f, con precisión opcional como %.2f.\nLa declaración está en la línea {LINEA_DECL}.",
-  "variantes": [
-   "Esta variable almacena un decimal de precisión simple.",
-   "{NOMBRE} puede guardar valores con parte fraccionaria.",
-   "El tipo elegido para este dato es float."
-  ],
-  "ejemplo": "int main() { float ALTURA = 1.75f; return ALTURA < 1.0f;}",
-  "verificado_gcc13": false
- },
- {
-  "rol": "variable_double",
-  "cuando_aplica": "Declaración de variable escalar local de tipo double; excluye parámetros y variables globales.",
-  "titulo": "Variable decimal double {NOMBRE}",
-  "que_es": "{NOMBRE} es una variable de tipo {TIPO}, declarada en la línea {LINEA_DECL}. Valor al declararla: {VALOR_INICIAL}{SIN_VALOR_INICIAL}.",
-  "como_se_usa": "Guarda números decimales con más precisión que float. Sus asignaciones aparecen en {LINEAS_ASIGNA}. En scanf se lee con %lf y en printf se muestra con %f: {LINEAS_USO_PRINTF}.",
-  "error_tipico": "Usar %f en scanf para leer un double; el formato correcto es %lf.",
-  "detalle": "double ofrece más precisión que float.\nLa variable conserva su valor hasta que otra asignación lo modifica.\nscanf necesita %lf para recibir la dirección de un double.\nprintf utiliza %f para mostrar un double.\nLas asignaciones detectadas aparecen en {LINEAS_ASIGNA}.\nLa declaración está en la línea {LINEA_DECL}.",
-  "variantes": [
-   "Este dato se guarda con precisión double.",
-   "{NOMBRE} es una variable decimal de doble precisión.",
-   "double conserva más cifras decimales que float."
-  ],
-  "ejemplo": "int main() { double DISTANCIA = 125.375; return DISTANCIA < 100.0;}",
-  "verificado_gcc13": false
- },
- {
-  "rol": "variable_char",
-  "cuando_aplica": "Declaración de variable escalar local de tipo char; excluye parámetros y arreglos de caracteres.",
-  "titulo": "Variable de carácter {NOMBRE}",
-  "que_es": "{NOMBRE} es una variable de tipo {TIPO}, declarada en la línea {LINEA_DECL}. Valor al declararla: {VALOR_INICIAL}{SIN_VALOR_INICIAL}.",
-  "como_se_usa": "Guarda un carácter individual, como una letra, un dígito o un símbolo. Sus asignaciones aparecen en {LINEAS_ASIGNA}. Para mostrarlo se utiliza %c: {LINEAS_USO_PRINTF}.",
-  "error_tipico": "Confundir un carácter entre comillas simples, como 'A', con un texto entre comillas dobles, como \"A\".",
-  "detalle": "char guarda un solo carácter, no una palabra completa.\nLos caracteres individuales se escriben entre comillas simples.\nscanf suele leerlo con %c y printf lo muestra con %c.\nUn espacio antes de %c en scanf permite descartar blancos pendientes.\nLas asignaciones detectadas indican dónde puede cambiar el carácter.\nLa declaración está en la línea {LINEA_DECL}.",
-  "variantes": [
-   "Esta variable guarda un carácter individual.",
-   "{NOMBRE} representa una letra, un dígito o un símbolo.",
-   "El tipo char es adecuado para un carácter."
-  ],
-  "ejemplo": "int main() { char INICIAL = 'D'; return INICIAL != 'D';}",
-  "verificado_gcc13": false
- },
- {
-  "rol": "variable_long",
-  "cuando_aplica": "Declaración de variable escalar local de tipo long o long int, no long long; excluye parámetros y variables globales.",
-  "titulo": "Variable entera long {NOMBRE}",
-  "que_es": "{NOMBRE} es una variable de tipo {TIPO}, declarada en la línea {LINEA_DECL}. Valor al declararla: {VALOR_INICIAL}{SIN_VALOR_INICIAL}.",
-  "como_se_usa": "Guarda enteros que pueden necesitar más rango que int. Sus asignaciones aparecen en {LINEAS_ASIGNA}. Para mostrar un long se utiliza %ld: {LINEAS_USO_PRINTF}.",
-  "error_tipico": "Mostrar un long con %d o leerlo con %d: esos formatos no corresponden al tipo.",
-  "detalle": "long es un tipo entero de mayor rango que int en el objetivo LP64 del editor.\nEl sufijo L puede indicar que una constante entera es long.\nscanf utiliza %ld para leer un long.\nprintf utiliza %ld para mostrarlo.\nLas asignaciones muestran dónde cambia el número.\nLa declaración está en la línea {LINEA_DECL}.",
-  "variantes": [
-   "Esta variable almacena un entero de tipo long.",
-   "{NOMBRE} puede representar enteros de mayor rango que int.",
-   "El programa eligió long para este valor."
-  ],
-  "ejemplo": "int main() { long DISTANCIA = 3000000000L; return DISTANCIA < 0L;}",
-  "verificado_gcc13": false
- },
- {
-  "rol": "variable_short",
-  "cuando_aplica": "Declaración de variable escalar local de tipo short o short int; excluye parámetros y variables globales.",
-  "titulo": "Variable entera short {NOMBRE}",
-  "que_es": "{NOMBRE} es una variable de tipo {TIPO}, declarada en la línea {LINEA_DECL}. Valor al declararla: {VALOR_INICIAL}{SIN_VALOR_INICIAL}.",
-  "como_se_usa": "Guarda enteros con un rango menor que int. Sus asignaciones aparecen en {LINEAS_ASIGNA}. Para mostrar un short se utiliza normalmente %hd: {LINEAS_USO_PRINTF}.",
-  "error_tipico": "Guardar un valor que supera el rango representable por short o utilizar un formato incorrecto en scanf.",
-  "detalle": "short es un tipo entero de rango más limitado que int.\nEn el objetivo del editor ocupa 16 bits.\nscanf utiliza %hd para leer un short.\nprintf utiliza %hd para mostrarlo.\nLas asignaciones muestran cuándo cambia {NOMBRE}.\nLa declaración está en la línea {LINEA_DECL}.",
-  "variantes": [
-   "Este dato se almacena como un entero corto.",
-   "{NOMBRE} utiliza el tipo short.",
-   "El rango de esta variable es menor que el de int."
-  ],
-  "ejemplo": "int main() { short NIVEL = 120; return NIVEL != 120;}",
-  "verificado_gcc13": false
- },
- {
-  "rol": "variable_unsigned",
-  "cuando_aplica": "Declaración de variable escalar local cuyo tipo comienza con unsigned; excluye parámetros, globales y arreglos.",
-  "titulo": "Variable entera sin signo {NOMBRE}",
-  "que_es": "{NOMBRE} es una variable de tipo {TIPO}, declarada en la línea {LINEA_DECL}. Valor al declararla: {VALOR_INICIAL}{SIN_VALOR_INICIAL}.",
-  "como_se_usa": "Representa cantidades que no necesitan valores negativos. Sus asignaciones aparecen en {LINEAS_ASIGNA}. El formato depende del tipo base; para unsigned int se utiliza %u: {LINEAS_USO_PRINTF}.",
-  "error_tipico": "Suponer que unsigned admite negativos: una resta menor que cero puede producir un valor muy grande.",
-  "detalle": "unsigned indica que el tipo entero no representa signo negativo.\nEl rango comienza en cero y llega más arriba que el del tipo equivalente con signo.\nEl especificador depende del tipo base, por ejemplo %u para unsigned int.\nUna resta puede dar una vuelta dentro del rango sin signo.\nLas comparaciones entre signed y unsigned requieren atención.\nLa declaración está en la línea {LINEA_DECL}.",
-  "variantes": [
-   "Esta variable guarda una cantidad sin signo.",
-   "{NOMBRE} utiliza una variante unsigned de un tipo entero.",
-   "El tipo elegido no representa números negativos."
-  ],
-  "ejemplo": "int main() { unsigned int CANTIDAD = 12U; return CANTIDAD != 12U;}",
-  "verificado_gcc13": false
- },
- {
-  "rol": "variable_bool",
-  "cuando_aplica": "Declaración de variable escalar local de tipo bool; no es parámetro ni variable global.",
-  "titulo": "Variable lógica {NOMBRE}",
-  "que_es": "{NOMBRE} es una variable de tipo {TIPO}, declarada en la línea {LINEA_DECL}. Valor al declararla: {VALOR_INICIAL}{SIN_VALOR_INICIAL}.",
-  "como_se_usa": "Representa una condición: false equivale a 0 y true equivale a 1. Sus asignaciones aparecen en {LINEAS_ASIGNA}. Puede consultarse directamente dentro de if, while o una expresión lógica.",
-  "error_tipico": "Olvidar incluir <stdbool.h> cuando se utiliza bool, true o false.",
-  "detalle": "bool representa un estado lógico.\nPara usar bool, true y false se incluye <stdbool.h>.\nUna condición puede comprobarse directamente con if ({NOMBRE}).\nLas asignaciones muestran cuándo cambia el estado.\nNo hace falta comparar una variable bool con 1 para usarla como condición.\nLa declaración está en la línea {LINEA_DECL}.",
-  "variantes": [
-   "Esta variable representa un estado verdadero o falso.",
-   "{NOMBRE} guarda un valor lógico.",
-   "El programa utiliza bool para recordar una condición."
-  ],
-  "ejemplo": "#include <stdbool.h>\nint main() { bool ACTIVO = true; return !ACTIVO;}",
-  "verificado_gcc13": false
- },
- {
-  "rol": "arreglo_1d",
-  "cuando_aplica": "La declaración seleccionada contiene exactamente un par de corchetes en el declarador de {NOMBRE}; no es parámetro de función.",
-  "titulo": "Arreglo de una dimensión {NOMBRE}",
-  "que_es": "{NOMBRE} es un arreglo de una dimensión de tipo {TIPO}, declarado en la línea {LINEA_DECL}, con tamaño {DIMENSIONES}.",
-  "como_se_usa": "Guarda varios valores del mismo tipo. Cada elemento se consulta o modifica con un índice entre corchetes, por ejemplo {NOMBRE}[0]. Las asignaciones detectadas aparecen en {LINEAS_ASIGNA}.",
-  "error_tipico": "Usar una posición fuera del arreglo: los índices comienzan en cero y el último es el tamaño menos uno.",
-  "detalle": "Un arreglo reúne varios elementos del mismo tipo bajo un nombre. El tamaño {DIMENSIONES} indica cuántas posiciones existen. El primer índice es cero y el último es el tamaño menos uno. Se puede recorrer con un for y una variable índice. La declaración está en la línea {LINEA_DECL}.",
-  "variantes": [
-   "Este nombre identifica un arreglo de una dimensión.",
-   "{NOMBRE} permite trabajar con varios valores del mismo tipo.",
-   "El programa accede a sus elementos mediante un índice."
-  ],
-  "ejemplo": "#include <stdio.h>\nint main() {\n int V[3], i;\n V[0]=2; V[1]=4; V[2]=6;\n for(i=0;i<3;i++) printf(\"%d \",V[i]);\n printf(\"\\n\");\n}",
-  "verificado_gcc13": false
- },
- {
-  "rol": "arreglo_2d",
-  "cuando_aplica": "La declaración seleccionada contiene exactamente dos pares de corchetes en el declarador de {NOMBRE}; no es parámetro.",
-  "titulo": "Arreglo de dos dimensiones {NOMBRE}",
-  "que_es": "{NOMBRE} es un arreglo de dos dimensiones de tipo {TIPO}, declarado en la línea {LINEA_DECL}; sus dimensiones son {DIMENSIONES}.",
-  "como_se_usa": "Organiza datos en filas y columnas. Se accede a cada valor con dos índices, como {NOMBRE}[FILA][COLUMNA], y las asignaciones detectadas aparecen en {LINEAS_ASIGNA}.",
-  "error_tipico": "Intercambiar fila y columna o recorrer una posición más allá del tamaño de alguna dimensión.",
-  "detalle": "Un arreglo de dos dimensiones organiza datos como una tabla. El primer índice indica la fila y el segundo la columna. Los dos índices comienzan en cero y cada dimensión tiene su propio límite. Para recorrerlo suelen utilizarse dos lazos, uno dentro del otro. La declaración está en la línea {LINEA_DECL}.",
-  "variantes": [
-   "Este identificador corresponde a una matriz.",
-   "{NOMBRE} organiza elementos en filas y columnas.",
-   "El programa necesita dos índices para acceder a cada elemento."
-  ],
-  "ejemplo": "#include <stdio.h>\nint main() {\n int TABLA[2][2];\n TABLA[0][0]=1; TABLA[0][1]=2;\n TABLA[1][0]=3; TABLA[1][1]=4;\n printf(\"%d\\n\",TABLA[1][0]);\n}",
-  "verificado_gcc13": false
- },
- {
-  "rol": "parametro_valor",
-  "cuando_aplica": "El identificador aparece en la lista de parámetros de la definición de una función, sin corchetes ni asterisco; no basta con un prototipo sin cuerpo.",
-  "titulo": "Parámetro por valor {NOMBRE}",
-  "que_es": "{NOMBRE} es un parámetro de la función {FUNCION_ACTUAL}. Su tipo es {TIPO} y la lista detectada es {PARAMS}.",
-  "como_se_usa": "Recibe un dato cuando se llama a la función. Por valor, la función trabaja con una copia del valor recibido. Sus usos aparecen en {CANT_USOS} lugares del código.",
-  "error_tipico": "Esperar que modificar el parámetro cambie automáticamente la variable del llamador.",
-  "detalle": "Un parámetro permite que una función reciba información.\nSe declara dentro de los paréntesis de la definición.\nLa función actual es {FUNCION_ACTUAL}.\nPor valor significa que se recibe una copia del argumento.\nEl alcance del parámetro se limita a esa función.\nEl tipo indica qué clase de dato recibe.",
-  "variantes": [
-   "Este nombre recibe un dato al entrar en la función.",
-   "{NOMBRE} es uno de los parámetros de {FUNCION_ACTUAL}.",
-   "La función utiliza este valor que llega desde la llamada."
-  ],
-  "ejemplo": "int DOBLE(int NUMERO) { return NUMERO * 2; }\nint main() { return DOBLE(3) != 6;}",
-  "verificado_gcc13": false
- },
- {
-  "rol": "parametro_arreglo",
-  "cuando_aplica": "El identificador aparece en la lista de parámetros de la definición de una función y su declarador incluye corchetes.",
-  "titulo": "Parámetro de arreglo {NOMBRE}",
-  "que_es": "{NOMBRE} es un parámetro de arreglo de la función {FUNCION_ACTUAL}. Su tipo es {TIPO} y sus dimensiones son {DIMENSIONES}.",
-  "como_se_usa": "Permite que una función reciba acceso a los elementos de un arreglo. En una matriz debe conservarse el tamaño de las columnas en la declaración del parámetro. Sus usos aparecen en {CANT_USOS} lugares.",
-  "error_tipico": "Intentar obtener el tamaño original con sizeof({NOMBRE}): como parámetro, el arreglo se ajusta a un puntero.",
-  "detalle": "El parámetro representa elementos que recibe la función.\nSu nombre solo existe dentro de {FUNCION_ACTUAL}.\nLa declaración incluye corchetes para indicar que se reciben elementos.\nEn una matriz debe indicarse la dimensión de las columnas.\nLa función necesita conocer el tamaño por otro parámetro o una regla acordada.\nLos cambios en los elementos pueden afectar al arreglo original.",
-  "variantes": [
-   "Este parámetro permite recorrer un arreglo recibido por la función.",
-   "{NOMBRE} representa datos organizados en posiciones.",
-   "La función recibe acceso a los elementos del arreglo."
-  ],
-  "ejemplo": "int PRIMERO(int V[], int N) { return N > 0 ? V[0] : 0; }\nint main() { int A[2] = {7, 8}; return PRIMERO(A, 2) != 7;}",
-  "verificado_gcc13": false
- },
- {
-  "rol": "variable_global",
-  "cuando_aplica": "Declaración de un objeto fuera de cualquier función y lista de parámetros; no es #define ni una declaración extern sin definición.",
-  "titulo": "Variable global {NOMBRE}",
-  "que_es": "{NOMBRE} es una variable global de tipo {TIPO}, declarada en la línea {LINEA_DECL}. Valor al declararla: {VALOR_INICIAL}{SIN_VALOR_INICIAL}.",
-  "como_se_usa": "Se declara fuera de las funciones y puede utilizarse desde las funciones que tengan acceso a su declaración. Sus asignaciones aparecen en {LINEAS_ASIGNA}; sus usos detectados son {CANT_USOS}.",
-  "error_tipico": "Crear una global para compartir cualquier dato sin necesidad: puede dificultar saber qué función modifica su valor.",
-  "detalle": "La variable global se declara fuera de main y de las demás funciones.\nSu duración de almacenamiento abarca la ejecución del programa.\nSi no se inicializa explícitamente, una global se inicializa con cero.\nVarias funciones pueden utilizarla si la declaración es visible.\nLas asignaciones registradas permiten localizar dónde cambia.\nConviene preferir variables locales cuando el dato no necesita compartirse.",
-  "variantes": [
-   "Este identificador está declarado fuera de las funciones.",
-   "{NOMBRE} puede utilizarse desde distintas funciones visibles.",
-   "El programa comparte este dato mediante una variable global."
-  ],
-  "ejemplo": "int TOTAL_GLOBAL = 0;\nint main() { TOTAL_GLOBAL++; return TOTAL_GLOBAL != 1;}",
-  "verificado_gcc13": false
- },
- {
-  "rol": "variable_scanf",
-  "cuando_aplica": "El identificador aparece como destino de una conversión de scanf: &{NOMBRE} para un escalar o {NOMBRE} para un arreglo de char leído como texto.",
-  "titulo": "Dato leído con scanf: {NOMBRE}",
-  "que_es": "{NOMBRE} recibe un dato desde la entrada estándar mediante scanf. Su declaración está en la línea {LINEA_DECL} y las lecturas aparecen en {LINEAS_LECTURA_SCANF}.",
-  "como_se_usa": "scanf necesita una dirección para escribir en un escalar. Normalmente se pasa &{NOMBRE}; para un arreglo de char usado con %s se pasa el nombre del arreglo sin &.",
-  "error_tipico": "Olvidar & al leer una variable escalar o utilizar un especificador que no coincide con su tipo.",
-  "detalle": "scanf convierte texto de entrada en valores almacenados en variables.\nCada especificador debe corresponder al tipo del destino.\nPara int se utiliza %d y se pasa &{NOMBRE}.\nPara float se utiliza %f; para double, %lf.\nUn arreglo de char para %s se pasa sin &.\nEs conveniente comprobar el valor de retorno de scanf.",
-  "variantes": [
-   "Este nombre recibe información escrita al ejecutar el programa.",
-   "{NOMBRE} es un destino de una lectura con scanf.",
-   "El valor de esta variable llega desde la entrada estándar."
-  ],
-  "ejemplo": "#include <stdio.h>\nint main() { int EDAD; if (scanf(\"%d\", &EDAD) == 1) return EDAD < 0;}",
-  "verificado_gcc13": false
- },
- {
-  "rol": "contador",
-  "cuando_aplica": "Variable escalar inicializada explícitamente en 0 que, dentro de un bloque repetitivo, aumenta mediante ++, += 1 o una asignación equivalente.",
-  "titulo": "Contador {NOMBRE}",
-  "que_es": "{NOMBRE} funciona como contador: registra cuántas veces ocurre algo. Se declara en la línea {LINEA_DECL}.",
-  "como_se_usa": "Se inicia antes del lazo y aumenta cuando ocurre el hecho que quieres contar. Las asignaciones detectadas aparecen en {LINEAS_ASIGNA}; se encontraron {CANT_USOS} usos.",
-  "error_tipico": "Olvidar iniciarlo en cero o aumentarlo en una vuelta que no cumple la condición, de modo que la cantidad final sea incorrecta.",
-  "detalle": "Un contador representa una cantidad de hechos o repeticiones. Normalmente comienza en cero antes del lazo. Después aumenta de uno en uno cuando ocurre el evento que interesa. Por ejemplo, puede contar cuántas temperaturas superan un límite. Comprueba que aumente exactamente una vez por cada dato contado. La declaración está en la línea {LINEA_DECL}.",
-  "variantes": [
-   "Este identificador lleva la cuenta de repeticiones o elementos.",
-   "{NOMBRE} aumenta de uno en uno.",
-   "El programa utiliza esta variable para contar."
-  ],
-  "ejemplo": "#include <stdio.h>\nint main() {\n int i, CONTADOR;\n CONTADOR=0;\n for(i=0;i<4;i++) {\n  if(i%2==0) CONTADOR=CONTADOR+1;\n }\n printf(\"Pares: %d\\n\",CONTADOR);\n}",
-  "verificado_gcc13": false
- },
- {
-  "rol": "acumulador",
-  "cuando_aplica": "Variable numérica inicializada explícitamente que luego aparece en una suma del tipo NOMBRE += EXPRESION o NOMBRE = NOMBRE + EXPRESION.",
-  "titulo": "Acumulador {NOMBRE}",
-  "que_es": "{NOMBRE} funciona como acumulador: conserva un total parcial al reunir varios datos. Se declara en la línea {LINEA_DECL}.",
-  "como_se_usa": "Se inicializa antes de comenzar y se actualiza con cada dato nuevo. Las asignaciones aparecen en {LINEAS_ASIGNA}; se encontraron {CANT_USOS} usos.",
-  "error_tipico": "No darle un valor inicial antes de la primera suma o reiniciarlo dentro del lazo, perdiendo el total anterior.",
-  "detalle": "Un acumulador reúne varios datos en una sola variable. Para sumar, normalmente comienza en cero; para multiplicar, comienza en uno. En cada vuelta se actualiza usando el valor anterior y el dato nuevo. Al terminar el lazo, conserva el total o producto obtenido. La declaración está en la línea {LINEA_DECL}.",
-  "variantes": [
-   "Esta variable va reuniendo una suma parcial.",
-   "{NOMBRE} conserva lo acumulado hasta el momento.",
-   "El programa agrega nuevos valores a este total."
-  ],
-  "ejemplo": "#include <stdio.h>\nint main() {\n int i, SUMA;\n SUMA=0;\n for(i=1;i<=4;i++) SUMA=SUMA+i;\n printf(\"Total: %d\\n\",SUMA);\n}",
-  "verificado_gcc13": false
- },
- {
-  "rol": "bandera",
-  "cuando_aplica": "Variable escalar con asignaciones explícitas limitadas a 0 y 1 (o false y true), con al menos una asignación de cada estado.",
-  "titulo": "Bandera lógica {NOMBRE}",
-  "que_es": "{NOMBRE} funciona como bandera: almacena uno de dos estados, 0 o 1. Su declaración está en la línea {LINEA_DECL}.",
-  "como_se_usa": "Recuerda si ocurrió una condición, si se encontró un elemento o si una tarea ya se realizó. Las asignaciones aparecen en {LINEAS_ASIGNA}; sus usos son {CANT_USOS}.",
-  "error_tipico": "No establecer el estado inicial antes de comprobarlo, o asignar otros valores y tratar la variable como si fuera estrictamente 0 o 1.",
-  "detalle": "Una bandera recuerda un estado entre distintas partes del programa.\nEl valor 0 suele representar falso y el valor 1, verdadero.\nPuede cambiar cuando se cumple una condición.\nLuego se consulta en una condición if o while.\nEste patrón se diferencia de un contador porque no acumula cantidades.\nLa línea {LINEA_DECL} indica dónde se declara.",
-  "variantes": [
-   "Este nombre se usa como indicador de un estado.",
-   "{NOMBRE} señala si ocurrió una condición.",
-   "El programa recuerda un sí o no mediante esta variable."
-  ],
-  "ejemplo": "int main() { int ENCONTRADO = 0; ENCONTRADO = 1; return ENCONTRADO != 1;}",
-  "verificado_gcc13": false
- },
- {
-  "rol": "centinela",
-  "cuando_aplica": "El identificador se lee antes de un while cuya condición lo compara con un valor literal de parada y vuelve a leerse dentro del cuerpo de ese mismo while.",
-  "titulo": "Variable centinela {NOMBRE}",
-  "que_es": "{NOMBRE} se utiliza como centinela: su valor permite decidir cuándo debe finalizar una repetición. Las lecturas detectadas aparecen en {LINEAS_LECTURA_SCANF}.",
-  "como_se_usa": "Se lee un primer dato, se compara con un valor especial y, mientras no coincida, se procesa y se vuelve a leer. La comparación del while controla la entrada o salida del lazo.",
-  "error_tipico": "Olvidar la lectura dentro del while: el valor no cambia y el lazo puede repetirse indefinidamente.",
-  "detalle": "Un centinela es un valor especial que marca el final de una secuencia.\nNo se procesa como dato normal cuando coincide con el valor de parada.\nLa primera lectura debe ocurrir antes de evaluar el while.\nEl cuerpo debe actualizar la variable mediante otra lectura o asignación.\nLa condición debe comparar con el mismo valor especial esperado.\nComprueba que el valor de parada no pueda confundirse con un dato válido.",
-  "variantes": [
-   "Esta variable puede indicar que ya no quedan datos por procesar.",
-   "{NOMBRE} controla cuándo termina la lectura repetitiva.",
-   "El programa utiliza un valor especial como señal de finalización."
-  ],
-  "ejemplo": "#include <stdio.h>\nint main() { int DATO; scanf(\"%d\", &DATO); while (DATO != -1) scanf(\"%d\", &DATO);}",
-  "verificado_gcc13": false
- },
- {
-  "rol": "maximo",
-  "cuando_aplica": "Dentro de un condicional se compara un dato candidato con {NOMBRE} mediante > y, si es mayor, se asigna el candidato a {NOMBRE}; el nombre por sí solo no cuenta.",
-  "titulo": "Valor máximo guardado en {NOMBRE}",
-  "que_es": "{NOMBRE} conserva el mayor valor encontrado hasta el momento. La asignación que lo actualiza aparece en {LINEAS_ASIGNA}.",
-  "como_se_usa": "Se compara cada dato nuevo con el máximo actual. Si el nuevo dato es mayor, reemplaza el valor guardado. La inicialización debe ser compatible con los datos; a menudo se toma el primer dato de la serie.",
-  "error_tipico": "Inicializar el máximo en cero cuando todos los datos podrían ser negativos, o actualizarlo con una comparación invertida.",
-  "detalle": "El máximo es el mayor valor observado en una serie.\nLa variable conserva el mejor valor encontrado hasta ese momento.\nCada dato nuevo se compara con el valor almacenado.\nSolo se actualiza cuando el candidato es mayor.\nLa inicialización debe evitar descartar series negativas.\nLa asignación detectada aparece en {LINEAS_ASIGNA}.",
-  "variantes": [
-   "Este identificador guarda el mayor valor encontrado.",
-   "{NOMBRE} se actualiza cuando aparece un dato superior.",
-   "El programa conserva aquí el máximo parcial."
-  ],
-  "ejemplo": "int main() { int MAXIMO = 3, DATO = 7; if (DATO > MAXIMO) MAXIMO = DATO; return MAXIMO != 7;}",
-  "verificado_gcc13": false
- },
- {
-  "rol": "minimo",
-  "cuando_aplica": "Dentro de un condicional se compara un dato candidato con {NOMBRE} mediante < y, si es menor, se asigna el candidato a {NOMBRE}; el nombre por sí solo no cuenta.",
-  "titulo": "Valor mínimo guardado en {NOMBRE}",
-  "que_es": "{NOMBRE} conserva el menor valor encontrado hasta el momento. La asignación que lo actualiza aparece en {LINEAS_ASIGNA}.",
-  "como_se_usa": "Se compara cada dato nuevo con el mínimo actual. Si el candidato es menor, reemplaza el valor guardado. La inicialización debe partir de un dato válido.",
-  "error_tipico": "Inicializar el mínimo en cero cuando todos los datos podrían ser positivos: el cero podría quedar como mínimo aunque nunca haya aparecido.",
-  "detalle": "El mínimo es el menor valor observado en una serie.\nLa variable conserva el menor dato encontrado hasta ese momento.\nCada dato nuevo se compara con el valor actual.\nSolo se actualiza cuando el candidato es menor.\nTomar el primer dato como inicial evita inventar un valor.\nLa asignación detectada aparece en {LINEAS_ASIGNA}.",
-  "variantes": [
-   "Este identificador guarda el menor valor encontrado.",
-   "{NOMBRE} cambia cuando aparece un dato inferior.",
-   "El programa conserva aquí el mínimo parcial."
-  ],
-  "ejemplo": "int main() { int MINIMO = 9, DATO = 4; if (DATO < MINIMO) MINIMO = DATO; return MINIMO != 4;}",
-  "verificado_gcc13": false
- },
- {
-  "rol": "indice_for",
-  "cuando_aplica": "El identificador aparece en la inicialización, condición y actualización del encabezado de un for y se utiliza como subíndice de un arreglo dentro del cuerpo del mismo lazo.",
-  "titulo": "Índice de recorrido {NOMBRE}",
-  "que_es": "{NOMBRE} es la variable de control de un for y también se utiliza para acceder a posiciones de un arreglo. Su declaración está en la línea {LINEA_DECL}.",
-  "como_se_usa": "Permite recorrer las posiciones de un arreglo. El encabezado del for define el valor inicial, la condición de continuidad y el incremento; dentro del cuerpo, {NOMBRE} identifica la posición procesada.",
-  "error_tipico": "Usar una condición que permita llegar a una posición igual al tamaño del arreglo: la última posición válida es tamaño menos uno.",
-  "detalle": "El índice identifica la posición de un elemento dentro de un arreglo.\nEn C, la primera posición tiene índice 0.\nEl encabezado del for controla el avance del índice.\nLa condición debe detener el recorrido antes de superar el tamaño.\nEl uso de {NOMBRE} como subíndice conecta el lazo con el arreglo.\nNo confundas la cantidad de elementos con el índice final.",
-  "variantes": [
-   "Esta variable recorre las posiciones de un arreglo.",
-   "{NOMBRE} indica qué elemento se está procesando.",
-   "El programa utiliza este índice dentro de un for."
-  ],
-  "ejemplo": "int main() { int A[3] = {2, 4, 6}, I, S = 0; for (I = 0; I < 3; I++) S += A[I]; return S != 12;}",
-  "verificado_gcc13": false
- },
- {
-  "rol": "variable_no_usada",
-  "cuando_aplica": "La variable tiene una declaración reconocida y cero referencias posteriores fuera de su declarador; no se cuentan comentarios ni cadenas.",
-  "titulo": "Variable declarada sin usos: {NOMBRE}",
-  "que_es": "{NOMBRE} está declarada en la línea {LINEA_DECL}, pero el análisis no encuentra usos. Cantidad de usos detectados: {CANT_USOS}.",
-  "como_se_usa": "Una variable suele declararse porque el algoritmo necesita guardar un dato que luego será leído o modificado. Si no se utiliza, puede ser una declaración olvidada o un nombre que quedó tras cambiar el programa.",
-  "error_tipico": "Escribir el nombre con otra combinación de mayúsculas y minúsculas: C distingue {NOMBRE} de cualquier variante.",
-  "detalle": "Declarar una variable reserva un lugar para un dato.\nSi nunca se consulta ni se modifica, quizá no sea necesaria.\nEl análisis detectó {CANT_USOS} usos después de la declaración.\nNo se cuentan apariciones dentro de comentarios o cadenas.\nLa línea {LINEA_DECL} permite revisar dónde se creó.\nComprueba si la declaración quedó pendiente de otra parte del algoritmo.",
-  "variantes": [
-   "Este nombre fue declarado, pero no aparece utilizado.",
-   "No se detectaron referencias a {NOMBRE} en el código.",
-   "La variable existe en la declaración, aunque no se encontraron usos."
-  ],
-  "ejemplo": "int main() { int SIN_USO = 5;}",
-  "verificado_gcc13": false
- },
- {
-  "rol": "variable_sin_inicializar",
-  "cuando_aplica": "Variable local escalar sin inicializador cuya primera lectura aparece antes de una asignación garantizada en algún camino de ejecución.",
-  "titulo": "Uso de {NOMBRE} sin valor inicial",
-  "que_es": "{NOMBRE} se declara en la línea {LINEA_DECL} sin un valor inicial. El análisis detectó {SIN_VALOR_INICIAL} antes de garantizar una asignación.",
-  "como_se_usa": "Una variable local debe recibir un valor antes de utilizarse. Revisa el orden entre la declaración, las asignaciones y las lecturas. Las asignaciones localizadas aparecen en {LINEAS_ASIGNA}.",
-  "error_tipico": "Leer la variable antes de asignarle un valor; C no define el resultado y no debe suponerse que será cero.",
-  "detalle": "Una declaración local sin inicializador no asigna un valor útil.\nEl contenido inicial puede ser indeterminado.\nLa lectura debe ocurrir después de una asignación en todos los caminos.\nUna asignación dentro de un if puede no ejecutarse.\nEl comportamiento de C no garantiza un resultado concreto.\nLa línea {LINEA_DECL} señala dónde se declara la variable.",
-  "variantes": [
-   "El programa consulta este dato antes de garantizar su inicialización.",
-   "{NOMBRE} necesita recibir un valor antes de leerse.",
-   "Hay una posible lectura de esta variable sin una asignación previa."
-  ],
-  "ejemplo": "int main() { int DATO; return DATO;}",
-  "verificado_gcc13": false
- },
- {
-  "rol": "constante_define",
-  "cuando_aplica": "Existe una directiva de objeto #define cuyo identificador es {NOMBRE}, sin lista de parámetros inmediatamente después del nombre.",
-  "titulo": "Constante simbólica {NOMBRE}",
-  "que_es": "{NOMBRE} es una macro definida con #define en la línea {LINEA_DECL}. Su reemplazo detectado es {VALOR_INICIAL}.",
-  "como_se_usa": "El preprocesador reemplaza cada aparición del nombre por el texto definido antes de compilar. Se utiliza para nombrar un valor fijo, como un límite o una cantidad.",
-  "error_tipico": "Escribir un punto y coma al final de la directiva: ese carácter también queda dentro del reemplazo.",
-  "detalle": "#define es una directiva del preprocesador, no una variable.\nUna macro de objeto reemplaza el nombre por el texto indicado.\nLa directiva se escribe sin punto y coma final.\nPor convención, las constantes simbólicas suelen escribirse en mayúsculas.\nSi el reemplazo es una expresión, conviene encerrarla entre paréntesis.\nLa definición está en la línea {LINEA_DECL}.",
-  "variantes": [
-   "Este nombre es una constante simbólica del preprocesador.",
-   "{NOMBRE} se reemplaza por el texto indicado en #define.",
-   "El programa utiliza este identificador para representar un valor definido."
-  ],
-  "ejemplo": "#define LIMITE 10\nint main() { return LIMITE != 10;}",
-  "verificado_gcc13": false
- },
- {
-  "rol": "funcion_sin_parametros",
-  "cuando_aplica": "Definición de función propia con lista vacía o void y cuerpo entre llaves; excluye main y funciones de biblioteca.",
-  "titulo": "Función sin parámetros {NOMBRE}",
-  "que_es": "{NOMBRE} es una función propia que no recibe parámetros. Su tipo de retorno es {RETORNO} y comienza en la línea {LINEA_DECL}.",
-  "como_se_usa": "Se llama con el nombre seguido de paréntesis vacíos: {NOMBRE}(). Si devuelve un dato, ese resultado puede guardarse o mostrarse.",
-  "error_tipico": "Llamarla sin paréntesis o enviar argumentos a una función que no recibe parámetros.",
-  "detalle": "Una función agrupa instrucciones bajo un nombre. Esta función no recibe datos desde sus paréntesis. Su cuerpo se ejecuta cuando otra parte del programa la llama. El tipo {RETORNO} indica si devuelve un valor o si es void. Puede declararse con (void) para dejar claro que no recibe parámetros. La definición comienza en la línea {LINEA_DECL}.",
-  "variantes": [
-   "Esta función se ejecuta sin recibir argumentos.",
-   "{NOMBRE} no necesita parámetros para ser llamada.",
-   "El programa puede invocar esta función con paréntesis vacíos."
-  ],
-  "ejemplo": "#include <stdio.h>\nvoid MOSTRAR(void);\nint main() {\n MOSTRAR();\n}\nvoid MOSTRAR(void) {\n printf(\"Listo\\n\");\n}",
-  "verificado_gcc13": false
- },
- {
-  "rol": "funcion_con_parametros",
-  "cuando_aplica": "Definición de función propia cuyo encabezado contiene uno o más parámetros formales; excluye main y funciones de biblioteca.",
-  "titulo": "Función con parámetros {NOMBRE}",
-  "que_es": "{NOMBRE} es una función que recibe {PARAMS}. Devuelve {RETORNO} y su definición comienza en la línea {LINEA_DECL}.",
-  "como_se_usa": "Se llama pasando argumentos entre paréntesis y en el mismo orden de los parámetros. Cada parámetro recibe el valor correspondiente durante esa llamada.",
-  "error_tipico": "Cambiar el orden de los argumentos o pasar una cantidad de datos distinta de la que espera la función.",
-  "detalle": "Los parámetros indican qué datos necesita recibir una función. Al llamarla, los argumentos son los valores concretos que se envían. El orden de los argumentos debe coincidir con el orden de los parámetros. La función trabaja con esos datos y puede devolver un resultado. La definición comienza en la línea {LINEA_DECL}.",
-  "variantes": [
-   "Esta función recibe datos para realizar su tarea.",
-   "{NOMBRE} trabaja con los parámetros de su encabezado.",
-   "La llamada debe proporcionar argumentos en el orden esperado."
-  ],
-  "ejemplo": "#include <stdio.h>\nint SUMAR(int A,int B);\nint main() {\n int TOTAL;\n TOTAL=SUMAR(2,3);\n printf(\"%d\\n\",TOTAL);\n}\nint SUMAR(int A,int B) {\n return A+B;\n}",
-  "verificado_gcc13": false
- },
- {
-  "rol": "funcion_void",
-  "cuando_aplica": "Definición de función propia cuyo tipo de retorno declarado es void.",
-  "titulo": "Función sin retorno {NOMBRE}",
-  "que_es": "{NOMBRE} es una función de tipo void. Recibe {PARAMS} y su definición comienza en la línea {LINEA_DECL}.",
-  "como_se_usa": "Realiza una tarea sin entregar un resultado que pueda guardarse, por ejemplo mostrar un mensaje. Se llama como una instrucción: {NOMBRE}(...);",
-  "error_tipico": "Intentar guardar el resultado de una función void o escribir return seguido de un valor.",
-  "detalle": "void indica que la función no devuelve un valor. Aun así, puede recibir parámetros y ejecutar varias instrucciones. Se llama escribiendo su nombre y los argumentos entre paréntesis. Puede terminar al llegar al final de su cuerpo o utilizar return; para salir antes. No se debe usar su llamada dentro de una cuenta o asignación. La definición comienza en la línea {LINEA_DECL}.",
-  "variantes": [
-   "Esta función realiza una acción y no devuelve un dato.",
-   "{NOMBRE} tiene retorno void.",
-   "La función se llama para ejecutar sus instrucciones, no para obtener un valor."
-  ],
-  "ejemplo": "#include <stdio.h>\nvoid AVISAR(int CANTIDAD);\nint main() {\n AVISAR(3);\n}\nvoid AVISAR(int CANTIDAD) {\n printf(\"Cantidad: %d\\n\",CANTIDAD);\n}",
-  "verificado_gcc13": false
- },
- {
-  "rol": "funcion_retorna_valor",
-  "cuando_aplica": "Definición de función propia con tipo de retorno distinto de void y al menos un return seguido de una expresión.",
-  "titulo": "Función que devuelve un valor: {NOMBRE}",
-  "que_es": "{NOMBRE} devuelve un resultado de tipo {RETORNO}. Recibe {PARAMS} y comienza en la línea {LINEA_DECL}.",
-  "como_se_usa": "Calcula un valor y lo entrega con return. La llamada puede utilizarse en una asignación, una cuenta, una condición o un printf.",
-  "error_tipico": "Olvidar devolver un valor en algún camino de una función cuyo tipo de retorno no es void.",
-  "detalle": "El tipo de retorno aparece antes del nombre de la función. return termina la llamada actual y entrega el resultado indicado. Ese resultado debe coincidir con el tipo declarado. La llamada puede guardarse en una variable o utilizarse directamente en otra expresión. Si hay distintas condiciones, todos los caminos que terminan normalmente deben devolver un valor. La definición comienza en la línea {LINEA_DECL}.",
-  "variantes": [
-   "Esta función entrega un resultado al terminar.",
-   "{NOMBRE} calcula un valor que puede utilizar quien la llama.",
-   "El resultado de esta función puede guardarse en otra variable."
-  ],
-  "ejemplo": "#include <stdio.h>\nfloat MITAD(int N);\nint main() {\n float RESULTADO;\n RESULTADO=MITAD(5);\n printf(\"%.1f\\n\",RESULTADO);\n}\nfloat MITAD(int N) {\n return N/2.0;\n}",
-  "verificado_gcc13": false
- },
- {
-  "rol": "prototipo_definicion",
-  "cuando_aplica": "El código contiene un prototipo terminado en ; y una definición posterior con el mismo nombre, retorno y lista de parámetros compatible.",
-  "titulo": "Prototipo y definición de {NOMBRE}",
-  "que_es": "{NOMBRE} tiene un prototipo que anuncia su tipo de retorno y sus parámetros, y una definición que contiene las instrucciones. El prototipo está en la línea {LINEA_DECL}.",
-  "como_se_usa": "El prototipo se escribe antes de llamar a la función y termina con punto y coma. La definición posterior incluye el cuerpo entre llaves; ambas deben coincidir.",
-  "error_tipico": "Cambiar el tipo, el orden o la cantidad de parámetros entre el prototipo y la definición.",
-  "detalle": "El prototipo le informa al compilador el nombre de la función, el valor que devuelve y los parámetros que recibe. Termina con punto y coma y no incluye el cuerpo. La definición aparece en otro lugar y contiene las instrucciones entre llaves. El nombre, el tipo de retorno y los parámetros deben coincidir. Gracias al prototipo se puede llamar a la función antes de escribir su definición. El prototipo está en la línea {LINEA_DECL}.",
-  "variantes": [
-   "Este nombre tiene una declaración previa y una definición con cuerpo.",
-   "{NOMBRE} se anuncia primero y se desarrolla después.",
-   "El prototipo permite conocer la función antes de encontrar su definición."
-  ],
-  "ejemplo": "#include <stdio.h>\nint CUADRADO(int N);\nint main() {\n printf(\"%d\\n\",CUADRADO(4));\n}\nint CUADRADO(int N) {\n return N*N;\n}",
-  "verificado_gcc13": false
- },
- {
-  "rol": "funcion_recursiva",
-  "cuando_aplica": "El cuerpo de la definición de una función propia contiene una llamada a esa misma función.",
-  "titulo": "Función recursiva {NOMBRE}",
-  "que_es": "{NOMBRE} es una función recursiva porque vuelve a llamarse a sí misma. Devuelve {RETORNO} y recibe {PARAMS}.",
-  "como_se_usa": "Debe tener un caso base que detenga las llamadas y un caso que reduzca el problema. Cada llamada conserva sus propios parámetros y variables locales.",
-  "error_tipico": "Olvidar el caso base o realizar una llamada que no se acerque a él; la función podría repetirse hasta agotar recursos.",
-  "detalle": "Una función recursiva se llama a sí misma para resolver una parte más pequeña del problema. El caso base define cuándo debe detenerse. El caso recursivo debe acercar los datos al caso base en cada llamada. Cuando la llamada más interna termina, las anteriores continúan y completan su trabajo. La recursión utiliza memoria para conservar las llamadas pendientes. Revisa que todas las rutas puedan llegar al caso base.",
-  "variantes": [
-   "Esta función se vuelve a ejecutar a sí misma.",
-   "{NOMBRE} contiene una llamada recursiva.",
-   "El proceso se resuelve mediante llamadas sucesivas a la misma función."
-  ],
-  "ejemplo": "#include <stdio.h>\nint CONTAR(int N);\nint main() {\n printf(\"%d\\n\",CONTAR(3));\n}\nint CONTAR(int N) {\n if(N<=0) return 0;\n return 1+CONTAR(N-1);\n}",
-  "verificado_gcc13": false
- },
- {
-  "rol": "main",
-  "cuando_aplica": "El identificador seleccionado es exactamente main y aparece en la definición de la función principal; no es una llamada ni una cadena.",
-  "titulo": "Función principal main",
-  "que_es": "main es la función principal del programa. Su tipo de retorno es {RETORNO} y su encabezado aparece en la línea {LINEA_DECL}.",
-  "como_se_usa": "int main() {\n int TOTAL;\n TOTAL=0;\n TOTAL=TOTAL+1;\n printf(\"%d\\n\",TOTAL);\n}",
-  "error_tipico": "Escribir el nombre con otra capitalización, olvidar una llave o declarar más de una función main en el mismo programa.",
-  "detalle": "main es la función principal de un programa ejecutable. La ejecución comienza allí y continúa con las instrucciones de su cuerpo. Dentro de main se declaran las variables locales y se llaman otras funciones cuando hace falta. En este proyecto se utiliza la forma int main() y no se escribe return 0 al final. Debe existir una sola definición de main.",
-  "variantes": [
-   "Esta es la función desde la que comienza la ejecución.",
-   "main organiza el recorrido principal del programa.",
-   "El identificador main corresponde al punto de entrada del código."
-  ],
-  "ejemplo": "#include <stdio.h>\nint main() {\n int TOTAL;\n TOTAL=0;\n TOTAL=TOTAL+1;\n printf(\"%d\\n\",TOTAL);\n}",
-  "verificado_gcc13": false
- }
+  {
+    "rol": "variable_int",
+    "cuando_aplica": "Declaración de variable escalar local cuyo tipo base es exactamente int; excluye parámetros y variables declaradas fuera de una función.",
+    "titulo": "Variable entera {NOMBRE}",
+    "que_es": "{NOMBRE} es una variable de tipo {TIPO}, declarada en la línea {LINEA_DECL}. Valor al declararla: {VALOR_INICIAL}{SIN_VALOR_INICIAL}.",
+    "como_se_usa": "Guarda números enteros, como cantidades o resultados sin parte decimal. Sus asignaciones aparecen en {LINEAS_ASIGNA}. En printf suele mostrarse con %d: {LINEAS_USO_PRINTF}.",
+    "error_tipico": "Usar %f para mostrarla o esperar que una división entre dos int conserve decimales.",
+    "detalle": "int guarda números enteros, positivos, negativos o cero.\nLa declaración reserva un espacio para un valor de ese tipo.\nLas asignaciones muestran cuándo cambia {NOMBRE}.\nLa lectura y la salida deben respetar el tipo declarado.\nUna operación entre enteros puede descartar la parte decimal.\nLa línea {LINEA_DECL} permite localizar la declaración.",
+    "variantes": [
+      "Este nombre corresponde a un entero del programa.",
+      "Aquí se guarda un valor sin decimales.",
+      "El tipo de {NOMBRE} es int."
+    ],
+    "ejemplo": "int main()\n{\n int CANTIDAD;\n CANTIDAD=4;\n return CANTIDAD != 4;\n}",
+    "verificado_gcc13": false
+  },
+  {
+    "rol": "variable_float",
+    "cuando_aplica": "Declaración de variable escalar local de tipo float; excluye parámetros y variables globales.",
+    "titulo": "Variable decimal float {NOMBRE}",
+    "que_es": "{NOMBRE} es una variable de tipo {TIPO}, declarada en la línea {LINEA_DECL}. Valor al declararla: {VALOR_INICIAL}{SIN_VALOR_INICIAL}.",
+    "como_se_usa": "Guarda números con parte decimal y aproximadamente 6 o 7 cifras significativas. Sus asignaciones aparecen en {LINEAS_ASIGNA}. En printf se suele utilizar %f: {LINEAS_USO_PRINTF}.",
+    "error_tipico": "Leer un float con %lf en scanf; para float se utiliza %f.",
+    "detalle": "float permite trabajar con valores decimales.\nSu precisión es menor que la de double.\nLas asignaciones detectadas muestran dónde cambia {NOMBRE}.\nEn scanf el formato habitual para este tipo es %f.\nEn printf se utiliza %f, con precisión opcional como %.2f.\nLa declaración está en la línea {LINEA_DECL}.",
+    "variantes": [
+      "Esta variable almacena un decimal de precisión simple.",
+      "{NOMBRE} puede guardar valores con parte fraccionaria.",
+      "El tipo elegido para este dato es float."
+    ],
+    "ejemplo": "int main()\n{\n float ALTURA;\n ALTURA=1.75f;\n return ALTURA < 1.0f;\n}",
+    "verificado_gcc13": false
+  },
+  {
+    "rol": "variable_double",
+    "cuando_aplica": "Declaración de variable escalar local de tipo double; excluye parámetros y variables globales.",
+    "titulo": "Variable decimal double {NOMBRE}",
+    "que_es": "{NOMBRE} es una variable de tipo {TIPO}, declarada en la línea {LINEA_DECL}. Valor al declararla: {VALOR_INICIAL}{SIN_VALOR_INICIAL}.",
+    "como_se_usa": "Guarda números decimales con más precisión que float. Sus asignaciones aparecen en {LINEAS_ASIGNA}. En scanf se lee con %lf y en printf se muestra con %f: {LINEAS_USO_PRINTF}.",
+    "error_tipico": "Usar %f en scanf para leer un double; el formato correcto es %lf.",
+    "detalle": "double ofrece más precisión que float.\nLa variable conserva su valor hasta que otra asignación lo modifica.\nscanf necesita %lf para recibir la dirección de un double.\nprintf utiliza %f para mostrar un double.\nLas asignaciones detectadas aparecen en {LINEAS_ASIGNA}.\nLa declaración está en la línea {LINEA_DECL}.",
+    "variantes": [
+      "Este dato se guarda con precisión double.",
+      "{NOMBRE} es una variable decimal de doble precisión.",
+      "double conserva más cifras decimales que float."
+    ],
+    "ejemplo": "int main()\n{\n double DISTANCIA;\n DISTANCIA=125.375;\n return DISTANCIA < 100.0;\n}",
+    "verificado_gcc13": false
+  },
+  {
+    "rol": "variable_char",
+    "cuando_aplica": "Declaración de variable escalar local de tipo char; excluye parámetros y arreglos de caracteres.",
+    "titulo": "Variable de carácter {NOMBRE}",
+    "que_es": "{NOMBRE} es una variable de tipo {TIPO}, declarada en la línea {LINEA_DECL}. Valor al declararla: {VALOR_INICIAL}{SIN_VALOR_INICIAL}.",
+    "como_se_usa": "Guarda un carácter individual, como una letra, un dígito o un símbolo. Sus asignaciones aparecen en {LINEAS_ASIGNA}. Para mostrarlo se utiliza %c: {LINEAS_USO_PRINTF}.",
+    "error_tipico": "Confundir un carácter entre comillas simples, como 'A', con un texto entre comillas dobles, como \"A\".",
+    "detalle": "char guarda un solo carácter, no una palabra completa.\nLos caracteres individuales se escriben entre comillas simples.\nscanf suele leerlo con %c y printf lo muestra con %c.\nUn espacio antes de %c en scanf permite descartar blancos pendientes.\nLas asignaciones detectadas indican dónde puede cambiar el carácter.\nLa declaración está en la línea {LINEA_DECL}.",
+    "variantes": [
+      "Esta variable guarda un carácter individual.",
+      "{NOMBRE} representa una letra, un dígito o un símbolo.",
+      "El tipo char es adecuado para un carácter."
+    ],
+    "ejemplo": "int main()\n{\n char INICIAL;\n INICIAL='D';\n return INICIAL != 'D';\n}",
+    "verificado_gcc13": false
+  },
+  {
+    "rol": "variable_long",
+    "cuando_aplica": "Declaración de variable escalar local de tipo long o long int, no long long; excluye parámetros y variables globales.",
+    "titulo": "Variable entera long {NOMBRE}",
+    "que_es": "{NOMBRE} es una variable de tipo {TIPO}, declarada en la línea {LINEA_DECL}. Valor al declararla: {VALOR_INICIAL}{SIN_VALOR_INICIAL}.",
+    "como_se_usa": "Guarda enteros que pueden necesitar más rango que int. Sus asignaciones aparecen en {LINEAS_ASIGNA}. Para mostrar un long se utiliza %ld: {LINEAS_USO_PRINTF}.",
+    "error_tipico": "Mostrar un long con %d o leerlo con %d: esos formatos no corresponden al tipo.",
+    "detalle": "long es un tipo entero de mayor rango que int en el objetivo LP64 del editor.\nEl sufijo L puede indicar que una constante entera es long.\nscanf utiliza %ld para leer un long.\nprintf utiliza %ld para mostrarlo.\nLas asignaciones muestran dónde cambia el número.\nLa declaración está en la línea {LINEA_DECL}.",
+    "variantes": [
+      "Esta variable almacena un entero de tipo long.",
+      "{NOMBRE} puede representar enteros de mayor rango que int.",
+      "El programa eligió long para este valor."
+    ],
+    "ejemplo": "int main()\n{\n long DISTANCIA;\n DISTANCIA=3000000000L;\n return DISTANCIA < 0L;\n}",
+    "verificado_gcc13": false
+  },
+  {
+    "rol": "variable_short",
+    "cuando_aplica": "Declaración de variable escalar local de tipo short o short int; excluye parámetros y variables globales.",
+    "titulo": "Variable entera short {NOMBRE}",
+    "que_es": "{NOMBRE} es una variable de tipo {TIPO}, declarada en la línea {LINEA_DECL}. Valor al declararla: {VALOR_INICIAL}{SIN_VALOR_INICIAL}.",
+    "como_se_usa": "Guarda enteros con un rango menor que int. Sus asignaciones aparecen en {LINEAS_ASIGNA}. Para mostrar un short se utiliza normalmente %hd: {LINEAS_USO_PRINTF}.",
+    "error_tipico": "Guardar un valor que supera el rango representable por short o utilizar un formato incorrecto en scanf.",
+    "detalle": "short es un tipo entero de rango más limitado que int.\nEn el objetivo del editor ocupa 16 bits.\nscanf utiliza %hd para leer un short.\nprintf utiliza %hd para mostrarlo.\nLas asignaciones muestran cuándo cambia {NOMBRE}.\nLa declaración está en la línea {LINEA_DECL}.",
+    "variantes": [
+      "Este dato se almacena como un entero corto.",
+      "{NOMBRE} utiliza el tipo short.",
+      "El rango de esta variable es menor que el de int."
+    ],
+    "ejemplo": "int main()\n{\n short NIVEL;\n NIVEL=120;\n return NIVEL != 120;\n}",
+    "verificado_gcc13": false
+  },
+  {
+    "rol": "variable_unsigned",
+    "cuando_aplica": "Declaración de variable escalar local cuyo tipo comienza con unsigned; excluye parámetros, globales y arreglos.",
+    "titulo": "Variable entera sin signo {NOMBRE}",
+    "que_es": "{NOMBRE} es una variable de tipo {TIPO}, declarada en la línea {LINEA_DECL}. Valor al declararla: {VALOR_INICIAL}{SIN_VALOR_INICIAL}.",
+    "como_se_usa": "Representa cantidades que no necesitan valores negativos. Sus asignaciones aparecen en {LINEAS_ASIGNA}. El formato depende del tipo base; para unsigned int se utiliza %u: {LINEAS_USO_PRINTF}.",
+    "error_tipico": "Suponer que unsigned admite negativos: una resta menor que cero puede producir un valor muy grande.",
+    "detalle": "unsigned indica que el tipo entero no representa signo negativo.\nEl rango comienza en cero y llega más arriba que el del tipo equivalente con signo.\nEl especificador depende del tipo base, por ejemplo %u para unsigned int.\nUna resta puede dar una vuelta dentro del rango sin signo.\nLas comparaciones entre signed y unsigned requieren atención.\nLa declaración está en la línea {LINEA_DECL}.",
+    "variantes": [
+      "Esta variable guarda una cantidad sin signo.",
+      "{NOMBRE} utiliza una variante unsigned de un tipo entero.",
+      "El tipo elegido no representa números negativos."
+    ],
+    "ejemplo": "int main()\n{\n unsigned int CANTIDAD;\n CANTIDAD=12U;\n return CANTIDAD != 12U;\n}",
+    "verificado_gcc13": false
+  },
+  {
+    "rol": "variable_bool",
+    "cuando_aplica": "Declaración de variable escalar local de tipo bool; no es parámetro ni variable global.",
+    "titulo": "Variable lógica {NOMBRE}",
+    "que_es": "{NOMBRE} es una variable de tipo {TIPO}, declarada en la línea {LINEA_DECL}. Valor al declararla: {VALOR_INICIAL}{SIN_VALOR_INICIAL}.",
+    "como_se_usa": "Representa una condición: false equivale a 0 y true equivale a 1. Sus asignaciones aparecen en {LINEAS_ASIGNA}. Puede consultarse directamente dentro de if, while o una expresión lógica.",
+    "error_tipico": "Olvidar incluir <stdbool.h> cuando se utiliza bool, true o false.",
+    "detalle": "bool representa un estado lógico.\nPara usar bool, true y false se incluye <stdbool.h>.\nUna condición puede comprobarse directamente con if ({NOMBRE}).\nLas asignaciones muestran cuándo cambia el estado.\nNo hace falta comparar una variable bool con 1 para usarla como condición.\nLa declaración está en la línea {LINEA_DECL}.",
+    "variantes": [
+      "Esta variable representa un estado verdadero o falso.",
+      "{NOMBRE} guarda un valor lógico.",
+      "El programa utiliza bool para recordar una condición."
+    ],
+    "ejemplo": "#include <stdbool.h>\nint main()\n{\n bool ACTIVO;\n ACTIVO=true;\n return !ACTIVO;\n}",
+    "verificado_gcc13": false
+  },
+  {
+    "rol": "arreglo_1d",
+    "cuando_aplica": "La declaración seleccionada contiene exactamente un par de corchetes en el declarador de {NOMBRE}; no es parámetro de función.",
+    "titulo": "Arreglo de una dimensión {NOMBRE}",
+    "que_es": "{NOMBRE} es un arreglo de una dimensión de tipo {TIPO}, declarado en la línea {LINEA_DECL}, con tamaño {DIMENSIONES}.",
+    "como_se_usa": "Guarda varios valores del mismo tipo. Cada elemento se consulta o modifica con un índice entre corchetes, por ejemplo {NOMBRE}[0]. Las asignaciones detectadas aparecen en {LINEAS_ASIGNA}.",
+    "error_tipico": "Usar una posición fuera del arreglo: los índices comienzan en cero y el último es el tamaño menos uno.",
+    "detalle": "Un arreglo reúne varios elementos del mismo tipo bajo un nombre. El tamaño {DIMENSIONES} indica cuántas posiciones existen. El primer índice es cero y el último es el tamaño menos uno. Se puede recorrer con un for y una variable índice. La declaración está en la línea {LINEA_DECL}.",
+    "variantes": [
+      "Este nombre identifica un arreglo de una dimensión.",
+      "{NOMBRE} permite trabajar con varios valores del mismo tipo.",
+      "El programa accede a sus elementos mediante un índice."
+    ],
+    "ejemplo": "#include <stdio.h>\nint main()\n{\n int V[3], i;\n V[0]=2; V[1]=4; V[2]=6;\n for(i=0;i<3;i++) printf(\"%d \",V[i]);\n printf(\"\\n\");\n}",
+    "verificado_gcc13": false
+  },
+  {
+    "rol": "arreglo_2d",
+    "cuando_aplica": "La declaración seleccionada contiene exactamente dos pares de corchetes en el declarador de {NOMBRE}; no es parámetro.",
+    "titulo": "Arreglo de dos dimensiones {NOMBRE}",
+    "que_es": "{NOMBRE} es un arreglo de dos dimensiones de tipo {TIPO}, declarado en la línea {LINEA_DECL}; sus dimensiones son {DIMENSIONES}.",
+    "como_se_usa": "Organiza datos en filas y columnas. Se accede a cada valor con dos índices, como {NOMBRE}[FILA][COLUMNA], y las asignaciones detectadas aparecen en {LINEAS_ASIGNA}.",
+    "error_tipico": "Intercambiar fila y columna o recorrer una posición más allá del tamaño de alguna dimensión.",
+    "detalle": "Un arreglo de dos dimensiones organiza datos como una tabla. El primer índice indica la fila y el segundo la columna. Los dos índices comienzan en cero y cada dimensión tiene su propio límite. Para recorrerlo suelen utilizarse dos lazos, uno dentro del otro. La declaración está en la línea {LINEA_DECL}.",
+    "variantes": [
+      "Este identificador corresponde a una matriz.",
+      "{NOMBRE} organiza elementos en filas y columnas.",
+      "El programa necesita dos índices para acceder a cada elemento."
+    ],
+    "ejemplo": "#include <stdio.h>\nint main()\n{\n int TABLA[2][2];\n TABLA[0][0]=1; TABLA[0][1]=2;\n TABLA[1][0]=3; TABLA[1][1]=4;\n printf(\"%d\\n\",TABLA[1][0]);\n}",
+    "verificado_gcc13": false
+  },
+  {
+    "rol": "parametro_valor",
+    "cuando_aplica": "El identificador aparece en la lista de parámetros de la definición de una función, sin corchetes ni asterisco; no basta con un prototipo sin cuerpo.",
+    "titulo": "Parámetro por valor {NOMBRE}",
+    "que_es": "{NOMBRE} es un parámetro de la función {FUNCION_ACTUAL}. Su tipo es {TIPO} y la lista detectada es {PARAMS}.",
+    "como_se_usa": "Recibe un dato cuando se llama a la función. Por valor, la función trabaja con una copia del valor recibido. Sus usos aparecen en {CANT_USOS} lugares del código.",
+    "error_tipico": "Esperar que modificar el parámetro cambie automáticamente la variable del llamador.",
+    "detalle": "Un parámetro permite que una función reciba información.\nSe declara dentro de los paréntesis de la definición.\nLa función actual es {FUNCION_ACTUAL}.\nPor valor significa que se recibe una copia del argumento.\nEl alcance del parámetro se limita a esa función.\nEl tipo indica qué clase de dato recibe.",
+    "variantes": [
+      "Este nombre recibe un dato al entrar en la función.",
+      "{NOMBRE} es uno de los parámetros de {FUNCION_ACTUAL}.",
+      "La función utiliza este valor que llega desde la llamada."
+    ],
+    "ejemplo": "int DOBLE(int NUMERO) { return NUMERO * 2; }\nint main()\n{ return DOBLE(3) != 6;}",
+    "verificado_gcc13": false
+  },
+  {
+    "rol": "parametro_arreglo",
+    "cuando_aplica": "El identificador aparece en la lista de parámetros de la definición de una función y su declarador incluye corchetes.",
+    "titulo": "Parámetro de arreglo {NOMBRE}",
+    "que_es": "{NOMBRE} es un parámetro de arreglo de la función {FUNCION_ACTUAL}. Su tipo es {TIPO} y sus dimensiones son {DIMENSIONES}.",
+    "como_se_usa": "Permite que una función reciba acceso a los elementos de un arreglo. En una matriz debe conservarse el tamaño de las columnas en la declaración del parámetro. Sus usos aparecen en {CANT_USOS} lugares.",
+    "error_tipico": "Intentar obtener el tamaño original con sizeof({NOMBRE}): como parámetro, el arreglo se ajusta a un puntero.",
+    "detalle": "El parámetro representa elementos que recibe la función.\nSu nombre solo existe dentro de {FUNCION_ACTUAL}.\nLa declaración incluye corchetes para indicar que se reciben elementos.\nEn una matriz debe indicarse la dimensión de las columnas.\nLa función necesita conocer el tamaño por otro parámetro o una regla acordada.\nLos cambios en los elementos pueden afectar al arreglo original.",
+    "variantes": [
+      "Este parámetro permite recorrer un arreglo recibido por la función.",
+      "{NOMBRE} representa datos organizados en posiciones.",
+      "La función recibe acceso a los elementos del arreglo."
+    ],
+    "ejemplo": "int PRIMERO(int V[], int N) { return N > 0 ? V[0] : 0; }\nint main()\n{\n int A[2];\n A[0]=7; A[1]=8;\n return PRIMERO(A, 2) != 7;\n}",
+    "verificado_gcc13": false
+  },
+  {
+    "rol": "variable_global",
+    "cuando_aplica": "Declaración de un objeto fuera de cualquier función y lista de parámetros; no es #define ni una declaración extern sin definición.",
+    "titulo": "Variable global {NOMBRE}",
+    "que_es": "{NOMBRE} es una variable global de tipo {TIPO}, declarada en la línea {LINEA_DECL}. Valor al declararla: {VALOR_INICIAL}{SIN_VALOR_INICIAL}.",
+    "como_se_usa": "Se declara fuera de las funciones y puede utilizarse desde las funciones que tengan acceso a su declaración. Sus asignaciones aparecen en {LINEAS_ASIGNA}; sus usos detectados son {CANT_USOS}.",
+    "error_tipico": "Crear una global para compartir cualquier dato sin necesidad: puede dificultar saber qué función modifica su valor.",
+    "detalle": "La variable global se declara fuera de main y de las demás funciones.\nSu duración de almacenamiento abarca la ejecución del programa.\nSi no se inicializa explícitamente, una global se inicializa con cero.\nVarias funciones pueden utilizarla si la declaración es visible.\nLas asignaciones registradas permiten localizar dónde cambia.\nConviene preferir variables locales cuando el dato no necesita compartirse.",
+    "variantes": [
+      "Este identificador está declarado fuera de las funciones.",
+      "{NOMBRE} puede utilizarse desde distintas funciones visibles.",
+      "El programa comparte este dato mediante una variable global."
+    ],
+    "ejemplo": "int TOTAL_GLOBAL;\nint main()\n{\n TOTAL_GLOBAL=0;\n TOTAL_GLOBAL++;\n return TOTAL_GLOBAL != 1;\n}",
+    "verificado_gcc13": false
+  },
+  {
+    "rol": "variable_scanf",
+    "cuando_aplica": "El identificador aparece como destino de una conversión de scanf: &{NOMBRE} para un escalar o {NOMBRE} para un arreglo de char leído como texto.",
+    "titulo": "Dato leído con scanf: {NOMBRE}",
+    "que_es": "{NOMBRE} recibe un dato desde la entrada estándar mediante scanf. Su declaración está en la línea {LINEA_DECL} y las lecturas aparecen en {LINEAS_LECTURA_SCANF}.",
+    "como_se_usa": "scanf necesita una dirección para escribir en un escalar. Normalmente se pasa &{NOMBRE}; para un arreglo de char usado con %s se pasa el nombre del arreglo sin &.",
+    "error_tipico": "Olvidar & al leer una variable escalar o utilizar un especificador que no coincide con su tipo.",
+    "detalle": "scanf convierte texto de entrada en valores almacenados en variables.\nCada especificador debe corresponder al tipo del destino.\nPara int se utiliza %d y se pasa &{NOMBRE}.\nPara float se utiliza %f; para double, %lf.\nUn arreglo de char para %s se pasa sin &.\nEs conveniente comprobar el valor de retorno de scanf.",
+    "variantes": [
+      "Este nombre recibe información escrita al ejecutar el programa.",
+      "{NOMBRE} es un destino de una lectura con scanf.",
+      "El valor de esta variable llega desde la entrada estándar."
+    ],
+    "ejemplo": "#include <stdio.h>\nint main()\n{ int EDAD; if (scanf(\"%d\", &EDAD) == 1) return EDAD < 0;}",
+    "verificado_gcc13": false
+  },
+  {
+    "rol": "contador",
+    "cuando_aplica": "Variable escalar inicializada explícitamente en 0 que, dentro de un bloque repetitivo, aumenta mediante ++, += 1 o una asignación equivalente.",
+    "titulo": "Contador {NOMBRE}",
+    "que_es": "{NOMBRE} funciona como contador: registra cuántas veces ocurre algo. Se declara en la línea {LINEA_DECL}.",
+    "como_se_usa": "Se inicia antes del lazo y aumenta cuando ocurre el hecho que quieres contar. Las asignaciones detectadas aparecen en {LINEAS_ASIGNA}; se encontraron {CANT_USOS} usos.",
+    "error_tipico": "Olvidar iniciarlo en cero o aumentarlo en una vuelta que no cumple la condición, de modo que la cantidad final sea incorrecta.",
+    "detalle": "Un contador representa una cantidad de hechos o repeticiones. Normalmente comienza en cero antes del lazo. Después aumenta de uno en uno cuando ocurre el evento que interesa. Por ejemplo, puede contar cuántas temperaturas superan un límite. Comprueba que aumente exactamente una vez por cada dato contado. La declaración está en la línea {LINEA_DECL}.",
+    "variantes": [
+      "Este identificador lleva la cuenta de repeticiones o elementos.",
+      "{NOMBRE} aumenta de uno en uno.",
+      "El programa utiliza esta variable para contar."
+    ],
+    "ejemplo": "#include <stdio.h>\nint main()\n{\n int i, CONTADOR;\n CONTADOR=0;\n for(i=0;i<4;i++) {\n  if(i%2==0) CONTADOR=CONTADOR+1;\n }\n printf(\"Pares: %d\\n\",CONTADOR);\n}",
+    "verificado_gcc13": false
+  },
+  {
+    "rol": "acumulador",
+    "cuando_aplica": "Variable numérica inicializada explícitamente que luego aparece en una suma del tipo NOMBRE += EXPRESION o NOMBRE = NOMBRE + EXPRESION.",
+    "titulo": "Acumulador {NOMBRE}",
+    "que_es": "{NOMBRE} funciona como acumulador: conserva un total parcial al reunir varios datos. Se declara en la línea {LINEA_DECL}.",
+    "como_se_usa": "Se inicializa antes de comenzar y se actualiza con cada dato nuevo. Las asignaciones aparecen en {LINEAS_ASIGNA}; se encontraron {CANT_USOS} usos.",
+    "error_tipico": "No darle un valor inicial antes de la primera suma o reiniciarlo dentro del lazo, perdiendo el total anterior.",
+    "detalle": "Un acumulador reúne varios datos en una sola variable. Para sumar, normalmente comienza en cero; para multiplicar, comienza en uno. En cada vuelta se actualiza usando el valor anterior y el dato nuevo. Al terminar el lazo, conserva el total o producto obtenido. La declaración está en la línea {LINEA_DECL}.",
+    "variantes": [
+      "Esta variable va reuniendo una suma parcial.",
+      "{NOMBRE} conserva lo acumulado hasta el momento.",
+      "El programa agrega nuevos valores a este total."
+    ],
+    "ejemplo": "#include <stdio.h>\nint main()\n{\n int i, SUMA;\n SUMA=0;\n for(i=1;i<=4;i++) SUMA=SUMA+i;\n printf(\"Total: %d\\n\",SUMA);\n}",
+    "verificado_gcc13": false
+  },
+  {
+    "rol": "bandera",
+    "cuando_aplica": "Variable escalar con asignaciones explícitas limitadas a 0 y 1 (o false y true), con al menos una asignación de cada estado.",
+    "titulo": "Bandera lógica {NOMBRE}",
+    "que_es": "{NOMBRE} funciona como bandera: almacena uno de dos estados, 0 o 1. Su declaración está en la línea {LINEA_DECL}.",
+    "como_se_usa": "Recuerda si ocurrió una condición, si se encontró un elemento o si una tarea ya se realizó. Las asignaciones aparecen en {LINEAS_ASIGNA}; sus usos son {CANT_USOS}.",
+    "error_tipico": "No establecer el estado inicial antes de comprobarlo, o asignar otros valores y tratar la variable como si fuera estrictamente 0 o 1.",
+    "detalle": "Una bandera recuerda un estado entre distintas partes del programa.\nEl valor 0 suele representar falso y el valor 1, verdadero.\nPuede cambiar cuando se cumple una condición.\nLuego se consulta en una condición if o while.\nEste patrón se diferencia de un contador porque no acumula cantidades.\nLa línea {LINEA_DECL} indica dónde se declara.",
+    "variantes": [
+      "Este nombre se usa como indicador de un estado.",
+      "{NOMBRE} señala si ocurrió una condición.",
+      "El programa recuerda un sí o no mediante esta variable."
+    ],
+    "ejemplo": "int main()\n{\n int ENCONTRADO;\n ENCONTRADO=0;\n ENCONTRADO=1;\n return ENCONTRADO != 1;\n}",
+    "verificado_gcc13": false
+  },
+  {
+    "rol": "centinela",
+    "cuando_aplica": "El identificador se lee antes de un while cuya condición lo compara con un valor literal de parada y vuelve a leerse dentro del cuerpo de ese mismo while.",
+    "titulo": "Variable centinela {NOMBRE}",
+    "que_es": "{NOMBRE} se utiliza como centinela: su valor permite decidir cuándo debe finalizar una repetición. Las lecturas detectadas aparecen en {LINEAS_LECTURA_SCANF}.",
+    "como_se_usa": "Se lee un primer dato, se compara con un valor especial y, mientras no coincida, se procesa y se vuelve a leer. La comparación del while controla la entrada o salida del lazo.",
+    "error_tipico": "Olvidar la lectura dentro del while: el valor no cambia y el lazo puede repetirse indefinidamente.",
+    "detalle": "Un centinela es un valor especial que marca el final de una secuencia.\nNo se procesa como dato normal cuando coincide con el valor de parada.\nLa primera lectura debe ocurrir antes de evaluar el while.\nEl cuerpo debe actualizar la variable mediante otra lectura o asignación.\nLa condición debe comparar con el mismo valor especial esperado.\nComprueba que el valor de parada no pueda confundirse con un dato válido.",
+    "variantes": [
+      "Esta variable puede indicar que ya no quedan datos por procesar.",
+      "{NOMBRE} controla cuándo termina la lectura repetitiva.",
+      "El programa utiliza un valor especial como señal de finalización."
+    ],
+    "ejemplo": "#include <stdio.h>\nint main()\n{ int DATO; scanf(\"%d\", &DATO); while (DATO != -1) scanf(\"%d\", &DATO);}",
+    "verificado_gcc13": false
+  },
+  {
+    "rol": "maximo",
+    "cuando_aplica": "Dentro de un condicional se compara un dato candidato con {NOMBRE} mediante > y, si es mayor, se asigna el candidato a {NOMBRE}; el nombre por sí solo no cuenta.",
+    "titulo": "Valor máximo guardado en {NOMBRE}",
+    "que_es": "{NOMBRE} conserva el mayor valor encontrado hasta el momento. La asignación que lo actualiza aparece en {LINEAS_ASIGNA}.",
+    "como_se_usa": "Se compara cada dato nuevo con el máximo actual. Si el nuevo dato es mayor, reemplaza el valor guardado. La inicialización debe ser compatible con los datos; a menudo se toma el primer dato de la serie.",
+    "error_tipico": "Inicializar el máximo en cero cuando todos los datos podrían ser negativos, o actualizarlo con una comparación invertida.",
+    "detalle": "El máximo es el mayor valor observado en una serie.\nLa variable conserva el mejor valor encontrado hasta ese momento.\nCada dato nuevo se compara con el valor almacenado.\nSolo se actualiza cuando el candidato es mayor.\nLa inicialización debe evitar descartar series negativas.\nLa asignación detectada aparece en {LINEAS_ASIGNA}.",
+    "variantes": [
+      "Este identificador guarda el mayor valor encontrado.",
+      "{NOMBRE} se actualiza cuando aparece un dato superior.",
+      "El programa conserva aquí el máximo parcial."
+    ],
+    "ejemplo": "int main()\n{\n int MAXIMO, DATO;\n MAXIMO=3;\n DATO=7;\n if (DATO > MAXIMO) MAXIMO = DATO;\n return MAXIMO != 7;\n}",
+    "verificado_gcc13": false
+  },
+  {
+    "rol": "minimo",
+    "cuando_aplica": "Dentro de un condicional se compara un dato candidato con {NOMBRE} mediante < y, si es menor, se asigna el candidato a {NOMBRE}; el nombre por sí solo no cuenta.",
+    "titulo": "Valor mínimo guardado en {NOMBRE}",
+    "que_es": "{NOMBRE} conserva el menor valor encontrado hasta el momento. La asignación que lo actualiza aparece en {LINEAS_ASIGNA}.",
+    "como_se_usa": "Se compara cada dato nuevo con el mínimo actual. Si el candidato es menor, reemplaza el valor guardado. La inicialización debe partir de un dato válido.",
+    "error_tipico": "Inicializar el mínimo en cero cuando todos los datos podrían ser positivos: el cero podría quedar como mínimo aunque nunca haya aparecido.",
+    "detalle": "El mínimo es el menor valor observado en una serie.\nLa variable conserva el menor dato encontrado hasta ese momento.\nCada dato nuevo se compara con el valor actual.\nSolo se actualiza cuando el candidato es menor.\nTomar el primer dato como inicial evita inventar un valor.\nLa asignación detectada aparece en {LINEAS_ASIGNA}.",
+    "variantes": [
+      "Este identificador guarda el menor valor encontrado.",
+      "{NOMBRE} cambia cuando aparece un dato inferior.",
+      "El programa conserva aquí el mínimo parcial."
+    ],
+    "ejemplo": "int main()\n{\n int MINIMO, DATO;\n MINIMO=9;\n DATO=4;\n if (DATO < MINIMO) MINIMO = DATO;\n return MINIMO != 4;\n}",
+    "verificado_gcc13": false
+  },
+  {
+    "rol": "indice_for",
+    "cuando_aplica": "El identificador aparece en la inicialización, condición y actualización del encabezado de un for y se utiliza como subíndice de un arreglo dentro del cuerpo del mismo lazo.",
+    "titulo": "Índice de recorrido {NOMBRE}",
+    "que_es": "{NOMBRE} es la variable de control de un for y también se utiliza para acceder a posiciones de un arreglo. Su declaración está en la línea {LINEA_DECL}.",
+    "como_se_usa": "Permite recorrer las posiciones de un arreglo. El encabezado del for define el valor inicial, la condición de continuidad y el incremento; dentro del cuerpo, {NOMBRE} identifica la posición procesada.",
+    "error_tipico": "Usar una condición que permita llegar a una posición igual al tamaño del arreglo: la última posición válida es tamaño menos uno.",
+    "detalle": "El índice identifica la posición de un elemento dentro de un arreglo.\nEn C, la primera posición tiene índice 0.\nEl encabezado del for controla el avance del índice.\nLa condición debe detener el recorrido antes de superar el tamaño.\nEl uso de {NOMBRE} como subíndice conecta el lazo con el arreglo.\nNo confundas la cantidad de elementos con el índice final.",
+    "variantes": [
+      "Esta variable recorre las posiciones de un arreglo.",
+      "{NOMBRE} indica qué elemento se está procesando.",
+      "El programa utiliza este índice dentro de un for."
+    ],
+    "ejemplo": "int main()\n{\n int A[3], i, S;\n A[0]=2; A[1]=4; A[2]=6;\n S=0;\n for (i=0; i<3; i++) S += A[i];\n return S != 12;\n}",
+    "verificado_gcc13": false
+  },
+  {
+    "rol": "variable_no_usada",
+    "cuando_aplica": "La variable tiene una declaración reconocida y cero referencias posteriores fuera de su declarador; no se cuentan comentarios ni cadenas.",
+    "titulo": "Variable declarada sin usos: {NOMBRE}",
+    "que_es": "{NOMBRE} está declarada en la línea {LINEA_DECL}, pero el análisis no encuentra usos. Cantidad de usos detectados: {CANT_USOS}.",
+    "como_se_usa": "Una variable suele declararse porque el algoritmo necesita guardar un dato que luego será leído o modificado. Si no se utiliza, puede ser una declaración olvidada o un nombre que quedó tras cambiar el programa.",
+    "error_tipico": "Escribir el nombre con otra combinación de mayúsculas y minúsculas: C distingue {NOMBRE} de cualquier variante.",
+    "detalle": "Declarar una variable reserva un lugar para un dato.\nSi nunca se consulta ni se modifica, quizá no sea necesaria.\nEl análisis detectó {CANT_USOS} usos después de la declaración.\nNo se cuentan apariciones dentro de comentarios o cadenas.\nLa línea {LINEA_DECL} permite revisar dónde se creó.\nComprueba si la declaración quedó pendiente de otra parte del algoritmo.",
+    "variantes": [
+      "Este nombre fue declarado, pero no aparece utilizado.",
+      "No se detectaron referencias a {NOMBRE} en el código.",
+      "La variable existe en la declaración, aunque no se encontraron usos."
+    ],
+    "ejemplo": "int main()\n{\n int SIN_USO;\n SIN_USO=5;\n}",
+    "verificado_gcc13": false
+  },
+  {
+    "rol": "variable_sin_inicializar",
+    "cuando_aplica": "Variable local escalar sin inicializador cuya primera lectura aparece antes de una asignación garantizada en algún camino de ejecución.",
+    "titulo": "Uso de {NOMBRE} sin valor inicial",
+    "que_es": "{NOMBRE} se declara en la línea {LINEA_DECL} sin un valor inicial. El análisis detectó {SIN_VALOR_INICIAL} antes de garantizar una asignación.",
+    "como_se_usa": "Una variable local debe recibir un valor antes de utilizarse. Revisa el orden entre la declaración, las asignaciones y las lecturas. Las asignaciones localizadas aparecen en {LINEAS_ASIGNA}.",
+    "error_tipico": "Leer la variable antes de asignarle un valor; C no define el resultado y no debe suponerse que será cero.",
+    "detalle": "Una declaración local sin inicializador no asigna un valor útil.\nNo se garantiza qué valor tiene antes de asignarle uno.\nLa lectura debe ocurrir después de una asignación en todos los caminos.\nUna asignación dentro de un if puede no ejecutarse.\nEl comportamiento de C no garantiza un resultado concreto.\nLa línea {LINEA_DECL} señala dónde se declara la variable.",
+    "variantes": [
+      "El programa consulta este dato antes de garantizar su inicialización.",
+      "{NOMBRE} necesita recibir un valor antes de leerse.",
+      "Hay una posible lectura de esta variable sin una asignación previa."
+    ],
+    "ejemplo": "int main()\n{\n int DATO;\n return DATO;\n}",
+    "verificado_gcc13": false
+  },
+  {
+    "rol": "constante_define",
+    "cuando_aplica": "Existe una directiva de objeto #define cuyo identificador es {NOMBRE}, sin lista de parámetros inmediatamente después del nombre.",
+    "titulo": "Constante simbólica {NOMBRE}",
+    "que_es": "{NOMBRE} es una macro definida con #define en la línea {LINEA_DECL}. Su reemplazo detectado es {VALOR_INICIAL}.",
+    "como_se_usa": "El preprocesador reemplaza cada aparición del nombre por el texto definido antes de compilar. Se utiliza para nombrar un valor fijo, como un límite o una cantidad.",
+    "error_tipico": "Escribir un punto y coma al final de la directiva: ese carácter también queda dentro del reemplazo.",
+    "detalle": "#define es una directiva del preprocesador, no una variable.\nUna macro de objeto reemplaza el nombre por el texto indicado.\nLa directiva se escribe sin punto y coma final.\nPor convención, las constantes simbólicas suelen escribirse en mayúsculas.\nSi el reemplazo es una expresión, conviene encerrarla entre paréntesis.\nLa definición está en la línea {LINEA_DECL}.",
+    "variantes": [
+      "Este nombre es una constante simbólica del preprocesador.",
+      "{NOMBRE} se reemplaza por el texto indicado en #define.",
+      "El programa utiliza este identificador para representar un valor definido."
+    ],
+    "ejemplo": "#define LIMITE 10\nint main()\n{ return LIMITE != 10;}",
+    "verificado_gcc13": false
+  },
+  {
+    "rol": "funcion_sin_parametros",
+    "cuando_aplica": "Definición de función propia con lista vacía o void y cuerpo entre llaves; excluye main y funciones de biblioteca.",
+    "titulo": "Función sin parámetros {NOMBRE}",
+    "que_es": "{NOMBRE} es una función propia que no recibe parámetros. Su tipo de retorno es {RETORNO} y comienza en la línea {LINEA_DECL}.",
+    "como_se_usa": "Se llama con el nombre seguido de paréntesis vacíos: {NOMBRE}(). Si devuelve un dato, ese resultado puede guardarse o mostrarse.",
+    "error_tipico": "Llamarla sin paréntesis o enviar argumentos a una función que no recibe parámetros.",
+    "detalle": "Una función agrupa instrucciones bajo un nombre. Esta función no recibe datos desde sus paréntesis. Su cuerpo se ejecuta cuando otra parte del programa la llama. El tipo {RETORNO} indica si devuelve un valor o si es void. Puede declararse con (void) para dejar claro que no recibe parámetros. La definición comienza en la línea {LINEA_DECL}.",
+    "variantes": [
+      "Esta función se ejecuta sin recibir argumentos.",
+      "{NOMBRE} no necesita parámetros para ser llamada.",
+      "El programa puede invocar esta función con paréntesis vacíos."
+    ],
+    "ejemplo": "#include <stdio.h>\nvoid MOSTRAR(void);\nint main()\n{\n MOSTRAR();\n}\nvoid MOSTRAR(void) {\n printf(\"Listo\\n\");\n}",
+    "verificado_gcc13": false
+  },
+  {
+    "rol": "funcion_con_parametros",
+    "cuando_aplica": "Definición de función propia cuyo encabezado contiene uno o más parámetros formales; excluye main y funciones de biblioteca.",
+    "titulo": "Función con parámetros {NOMBRE}",
+    "que_es": "{NOMBRE} es una función que recibe {PARAMS}. Devuelve {RETORNO} y su definición comienza en la línea {LINEA_DECL}.",
+    "como_se_usa": "Se llama pasando argumentos entre paréntesis y en el mismo orden de los parámetros. Cada parámetro recibe el valor correspondiente durante esa llamada.",
+    "error_tipico": "Cambiar el orden de los argumentos o pasar una cantidad de datos distinta de la que espera la función.",
+    "detalle": "Los parámetros indican qué datos necesita recibir una función. Al llamarla, los argumentos son los valores concretos que se envían. El orden de los argumentos debe coincidir con el orden de los parámetros. La función trabaja con esos datos y puede devolver un resultado. La definición comienza en la línea {LINEA_DECL}.",
+    "variantes": [
+      "Esta función recibe datos para realizar su tarea.",
+      "{NOMBRE} trabaja con los parámetros de su encabezado.",
+      "La llamada debe proporcionar argumentos en el orden esperado."
+    ],
+    "ejemplo": "#include <stdio.h>\nint SUMAR(int A,int B);\nint main()\n{\n int TOTAL;\n TOTAL=SUMAR(2,3);\n printf(\"%d\\n\",TOTAL);\n}\nint SUMAR(int A,int B) {\n return A+B;\n}",
+    "verificado_gcc13": false
+  },
+  {
+    "rol": "funcion_void",
+    "cuando_aplica": "Definición de función propia cuyo tipo de retorno declarado es void.",
+    "titulo": "Función sin retorno {NOMBRE}",
+    "que_es": "{NOMBRE} es una función de tipo void. Recibe {PARAMS} y su definición comienza en la línea {LINEA_DECL}.",
+    "como_se_usa": "Realiza una tarea sin entregar un resultado que pueda guardarse, por ejemplo mostrar un mensaje. Se llama como una instrucción: {NOMBRE}(...);",
+    "error_tipico": "Intentar guardar el resultado de una función void o escribir return seguido de un valor.",
+    "detalle": "void indica que la función no devuelve un valor. Aun así, puede recibir parámetros y ejecutar varias instrucciones. Se llama escribiendo su nombre y los argumentos entre paréntesis. Puede terminar al llegar al final de su cuerpo o utilizar return; para salir antes. No se debe usar su llamada dentro de una cuenta o asignación. La definición comienza en la línea {LINEA_DECL}.",
+    "variantes": [
+      "Esta función realiza una acción y no devuelve un dato.",
+      "{NOMBRE} tiene retorno void.",
+      "La función se llama para ejecutar sus instrucciones, no para obtener un valor."
+    ],
+    "ejemplo": "#include <stdio.h>\nvoid AVISAR(int CANTIDAD);\nint main()\n{\n AVISAR(3);\n}\nvoid AVISAR(int CANTIDAD) {\n printf(\"Cantidad: %d\\n\",CANTIDAD);\n}",
+    "verificado_gcc13": false
+  },
+  {
+    "rol": "funcion_retorna_valor",
+    "cuando_aplica": "Definición de función propia con tipo de retorno distinto de void y al menos un return seguido de una expresión.",
+    "titulo": "Función que devuelve un valor: {NOMBRE}",
+    "que_es": "{NOMBRE} devuelve un resultado de tipo {RETORNO}. Recibe {PARAMS} y comienza en la línea {LINEA_DECL}.",
+    "como_se_usa": "Calcula un valor y lo entrega con return. La llamada puede utilizarse en una asignación, una cuenta, una condición o un printf.",
+    "error_tipico": "Olvidar devolver un valor en algún camino de una función cuyo tipo de retorno no es void.",
+    "detalle": "El tipo de retorno aparece antes del nombre de la función. return termina la llamada actual y entrega el resultado indicado. Ese resultado debe coincidir con el tipo declarado. La llamada puede guardarse en una variable o utilizarse directamente en otra expresión. Si hay distintas condiciones, todos los caminos que terminan normalmente deben devolver un valor. La definición comienza en la línea {LINEA_DECL}.",
+    "variantes": [
+      "Esta función entrega un resultado al terminar.",
+      "{NOMBRE} calcula un valor que puede utilizar quien la llama.",
+      "El resultado de esta función puede guardarse en otra variable."
+    ],
+    "ejemplo": "#include <stdio.h>\nfloat MITAD(int N);\nint main()\n{\n float RESULTADO;\n RESULTADO=MITAD(5);\n printf(\"%.1f\\n\",RESULTADO);\n}\nfloat MITAD(int N) {\n return N/2.0;\n}",
+    "verificado_gcc13": false
+  },
+  {
+    "rol": "prototipo_definicion",
+    "cuando_aplica": "El código contiene un prototipo terminado en ; y una definición posterior con el mismo nombre, retorno y lista de parámetros compatible.",
+    "titulo": "Prototipo y definición de {NOMBRE}",
+    "que_es": "{NOMBRE} tiene un prototipo que anuncia su tipo de retorno y sus parámetros, y una definición que contiene las instrucciones. El prototipo está en la línea {LINEA_DECL}.",
+    "como_se_usa": "El prototipo se escribe antes de llamar a la función y termina con punto y coma. La definición posterior incluye el cuerpo entre llaves; ambas deben coincidir.",
+    "error_tipico": "Cambiar el tipo, el orden o la cantidad de parámetros entre el prototipo y la definición.",
+    "detalle": "El prototipo le informa al compilador el nombre de la función, el valor que devuelve y los parámetros que recibe. Termina con punto y coma y no incluye el cuerpo. La definición aparece en otro lugar y contiene las instrucciones entre llaves. El nombre, el tipo de retorno y los parámetros deben coincidir. Gracias al prototipo se puede llamar a la función antes de escribir su definición. El prototipo está en la línea {LINEA_DECL}.",
+    "variantes": [
+      "Este nombre tiene una declaración previa y una definición con cuerpo.",
+      "{NOMBRE} se anuncia primero y se desarrolla después.",
+      "El prototipo permite conocer la función antes de encontrar su definición."
+    ],
+    "ejemplo": "#include <stdio.h>\nint CUADRADO(int N);\nint main()\n{\n printf(\"%d\\n\",CUADRADO(4));\n}\nint CUADRADO(int N) {\n return N*N;\n}",
+    "verificado_gcc13": false
+  },
+  {
+    "rol": "funcion_recursiva",
+    "cuando_aplica": "El cuerpo de la definición de una función propia contiene una llamada a esa misma función.",
+    "titulo": "Función recursiva {NOMBRE}",
+    "que_es": "{NOMBRE} es una función recursiva porque vuelve a llamarse a sí misma. Devuelve {RETORNO} y recibe {PARAMS}.",
+    "como_se_usa": "Debe tener un caso base que detenga las llamadas y un caso que reduzca el problema. Cada llamada conserva sus propios parámetros y variables locales.",
+    "error_tipico": "Olvidar el caso base o realizar una llamada que no se acerque a él; la función podría repetirse hasta agotar recursos.",
+    "detalle": "Una función recursiva se llama a sí misma para resolver una parte más pequeña del problema. El caso base define cuándo debe detenerse. El caso recursivo debe acercar los datos al caso base en cada llamada. Cuando la llamada más interna termina, las anteriores continúan y completan su trabajo. La recursión utiliza memoria para conservar las llamadas pendientes. Revisa que todas las rutas puedan llegar al caso base.",
+    "variantes": [
+      "Esta función se vuelve a ejecutar a sí misma.",
+      "{NOMBRE} contiene una llamada recursiva.",
+      "El proceso se resuelve mediante llamadas sucesivas a la misma función."
+    ],
+    "ejemplo": "#include <stdio.h>\nint CONTAR(int N);\nint main()\n{\n printf(\"%d\\n\",CONTAR(3));\n}\nint CONTAR(int N) {\n if(N<=0) return 0;\n return 1+CONTAR(N-1);\n}",
+    "verificado_gcc13": false
+  },
+  {
+    "rol": "main",
+    "cuando_aplica": "El identificador seleccionado es exactamente main y aparece en la definición de la función principal; no es una llamada ni una cadena.",
+    "titulo": "Función principal main",
+    "que_es": "main es la función principal del programa. Su tipo de retorno es {RETORNO} y su encabezado aparece en la línea {LINEA_DECL}.",
+    "como_se_usa": "#include <stdio.h>\nint main()\n{\n int TOTAL;\n TOTAL=0;\n TOTAL=TOTAL+1;\n printf(\"%d\\n\",TOTAL);\n}",
+    "error_tipico": "Escribir el nombre con otra capitalización, olvidar una llave o declarar más de una función main en el mismo programa.",
+    "detalle": "main es la función principal de un programa ejecutable. La ejecución comienza allí y continúa con las instrucciones de su cuerpo. Dentro de main se declaran las variables locales y se llaman otras funciones cuando hace falta. En este proyecto se utiliza la forma int main() y no se escribe return 0 al final. Debe existir una sola definición de main.",
+    "variantes": [
+      "Esta es la función desde la que comienza la ejecución.",
+      "main organiza el recorrido principal del programa.",
+      "El identificador main corresponde al punto de entrada del código."
+    ],
+    "ejemplo": "#include <stdio.h>\nint main()\n{\n int TOTAL;\n TOTAL=0;\n TOTAL=TOTAL+1;\n printf(\"%d\\n\",TOTAL);\n}",
+    "verificado_gcc13": false
+  }
 ]
