@@ -3,7 +3,7 @@
 **Contrato.** Para los programas del subconjunto documentado, que usan solo comportamiento definido por C y se ejecutan en el objetivo de referencia, Editor C produce la misma salida estándar y el mismo código de salida. Lo que no está soportado se informa como error; nunca se simula en silencio.
 
 ## Objetivo de referencia
-- Linux x86-64, gcc 13 (`-std=gnu99`), glibc.
+- Linux x86-64, glibc. **Salidas y comportamiento: gcc 13** (`-std=gnu99`; las salidas de un programa válido son las mismas en gcc 13 y 14). **Errores y avisos: gcc 14** (la versión de Programiz, 14.2, y OnlineGDB, 14.3, comprobadas el 21/11/2026): lo que gcc 14 rechaza como error el editor también lo rechaza (`main()` sin tipo, función usada sin prototipo, `return;` sin valor en una función que devuelve un valor, entero asignado a puntero, punteros incompatibles). Prueba: `node test/gcc14.js` (con `gcc-14` instalado también compara contra él).
 - Modelo LP64: `char` 8 bits con signo, `short` 16, `int` 32, `long` y `long long` 64 (BigInt), versiones `unsigned` de cada uno, `float` binary32, `double` binary64, `bool` de `<stdbool.h>`.
 - `printf`/`scanf`, `rand`/`srand` y `ctype.h` imitan a glibc (valores de retorno incluidos).
 - **Qué es error y qué es aviso** sigue a Programiz (comprobado el 10/11/2026 con 20 programas de errores comunes), que usa un gcc más nuevo y estricto que el 13: son **error** (no se ejecuta) escribir `main()` sin `int`, usar `printf`/`scanf`/otras funciones o constantes sin su `#include`, y llamar a una función antes de definirla sin prototipo. Con gcc 13 esos casos solo dan aviso.

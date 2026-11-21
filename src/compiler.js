@@ -897,7 +897,7 @@
       if (!this.funcs.has('main')) this.err("no hay función main(): el programa empieza en 'main() { ... }'", 1);
       else {
         const mf = this.funcs.get('main');
-        if (this.items.mainSinTipo) this.warn("main sin tipo: gcc lo acepta y lo toma como int. Se recomienda escribir int main()", this.items.mainSinTipo, 'POR-006');
+        if (this.items.mainSinTipo) this.err("falta el tipo de la función 'main': gcc 14 no lo acepta (gcc 13 solo avisaba). Se escribe int main() { ... }", this.items.mainSinTipo, 'POR-006');
         if (mf.ret === 'void') this.warn("main tiene que devolver int: con 'void main' funciona en algunos compiladores (Code::Blocks), pero gcc avisa", mf.line, 'POR-005', 'FUN-023');
         if (mf.params.length === 1) this.warn("main recibe cero parámetros o dos (argc y argv), no uno solo", mf.line, 'FUN-025');
       }
@@ -1020,7 +1020,7 @@
         }
         case 'return': {
           const rt = this.cur.ret;
-          if (!s.e) { if (rt !== 'void') this.warn("'return' sin valor en una función que devuelve " + TNAME[rt], s.line, 'FUN-015'); return 'return' + (this.cur.name === 'main' ? ' 0' : '') + ';'; }
+          if (!s.e) { if (rt !== 'void') this.err("'return' sin valor en una función que devuelve " + TNAME[rt] + ": gcc 14 lo rechaza (gcc 13 solo avisaba)", s.line, 'FUN-015'); return 'return' + (this.cur.name === 'main' ? ' 0' : '') + ';'; }
           if (rt === 'void') { this.err('una función void no puede devolver un valor', s.line, 'FUN-014'); this.expr(s.e); return 'return;'; }
           if (s.e.k === 'comma' && !this.hasSideEffect(s.e.l)) this.warn("'return A, B' devuelve solo B: la coma descarta el primer valor (una función devuelve un único valor)", s.line, 'FUN-040');
           const r = this.expr(s.e);
