@@ -1846,5 +1846,63 @@
   "mensaje_editor_actual": null,
   "codigo_editor_actual": null,
   "verificado_editor_corrige": true
+ },
+ {
+  "id": "SCN-095",
+  "categoria": "scanf",
+  "nombre_corto": "%i interpreta un cero inicial como número octal",
+  "frecuencia": "baja",
+  "codigo_mal": "#include <stdio.h>\nint main() {\n  int N;\n  scanf(\"%i\", &N);\n  printf(\"%d\\n\", N);\n}",
+  "codigo_bien": "#include <stdio.h>\nint main() {\n  int N;\n  scanf(\"%d\", &N);\n  printf(\"%d\\n\", N);\n}",
+  "entrada": "08\n",
+  "que_dice_gcc": "nada",
+  "mensaje_editor": "El formato %i detecta la base del número: un cero inicial indica octal. Para leer números decimales habituales, utiliza %d.",
+  "explicacion": "%i interpreta entradas con prefijo 0 como octales y con 0x como hexadecimales. Por eso la entrada 08 se lee como 0 y el 8 queda sin consumir.",
+  "como_arreglarlo": "Utiliza %d si el usuario debe ingresar números en base diez.",
+  "pistas": [
+   "¿Qué base debe utilizar el programa?",
+   "%i detecta la base a partir del prefijo.",
+   "Para decimal, cambia %i por %d."
+  ],
+  "relacion_con_la_materia": "scanf",
+  "deteccion": "no_detectable",
+  "como_detectarlo": "Formato %i cuando la aplicación espera números decimales y la entrada comienza con cero.",
+  "riesgo_falso_positivo": "%i es correcto cuando se desea aceptar valores octales o hexadecimales además de decimales.",
+  "nivel": "aviso",
+  "verificado_gcc13": true,
+  "detectado_editor": false,
+  "mensaje_editor_actual": null,
+  "codigo_editor_actual": null,
+  "verificado_editor_corrige": true,
+  "notas": "Compilado con gcc-14 (Debian 14.2.0-19) 14.2.0; gcc 13 no está instalado. No se ejecutó el editor."
+ },
+ {
+  "id": "SCN-096",
+  "categoria": "scanf",
+  "nombre_corto": "%u acepta un signo menos y produce un entero sin signo grande",
+  "frecuencia": "baja",
+  "codigo_mal": "#include <stdio.h>\nint main() {\n  unsigned int N;\n  scanf(\"%u\", &N);\n  printf(\"%u\\n\", N);\n}",
+  "codigo_bien": "#include <stdio.h>\nint main() {\n  int N;\n  if (scanf(\"%d\", &N) == 1 && N >= 0) printf(\"%d\\n\", N);\n  else printf(\"Dato invalido\\n\");\n}",
+  "entrada": "-1\n",
+  "que_dice_gcc": "nada",
+  "mensaje_editor": "%u permite un signo opcional, incluso el signo menos. Por eso -1 se convierte en un valor unsigned grande en lugar de rechazarse.",
+  "explicacion": "El formato %u no valida que el usuario haya escrito un número no negativo. La conversión interpreta el signo y almacena el resultado en un tipo sin signo.",
+  "como_arreglarlo": "Si el dato no puede ser negativo, léelo en un int y comprueba que sea mayor o igual que cero.",
+  "pistas": [
+   "¿El tipo unsigned puede representar -1?",
+   "El formato %u admite el signo menos.",
+   "Comprueba el valor antes de aceptarlo."
+  ],
+  "relacion_con_la_materia": "scanf",
+  "deteccion": "no_detectable",
+  "como_detectarlo": "Uso de %u cuando el programa requiere rechazar entradas negativas.",
+  "riesgo_falso_positivo": "%u es correcto si el programa acepta la conversión modular de valores con signo según las reglas de scanf.",
+  "nivel": "aviso",
+  "verificado_gcc13": true,
+  "detectado_editor": false,
+  "mensaje_editor_actual": null,
+  "codigo_editor_actual": null,
+  "verificado_editor_corrige": true,
+  "notas": "Compilado con gcc-14 (Debian 14.2.0-19) 14.2.0; gcc 13 no está instalado. No se ejecutó el editor."
  }
 ]
