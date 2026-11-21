@@ -24,7 +24,7 @@
   "verificado_gcc13": true,
   "detectado_editor": true,
   "mensaje_editor_actual": "usas printf pero falta #include <stdio.h> al principio del programa",
-  "codigo_editor_actual": "W-preprocesador",
+  "codigo_editor_actual": "E-preprocesador",
   "verificado_editor_corrige": true
  },
  {
@@ -52,7 +52,7 @@
   "verificado_gcc13": true,
   "detectado_editor": true,
   "mensaje_editor_actual": "usas scanf pero falta #include <stdio.h> al principio del programa",
-  "codigo_editor_actual": "W-preprocesador",
+  "codigo_editor_actual": "E-preprocesador",
   "verificado_editor_corrige": true
  },
  {
@@ -80,7 +80,7 @@
   "verificado_gcc13": true,
   "detectado_editor": true,
   "mensaje_editor_actual": "usas sqrt pero falta #include <math.h> al principio del programa",
-  "codigo_editor_actual": "W-preprocesador",
+  "codigo_editor_actual": "E-preprocesador",
   "verificado_editor_corrige": true
  },
  {
@@ -108,7 +108,7 @@
   "verificado_gcc13": true,
   "detectado_editor": true,
   "mensaje_editor_actual": "usas pow pero falta #include <math.h> al principio del programa",
-  "codigo_editor_actual": "W-preprocesador",
+  "codigo_editor_actual": "E-preprocesador",
   "verificado_editor_corrige": true
  },
  {
@@ -136,7 +136,7 @@
   "verificado_gcc13": true,
   "detectado_editor": true,
   "mensaje_editor_actual": "usas abs pero falta #include <stdlib.h> al principio del programa",
-  "codigo_editor_actual": "W-preprocesador",
+  "codigo_editor_actual": "E-preprocesador",
   "verificado_editor_corrige": true
  },
  {
@@ -164,7 +164,7 @@
   "verificado_gcc13": true,
   "detectado_editor": true,
   "mensaje_editor_actual": "usas strlen pero falta #include <string.h> al principio del programa",
-  "codigo_editor_actual": "W-preprocesador",
+  "codigo_editor_actual": "E-preprocesador",
   "verificado_editor_corrige": true
  },
  {
@@ -192,7 +192,7 @@
   "verificado_gcc13": true,
   "detectado_editor": true,
   "mensaje_editor_actual": "usas strcmp pero falta #include <string.h> al principio del programa",
-  "codigo_editor_actual": "W-preprocesador",
+  "codigo_editor_actual": "E-preprocesador",
   "verificado_editor_corrige": true
  },
  {
@@ -220,7 +220,7 @@
   "verificado_gcc13": true,
   "detectado_editor": true,
   "mensaje_editor_actual": "usas srand pero falta #include <stdlib.h> al principio del programa",
-  "codigo_editor_actual": "W-preprocesador",
+  "codigo_editor_actual": "E-preprocesador",
   "verificado_editor_corrige": true
  },
  {
@@ -248,7 +248,7 @@
   "verificado_gcc13": true,
   "detectado_editor": true,
   "mensaje_editor_actual": "usas time pero falta #include <time.h> al principio del programa",
-  "codigo_editor_actual": "W-preprocesador",
+  "codigo_editor_actual": "E-preprocesador",
   "verificado_editor_corrige": true
  },
  {
@@ -276,7 +276,7 @@
   "verificado_gcc13": true,
   "detectado_editor": true,
   "mensaje_editor_actual": "usas exit pero falta #include <stdlib.h> al principio del programa",
-  "codigo_editor_actual": "W-preprocesador",
+  "codigo_editor_actual": "E-preprocesador",
   "verificado_editor_corrige": true
  },
  {
@@ -304,7 +304,7 @@
   "verificado_gcc13": true,
   "detectado_editor": true,
   "mensaje_editor_actual": "usas toupper pero falta #include <ctype.h> al principio del programa",
-  "codigo_editor_actual": "W-preprocesador",
+  "codigo_editor_actual": "E-preprocesador",
   "verificado_editor_corrige": true
  },
  {
@@ -331,8 +331,8 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "no se conoce la biblioteca <studio.h>: ¿quisiste escribir <stdio.h>?",
-  "codigo_editor_actual": "W-preprocesador",
+  "mensaje_editor_actual": "no se conoce el archivo cabecera <studio.h>: ¿quisiste escribir <stdio.h>?",
+  "codigo_editor_actual": "W-otro",
   "verificado_editor_corrige": true
  },
  {
@@ -359,8 +359,8 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "no se conoce la biblioteca <stdio>: ¿quisiste escribir <stdio.h>?",
-  "codigo_editor_actual": "W-preprocesador",
+  "mensaje_editor_actual": "no se conoce el archivo cabecera <stdio>: ¿quisiste escribir <stdio.h>?",
+  "codigo_editor_actual": "W-otro",
   "verificado_editor_corrige": true
  },
  {
@@ -471,8 +471,8 @@
   "nivel": "error",
   "verificado_gcc13": true,
   "detectado_editor": true,
-  "mensaje_editor_actual": "no se conoce la biblioteca <STDIO.H>",
-  "codigo_editor_actual": "W-preprocesador",
+  "mensaje_editor_actual": "no se conoce el archivo cabecera <STDIO.H>",
+  "codigo_editor_actual": "W-otro",
   "verificado_editor_corrige": true
  },
  {
@@ -1004,7 +1004,7 @@
   "verificado_gcc13": true,
   "detectado_editor": true,
   "mensaje_editor_actual": "usas M_PI pero falta #include <math.h> al principio del programa",
-  "codigo_editor_actual": "W-preprocesador",
+  "codigo_editor_actual": "E-preprocesador",
   "verificado_editor_corrige": true
  },
  {
@@ -1060,7 +1060,7 @@
   "verificado_gcc13": true,
   "detectado_editor": true,
   "mensaje_editor_actual": "usas getch pero falta #include <conio.h> al principio del programa",
-  "codigo_editor_actual": "W-preprocesador",
+  "codigo_editor_actual": "E-preprocesador",
   "verificado_editor_corrige": true
  },
  {
@@ -1370,5 +1370,208 @@
   "mensaje_editor_actual": "fflush(stdin) no está definido en C estándar: en Linux (gcc, Programiz, OnlineGDB) no limpia el teclado",
   "codigo_editor_actual": "W-portabilidad",
   "verificado_editor_corrige": true
+ },
+ {
+  "id": "PRE-050",
+  "categoria": "preprocesador y bibliotecas",
+  "nombre_corto": "bool sin stdbool.h",
+  "frecuencia": "alta",
+  "codigo_mal": "#include <stdio.h>\nint main() {\n  bool LISTO;\n  LISTO = true;\n  if (LISTO) printf(\"Listo\\n\");\n}",
+  "codigo_bien": "#include <stdio.h>\n#include <stdbool.h>\nint main() {\n  bool LISTO;\n  LISTO = true;\n  if (LISTO) printf(\"Listo\\n\");\n}",
+  "entrada": "",
+  "que_dice_gcc": "archivo.c:3: error: unknown type name 'bool'",
+  "mensaje_editor": "La declaración de bool y las constantes true y false requieren el archivo cabecera stdbool.h en C99.",
+  "explicacion": "Sin ese archivo cabecera, bool y true no están declarados como nombres del lenguaje C99. El programa no llega a compilar, aunque el tipo se vea familiar.",
+  "como_arreglarlo": "Incluye stdbool.h antes de usar bool, true o false.",
+  "pistas": [
+   "¿Qué archivo cabecera define bool?",
+   "El problema aparece en el tipo y en true.",
+   "Añade stdbool.h al principio."
+  ],
+  "relacion_con_la_materia": "tipos",
+  "deteccion": "estatica",
+  "como_detectarlo": "Uso de bool o true sin incluir stdbool.h.",
+  "riesgo_falso_positivo": "ninguno",
+  "nivel": "error",
+  "verificado_gcc13": true,
+  "detectado_editor": false,
+  "mensaje_editor_actual": null,
+  "codigo_editor_actual": null,
+  "verificado_editor_corrige": true,
+  "notas": "Compilado con gcc-14 (Debian 14.2.0-19) 14.2.0; gcc 13 no está instalado. No se ejecutó el editor."
+ },
+ {
+  "id": "PRE-051",
+  "categoria": "preprocesador y bibliotecas",
+  "nombre_corto": "macro definida dos veces con valores distintos",
+  "frecuencia": "media",
+  "codigo_mal": "#include <stdio.h>\n#define LIMITE 5\n#define LIMITE 8\nint main() {\n  printf(\"%d\\n\", LIMITE);\n}",
+  "codigo_bien": "#include <stdio.h>\n#define LIMITE 8\nint main() {\n  printf(\"%d\\n\", LIMITE);\n}",
+  "entrada": "",
+  "que_dice_gcc": "archivo.c:3: warning: \"LIMITE\" redefined",
+  "mensaje_editor": "La macro LIMITE se define dos veces con valores diferentes. GCC avisa de la redefinición y el programa termina usando la última definición.",
+  "explicacion": "Una macro no es una variable: el preprocesador reemplaza su nombre por el texto de la definición activa. Si se redefine con otro contenido, el resultado puede cambiar sin que el código parezca distinto en el lugar de uso.",
+  "como_arreglarlo": "Deja una sola definición o utiliza nombres diferentes para las dos constantes.",
+  "pistas": [
+   "Busca todas las apariciones de #define LIMITE.",
+   "Compara los valores de ambas definiciones.",
+   "Conserva una sola definición."
+  ],
+  "relacion_con_la_materia": "preprocesador",
+  "deteccion": "estatica",
+  "como_detectarlo": "Dos #define con el mismo identificador y reemplazos diferentes.",
+  "riesgo_falso_positivo": "Puede ser intencional redefinir una macro después de #undef; no avisar en ese caso.",
+  "nivel": "aviso",
+  "verificado_gcc13": true,
+  "detectado_editor": false,
+  "mensaje_editor_actual": null,
+  "codigo_editor_actual": null,
+  "verificado_editor_corrige": true,
+  "notas": "Compilado con gcc-14 (Debian 14.2.0-19) 14.2.0; gcc 13 no está instalado. No se ejecutó el editor."
+ },
+ {
+  "id": "PRE-052",
+  "categoria": "preprocesador y bibliotecas",
+  "nombre_corto": "ifdef considera definida una macro aunque valga cero",
+  "frecuencia": "media",
+  "codigo_mal": "#include <stdio.h>\n#define ACTIVO 0\nint main() {\n#ifdef ACTIVO\n  printf(\"Activo\\n\");\n#else\n  printf(\"Inactivo\\n\");\n#endif\n}",
+  "codigo_bien": "#include <stdio.h>\n#define ACTIVO 0\nint main() {\n#if ACTIVO\n  printf(\"Activo\\n\");\n#else\n  printf(\"Inactivo\\n\");\n#endif\n}",
+  "entrada": "",
+  "que_dice_gcc": "nada",
+  "mensaje_editor": "El bloque #ifdef se ejecuta porque ACTIVO está definido, aunque su valor sea 0.",
+  "explicacion": "#ifdef solo pregunta si existe una definición con ese nombre. No evalúa el valor que se le asignó. Para comprobar si una macro vale cero o un número distinto de cero, se usa #if.",
+  "como_arreglarlo": "Cambia la condición por una que evalúe el valor de la macro.",
+  "pistas": [
+   "¿La directiva pregunta por existencia o por valor?",
+   "La macro existe aunque valga cero.",
+   "Usa #if ACTIVO."
+  ],
+  "relacion_con_la_materia": "preprocesador",
+  "deteccion": "estatica",
+  "como_detectarlo": "#ifdef aplicado a una macro definida explícitamente como 0, cuando se espera evaluar su valor.",
+  "riesgo_falso_positivo": "No hay falso positivo si el programa realmente quiere comprobar que la macro está definida, sin importar su valor.",
+  "nivel": "aviso",
+  "verificado_gcc13": true,
+  "detectado_editor": false,
+  "mensaje_editor_actual": null,
+  "codigo_editor_actual": null,
+  "verificado_editor_corrige": true,
+  "notas": "Compilado con gcc-14 (Debian 14.2.0-19) 14.2.0; gcc 13 no está instalado. No se ejecutó el editor."
+ },
+ {
+  "id": "PRE-053",
+  "categoria": "preprocesador y bibliotecas",
+  "nombre_corto": "constante decimal en una condición #if",
+  "frecuencia": "baja",
+  "codigo_mal": "#include <stdio.h>\n#define VERSION 2.5\n#if VERSION > 2.0\n#define NUEVA 1\n#else\n#define NUEVA 0\n#endif\nint main() {\n  printf(\"%d\\n\", NUEVA);\n}",
+  "codigo_bien": "#include <stdio.h>\nint main() {\n  double VERSION;\n  VERSION = 2.5;\n  if (VERSION > 2.0) printf(\"1\\n\");\n  else printf(\"0\\n\");\n}",
+  "entrada": "",
+  "que_dice_gcc": "archivo.c:2: error: floating constant in preprocessor expression",
+  "mensaje_editor": "La expresión de #if no admite valores decimales. Las condiciones del preprocesador se calculan con expresiones enteras.",
+  "explicacion": "El preprocesador decide qué partes del programa conservar antes de que el compilador analice las instrucciones de C. Por eso una condición #if no puede comparar números de punto flotante.",
+  "como_arreglarlo": "Si la condición depende de un decimal, evalúala con un if dentro de una función.",
+  "pistas": [
+   "¿#if se ejecuta cuando corre el programa?",
+   "La condición se calcula antes de compilar las instrucciones.",
+   "Usa un if para comparar VERSION."
+  ],
+  "relacion_con_la_materia": "preprocesador",
+  "deteccion": "estatica",
+  "como_detectarlo": "Literal decimal o macro de punto flotante dentro de una expresión #if.",
+  "riesgo_falso_positivo": "ninguno",
+  "nivel": "error",
+  "verificado_gcc13": true,
+  "detectado_editor": false,
+  "mensaje_editor_actual": null,
+  "codigo_editor_actual": null,
+  "verificado_editor_corrige": true,
+  "notas": "Compilado con gcc-14 (Debian 14.2.0-19) 14.2.0; gcc 13 no está instalado. No se ejecutó el editor."
+ },
+ {
+  "id": "PRE-054",
+  "categoria": "preprocesador y bibliotecas",
+  "nombre_corto": "falta cerrar una condición del preprocesador con endif",
+  "frecuencia": "baja",
+  "codigo_mal": "#include <stdio.h>\n#if 1\nint main() {\n  printf(\"Hola\\n\");\n}",
+  "codigo_bien": "#include <stdio.h>\n#if 1\nint main() {\n  printf(\"Hola\\n\");\n}\n#endif",
+  "entrada": "",
+  "que_dice_gcc": "archivo.c:2: error: unterminated #if",
+  "mensaje_editor": "Cada #if o #ifdef debe cerrarse con #endif. Sin esa directiva, el preprocesador no puede terminar la selección del código.",
+  "explicacion": "Las directivas condicionales forman bloques que se abren con #if o #ifdef. Cada bloque necesita su #endif correspondiente, incluso cuando la condición siempre es verdadera.",
+  "como_arreglarlo": "Añade #endif después del código que debe quedar dentro de la condición.",
+  "pistas": [
+   "Cuenta las directivas que abren un bloque.",
+   "Busca el cierre de cada una.",
+   "Añade #endif al final del bloque."
+  ],
+  "relacion_con_la_materia": "preprocesador",
+  "deteccion": "estatica",
+  "como_detectarlo": "Bloque #if o #ifdef sin una directiva #endif correspondiente.",
+  "riesgo_falso_positivo": "ninguno",
+  "nivel": "error",
+  "verificado_gcc13": true,
+  "detectado_editor": false,
+  "mensaje_editor_actual": null,
+  "codigo_editor_actual": null,
+  "verificado_editor_corrige": true,
+  "notas": "Compilado con gcc-14 (Debian 14.2.0-19) 14.2.0; gcc 13 no está instalado. No se ejecutó el editor."
+ },
+ {
+  "id": "PRE-055",
+  "categoria": "preprocesador y bibliotecas",
+  "nombre_corto": "sizeof dentro de una condición #if",
+  "frecuencia": "baja",
+  "codigo_mal": "#include <stdio.h>\n#if sizeof(int) >= 4\n#define ENTERO_GRANDE 1\n#else\n#define ENTERO_GRANDE 0\n#endif\nint main() {\n  printf(\"%d\\n\", ENTERO_GRANDE);\n}",
+  "codigo_bien": "#include <stdio.h>\nint main() {\n  if (sizeof(int) >= 4) printf(\"1\\n\");\n  else printf(\"0\\n\");\n}",
+  "entrada": "",
+  "que_dice_gcc": "archivo.c:2: error: missing binary operator before token \"(\"",
+  "mensaje_editor": "El operador sizeof pertenece a las expresiones de C y no puede usarse dentro de #if.",
+  "explicacion": "El preprocesador evalúa una expresión antes de que el compilador conozca los tipos y tamaños del programa. sizeof se evalúa durante la compilación de C, no durante el preprocesamiento.",
+  "como_arreglarlo": "Mueve la comprobación de sizeof a un if normal dentro de una función.",
+  "pistas": [
+   "¿La condición se procesa antes o durante la compilación de C?",
+   "sizeof no pertenece al lenguaje de expresiones del preprocesador.",
+   "Comprueba sizeof con if dentro de main."
+  ],
+  "relacion_con_la_materia": "preprocesador",
+  "deteccion": "estatica",
+  "como_detectarlo": "Uso de sizeof dentro de una expresión de #if.",
+  "riesgo_falso_positivo": "ninguno",
+  "nivel": "error",
+  "verificado_gcc13": true,
+  "detectado_editor": false,
+  "mensaje_editor_actual": null,
+  "codigo_editor_actual": null,
+  "verificado_editor_corrige": true,
+  "notas": "Compilado con gcc-14 (Debian 14.2.0-19) 14.2.0; gcc 13 no está instalado. No se ejecutó el editor."
+ },
+ {
+  "id": "PRE-056",
+  "categoria": "preprocesador y bibliotecas",
+  "nombre_corto": "variable de C usada en #if en vez de if",
+  "frecuencia": "media",
+  "codigo_mal": "#include <stdio.h>\nint main() {\n  int EDAD;\n  EDAD = 20;\n#if EDAD >= 18\n  printf(\"Mayor\\n\");\n#else\n  printf(\"Menor\\n\");\n#endif\n}",
+  "codigo_bien": "#include <stdio.h>\nint main() {\n  int EDAD;\n  EDAD = 20;\n  if (EDAD >= 18) printf(\"Mayor\\n\");\n  else printf(\"Menor\\n\");\n}",
+  "entrada": "",
+  "que_dice_gcc": "archivo.c:3: warning: variable 'EDAD' set but not used [-Wunused-but-set-variable]",
+  "mensaje_editor": "La directiva #if se procesa antes de que exista la variable EDAD. El preprocesador trata un identificador no definido como cero y conserva la rama incorrecta.",
+  "explicacion": "Una variable local solo existe para el compilador cuando analiza el cuerpo de la función. #if pertenece al preprocesador y solo puede usar expresiones enteras formadas con macros y constantes.",
+  "como_arreglarlo": "Usa if cuando la condición dependa de una variable del programa.",
+  "pistas": [
+   "¿EDAD ya existe cuando se procesa #if?",
+   "Las directivas se procesan antes de compilar main.",
+   "Sustituye #if por if."
+  ],
+  "relacion_con_la_materia": "preprocesador",
+  "deteccion": "estatica",
+  "como_detectarlo": "Identificador de variable local dentro de una expresión #if y no definido como macro.",
+  "riesgo_falso_positivo": "Un nombre de macro puede coincidir intencionalmente con un identificador; comprobar que no esté definido evita avisos erróneos.",
+  "nivel": "aviso",
+  "verificado_gcc13": true,
+  "detectado_editor": false,
+  "mensaje_editor_actual": null,
+  "codigo_editor_actual": null,
+  "verificado_editor_corrige": true,
+  "notas": "Compilado con gcc-14 (Debian 14.2.0-19) 14.2.0; gcc 13 no está instalado. No se ejecutó el editor."
  }
 ]
