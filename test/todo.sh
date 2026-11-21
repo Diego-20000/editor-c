@@ -15,7 +15,7 @@ paso() { # paso "nombre" "tiempo máximo en segundos" comando...
   local nombre="$1" max="$2"; shift 2
   local t0=$(date +%s); timeout "$max" "$@" > "$T/sal.txt" 2>&1 < /dev/null; local rc=$?
   local seg=$(( $(date +%s) - t0 )); local resumen
-  resumen=$(grep -E "iguales a gcc|diagnósticos|pruebas bien|casos bien|ok, [0-9]+ fallas|sin problemas|versión|programas aleatorios" "$T/sal.txt" | tail -1 | tr -s ' ' | cut -c1-70)
+  resumen=$(grep -E "iguales a gcc|diagnósticos|pruebas bien|casos bien|casos de gcc 14 bien|ok, [0-9]+ fallas|sin problemas|versión|programas aleatorios" "$T/sal.txt" | tail -1 | tr -s ' ' | cut -c1-70)
   [ -z "$resumen" ] && resumen=$(grep -v '^\s*$' "$T/sal.txt" | tail -1 | cut -c1-70)
   if [ "$rc" = 0 ]; then OK=$((OK+1)); printf "  ✔ %-28s %4ss  %s\n" "$nombre" "$seg" "$resumen"
   else MAL=$((MAL+1)); [ "$rc" = 124 ] && resumen="se pasó del tiempo máximo (${max}s)"; printf "  ✘ %-28s %4ss  %s\n" "$nombre" "$seg" "$resumen"
@@ -28,6 +28,7 @@ paso "Motor contra gcc"               600 bash test/run_all.sh
 paso "Programas aleatorios contra gcc" 900 bash test/fuzz_run.sh "$FUZZ"
 paso "Programas completos contra gcc" 900 bash test/fuzz2_run.sh "$((FUZZ * 2))"
 paso "Diagnósticos del compilador"    300 node test/diag.js
+paso "Errores de gcc 14"             120 node test/gcc14.js
 paso "Base de conocimiento (módulos)" 300 node test/kb.test.js
 paso "Ejemplos del editor"            300 node test/ejemplos.js
 paso "Nombres del alumno (¿qué es?)"   300 node test/nombres.test.js
