@@ -411,11 +411,16 @@
   });
 
   document.addEventListener('keydown', (e) => { if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's' && e.target !== ta) { e.preventDefault(); save(); } });
+  let tabLibre = false;
   ta.addEventListener('keydown', (e) => {
     const mod = e.ctrlKey || e.metaKey;
     if (mod && e.key.toLowerCase() === 's') { e.preventDefault(); save(); return; }
     if (mod && (e.key === '/' || e.code === 'Slash' || (e.shiftKey && e.code === 'Digit7'))) { e.preventDefault(); toggleComment(); return; }
     const v = ta.value, s = ta.selectionStart, en = ta.selectionEnd;
+    // sin trampa de teclado: Esc y después Tab saca el foco del editor (si no, Tab siempre inserta espacios)
+    if (e.key === 'Escape') { tabLibre = true; return; }
+    if (e.key === 'Tab' && tabLibre) { tabLibre = false; return; }
+    if (e.key !== 'Shift') tabLibre = false;
     if (e.key === 'Tab') {
       e.preventDefault();
       if (s === en && !e.shiftKey) { auto(() => insert(SP())); return; }

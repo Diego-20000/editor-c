@@ -563,6 +563,21 @@ const check = (c, m) => { if (c) { ok++; console.log('  ok   ' + m); } else { fa
     await cx.close();
   }
 
+  // 17) accesibilidad: el teclado no queda atrapado en el editor (Esc y luego Tab sale; Tab solo inserta espacios)
+  {
+    const cx = await br.newContext({ viewport: { width: 1366, height: 768 } }); const pg = await cx.newPage();
+    await pg.goto(url); await pg.waitForSelector('#code');
+    await pg.click('#code'); await pg.keyboard.press('Control+End');
+    const antes = (await pg.inputValue('#code')).length;
+    await pg.keyboard.press('Tab');
+    check((await pg.evaluate(() => document.activeElement.id)) === 'code' && (await pg.inputValue('#code')).length > antes, 'teclado: Tab dentro del editor inserta espacios y el foco se queda');
+    await pg.keyboard.press('Escape'); await pg.keyboard.press('Tab');
+    check((await pg.evaluate(() => document.activeElement.id)) !== 'code', 'teclado: Esc y luego Tab saca el foco del editor');
+    await pg.click('#code'); await pg.keyboard.press('Escape'); await pg.keyboard.press('a'); await pg.keyboard.press('Tab');
+    check((await pg.evaluate(() => document.activeElement.id)) === 'code', 'teclado: si después de Esc se escribe otra tecla, Tab vuelve a insertar espacios');
+    await cx.close();
+  }
+
   await br.close();
   console.log(ok + ' ok, ' + fallas + ' fallas');
   process.exit(fallas ? 1 : 0);
