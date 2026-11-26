@@ -425,7 +425,7 @@ async function disenoSuite(browser, target, mobile) {
   ok(await page.evaluate(() => document.getElementById('runBar').hidden), 'cartel: se oculta al detener');
   await H.setCode(SCANF); await H.tab('ed'); await H.run();
   await page.waitForSelector('.stdin input');
-  ok(/Esperando datos/.test(await page.textContent('#runBarTxt')) && await page.evaluate(() => document.getElementById('runBar').classList.contains('wait')), 'cartel: pidiendo datos dice "Esperando datos"');
+  ok(/aprieta Enter/.test(await page.textContent('#runBarTxt')) && await page.evaluate(() => document.getElementById('runBar').classList.contains('wait')), 'cartel: pidiendo datos pide escribir y apretar Enter');
   await H.typeLine('1'); await H.typeLine('2'); await H.done();
   ok(await page.evaluate(() => document.getElementById('runBar').hidden), 'cartel: al terminar no queda a la vista');
   ok(await page.evaluate(() => { const i = document.querySelector('#out .in'); return !!i && +getComputedStyle(i).fontWeight >= 600 && getComputedStyle(i).color !== getComputedStyle(document.getElementById('out')).color; }), 'consola: lo tipeado se distingue (matiz y peso), no solo por el color');

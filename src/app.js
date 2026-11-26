@@ -267,11 +267,19 @@
       return h;
     }).join('\n') + '\n';
   }
-  let curLn = 0;
+  let curLn = 0, lastSb = [-1, -1];
   function syncScroll() {
     layers.forEach((l) => { l.scrollTop = ta.scrollTop; l.scrollLeft = ta.scrollLeft; });
     gut.scrollTop = ta.scrollTop;
     codeBox.style.setProperty('--sy', ta.scrollTop + 'px');
+    // con barras de desplazamiento clásicas (Windows) el área del texto es más baja que las capas y el número de línea:
+    // se les suma ese alto para que lleguen hasta el final igual que el texto y no se corran
+    const sbh = ta.offsetHeight - ta.clientHeight, sbw = ta.offsetWidth - ta.clientWidth;
+    if (sbh !== lastSb[0] || sbw !== lastSb[1]) {
+      lastSb = [sbh, sbw];
+      ta.closest('.editor').style.setProperty('--sbh', sbh + 'px'); ta.closest('.editor').style.setProperty('--sbw', sbw + 'px');
+      layers.forEach((l) => { l.scrollTop = ta.scrollTop; l.scrollLeft = ta.scrollLeft; }); gut.scrollTop = ta.scrollTop;
+    }
     curEl.style.top = (12 + curLn * lineH() - ta.scrollTop) + 'px';
   }
   function lineH() { return (parseFloat(getComputedStyle(ta).fontSize) || 15) * 1.5; }
@@ -1160,7 +1168,7 @@
     // cartel bien visible mientras algo corre o espera datos (no depende solo del color)
     const rb = $('runBar'), on = cls === 'run' || cls === 'wait';
     rb.hidden = !on; rb.className = 'runbar' + (cls === 'wait' ? ' wait' : '');
-    $('runBarTxt').textContent = cls === 'wait' ? 'Esperando datos: escribe en la consola y aprieta Enter' : txt === 'Compilando…' ? 'Compilando…' : 'Ejecutando… el programa está en marcha';
+    $('runBarTxt').textContent = cls === 'wait' ? 'Escribe en la consola y aprieta Enter' : txt === 'Compilando…' ? 'Compilando…' : 'Ejecutando… el programa está en marcha';
   }
   function clearConsole() { clearTimeout(outTimer); outTimer = null; outBuf = ''; out.textContent = ''; total = 0; runEnd.hidden = true; runEnd.textContent = ''; }
   $('clear').addEventListener('click', () => { removeInput(); clearConsole(); if ((worker || main) && waiting) showInput(); });
@@ -1870,6 +1878,8 @@ self.postMessage({ type: 'ready' });`;
   let exTema = 'Todos';
   function pintarEjemplos() {
     const temas = []; EXAMPLES.forEach((e) => { if (temas.indexOf(e.g) < 0) temas.push(e.g); });
+    const ORDEN = ['Básico', 'Medio', 'Completo', 'Práctica · errores']; // orden fijo: de lo más simple a lo más largo, y la práctica al final
+    temas.sort((x, y) => { const i = ORDEN.indexOf(x), j = ORDEN.indexOf(y); return (i < 0 ? 99 : i) - (j < 0 ? 99 : j); });
     const chips = $('exChips'); chips.textContent = '';
     ['Todos'].concat(temas).forEach((t) => {
       const b = document.createElement('button'); b.type = 'button'; b.className = 'chipbtn'; b.textContent = t; b.setAttribute('aria-pressed', t === exTema ? 'true' : 'false');
