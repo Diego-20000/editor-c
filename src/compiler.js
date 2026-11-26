@@ -339,7 +339,12 @@
       if (t.t === 'id' && (t.v === 'and' || t.v === 'or' || t.v === 'not')) throw new CErr("en C la \"y\" lógica es '&&', la \"o\" es '||' y el \"no\" es '!' (no se escribe '" + t.v + "')", t.line, 'OPE-039');
       if (v === ';' && t.t === 'id' && (t.v === 'then' || t.v === 'endif' || t.v === 'end')) throw new CErr("'" + t.v + "' no existe en C: el cuerpo del if va entre llaves { }", t.line, t.v === 'then' ? 'SIN-015' : undefined);
       const r = (v === ';' ? this.kbPuntoComa(cx, t, pv) : this.kbEsperaba(v, t, pv, cx)) || {};
-      if (v === ';') throw new CErr(r.msg || "falta un ';' al final de esta línea (antes de " + found + ')', line, r.kb);
+      if (v === ';') {
+        const msg = r.msg || "falta un ';' al final de esta línea (antes de " + found + ')';
+        // recuperación: un ';' que falta al final de una línea se anota y se sigue leyendo como si estuviera, así los demás errores del programa (variables sin declarar, etc.) salen todos juntos, como en gcc
+        if (t.line > this.prevLine() && t.t !== 'eof' && (!this.soft || this.soft.length < 20)) { (this.soft = this.soft || []).push({ line, msg, kb: r.kb }); return pv; }
+        throw new CErr(msg, line, r.kb);
+      }
       throw new CErr(r.msg || "se esperaba '" + v + "' pero se encontró " + found, line, r.kb);
     }
     kbPuntoComa(cx, t, pv) {
@@ -467,6 +472,7 @@
         else { this.p--; if (ptrTok) this.p--; const d = this.declRest(type, line); d.const = cn; items.push(d); }
       }
       if (this.mainSinTipo) items.mainSinTipo = this.mainSinTipo;
+      if (this.soft) items.softErrors = this.soft;
       return items;
     }
     funcRest(ret, nameTok, line) {
@@ -2742,6 +2748,7 @@
       toksRef = toks;
       const g = new Gen(items, Object.assign({}, opts, { includes, defines }));
       const js = g.run();
+      for (const e of (items.softErrors || [])) { const x = { line: e.line, msg: e.msg }; if (e.kb) x.kb = e.kb; g.errors.push(x); }
       g.errors.sort((a, b) => a.line - b.line);
       g.warnings.sort((a, b) => a.line - b.line);
       for (const e of g.errors) refinaNOS(e, toksRef);
