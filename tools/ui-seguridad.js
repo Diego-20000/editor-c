@@ -62,7 +62,7 @@ const cerrar = (pg) => pg.evaluate(() => document.querySelectorAll('dialog[open]
 
 // recorre todas las pantallas que muestran datos guardados o recibidos
 async function recorrer(pg) {
-  const pasos = [['#progs', '#dProgs'], ['#settings', '#dSet'], ['#casosBtn', '#dCasos'], ['#pruebas', '#dPru'], ['#exBtn', '#dEj'], ['#ayudaBtn', '#dAyuda'], ['#avisar', '#dCasos'], ['#shot', '#dShot']];
+  const pasos = [['#pname', '#dProgs'], ['#settings', '#dSet'], ['#casosBtn', '#dCasos'], ['#pruebas', '#dPru'], ['#exBtn', '#dEj'], ['#ayudaBtn', '#dAyuda'], ['#avisar', '#dCasos'], ['#shot', '#dShot']];
   const mal = [];
   for (const [b, d] of pasos) {
     try { await abrir(pg, b, d); await pg.waitForTimeout(d === '#dShot' ? 500 : 80); } catch (e) { mal.push(b); }
@@ -235,7 +235,7 @@ const srv = http.createServer((q, r) => {
         check(abre, 'importar con cargas HTML: muestra el resumen antes de agregar');
         await limpio(pg, 'importar con cargas HTML: el resumen y la lista no ejecutan nada');
         // el programa con cargas queda abierto en algún momento: se recorre todo
-        await abrir(pg, '#progs', '#dProgs');
+        await abrir(pg, '#pname', '#dProgs');
         const nombres = await pg.$$eval('#plist li b', (l) => l.map((b) => b.textContent));
         check(nombres.some((n) => n.indexOf('<img') >= 0), 'importar: el nombre con marcado se ve como texto en la lista');
         check(!nombres.some((n) => /[\u0000-\u001f\u202a-\u202e]/.test(n)), 'importar: los nombres quedan sin caracteres de control ni marcas de dirección');

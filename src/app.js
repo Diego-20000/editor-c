@@ -1949,7 +1949,6 @@ self.postMessage({ type: 'ready' });`;
     });
   }
   function openProgs() { flushSave(); renderProgs(); dProgs.showModal(); }
-  $('progs').addEventListener('click', openProgs);
   $('pname').addEventListener('click', openProgs);
   $('pnew').addEventListener('click', () => { newProgram(); dProgs.close(); if (!coarse) { const p = ta.value.indexOf('{\n') + 6; ta.focus(); ta.setSelectionRange(p, p); } });
 

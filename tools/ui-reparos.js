@@ -42,13 +42,13 @@ const check = (c, m) => { if (c) { ok++; console.log('  ok   ' + m); } else { fa
   {
     const pg = await (await br.newContext({ viewport: { width: 1280, height: 800 } })).newPage();
     await pg.goto(url); await pg.waitForSelector('#code');
-    await pg.click('#progs');
+    await pg.click('#pname');
     await pg.waitForSelector('#dProgs[open]');
     // crear otro programa si hace falta (menú de la lista)
     let n0 = await pg.$$eval('#plist li', (l) => l.length);
     if (n0 < 2) {
       const nuevo = await pg.$('#dProgs button:has-text("Nuevo")');
-      if (nuevo) { await nuevo.click(); await pg.waitForTimeout(200); if (!(await pg.$('#dProgs[open]'))) { await pg.click('#progs'); await pg.waitForSelector('#dProgs[open]'); } }
+      if (nuevo) { await nuevo.click(); await pg.waitForTimeout(200); if (!(await pg.$('#dProgs[open]'))) { await pg.click('#pname'); await pg.waitForSelector('#dProgs[open]'); } }
       n0 = await pg.$$eval('#plist li', (l) => l.length);
     }
     await pg.click('#plist li:last-child button[aria-label^="Borrar"]');
@@ -452,15 +452,15 @@ const check = (c, m) => { if (c) { ok++; console.log('  ok   ' + m); } else { fa
     await poner('#include <stdio.h>\nint main() {\n    // printf("Ejercicio 99");\n    printf("Ejemplo 3");\n}\n');
     check((await nombre()) === 'Ejemplo 3', 'nombre: ignora los comentarios y entiende «Ejemplo» (' + (await nombre()) + ')');
     // un nombre puesto a mano ya no cambia solo
-    await pg.click('#progs'); await pg.waitForSelector('#dProgs[open]'); await pg.click('#plist .btn[title="Cambiar nombre"]');
+    await pg.click('#pname'); await pg.waitForSelector('#dProgs[open]'); await pg.click('#plist .btn[title="Cambiar nombre"]');
     await pg.fill('#plist input', 'Mi tarea'); await pg.keyboard.press('Enter'); await pg.keyboard.press('Escape');
     await poner('#include <stdio.h>\nint main() {\n    printf("Ejercicio 30");\n}\n');
     check((await nombre()) === 'Mi tarea', 'nombre: si lo cambió a mano, ya no cambia solo (' + (await nombre()) + ')');
     // un programa nuevo repite el título de otro: se distingue
-    await pg.click('#progs'); await pg.waitForSelector('#dProgs[open]'); await pg.click('#pnew');
+    await pg.click('#pname'); await pg.waitForSelector('#dProgs[open]'); await pg.click('#pnew');
     await poner('#include <stdio.h>\nint main() {\n    printf("Ejercicio 30");\n}\n');
     check((await nombre()) === 'Ejercicio 30', 'nombre: un programa nuevo toma el título (' + (await nombre()) + ')');
-    await pg.click('#progs'); await pg.waitForSelector('#dProgs[open]'); await pg.click('#pnew');
+    await pg.click('#pname'); await pg.waitForSelector('#dProgs[open]'); await pg.click('#pnew');
     await poner('#include <stdio.h>\nint main() {\n    printf("Ejercicio 30");\n}\n');
     check((await nombre()) === 'Ejercicio 30 (2)', 'nombre: si ya existe uno igual, agrega (2) (' + (await nombre()) + ')');
     await cx.close();
@@ -512,7 +512,7 @@ const check = (c, m) => { if (c) { ok++; console.log('  ok   ' + m); } else { fa
     const c2 = await br.newContext({ viewport: { width: 1280, height: 800 } });
     const A = await c2.newPage(), B = await c2.newPage();
     await A.goto(url); await A.waitForSelector('#code'); await B.goto(url); await B.waitForSelector('#code');
-    await A.evaluate(() => { document.getElementById('progs').click(); }); await A.waitForSelector('#dProgs[open]'); await A.click('#pnew');
+    await A.evaluate(() => { document.getElementById('pname').click(); }); await A.waitForSelector('#dProgs[open]'); await A.click('#pnew');
     await A.fill('#code', '#include <stdio.h>\nint main() {\n    printf("TRABAJO DE A");\n}\n'); await A.waitForTimeout(800);
     await B.evaluate(() => window.__editorc.setCode('int main() {\n}\n')); await B.waitForTimeout(800);
     await B.evaluate(() => window.dispatchEvent(new Event('pagehide'))); await B.waitForTimeout(300);
@@ -532,7 +532,7 @@ const check = (c, m) => { if (c) { ok++; console.log('  ok   ' + m); } else { fa
     await P.goto(url); await P.waitForSelector('#code');
     await P.click('#pruebas'); await P.waitForSelector('#dPru[open]');
     // todo en el mismo instante: se pide la captura, se cierra y se abre el otro programa antes de que terminen de correr las pruebas
-    await P.evaluate(() => { document.getElementById('pruCaps').click(); document.getElementById('dPru').close(); document.getElementById('progs').click(); document.querySelector('#plist li:nth-child(2) .open').click(); });
+    await P.evaluate(() => { document.getElementById('pruCaps').click(); document.getElementById('dPru').close(); document.getElementById('pname').click(); document.querySelector('#plist li:nth-child(2) .open').click(); });
     await P.waitForTimeout(6000);
     check(!(await P.isVisible('#dPruCap[open]')) && e3.length === 0, 'capturas por prueba: al cambiar de programa a mitad no se abre con resultados de otro' + (e3.length ? ': ' + e3.join(' | ') : ''));
     await c3.close();
@@ -542,9 +542,9 @@ const check = (c, m) => { if (c) { ok++; console.log('  ok   ' + m); } else { fa
   {
     let cx = await br.newContext({ viewport: { width: 1366, height: 768 } }); let pg = await cx.newPage();
     await pg.goto(url); await pg.waitForSelector('#code'); await pg.click('#enlace'); await pg.waitForTimeout(400);
-    check(await pg.isVisible('#progs') && await pg.isVisible('#settings'), 'barra: sigue visible después de tocar «Pasar a otro dispositivo» desde un archivo suelto');
+    check(await pg.isVisible('#pname') && await pg.isVisible('#settings'), 'barra: sigue visible después de tocar «Pasar a otro dispositivo» desde un archivo suelto');
     await pg.click('#avisar'); await pg.waitForSelector('dialog[open]'); await pg.keyboard.press('Escape'); await pg.waitForTimeout(200);
-    check(await pg.isVisible('#progs'), 'barra: sigue visible después de «Avisar a Diego»');
+    check(await pg.isVisible('#pname'), 'barra: sigue visible después de «Avisar a Diego»');
     await cx.close();
     cx = await br.newContext({ viewport: { width: 1024, height: 600 } }); pg = await cx.newPage();
     await pg.goto(url); await pg.waitForSelector('#code');

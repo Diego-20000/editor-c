@@ -61,7 +61,7 @@ async function ctx(br, mobile, tema) {
         await S(p, M + '-' + T + '-ajustes');
         await p.evaluate(() => document.querySelectorAll('dialog[open]').forEach((d) => d.close()));
         // programas
-        await p.evaluate(() => { document.getElementById('more').open = true; document.getElementById('progs').click(); }); await p.waitForTimeout(200);
+        await p.evaluate(() => { document.getElementById('more').open = true; document.getElementById('pname').click(); }); await p.waitForTimeout(200);
         await S(p, M + '-' + T + '-programas');
         await p.evaluate(() => document.querySelectorAll('dialog[open]').forEach((d) => d.close()));
         await p.evaluate(() => { const t = document.getElementById('inTxt'); t.value = ''; t.dispatchEvent(new Event('input')); });

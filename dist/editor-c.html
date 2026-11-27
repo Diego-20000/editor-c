@@ -3,7 +3,7 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-fU/QoskQuRctWlhECw3JlI6RrDSje0vtV21uFbUnqKQ=' 'sha256-1Ov+/38X8G38X4XVVpmIpMy4aW4lqDPeK2a3mnsmbqQ=' 'sha256-wEcGfBiCSYIcBXrOR6suuhroPO4d/UnZ9GqncUgYsrk=' 'sha256-3PcC9nUVNwkaaKwUbQu6NfvC6hwzbNdXOCgcmNlaXd8=' 'sha256-8iDO4fYDeppauw1I6AfkEKejTzPMdzvGXAX8PeBDKwg=' 'sha256-bk3i+2TjwkdWBUUu58Q38UuYPpTs6GkK/vw7efWYTOg=' 'sha256-FxYuoiMtJuNJ56TqfNQUJQYhGV5cyQmFcfIf/93cAoI=' 'sha256-D5eNFhJM5caNHsqiKB7XBhlV8Y/ARxp5llSr91wXSdw=' 'sha256-roqfeKHX31qnhNACUzx3ptrcftZMZBB97BGtw/Z3ojs=' 'sha256-eDnOIzEinYAB2tOTqOA5fuAMar6Rl/n1njISU2FFeCY=' 'sha256-rgiSH12iMr5IUIltfKReOQmwgPX6XvqRC3qq4U3+BPk=' 'unsafe-eval'; worker-src blob:; child-src blob:; style-src 'sha256-KAZ0iVwyMOp5tr8eg0gtgeYndi1eS38EmoM2nfL2jgw='; img-src data: blob:; font-src data:; connect-src blob:; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-fU/QoskQuRctWlhECw3JlI6RrDSje0vtV21uFbUnqKQ=' 'sha256-1Ov+/38X8G38X4XVVpmIpMy4aW4lqDPeK2a3mnsmbqQ=' 'sha256-wEcGfBiCSYIcBXrOR6suuhroPO4d/UnZ9GqncUgYsrk=' 'sha256-3PcC9nUVNwkaaKwUbQu6NfvC6hwzbNdXOCgcmNlaXd8=' 'sha256-UGzatKqU18on6DE6TFzYSEt9NEX4rpUzlz/UTltyu0s=' 'sha256-bk3i+2TjwkdWBUUu58Q38UuYPpTs6GkK/vw7efWYTOg=' 'sha256-+Y0JIlV2fyNcP6uWEqVaNYgURVDM2y5DdIh2cyO8HSA=' 'sha256-D5eNFhJM5caNHsqiKB7XBhlV8Y/ARxp5llSr91wXSdw=' 'sha256-roqfeKHX31qnhNACUzx3ptrcftZMZBB97BGtw/Z3ojs=' 'sha256-eDnOIzEinYAB2tOTqOA5fuAMar6Rl/n1njISU2FFeCY=' 'sha256-rgiSH12iMr5IUIltfKReOQmwgPX6XvqRC3qq4U3+BPk=' 'unsafe-eval'; worker-src blob:; child-src blob:; style-src 'sha256-KAZ0iVwyMOp5tr8eg0gtgeYndi1eS38EmoM2nfL2jgw='; img-src data: blob:; font-src data:; connect-src blob:; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="dark light">
 <title>Editor C</title>
@@ -583,7 +583,6 @@ dialog.ayuda { overflow-x: hidden; }
     <button id="ayudaBtn" class="btn" title="Ayuda: busca una duda de C o de un error" aria-label="Ayuda" aria-haspopup="dialog"><svg class="i" aria-hidden="true"><use href="#i-ayuda"/></svg><span>Ayuda</span></button>
     <details class="more" id="more"><summary class="btn" aria-label="Más opciones"><svg class="i" aria-hidden="true"><use href="#i-mas-menu"/></svg><span>Más</span></summary>
     <div class="menu">
-      <button id="progs" class="btn" title="Mis programas guardados en este dispositivo" aria-label="Programas"><svg class="i" aria-hidden="true"><use href="#i-programas"/></svg><span class="l">Programas</span></button>
       <button id="exBtn" class="btn" title="Programas de ejemplo ordenados por tema" aria-label="Ejemplos"><svg class="i" aria-hidden="true"><use href="#i-abrir"/></svg><span class="l">Ejemplos</span></button>
       <button id="ordenar" class="btn" title="Acomoda la sangría y los espacios del código, sin cambiar lo que hace (Ctrl+Z lo deshace)" aria-label="Ordenar código"><svg class="i" aria-hidden="true"><use href="#i-editar"/></svg><span class="l">Ordenar</span></button>
       <button id="pruebas" class="btn" title="Guardar varias entradas con el programa y ejecutarlas todas juntas" aria-label="Pruebas"><svg class="i" aria-hidden="true"><use href="#i-ejecutar"/></svg><span class="l">Pruebas</span></button>
@@ -6561,7 +6560,6 @@ self.postMessage({ type: 'ready' });`;
     });
   }
   function openProgs() { flushSave(); renderProgs(); dProgs.showModal(); }
-  $('progs').addEventListener('click', openProgs);
   $('pname').addEventListener('click', openProgs);
   $('pnew').addEventListener('click', () => { newProgram(); dProgs.close(); if (!coarse) { const p = ta.value.indexOf('{\n') + 6; ta.focus(); ta.setSelectionRange(p, p); } });
 
@@ -7018,7 +7016,7 @@ window.KB_DATA={"errores":[{"id":"ARR-001","categoria":"arreglos y textos","nomb
    (por ejemplo '5491112345678'). Vacío = el botón abre WhatsApp sin destinatario. */
 (function (root) {
   'use strict';
-  var CONFIG = { WHATSAPP_NUMERO: '5491137781528', VERSION: '604465682878' };
+  var CONFIG = { WHATSAPP_NUMERO: '5491137781528', VERSION: 'f901f29481af' };
   if (typeof module !== 'undefined' && module.exports) module.exports = CONFIG;
   else root.CONFIG = CONFIG;
 })(typeof self !== 'undefined' ? self : this);
