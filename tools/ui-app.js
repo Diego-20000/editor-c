@@ -19,6 +19,12 @@ let ok = 0, bad = 0; const check = (c, m) => { if (c) { ok++; console.log('  ok 
   await pg.click('#inBtn'); await pg.fill('#inTxt', '21'); await pg.click('#gccBtn');
   await pg.waitForFunction(() => /código de salida/.test(document.getElementById('out').textContent), null, { timeout: 15000 });
   const t = await pg.textContent('#out'); check(/gcc real/.test(t) && /doble: 42/.test(t), 'app: «gcc real» compila y ejecuta con la entrada');
+  await pg.fill('#inTxt', '5'); await pg.click('#gccBtn');
+  await pg.waitForFunction(() => /doble: 10/.test(document.getElementById('out').textContent), null, { timeout: 15000 });
+  const t2 = await pg.textContent('#out'); check(!/doble: 42/.test(t2) && (t2.match(/— gcc real/g) || []).length === 1, 'app: «gcc real» borra la salida anterior antes de mostrar la nueva');
+  await pg.fill('#inTxt', '7'); await pg.keyboard.press('F5');
+  await pg.waitForFunction(() => /doble: 14/.test(document.getElementById('out').textContent), null, { timeout: 15000 });
+  check(!/gcc real/.test(await pg.textContent('#out')), 'app: Ejecutar normal también limpia lo de «gcc real»');
   await pg.click('#settings'); await pg.waitForSelector('#dSet[open]');
   check(await pg.isHidden('#instBtn') && await pg.isHidden('#instMsg') && await pg.isHidden('#descApp'), 'app: dentro de la app no aparece «Instalar la app» ni «Descargar»');
   await pg.click('#updBtn'); await pg.waitForFunction(() => /última versión|Actualizado|No se pudo/.test(document.getElementById('updMsg').textContent), null, { timeout: 8000 });

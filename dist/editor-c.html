@@ -3,7 +3,7 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-fU/QoskQuRctWlhECw3JlI6RrDSje0vtV21uFbUnqKQ=' 'sha256-1Ov+/38X8G38X4XVVpmIpMy4aW4lqDPeK2a3mnsmbqQ=' 'sha256-wEcGfBiCSYIcBXrOR6suuhroPO4d/UnZ9GqncUgYsrk=' 'sha256-3PcC9nUVNwkaaKwUbQu6NfvC6hwzbNdXOCgcmNlaXd8=' 'sha256-himkFZMK3HGCCTdYohwFKoyk6hmxI0h1jM10CPXnN2Q=' 'sha256-bk3i+2TjwkdWBUUu58Q38UuYPpTs6GkK/vw7efWYTOg=' 'sha256-pVOk2CJkqRUjEf7UBo3kpWuCFPZs66XMtd/SQO+ADpg=' 'sha256-D5eNFhJM5caNHsqiKB7XBhlV8Y/ARxp5llSr91wXSdw=' 'sha256-roqfeKHX31qnhNACUzx3ptrcftZMZBB97BGtw/Z3ojs=' 'sha256-eDnOIzEinYAB2tOTqOA5fuAMar6Rl/n1njISU2FFeCY=' 'sha256-rgiSH12iMr5IUIltfKReOQmwgPX6XvqRC3qq4U3+BPk=' 'unsafe-eval'; worker-src blob:; child-src blob:; style-src 'sha256-KAZ0iVwyMOp5tr8eg0gtgeYndi1eS38EmoM2nfL2jgw='; img-src data: blob:; font-src data:; connect-src blob:; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-fU/QoskQuRctWlhECw3JlI6RrDSje0vtV21uFbUnqKQ=' 'sha256-1Ov+/38X8G38X4XVVpmIpMy4aW4lqDPeK2a3mnsmbqQ=' 'sha256-wEcGfBiCSYIcBXrOR6suuhroPO4d/UnZ9GqncUgYsrk=' 'sha256-3PcC9nUVNwkaaKwUbQu6NfvC6hwzbNdXOCgcmNlaXd8=' 'sha256-8iDO4fYDeppauw1I6AfkEKejTzPMdzvGXAX8PeBDKwg=' 'sha256-bk3i+2TjwkdWBUUu58Q38UuYPpTs6GkK/vw7efWYTOg=' 'sha256-FxYuoiMtJuNJ56TqfNQUJQYhGV5cyQmFcfIf/93cAoI=' 'sha256-D5eNFhJM5caNHsqiKB7XBhlV8Y/ARxp5llSr91wXSdw=' 'sha256-roqfeKHX31qnhNACUzx3ptrcftZMZBB97BGtw/Z3ojs=' 'sha256-eDnOIzEinYAB2tOTqOA5fuAMar6Rl/n1njISU2FFeCY=' 'sha256-rgiSH12iMr5IUIltfKReOQmwgPX6XvqRC3qq4U3+BPk=' 'unsafe-eval'; worker-src blob:; child-src blob:; style-src 'sha256-KAZ0iVwyMOp5tr8eg0gtgeYndi1eS38EmoM2nfL2jgw='; img-src data: blob:; font-src data:; connect-src blob:; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="dark light">
 <title>Editor C</title>
@@ -6927,11 +6927,12 @@ self.postMessage({ type: 'ready' });`;
     btn.addEventListener('click', () => {
       if (btn.disabled) return;
       btn.disabled = true;
+      if (phase) stopRun(true);
+      clearConsole(); clearProblems();   // igual que Ejecutar: no se mezcla con la salida anterior
       let entrada = inTxt.value; if (entrada && !entrada.endsWith('\n')) entrada += '\n';
       fetch('/api/gcc', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Token': tk }, body: JSON.stringify({ code: ta.value, input: entrada }) })
         .then((r) => (r.ok ? r.json() : Promise.reject(new Error('http'))))
         .then((j) => {
-          if (!endsWithNewline()) appendText('\n');
           appendText('— gcc real ' + ver + ' (' + so + ') —\n', 'dim');
           if (!j.compiled) {
             appendText(nivelAyuda >= 2 ? String(j.messages || '') + '\n' : 'gcc no pudo compilar el programa.\n', 'er');
@@ -7017,7 +7018,7 @@ window.KB_DATA={"errores":[{"id":"ARR-001","categoria":"arreglos y textos","nomb
    (por ejemplo '5491112345678'). Vacío = el botón abre WhatsApp sin destinatario. */
 (function (root) {
   'use strict';
-  var CONFIG = { WHATSAPP_NUMERO: '5491137781528', VERSION: '867eecdd7369' };
+  var CONFIG = { WHATSAPP_NUMERO: '5491137781528', VERSION: '604465682878' };
   if (typeof module !== 'undefined' && module.exports) module.exports = CONFIG;
   else root.CONFIG = CONFIG;
 })(typeof self !== 'undefined' ? self : this);

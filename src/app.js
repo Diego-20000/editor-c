@@ -2315,11 +2315,12 @@ self.postMessage({ type: 'ready' });`;
     btn.addEventListener('click', () => {
       if (btn.disabled) return;
       btn.disabled = true;
+      if (phase) stopRun(true);
+      clearConsole(); clearProblems();   // igual que Ejecutar: no se mezcla con la salida anterior
       let entrada = inTxt.value; if (entrada && !entrada.endsWith('\n')) entrada += '\n';
       fetch('/api/gcc', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Token': tk }, body: JSON.stringify({ code: ta.value, input: entrada }) })
         .then((r) => (r.ok ? r.json() : Promise.reject(new Error('http'))))
         .then((j) => {
-          if (!endsWithNewline()) appendText('\n');
           appendText('— gcc real ' + ver + ' (' + so + ') —\n', 'dim');
           if (!j.compiled) {
             appendText(nivelAyuda >= 2 ? String(j.messages || '') + '\n' : 'gcc no pudo compilar el programa.\n', 'er');
