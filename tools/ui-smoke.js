@@ -292,7 +292,7 @@ async function suite(browser, target, mobile) {
   ok(fs.statSync(png).size > 3000 && sig === '89504e470d0a1a0a' && dl.suggestedFilename().endsWith('.png'), 'exporta PNG desde la vista previa (' + dl.suggestedFilename() + ')');
 
   // ---- 14) exportar e importar todos los programas
-  await H.menu(); await H.tap('#progs');
+  await page.evaluate(() => document.getElementById('pname').click());
   await page.waitForSelector('#dProgs[open]');
   const nBefore = await H.progCount();
   const [ex] = await Promise.all([page.waitForEvent('download'), H.tap('#pexp')]);
@@ -702,7 +702,7 @@ async function phoneSuite(browser, target) {
   await page.tap('#fclose');
   await page.tap('#more > summary');
   bad = await small(); ok(bad.length === 0, 'objetivos táctiles >= 44 px, menú Más' + (bad.length ? ': ' + bad.join(', ') : ''));
-  await page.tap('#progs'); await page.waitForSelector('#dProgs[open]');
+  await page.evaluate(() => document.getElementById('pname').click()); await page.waitForSelector('#dProgs[open]');
   bad = await small(); ok(bad.length === 0, 'objetivos táctiles >= 44 px, diálogo Programas' + (bad.length ? ': ' + bad.join(', ') : ''));
   await page.keyboard.press('Escape');
   await page.tap('#more > summary'); await page.tap('#settings'); await page.waitForSelector('#dSet[open]');
@@ -1066,7 +1066,7 @@ async function finalShots(browser, url) {
     if (mobile) { await page.tap('#tabEd'); await snap('editor'); await H.run(); await page.waitForSelector('.stdin input'); await page.setViewportSize({ width: 390, height: 480 }); await page.waitForTimeout(300); await snap('teclado'); await page.setViewportSize({ width: 390, height: 844 }); await page.keyboard.type('1'); await page.keyboard.press('Enter'); await H.typeLine('2'); await H.done(); }
     await H.run(); await H.typeLine('7'); await H.typeLine('5'); await H.done();
     await H.menu(); await H.tap('#shot'); await page.waitForFunction(() => { const i = document.getElementById('shotImg'); return i.complete && i.naturalWidth > 0; }); await snap('vista-previa'); await page.keyboard.press('Escape');
-    await H.menu(); await H.tap('#progs'); await page.waitForSelector('#dProgs[open]'); await snap('programas'); await page.keyboard.press('Escape');
+    await page.evaluate(() => document.getElementById('pname').click()); await page.waitForSelector('#dProgs[open]'); await snap('programas'); await page.keyboard.press('Escape');
     if (!mobile) { const b = await page.locator('#divider').boundingBox(); await page.mouse.move(b.x + 5, b.y + 100); await page.mouse.down(); await page.mouse.move(b.x - 160, b.y + 100, { steps: 6 }); await page.mouse.up(); await snap('divisor'); }
     await ctx.close();
   }
